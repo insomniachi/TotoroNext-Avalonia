@@ -1,16 +1,16 @@
+using IconPacks.Avalonia.MaterialDesign;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
-using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Anime.ViewModels;
 using TotoroNext.Anime.Views;
+using TotoroNext.Module;
+using TotoroNext.Module.Abstractions;
 //using TotoroNext.Anime.Abstractions;
 //using TotoroNext.Anime.Abstractions.Models;
 //using TotoroNext.Anime.Services;
 //using TotoroNext.Anime.UserInteractions;
 //using TotoroNext.Anime.ViewModels;
 //using TotoroNext.Anime.Views;
-using TotoroNext.Module;
-using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime;
 
@@ -23,7 +23,9 @@ public class Module : IModule
 
         //// main navigation
         services.AddMainNavigationItem<SearchView, SearchViewModel>("Search",
-            IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.Search);
+                                                                    PackIconMaterialDesignKind.Search);
+        services.AddMainNavigationItem<UserListView, UserListViewModel>("My List",
+                                                                        PackIconMaterialDesignKind.VideoLibrary);
 
         //// Pane navigation
         //services.AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()

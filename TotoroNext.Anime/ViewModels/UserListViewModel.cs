@@ -16,7 +16,6 @@ public partial class UserListViewModel(IFactory<ITrackingService, Guid> factory,
                                        IMessenger messenger) : ObservableObject, IAsyncInitializable
 {
     private readonly ITrackingService? _trackingService = factory.CreateDefault();
-    private readonly IMessenger _messenger = messenger;
     private IEnumerable<AnimeModel> _allItems = [];
     
     
@@ -53,7 +52,7 @@ public partial class UserListViewModel(IFactory<ITrackingService, Guid> factory,
 
         IsLoading = false;
 
-        _messenger.Register<ClosePaneMessage>(this, (_, _) => IsPaneOpen = false);
+        messenger.Register<ClosePaneMessage>(this, (_, _) => IsPaneOpen = false);
 
         Filter
             .WhenAnyValue(x => x.Year, x => x.Status, x => x.Term)
@@ -72,16 +71,11 @@ public partial class UserListViewModel(IFactory<ITrackingService, Guid> factory,
             ? providerFactory.Create(providerId)
             : providerFactory.CreateDefault();
 
-        if (provider is null)
-        {
-            return;
-        }
-
         var result = await provider.SearchAndSelectAsync(anime);
 
         if (overrides is not null)
         {
-            _messenger.Send(overrides);
+            messenger.Send(overrides);
         }
 
         if (result is null)
@@ -89,19 +83,19 @@ public partial class UserListViewModel(IFactory<ITrackingService, Guid> factory,
             return;
         }
 
-        _messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, anime)));
+        messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, anime)));
     }
 
     public void OpenAnimeDetails(AnimeModel anime)
     {
-        _messenger.Send(new PaneNavigateToDataMessage(anime, 750));
+        messenger.Send(new PaneNavigateToDataMessage(anime, 750));
     }
 
 
     [RelayCommand]
     private void OpenFilterPane()
     {
-        _messenger.Send(new PaneNavigateToDataMessage(Filter));
+        messenger.Send(new PaneNavigateToDataMessage(Filter));
         IsPaneOpen = true;
     }
 

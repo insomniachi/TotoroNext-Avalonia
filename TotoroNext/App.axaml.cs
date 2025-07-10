@@ -31,6 +31,7 @@ public partial class App : Application
             {
                 services.AddCoreServices();
                 services.AddTransient<MainWindowViewModel>();
+                services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
 
                 services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
                     // .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))

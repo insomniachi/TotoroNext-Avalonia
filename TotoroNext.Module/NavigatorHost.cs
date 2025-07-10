@@ -97,7 +97,7 @@ public class NavigatorHost(TransitioningContentControl host,
 
             return true;
         }
-        catch
+        catch(Exception ex)
         {
             return false;
         }

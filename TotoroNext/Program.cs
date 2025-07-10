@@ -19,7 +19,5 @@ sealed class Program
             .UsePlatformDetect()
             .WithInterFont()
             .UseReactiveUI()
-            .With(new Win32PlatformOptions { CompositionMode = [Win32CompositionMode.RedirectionSurface] })
-            .With(new AvaloniaNativePlatformOptions {  RenderingMode = [AvaloniaNativeRenderingMode.OpenGl, AvaloniaNativeRenderingMode.Software]})
             .LogToTrace();
 }
