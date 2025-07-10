@@ -23,7 +23,8 @@
                  Text="{Binding Query}"/>
         
         <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding Items}">
+            <ItemsControl ItemsSource="{Binding Items}"
+                          mod:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel ItemWidth="250" ItemHeight="400" ItemsAlignment="Start" ItemSpacing="16" LineSpacing="16"/>
@@ -31,7 +32,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ac:AnimeCard Anime="{Binding}" mod:WrapAnimationBehavior.EnableWrapOffsetAnimation="True"/>
+                        <ac:AnimeCard Anime="{Binding}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
