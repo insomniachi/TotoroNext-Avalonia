@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="AsyncImageLoader.Avalonia" />
+        <PackageReference Include="Avalonia" />
+        <PackageReference Include="Avalonia.Controls.ItemsRepeater" />
+        <PackageReference Include="Avalonia.ReactiveUI" />
+        <PackageReference Include="Flurl.Http" />
+        <PackageReference Include="IconPacks.Avalonia" />
+        <PackageReference Include="Irihi.Ursa" />
+        <PackageReference Include="Irihi.Ursa.Themes.Semi" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="Semi.Avalonia" />
+
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="System.Linq.Async" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Controls\" />
+    </ItemGroup>
+    
+
+</Project>

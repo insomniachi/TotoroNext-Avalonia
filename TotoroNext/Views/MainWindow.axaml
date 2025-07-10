@@ -1,0 +1,81 @@
+<u:UrsaWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:TotoroNext.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TotoroNext.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        xmlns:u="https://irihi.tech/ursa"
+        xmlns:iri="https://irihi.tech/shared"
+        xmlns:mod="using:TotoroNext.Module"
+        Icon="/Assets/avalonia-logo.ico"
+        WindowStartupLocation="CenterScreen"
+        IsFullScreenButtonVisible="{OnPlatform {x:True}, macOS={x:False}}"
+        IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
+        Title="TotoroNext">
+    <u:UrsaWindow.RightContent>
+        <Button Content="Right"/>
+    </u:UrsaWindow.RightContent>
+
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Panel>
+        <Panel.Styles>
+            <Style Selector="Grid.Blur">
+                <Setter Property="Effect" Value="blur(10)" />
+            </Style>
+        </Panel.Styles>
+        <Grid Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}" ColumnDefinitions="Auto, *">
+            <Border
+                Padding="8,4"
+                VerticalAlignment="Stretch"
+                Theme="{DynamicResource CardBorder}">
+                <u:NavMenu
+                    Name="menu"
+                    ExpandWidth="300"
+                    ItemsSource="{Binding MenuItems}">
+                    <u:NavMenu.HeaderTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <TextBlock HorizontalAlignment="Left" Text="{Binding}" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </u:NavMenu.HeaderTemplate>
+                    <u:NavMenu.Header>
+                        <DockPanel 
+                            Margin="8 32 8 8"
+                            HorizontalAlignment="Center"                        
+                            u:NavMenu.CanToggle="True">
+                            <Panel
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                DockPanel.Dock="Left">
+                                <iri:IrihiLogo Width="32" Fill="{DynamicResource SemiGrey7}" />
+                            </Panel>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Classes="H4"
+                                Margin="16 0 0 0"
+                                IsVisible="{Binding !#menu.IsHorizontalCollapsed}"
+                                Text="Totoro"
+                                Theme="{DynamicResource TitleTextBlock}" />
+                        </DockPanel>
+                    </u:NavMenu.Header>
+                </u:NavMenu>
+            </Border>
+            <TransitioningContentControl
+                Grid.Column="1"
+                Margin="12,36,12,12"
+                mod:NavigationExtensions.IsAttached="True">
+                <TransitioningContentControl.PageTransition>
+                    <CrossFade Duration="0:00:00.200" />
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
+        </Grid>
+    </Panel>
+
+</u:UrsaWindow>

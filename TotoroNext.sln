@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext", "TotoroNext\TotoroNext.csproj", "{F68D9278-916E-4F29-8A64-3664B88388CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Module", "TotoroNext.Module\TotoroNext.Module.csproj", "{470C6602-2781-4B6D-8AF9-D8169C8C0BED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{49B7BD5E-E31A-472C-82E4-A2F72BB9E540}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime", "TotoroNext.Anime\TotoroNext.Anime.csproj", "{2C065B11-3DD4-4D30-B5BB-5B1AFC02D9BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.Abstractions", "TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj", "{C4379CB4-C7DD-4AEA-94AB-7A420448E775}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.Anilist", "TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj", "{537DF5E4-D4CC-4D72-8051-4F32290D297D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AllAnime", "TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj", "{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F68D9278-916E-4F29-8A64-3664B88388CA}.Debug|x64.ActiveCfg = Debug|x64
+		{F68D9278-916E-4F29-8A64-3664B88388CA}.Debug|x64.Build.0 = Debug|x64
+		{F68D9278-916E-4F29-8A64-3664B88388CA}.Release|x64.ActiveCfg = Release|x64
+		{F68D9278-916E-4F29-8A64-3664B88388CA}.Release|x64.Build.0 = Release|x64
+		{470C6602-2781-4B6D-8AF9-D8169C8C0BED}.Debug|x64.ActiveCfg = Debug|x64
+		{470C6602-2781-4B6D-8AF9-D8169C8C0BED}.Debug|x64.Build.0 = Debug|x64
+		{470C6602-2781-4B6D-8AF9-D8169C8C0BED}.Release|x64.ActiveCfg = Release|x64
+		{470C6602-2781-4B6D-8AF9-D8169C8C0BED}.Release|x64.Build.0 = Release|x64
+		{2C065B11-3DD4-4D30-B5BB-5B1AFC02D9BF}.Debug|x64.ActiveCfg = Debug|x64
+		{2C065B11-3DD4-4D30-B5BB-5B1AFC02D9BF}.Debug|x64.Build.0 = Debug|x64
+		{2C065B11-3DD4-4D30-B5BB-5B1AFC02D9BF}.Release|x64.ActiveCfg = Release|x64
+		{2C065B11-3DD4-4D30-B5BB-5B1AFC02D9BF}.Release|x64.Build.0 = Release|x64
+		{C4379CB4-C7DD-4AEA-94AB-7A420448E775}.Debug|x64.ActiveCfg = Debug|x64
+		{C4379CB4-C7DD-4AEA-94AB-7A420448E775}.Debug|x64.Build.0 = Debug|x64
+		{C4379CB4-C7DD-4AEA-94AB-7A420448E775}.Release|x64.ActiveCfg = Release|x64
+		{C4379CB4-C7DD-4AEA-94AB-7A420448E775}.Release|x64.Build.0 = Release|x64
+		{537DF5E4-D4CC-4D72-8051-4F32290D297D}.Debug|x64.ActiveCfg = Debug|x64
+		{537DF5E4-D4CC-4D72-8051-4F32290D297D}.Debug|x64.Build.0 = Debug|x64
+		{537DF5E4-D4CC-4D72-8051-4F32290D297D}.Release|x64.ActiveCfg = Release|x64
+		{537DF5E4-D4CC-4D72-8051-4F32290D297D}.Release|x64.Build.0 = Release|x64
+		{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}.Debug|x64.ActiveCfg = Debug|x64
+		{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}.Debug|x64.Build.0 = Debug|x64
+		{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}.Release|x64.ActiveCfg = Release|x64
+		{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A99C9AE3-1A61-4A01-A03A-0916DC269789}
+	EndGlobalSection
+EndGlobal

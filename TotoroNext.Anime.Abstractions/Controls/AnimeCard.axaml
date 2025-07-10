@@ -1,0 +1,45 @@
+﻿<UserControl
+    x:Class="TotoroNext.Anime.Abstractions.Controls.AnimeCard"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:local="using:TotoroNext.Anime.Abstractions.Controls"
+    xmlns:u="https://irihi.tech/ursa">
+    <Grid RowDefinitions="*,Auto">
+        <Grid>
+            <Image Stretch="UniformToFill" ail:ImageLoader.Source="{Binding $parent[local:AnimeCard].Anime.Image}"/>
+            <Grid VerticalAlignment="Top" Background="Transparent" ColumnDefinitions="*,Auto">
+                <TextBlock Grid.ColumnSpan="2"
+                           Padding="2"
+                           HorizontalAlignment="Stretch"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+                <Border CornerRadius="20" Background="Red" Padding="3" Grid.Column="1" Width="30" Margin="4">
+                    <TextBlock Text="1" HorizontalAlignment="Center" FontWeight="Bold"/>
+                </Border>
+            </Grid>
+        </Grid>
+        <Border
+            x:Name="StatusBorder"
+            Grid.Row="1"
+            Height="60"
+            Padding="3"
+            Background="Gray"
+            BorderThickness="0,4,0,0">
+            <TextBlock
+                Padding="3"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                FontSize="15"
+                TextAlignment="Center"
+                Text="{Binding $parent[local:AnimeCard].Anime.Title, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis"/>
+        </Border>
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="TotoroNext.Anime.Abstractions/Controls/AnimeCard.axaml" value="TotoroNext/TotoroNext.csproj" />
+        <entry key="TotoroNext.Anime/Views/SearchView.axaml" value="TotoroNext/TotoroNext.csproj" />
+        <entry key="TotoroNext.Anime/Views/UserListView.axaml" value="TotoroNext/TotoroNext.csproj" />
+        <entry key="TotoroNext/App.axaml" value="TotoroNext/TotoroNext.csproj" />
+        <entry key="TotoroNext/Views/MainWindow.axaml" value="TotoroNext/TotoroNext.csproj" />
+        <entry key="TotoroNext/Views/SearchView.axaml" value="TotoroNext/TotoroNext.csproj" />
+        <entry key="TotoroNext/Views/UserListView.axaml" value="TotoroNext/TotoroNext.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

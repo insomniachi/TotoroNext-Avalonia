@@ -1,0 +1,20 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TotoroNext.App"
+             xmlns:local="using:TotoroNext"
+             xmlns:semi="https://irihi.tech/semi"
+             xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+  
+    <Application.Styles>
+        <semi:SemiPopupAnimations/>
+        <semi:SemiTheme/>
+        <u-semi:SemiTheme/>
+        <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
+    </Application.Styles>
+</Application>
