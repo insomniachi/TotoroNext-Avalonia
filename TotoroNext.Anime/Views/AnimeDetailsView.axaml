@@ -1,0 +1,61 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TotoroNext.Anime.ViewModels"
+             xmlns:ail="using:AsyncImageLoader"
+             xmlns:aa="using:TotoroNext.Anime.Abstractions"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TotoroNext.Anime.Views.AnimeDetailsView"
+             Width="750"
+             x:DataType="vm:AnimeDetailsViewModel">
+
+    <Grid RowSpacing="8"
+          RowDefinitions="435,Auto,*">
+
+        <Grid Grid.Row="0"
+              ColumnSpacing="24"
+              ColumnDefinitions="*,1.25*">
+            
+            <Border CornerRadius="15" ClipToBounds="True">
+                <Image ail:ImageLoader.Source="{Binding Anime.Image}" Stretch="UniformToFill"/>
+            </Border>
+
+            <Grid Grid.Column="1" RowDefinitions="Auto,*">
+                <u:Form LabelPosition="Left" LabelWidth="*" HorizontalAlignment="Stretch">
+                    <u:FormItem Label="Status">
+                        <u:EnumSelector EnumType="{x:Type aa:ListItemStatus}"
+                                        Value="{Binding Status, Mode=TwoWay}"
+                                        HorizontalAlignment="Stretch"/>
+                    </u:FormItem>
+                    <u:FormItem Label="Progress">
+                        <u:NumericIntUpDown Minimum="0"
+                                            Maximum="{Binding Anime.TotalEpisodes}"
+                                            Value="{Binding Progress, Mode=TwoWay}" />
+                    </u:FormItem>
+                    <u:FormItem Label="Score">
+                        <u:NumericIntUpDown Minimum="0"
+                                            Maximum="10"
+                                            Value="{Binding Score, Mode=TwoWay}"/>
+                    </u:FormItem>
+                    <u:FormItem Label="Start Date">
+                        <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
+                                      HorizontalAlignment="Stretch"
+                                      DisplayFormat="MMMM dd, yyyy"/>
+                    </u:FormItem>
+                    <u:FormItem Label="Finish Date">
+                        <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}" 
+                                      HorizontalAlignment="Stretch"
+                                      DisplayFormat="MMMM dd, yyyy"/>
+                    </u:FormItem>
+                </u:Form>
+                <ScrollViewer Grid.Row="1" Margin="0 8 0 0">
+                    <TextBlock Text="{Binding Anime.Description}" TextWrapping="Wrap" />
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+    </Grid>
+
+</UserControl>

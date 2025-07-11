@@ -7,9 +7,11 @@
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:modc="using:TotoroNext.Module.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:UserListViewModel"
              x:Class="TotoroNext.Anime.Views.UserListView">
+
     <Grid RowDefinitions="Auto, *" RowSpacing="16">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="18">
             <u:SelectionList
@@ -50,18 +52,21 @@
                           module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <u:ElasticWrapPanel 
-                            ItemHeight="400" 
+                        <modc:WrapPanelEx
+                            ItemHeight="400"
                             ItemWidth="250"
                             IsFillHorizontal="True" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ac:AnimeCard Anime="{Binding}" Margin="8"/>
+                        <ac:AnimeCard Anime="{Binding}" 
+                                      Margin="8" 
+                                      module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).OpenAnimeDetailsCommand, TargetNullValue={x:Null}}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
     </Grid>
+    
 </UserControl>

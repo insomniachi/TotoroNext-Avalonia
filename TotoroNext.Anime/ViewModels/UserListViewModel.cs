@@ -94,9 +94,10 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
         _messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, anime)));
     }
 
-    public void OpenAnimeDetails(AnimeModel anime)
+    [RelayCommand]
+    private void OpenAnimeDetails(AnimeModel anime)
     {
-        _messenger.Send(new PaneNavigateToDataMessage(anime, paneWidth: 750));
+        _messenger.Send(new PaneNavigateToDataMessage(anime, paneWidth: 750, title: anime.Title));
     }
 
 

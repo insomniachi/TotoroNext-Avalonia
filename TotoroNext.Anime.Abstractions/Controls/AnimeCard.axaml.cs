@@ -1,8 +1,10 @@
 ﻿using System.Text;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.Xaml.Interactions.Events;
 
 namespace TotoroNext.Anime.Abstractions.Controls;
 
@@ -117,10 +119,15 @@ public partial class AnimeCard : UserControl
     {
         return anime?.AiringStatus switch
         {
-            AiringStatus.CurrentlyAiring => new SolidColorBrush(Colors.LimeGreen),
-            AiringStatus.FinishedAiring => new SolidColorBrush(Colors.MediumSlateBlue),
-            AiringStatus.NotYetAired => new SolidColorBrush(Colors.LightSlateGray),
-            _ => new SolidColorBrush(Colors.Navy)
+            AiringStatus.CurrentlyAiring => AiringBrush,
+            AiringStatus.FinishedAiring => FinishedBrush,
+            AiringStatus.NotYetAired => NotYetBrush,
+            _ => OtherBrush
         };
     }
+
+    private static readonly SolidColorBrush AiringBrush = new(Colors.LimeGreen);
+    private static readonly SolidColorBrush FinishedBrush = new(Colors.MediumSlateBlue);
+    private static readonly SolidColorBrush NotYetBrush = new(Colors.LightSlateGray);
+    private static readonly SolidColorBrush OtherBrush = new(Colors.Transparent);
 }

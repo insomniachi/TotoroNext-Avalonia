@@ -22,13 +22,8 @@ public class Module : IModule
                                                                         PackIconMaterialDesignKind.VideoLibrary);
 
         //// Pane navigation
-        services.AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>();
-        //services.AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()
-        //        .AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>()
-        //        .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>()
-        //        .AddDataViewMap<AnimeGridView, AnimeGridViewModel, List<AnimeModel>>()
-        //        .AddDataViewMap<AnimeOverridesView, AnimeOverridesViewModel, OverridesViewModelNavigationParameters>()
-        //        .AddDataViewMap<AnimeSongsView, AnimeSongsViewModel, SongsViewModelNavigationParameters>();
+        services.AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>()
+                .AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>();
 
         // services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
         //         .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>()
