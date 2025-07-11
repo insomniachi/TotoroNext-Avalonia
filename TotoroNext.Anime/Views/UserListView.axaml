@@ -5,42 +5,60 @@
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:UserListViewModel"
              x:Class="TotoroNext.Anime.Views.UserListView">
     <Grid RowDefinitions="Auto, *" RowSpacing="16">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <ListBox ItemsSource="{Binding AllStatus}" SelectedItem="{Binding Filter.Status}">
-                <ListBox.Styles>
-                    <Style Selector="ListBoxItem">
-                        <Setter Property="Width" Value="200"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="18">
+            <u:SelectionList
+                ItemsSource="{Binding AllStatus}"
+                SelectedItem="{Binding Filter.Status}">
+                <u:SelectionList.Styles>
+                    <Style Selector="u|SelectionListItem">
+                        <Setter Property="Classes.Large" Value="true" />
+                        <Setter Property="Width" Value="175" />
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
                     </Style>
-                    <Style Selector="ListBoxItem:selected">
-                        <Setter Property="Background" Value="#007ACC"/>
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
-                    </Style>
-                </ListBox.Styles>
-                <ListBox.ItemsPanel>
+                </u:SelectionList.Styles>
+                <u:SelectionList.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
                     </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
+                </u:SelectionList.ItemsPanel>
+            </u:SelectionList>
+            <SplitButton Height="40" Command="{Binding OpenFilterPaneCommand}">
+                <SplitButton.Content>
+                    <StackPanel Spacing="8" Orientation="Horizontal">
+                        <Viewbox Height="20" Width="20">
+                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Filter}" />
+                        </Viewbox>
+                        <TextBlock Text="Filter" VerticalAlignment="Center" />
+                    </StackPanel>
+                </SplitButton.Content>
+                <SplitButton.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="Clear" Icon="{iconPacks:MaterialDesign Kind=ClearAll}"
+                                  Command="{Binding ClearFiltersCommand}" />
+                    </MenuFlyout>
+                </SplitButton.Flyout>
+            </SplitButton>
         </StackPanel>
         <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding Items}"
+            <ItemsControl ItemsSource="{Binding Anime}"
                           module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel ItemWidth="250" ItemHeight="400" ItemsAlignment="Start" ItemSpacing="16" LineSpacing="16"/>
+                        <u:ElasticWrapPanel 
+                            ItemHeight="400" 
+                            ItemWidth="250"
+                            IsFillHorizontal="True" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ac:AnimeCard Anime="{Binding}"/>
+                        <ac:AnimeCard Anime="{Binding}" Margin="8"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

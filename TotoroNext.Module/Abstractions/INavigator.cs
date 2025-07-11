@@ -18,8 +18,9 @@ public class NavigateToViewModelMessage(Type vm)
     public Type ViewModel { get; } = vm;
 }
 
-public class PaneNavigateToViewModelMessage(Type vm, double? paneWidth = null, bool isInline = false) : NavigateToViewModelMessage(vm)
+public class PaneNavigateToViewModelMessage(Type vm, string title = "", double? paneWidth = null, bool isInline = false) : NavigateToViewModelMessage(vm)
 {
+    public string Title { get; } = title;
     public double? PaneWidth { get; } = paneWidth;
     public bool IsInline { get; } = isInline;
 }
@@ -29,8 +30,9 @@ public class NavigateToDataMessage(object data)
     public object Data { get; } = data;
 }
 
-public class PaneNavigateToDataMessage(object data, double? paneWidth = null, bool isInline = false) : NavigateToDataMessage(data)
+public class PaneNavigateToDataMessage(object data, string title = "", double? paneWidth = null, bool isInline = false) : NavigateToDataMessage(data)
 {
+    public string Title { get; } = title;
     public double? PaneWidth { get; } = paneWidth;
     public bool IsInline { get; } = isInline;
 }

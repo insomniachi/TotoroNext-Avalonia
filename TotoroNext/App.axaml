@@ -13,8 +13,8 @@
   
     <Application.Styles>
         <semi:SemiPopupAnimations/>
-        <semi:SemiTheme/>
-        <u-semi:SemiTheme/>
+        <semi:SemiTheme Locale="en-US"/>
+        <u-semi:SemiTheme Locale="en-US"/>
         <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
     </Application.Styles>
 </Application>

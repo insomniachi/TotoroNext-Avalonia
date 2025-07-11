@@ -5,12 +5,6 @@ using TotoroNext.Anime.ViewModels;
 using TotoroNext.Anime.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
-//using TotoroNext.Anime.Abstractions;
-//using TotoroNext.Anime.Abstractions.Models;
-//using TotoroNext.Anime.Services;
-//using TotoroNext.Anime.UserInteractions;
-//using TotoroNext.Anime.ViewModels;
-//using TotoroNext.Anime.Views;
 
 namespace TotoroNext.Anime;
 
@@ -28,6 +22,7 @@ public class Module : IModule
                                                                         PackIconMaterialDesignKind.VideoLibrary);
 
         //// Pane navigation
+        services.AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>();
         //services.AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()
         //        .AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>()
         //        .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>()

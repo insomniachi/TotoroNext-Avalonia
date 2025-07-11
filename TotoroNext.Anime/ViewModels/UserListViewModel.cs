@@ -1,8 +1,11 @@
+using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using ReactiveUI;
+using DynamicData;
+using DynamicData.Binding;
+using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Extensions;
 using TotoroNext.Module;
@@ -10,32 +13,46 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.ViewModels;
 
-public partial class UserListViewModel(IFactory<ITrackingService, Guid> factory,
-                                       IFactory<IAnimeProvider, Guid> providerFactory,
-                                       IAnimeOverridesRepository animeOverridesRepository,
-                                       IMessenger messenger) : ObservableObject, IAsyncInitializable
+[UsedImplicitly]
+public partial class UserListViewModel : ObservableObject, IAsyncInitializable
 {
-    private readonly ITrackingService? _trackingService = factory.CreateDefault();
+    private readonly IFactory<IAnimeProvider, Guid> _providerFactory;
+    private readonly IAnimeOverridesRepository _animeOverridesRepository;
+    private readonly IMessenger _messenger;
+    private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
+    private readonly ITrackingService? _trackingService;
     private IEnumerable<AnimeModel> _allItems = [];
-    
-    
-    // Design Instance
-    public UserListViewModel() : this(null!, null!, null!, null!)
-    {
-        
-    }
+    private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
 
+    public UserListViewModel(IFactory<ITrackingService, Guid> factory,
+                             IFactory<IAnimeProvider, Guid> providerFactory,
+                             IAnimeOverridesRepository animeOverridesRepository,
+                             IMessenger messenger)
+    {
+        _providerFactory = providerFactory;
+        _animeOverridesRepository = animeOverridesRepository;
+        _messenger = messenger;
+        _trackingService = factory.CreateDefault();
+        
+        _animeCache
+            .Connect()
+            .RefCount()
+            .Filter(Filter.WhenAnyPropertyChanged().Select(x => (Func<AnimeModel, bool>)x!.IsVisible))
+            .Bind(out _anime)
+            .DisposeMany()
+            .Subscribe();
+    }
+    
     public UserListFilter Filter { get; } = new();
 
-    public List<ListItemStatus> AllStatus { get; } = [ListItemStatus.Watching, ListItemStatus.PlanToWatch, ListItemStatus.Completed, ListItemStatus.OnHold];
+    public List<ListItemStatus> AllStatus { get; } =
+        [ListItemStatus.Watching, ListItemStatus.PlanToWatch, ListItemStatus.Completed, ListItemStatus.OnHold];
 
-    [ObservableProperty]
-    public partial List<AnimeModel> Items { get; set; } = [];
+    [ObservableProperty] public partial List<AnimeModel> Items { get; set; } = [];
 
-    [ObservableProperty]
-    public partial bool IsLoading { get; set; }
+    [ObservableProperty] public partial bool IsLoading { get; set; }
 
-    public bool IsPaneOpen { get; set; }
+    public ReadOnlyObservableCollection<AnimeModel> Anime => _anime;
 
 
     public async Task InitializeAsync()
@@ -48,34 +65,25 @@ public partial class UserListViewModel(IFactory<ITrackingService, Guid> factory,
         IsLoading = true;
 
         _allItems = await _trackingService.GetUserList();
-        Items = [.. _allItems];
-
+        _animeCache.AddOrUpdate(_allItems);
+        Filter.Refresh();
+        
         IsLoading = false;
-
-        messenger.Register<ClosePaneMessage>(this, (_, _) => IsPaneOpen = false);
-
-        Filter
-            .WhenAnyValue(x => x.Year, x => x.Status, x => x.Term)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(_ =>
-            {
-                Items = [.. _allItems.Where(Filter.IsVisible)];
-            });
     }
 
     public async Task NavigateToWatch(AnimeModel anime)
     {
-        var overrides = animeOverridesRepository.GetOverrides(anime.Id);
+        var overrides = _animeOverridesRepository.GetOverrides(anime.Id);
 
         var provider = overrides?.Provider is { } providerId
-            ? providerFactory.Create(providerId)
-            : providerFactory.CreateDefault();
+            ? _providerFactory.Create(providerId)
+            : _providerFactory.CreateDefault();
 
         var result = await provider.SearchAndSelectAsync(anime);
 
         if (overrides is not null)
         {
-            messenger.Send(overrides);
+            _messenger.Send(overrides);
         }
 
         if (result is null)
@@ -83,23 +91,24 @@ public partial class UserListViewModel(IFactory<ITrackingService, Guid> factory,
             return;
         }
 
-        messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, anime)));
+        _messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, anime)));
     }
 
     public void OpenAnimeDetails(AnimeModel anime)
     {
-        messenger.Send(new PaneNavigateToDataMessage(anime, 750));
+        _messenger.Send(new PaneNavigateToDataMessage(anime, paneWidth: 750));
     }
 
 
     [RelayCommand]
     private void OpenFilterPane()
     {
-        messenger.Send(new PaneNavigateToDataMessage(Filter));
-        IsPaneOpen = true;
+        _messenger.Send(new PaneNavigateToDataMessage(Filter, "Filter"));
     }
 
     [RelayCommand]
-    private void ClearFilters() => Filter.Clear();
+    private void ClearFilters()
+    {
+        Filter.Clear();
+    }
 }
-

@@ -7,6 +7,7 @@
     <PackageVersion Include="Avalonia" Version="11.3.2" />
     <PackageVersion Include="Avalonia.Controls.ItemsRepeater" Version="11.1.5" />
     <PackageVersion Include="Avalonia.Desktop" Version="11.3.2" />
+    <PackageVersion Include="Avalonia.Labs.Panels" Version="11.3.0" />
     <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="11.3.2" />
     <PackageVersion Include="Avalonia.ReactiveUI" Version="11.3.2" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.2" />
@@ -19,9 +20,11 @@
     <PackageVersion Include="GraphQL.Client.Serializer.Newtonsoft" Version="6.1.0" />
     <PackageVersion Include="HotAvalonia" Version="3.0.0" />
     <PackageVersion Include="HotAvalonia.Extensions" Version="3.0.0" />
+    <PackageVersion Include="Humanizer" Version="2.14.1" />
     <PackageVersion Include="IconPacks.Avalonia" Version="1.0.0" />
     <PackageVersion Include="Irihi.Ursa" Version="1.11.1" />
     <PackageVersion Include="Irihi.Ursa.Themes.Semi" Version="1.11.1" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2024.3.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.7" />
     <PackageVersion Include="Semi.Avalonia" Version="11.2.1.8" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.7" />

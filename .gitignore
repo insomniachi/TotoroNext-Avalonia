@@ -406,4 +406,4 @@ solution-config.props
 !**/Properties/PublishProfiles/*.pubxml
 
 # rider
-.idea/workspace.xml
+.idea/*

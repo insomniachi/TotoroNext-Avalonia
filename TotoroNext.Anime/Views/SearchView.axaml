@@ -8,7 +8,7 @@
     xmlns:mod="using:TotoroNext.Module"
     xmlns:ac="using:TotoroNext.Anime.Abstractions.Controls"
     x:DataType="vm:SearchViewModel"
-    xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+    xmlns:panels="clr-namespace:Avalonia.Labs.Panels;assembly=Avalonia.Labs.Panels"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -27,7 +27,13 @@
                           mod:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel ItemWidth="250" ItemHeight="400" ItemsAlignment="Start" ItemSpacing="16" LineSpacing="16"/>
+                        <panels:FlexPanel 
+                            JustifyContent="FlexStart"  
+                            AlignContent="FlexStart"
+                            AlignItems="FlexEnd"
+                            Wrap="Wrap"
+                            ColumnSpacing="16"
+                            RowSpacing="16"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

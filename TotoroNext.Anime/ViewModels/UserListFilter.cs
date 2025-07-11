@@ -6,15 +6,14 @@ namespace TotoroNext.Anime.ViewModels;
 
 public partial class UserListFilter : ObservableObject
 {
-    [ObservableProperty]
-    public partial ListItemStatus? Status { get; set; } = ListItemStatus.Watching;
+    [ObservableProperty] public partial ListItemStatus? Status { get; set; } = ListItemStatus.Watching;
 
-    [ObservableProperty]
-    public partial string Term { get; set; }
+    [ObservableProperty] public partial string Term { get; set; } = "";
 
-    [ObservableProperty]
-    public partial string Year { get; set; }
+    [ObservableProperty] public partial string Year { get; set; } = "";
 
+    public void Refresh() => OnPropertyChanged(nameof(Status));
+    
     public bool IsVisible(AnimeModel model)
     {
         if (model.Tracking is null)
