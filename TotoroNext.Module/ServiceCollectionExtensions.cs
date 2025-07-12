@@ -26,15 +26,16 @@ public static class ServiceCollectionExtensions
         return services.AddSingleton<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
     }
     
-    public static IServiceCollection AddMainNavigationItem<TView,TViewModel>(this IServiceCollection services, string header, Enum icon)
+    public static IServiceCollection AddMainNavigationItem<TView,TViewModel>(this IServiceCollection services, string header, Enum icon, NavMenuItemTag? tag = null)
         where TView : class, new()
         where TViewModel : class
     {
-        services.AddViewMap<TView, TViewModel>();
+        tag ??= new NavMenuItemTag();
+        tag.ViewModelType = typeof(TViewModel);
+        
+        services.AddKeyedViewMap<TView, TViewModel>(header);
         services.AddTransient(sp =>
         {
-            var messenger = sp.GetRequiredService<IMessenger>();
-            
             var item = new NavMenuItem()
             {
                 Header = header,
@@ -44,14 +45,12 @@ public static class ServiceCollectionExtensions
                     {
                         Kind = icon
                     }
-                }
+                },
+                Tag = tag,
             };
-
-            item.Tapped += (_, _) =>
-            {
-                messenger.Send(new NavigateToViewModelMessage(typeof(TViewModel)));
-            };
-
+            
+            NavigationExtensions.SetNavigateToViewModel(item, typeof(TViewModel));
+            
             return item;
         });
         return services;
@@ -99,4 +98,10 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+}
+
+public class NavMenuItemTag
+{
+    public Type? ViewModelType { get; set; }
+    public bool IsFooterItem { get; init; }
 }

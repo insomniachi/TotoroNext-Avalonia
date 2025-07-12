@@ -32,7 +32,8 @@ public class App : Application
                           services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
 
                           services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
-                           IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.ShoppingCart);
+                           IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.ShoppingCart,
+                           new NavMenuItemTag() { IsFooterItem = true });
 
                           services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))

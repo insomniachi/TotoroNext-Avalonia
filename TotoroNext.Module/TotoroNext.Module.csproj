@@ -10,7 +10,6 @@
         <PackageReference Include="AsyncImageLoader.Avalonia" />
         <PackageReference Include="Avalonia" />
         <PackageReference Include="Avalonia.Controls.ItemsRepeater" />
-        <PackageReference Include="Avalonia.Labs.Panels" />
         <PackageReference Include="Avalonia.ReactiveUI" />
         <PackageReference Include="Flurl.Http" />
         <PackageReference Include="Humanizer" />

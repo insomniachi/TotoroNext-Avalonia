@@ -1,19 +1,20 @@
 <u:UrsaWindow xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:TotoroNext.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="TotoroNext.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        xmlns:u="https://irihi.tech/ursa"
-        xmlns:iri="https://irihi.tech/shared"
-        xmlns:mod="using:TotoroNext.Module"
-        Icon="/Assets/avalonia-logo.ico"
-        WindowStartupLocation="CenterScreen"
-        IsFullScreenButtonVisible="{OnPlatform {x:True}, macOS={x:False}}"
-        IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
-        Title="TotoroNext">
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:vm="using:TotoroNext.ViewModels"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+              x:Class="TotoroNext.Views.MainWindow"
+              x:DataType="vm:MainWindowViewModel"
+              xmlns:u="https://irihi.tech/ursa"
+              xmlns:mod="using:TotoroNext.Module"
+              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+              xmlns:iri="https://irihi.tech/shared"
+              Icon="/Assets/avalonia-logo.ico"
+              WindowStartupLocation="CenterScreen"
+              IsFullScreenButtonVisible="{OnPlatform {x:True}, macOS={x:False}}"
+              IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
+              Title="TotoroNext">
     <u:UrsaWindow.RightContent>
         <u:ThemeToggleButton
             IsThreeState="True"
@@ -26,24 +27,25 @@
                 <Setter Property="Effect" Value="blur(10)" />
             </Style>
         </Panel.Styles>
-        <Grid Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}" ColumnDefinitions="Auto, *">
+        <Grid Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}"
+              ColumnDefinitions="Auto, *">
             <Border
                 Padding="8,4"
                 VerticalAlignment="Stretch"
                 Theme="{DynamicResource CardBorder}">
                 <u:NavMenu
-                    Name="menu"
+                    Name="Menu"
                     ExpandWidth="300"
                     ItemsSource="{Binding MenuItems}">
                     <u:NavMenu.HeaderTemplate>
                         <DataTemplate x:DataType="x:String">
-                            <TextBlock HorizontalAlignment="Left" Text="{Binding}" VerticalAlignment="Center"/>
+                            <TextBlock HorizontalAlignment="Left" Text="{Binding}" VerticalAlignment="Center" />
                         </DataTemplate>
                     </u:NavMenu.HeaderTemplate>
                     <u:NavMenu.Header>
-                        <DockPanel 
+                        <DockPanel
                             Margin="8 32 8 8"
-                            HorizontalAlignment="Center"                        
+                            HorizontalAlignment="Center"
                             u:NavMenu.CanToggle="True">
                             <Panel
                                 VerticalAlignment="Center"
@@ -55,11 +57,14 @@
                                 VerticalAlignment="Center"
                                 Classes="H4"
                                 Margin="16 0 0 0"
-                                IsVisible="{Binding !#menu.IsHorizontalCollapsed}"
+                                IsVisible="{Binding !#Menu.IsHorizontalCollapsed}"
                                 Text="Totoro"
                                 Theme="{DynamicResource TitleTextBlock}" />
                         </DockPanel>
                     </u:NavMenu.Header>
+                    <u:NavMenu.Footer>
+                        <ItemsControl ItemsSource="{Binding FooterMenuItems}"/>
+                    </u:NavMenu.Footer>
                 </u:NavMenu>
             </Border>
             <TransitioningContentControl
