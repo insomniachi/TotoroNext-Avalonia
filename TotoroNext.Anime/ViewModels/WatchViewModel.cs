@@ -9,6 +9,7 @@ using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using Ursa.Controls;
 
 namespace TotoroNext.Anime.ViewModels;
 
@@ -18,6 +19,7 @@ public sealed partial class WatchViewModel(
     IFactory<IMediaPlayer, Guid> mediaPlayerFactory,
     IPlaybackProgressService progressService,
     IAnimeOverridesRepository animeOverridesRepository,
+    IDialogService dialogService,
     IMessenger messenger) : ObservableObject, IInitializable, IDisposable
 {
     private TimeSpan _duration;
@@ -122,18 +124,26 @@ public sealed partial class WatchViewModel(
             .WhereNotNull()
             .Where(x => x is { Type : MediaSectionType.Opening or MediaSectionType.Ending })
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(segment =>
+            .SelectMany(AskSkip)
+            .SelectMany(x =>
             {
-                if (MediaPlayer is not ISeekable seekable) { }
+                if (MediaPlayer is not ISeekable seekable)
+                {
+                    return Task.CompletedTask.ToObservable();
+                }
 
-                // var answer = await dialogService.AskSkip();
-                // if(answer is DialogResult.Yes)
-                // {
-                //     await seekable.SeekTo(segment.End);
-                // }
-            });
+                return x.Result is MessageBoxResult.Yes
+                    ? seekable.SeekTo(x.Segment.End).ToObservable()
+                    : Task.CompletedTask.ToObservable();
+            })
+            .Subscribe();
 
         InitializePublishers();
+    }
+
+    private async Task<(MediaSegment Segment, MessageBoxResult Result)> AskSkip(MediaSegment segment)
+    {
+        return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip());
     }
 
     private void InitializePublishers()
@@ -199,6 +209,7 @@ public sealed partial class WatchViewModel(
         _duration = MediaHelper.GetDuration(source.Url, source.Headers);
         List<MediaSegment> segments = [];
 
+        await Task.CompletedTask;
         // if (Anime is { ExternalIds.MyAnimeList: not null } && segmentsFactory.CreateDefault() is { } segmentsProvider)
         // {
         //     segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value,
@@ -224,10 +235,9 @@ public sealed partial class WatchViewModel(
         }
 
         var question = $"Completed watching {Anime?.Title} - Episode {SelectedEpisode.Number}, play the next episode ?";
-        // var answer = await dialogService.Ask("Tracking Updated", question);
-        // return answer is DialogResult.Yes
-        //     ? nextEp
-        //     : null;
-        return await Task.FromResult(nextEp);
+        var answer = await dialogService.Question("Tracking Updated", question);
+        return answer is MessageBoxResult.Yes
+            ? nextEp
+            : null;
     }
 }

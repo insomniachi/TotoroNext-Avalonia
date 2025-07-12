@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IViewRegistry, ViewRegistry>();
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
-        // services.AddTransient<IDialogService, DialogService>();
+        services.AddTransient<IDialogService, DialogService>();
 
         return services;
     }
@@ -97,6 +97,12 @@ public static class ServiceCollectionExtensions
         });
 
         return services;
+    }
+    
+    public static IServiceCollection AddSelectionUserInteraction<TImpl, TType>(this IServiceCollection services)
+        where TImpl : class, ISelectionUserInteraction<TType>
+    {
+        return services.AddTransient<ISelectionUserInteraction<TType>, TImpl>();
     }
 }
 

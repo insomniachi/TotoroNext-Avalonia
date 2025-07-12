@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Avalonia.Markup.Declarative;
 using Avalonia.ReactiveUI;
 
 namespace TotoroNext;
@@ -19,5 +20,6 @@ sealed class Program
             .UsePlatformDetect()
             .WithInterFont()
             .UseReactiveUI()
+            .UseRiderHotReload()
             .LogToTrace();
 }

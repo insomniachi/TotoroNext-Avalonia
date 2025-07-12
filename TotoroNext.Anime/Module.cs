@@ -1,6 +1,8 @@
 using IconPacks.Avalonia.MaterialDesign;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Interaction;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Anime.ViewModels;
 using TotoroNext.Anime.Views;
 using TotoroNext.Module;
@@ -27,9 +29,8 @@ public class Module : IModule
                 .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>()
                 .AddDataViewMap<WatchView, WatchViewModel, WatchViewModelNavigationParameter>();
 
-        // services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
-        //         .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>()
-        //         .AddSelectionUserInteraction<SelectServerResult, VideoServer>();
+        services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
+                .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>();
 
         services.AddHostedService<TrackingUpdater>()
                 .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>());
