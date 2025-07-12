@@ -28,6 +28,32 @@ public class MainWindowViewModel : ViewModelBase, INavigatorHost
                                                                            Navigator?.NavigateToData(message
                                                                                .Data);
                                                                        });
+        
+        WeakReferenceMessenger.Default.Register<PaneNavigateToViewModelMessage>(this, (_, message) =>
+        {
+            var map = locator.FindByViewModel(message.ViewModel);
+            if (map is not { View: { } viewType, ViewModel: { } vmType })
+            {
+                return;
+            }
+
+            var viewObj = (Control)Activator.CreateInstance(viewType)!;
+            var vmObj = ActivatorUtilities.CreateInstance(Container.Services, vmType);
+
+            var options = new DrawerOptions
+            {
+                CanResize = true,
+                CanLightDismiss = !message.IsInline,
+                Position = Position.Right,
+                MinWidth = message.PaneWidth,
+                IsCloseButtonVisible = message.IsInline,
+                Buttons = DialogButton.None,
+                Title = message.Title,
+                MaxHeight = 700
+            };
+
+            Drawer.ShowModal(viewObj, vmObj, options: options);
+        });
 
         WeakReferenceMessenger.Default.Register<PaneNavigateToDataMessage>(this, (_, message) =>
         {

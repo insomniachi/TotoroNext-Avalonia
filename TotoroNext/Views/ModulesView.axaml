@@ -1,0 +1,35 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TotoroNext.ViewModels"
+             xmlns:mod="using:TotoroNext.Module"
+             xmlns:modc="using:TotoroNext.Module.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:ModulesViewModel"
+             x:Class="TotoroNext.Views.ModulesView">
+    <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Descriptors}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="mod:Descriptor">
+                    <Grid RowDefinitions="Auto,Auto" Margin="16"
+                          mod:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:ModulesViewModel)DataContext).NavigateToSettingsCommand, FallbackValue={x:Null}}">
+                        <Image Height="200" />
+                        <StackPanel Grid.Row="1">
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Description}"
+                                       Height="50"
+                                       TextTrimming="{x:Static TextTrimming.WordEllipsis}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <modc:WrapPanelEx IsFillHorizontal="True" ItemWidth="300" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

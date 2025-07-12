@@ -8,14 +8,17 @@
              x:DataType="vm:SettingsViewModel"
              x:Class="TotoroNext.MediaEngine.Mpv.Views.SettingsView">
     <ScrollViewer>
-        <u:Form LabelPosition="Left" LabelWidth="*">
-            <u:FormItem Label="Command">
+        <u:Form>
+            <u:FormItem Label="Program">
                 <u:PathPicker
+                    Title="Browse"
                     AllowMultiple="False"
-                    DefaultFileExtension="exe"
                     SelectedPathsText="{Binding Command}"
-                    Theme="{DynamicResource ButtonPathPicker}"
-                    UsePickerType="OpenFile" />
+                    UsePickerType="OpenFile"
+                    HorizontalAlignment="Stretch"/>
+            </u:FormItem>
+            <u:FormItem Label="Start Fullscreen">
+                <ToggleSwitch IsChecked="{Binding LaunchFullScreen}"/>
             </u:FormItem>
         </u:Form>
     </ScrollViewer>

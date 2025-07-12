@@ -31,6 +31,9 @@ public class App : Application
                           services.AddTransient<MainWindowViewModel>();
                           services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
 
+                          services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
+                           IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.ShoppingCart);
+
                           services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
