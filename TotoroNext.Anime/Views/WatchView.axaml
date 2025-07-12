@@ -1,0 +1,49 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TotoroNext.Anime.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:aam="using:TotoroNext.Anime.Abstractions.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:WatchViewModel"
+             x:Class="TotoroNext.Anime.Views.WatchView">
+    <Grid RowDefinitions="*,Auto"
+          ColumnDefinitions="*,Auto">
+        <Grid Grid.Row="1"
+              MaxHeight="100"
+              VerticalAlignment="Stretch"
+              ColumnSpacing="16"
+              ColumnDefinitions="Auto,*">
+            <TextBlock Text="Servers" VerticalAlignment="Center"/>
+            <u:SelectionList Grid.Column="1"
+                             ItemsSource="{Binding Servers}"
+                             SelectedItem="{Binding SelectedServer}"
+                             DisplayMemberBinding="{Binding Name}">
+                <u:SelectionList.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </u:SelectionList.ItemsPanel>
+            </u:SelectionList>
+        </Grid>
+        
+        <ListBox Grid.Row="0"
+                 Grid.Column="1" 
+                 Grid.RowSpan="2"
+                 MaxWidth="300" 
+                 MinHeight="200"
+                 ItemsSource="{Binding Episodes}"
+                 SelectedItem="{Binding SelectedEpisode}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="aam:Episode">
+                    <TextBlock>
+                        <Run Text="{Binding Number}"/>
+                        <Run Text="{Binding Name}"/>
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+    </Grid>
+</UserControl>

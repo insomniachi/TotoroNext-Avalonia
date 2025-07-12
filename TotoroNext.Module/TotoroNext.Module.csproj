@@ -24,6 +24,8 @@
         <PackageReference Include="CommunityToolkit.Mvvm" />
         <PackageReference Include="System.Linq.Async" />
         <PackageReference Include="Xaml.Behaviors.Avalonia" />
+
+        <PackageReference Include="JetBrains.Annotations" />
     </ItemGroup>
     
 

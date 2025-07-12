@@ -24,7 +24,8 @@ public class Module : IModule
         //// Pane navigation
         services.AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>()
                 .AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()
-                .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>();
+                .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>()
+                .AddDataViewMap<WatchView, WatchViewModel, WatchViewModelNavigationParameter>();
 
         // services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
         //         .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>()

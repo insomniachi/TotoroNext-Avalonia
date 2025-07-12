@@ -42,7 +42,7 @@ public class NavigatorHost(TransitioningContentControl host,
 
             ConfigurePage(page, vmObj);
             Navigate(page);
-            Navigated?.Invoke(this, new(viewType, vmType));
+            Navigated?.Invoke(this, new NavigationResult(viewType, vmType));
             return true;
         }
         catch(Exception ex)
@@ -69,12 +69,13 @@ public class NavigatorHost(TransitioningContentControl host,
 
             ConfigurePage(page, vmObj);
             Navigate(page);
-            Navigated?.Invoke(this, new(viewType, vmType));
+            Navigated?.Invoke(this, new NavigationResult(viewType, vmType));
 
             return true;
         }
-        catch
+        catch(Exception ex)
         {
+            logger.LogError(ex, "Navigation failed");
             return true;
         }
     }
@@ -96,12 +97,13 @@ public class NavigatorHost(TransitioningContentControl host,
 
             ConfigurePage(page, vmObj);
             Navigate(page);
-            Navigated?.Invoke(this, new(viewType, vmType));
+            Navigated?.Invoke(this, new NavigationResult(viewType, vmType));
 
             return true;
         }
         catch(Exception ex)
         {
+            logger.LogError(ex, "Navigation failed");
             return false;
         }
     }
@@ -111,7 +113,7 @@ public class NavigatorHost(TransitioningContentControl host,
         Control.Content = page;
     }
 
-    private static void ConfigurePage(StyledElement page, object vm)
+    private void ConfigurePage(StyledElement page, object vm)
     {
         page.DataContext = vm;
         page.AttachedToLogicalTree += async (_, _) =>
@@ -128,9 +130,8 @@ public class NavigatorHost(TransitioningContentControl host,
                     }
                     catch(Exception ex)
                     {
-                        throw;
+                        logger.LogError(ex, "Initialization failed");
                     }
-
                     break;
             }
         };

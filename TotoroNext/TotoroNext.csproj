@@ -34,6 +34,8 @@
       <ProjectReference Include="..\TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj" />
       <ProjectReference Include="..\TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj" />
       <ProjectReference Include="..\TotoroNext.Anime\TotoroNext.Anime.csproj" />
+      <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj" />
+      <ProjectReference Include="..\TotoroNext.MediaEngine.Mpv\TotoroNext.MediaEngine.Mpv.csproj" />
       <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
     </ItemGroup>
 </Project>

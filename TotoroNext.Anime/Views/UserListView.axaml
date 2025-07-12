@@ -47,11 +47,11 @@
                 </SplitButton.Flyout>
             </SplitButton>
         </StackPanel>
-        
+
         <u:LoadingContainer Grid.Row="1"
                             Background="Transparent"
                             IsLoading="{Binding IsLoading}"
-                            VerticalContentAlignment="Stretch" 
+                            VerticalContentAlignment="Stretch"
                             HorizontalContentAlignment="Stretch">
             <ScrollViewer>
                 <ItemsControl ItemsSource="{Binding Anime}"
@@ -66,14 +66,15 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <ac:AnimeCard Anime="{Binding}" 
-                                          Margin="8" 
-                                          module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).OpenAnimeDetailsCommand, TargetNullValue={x:Null}}"/>
+                            <ac:AnimeCard Anime="{Binding}"
+                                          Margin="8"
+                                          module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}"
+                                          module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
         </u:LoadingContainer>
     </Grid>
-    
+
 </UserControl>

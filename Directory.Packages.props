@@ -14,6 +14,7 @@
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.2" />
     <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.2" />
     <PackageVersion Include="Avalonia" Version="11.3.2" />
+    <PackageVersion Include="FFMpegCore" Version="5.2.0" />
     <PackageVersion Include="Flurl.Http" Version="4.0.2" />
     <PackageVersion Include="FlurlGraphQL" Version="2.0.5" />
     <PackageVersion Include="GraphQL.Client" Version="6.1.0" />

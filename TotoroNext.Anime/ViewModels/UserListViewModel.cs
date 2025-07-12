@@ -16,13 +16,13 @@ namespace TotoroNext.Anime.ViewModels;
 [UsedImplicitly]
 public partial class UserListViewModel : ObservableObject, IAsyncInitializable
 {
-    private readonly IFactory<IAnimeProvider, Guid> _providerFactory;
+    private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
+    private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
     private readonly IAnimeOverridesRepository _animeOverridesRepository;
     private readonly IMessenger _messenger;
-    private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
+    private readonly IFactory<IAnimeProvider, Guid> _providerFactory;
     private readonly ITrackingService? _trackingService;
     private IEnumerable<AnimeModel> _allItems = [];
-    private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
 
     public UserListViewModel(IFactory<ITrackingService, Guid> factory,
                              IFactory<IAnimeProvider, Guid> providerFactory,
@@ -33,7 +33,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
         _animeOverridesRepository = animeOverridesRepository;
         _messenger = messenger;
         _trackingService = factory.CreateDefault();
-        
+
         _animeCache
             .Connect()
             .RefCount()
@@ -42,7 +42,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
             .DisposeMany()
             .Subscribe();
     }
-    
+
     public UserListFilter Filter { get; } = new();
 
     public List<ListItemStatus> AllStatus { get; } =
@@ -67,11 +67,12 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
         _allItems = await _trackingService.GetUserList();
         _animeCache.AddOrUpdate(_allItems);
         Filter.Refresh();
-        
+
         IsLoading = false;
     }
 
-    public async Task NavigateToWatch(AnimeModel anime)
+    [RelayCommand]
+    private async Task NavigateToWatch(AnimeModel anime)
     {
         var overrides = _animeOverridesRepository.GetOverrides(anime.Id);
 

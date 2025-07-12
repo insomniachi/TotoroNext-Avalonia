@@ -22,6 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.Anilist", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AllAnime", "TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj", "{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.MediaEngine.Abstractions", "TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj", "{22CC8FAF-4AE0-4159-9577-4A70E90747E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.MediaEngine.Mpv", "TotoroNext.MediaEngine.Mpv\TotoroNext.MediaEngine.Mpv.csproj", "{94665FD8-2AA5-40D7-867E-2138F2A3C9A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -52,6 +56,14 @@ Global
 		{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}.Debug|x64.Build.0 = Debug|x64
 		{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}.Release|x64.ActiveCfg = Release|x64
 		{88B21E84-0B45-4006-9DE3-8BB120FDBFB4}.Release|x64.Build.0 = Release|x64
+		{22CC8FAF-4AE0-4159-9577-4A70E90747E1}.Debug|x64.ActiveCfg = Debug|x64
+		{22CC8FAF-4AE0-4159-9577-4A70E90747E1}.Debug|x64.Build.0 = Debug|x64
+		{22CC8FAF-4AE0-4159-9577-4A70E90747E1}.Release|x64.ActiveCfg = Release|x64
+		{22CC8FAF-4AE0-4159-9577-4A70E90747E1}.Release|x64.Build.0 = Release|x64
+		{94665FD8-2AA5-40D7-867E-2138F2A3C9A2}.Debug|x64.ActiveCfg = Debug|x64
+		{94665FD8-2AA5-40D7-867E-2138F2A3C9A2}.Debug|x64.Build.0 = Debug|x64
+		{94665FD8-2AA5-40D7-867E-2138F2A3C9A2}.Release|x64.ActiveCfg = Release|x64
+		{94665FD8-2AA5-40D7-867E-2138F2A3C9A2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

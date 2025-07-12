@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module;
@@ -23,6 +22,12 @@ public class MainWindowViewModel : ViewModelBase, INavigatorHost
                                                                                 Navigator?.NavigateViewModel(message
                                                                                     .ViewModel);
                                                                             });
+        WeakReferenceMessenger.Default.Register<NavigateToDataMessage>(this,
+                                                                       (_, message) =>
+                                                                       {
+                                                                           Navigator?.NavigateToData(message
+                                                                               .Data);
+                                                                       });
 
         WeakReferenceMessenger.Default.Register<PaneNavigateToDataMessage>(this, (_, message) =>
         {
@@ -44,7 +49,7 @@ public class MainWindowViewModel : ViewModelBase, INavigatorHost
                 IsCloseButtonVisible = message.IsInline,
                 Buttons = DialogButton.None,
                 Title = message.Title,
-                MaxHeight = 700,
+                MaxHeight = 700
             };
 
             Drawer.ShowModal(viewObj, vmObj, options: options);

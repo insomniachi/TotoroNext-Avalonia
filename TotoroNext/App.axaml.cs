@@ -1,13 +1,11 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.ViewModels;
@@ -15,10 +13,10 @@ using TotoroNext.Views;
 
 namespace TotoroNext;
 
-public partial class App : Application
+public class App : Application
 {
     public static IHost AppHost { get; private set; } = null!;
-    
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -27,35 +25,35 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         AppHost = Host.CreateDefaultBuilder()
-            .ConfigureServices(async (ctx, services) =>
-            {
-                services.AddCoreServices();
-                services.AddTransient<MainWindowViewModel>();
-                services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
+                      .ConfigureServices(async (_, services) =>
+                      {
+                          services.AddCoreServices();
+                          services.AddTransient<MainWindowViewModel>();
+                          services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
 
-                services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
-                    // .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
-                    .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
-                    .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider));
-                // .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
+                          services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
+                                  .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
+                                  .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
+                                  .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
+                                  .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
 
-                var modules = new List<IModule>()
-                {
-                    new Anime.Module(),
-                    new Anime.Anilist.Module(),
-                    new Anime.AllAnime.Module()
-                };
-                
-                foreach (var module in modules)
-                {
-                    module.ConfigureServices(services);
-                }
+                          var modules = new List<IModule>
+                          {
+                              new Anime.Module(),
+                              new Anime.Anilist.Module(),
+                              new Anime.AllAnime.Module(),
+                              new MediaEngine.Mpv.Module(),
+                          };
 
-            })
-            .Build();
-        
+                          foreach (var module in modules)
+                          {
+                              module.ConfigureServices(services);
+                          }
+                      })
+                      .Build();
+
         Container.SetServiceProvider(AppHost.Services);
-        
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
@@ -63,7 +61,7 @@ public partial class App : Application
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = AppHost.Services.GetService<MainWindowViewModel>(),
+                DataContext = AppHost.Services.GetService<MainWindowViewModel>()
             };
         }
 
@@ -105,12 +103,18 @@ public class DebugModuleStore : IModuleStore
         //yield return new Discord.Module();
 
         // Media Players
-        //yield return new MediaEngine.Mpv.Module();
+        yield return new MediaEngine.Mpv.Module();
         //yield return new MediaEngine.Vlc.Module();
-
     }
 
-    public Task<bool> DownloadModule(ModuleManifest manifest) => Task.FromResult(false);
-    public IAsyncEnumerable<ModuleManifest> GetAllModules() => AsyncEnumerable.Empty<ModuleManifest>();
+    public Task<bool> DownloadModule(ModuleManifest manifest)
+    {
+        return Task.FromResult(false);
+    }
+
+    public IAsyncEnumerable<ModuleManifest> GetAllModules()
+    {
+        return AsyncEnumerable.Empty<ModuleManifest>();
+    }
 }
 #endif
