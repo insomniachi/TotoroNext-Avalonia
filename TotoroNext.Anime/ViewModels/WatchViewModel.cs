@@ -17,6 +17,7 @@ namespace TotoroNext.Anime.ViewModels;
 public sealed partial class WatchViewModel(
     WatchViewModelNavigationParameter navigationParameter,
     IFactory<IMediaPlayer, Guid> mediaPlayerFactory,
+    IFactory<IMediaSegmentsProvider, Guid> segmentsFactory,
     IPlaybackProgressService progressService,
     IAnimeOverridesRepository animeOverridesRepository,
     IDialogService dialogService,
@@ -209,12 +210,11 @@ public sealed partial class WatchViewModel(
         _duration = MediaHelper.GetDuration(source.Url, source.Headers);
         List<MediaSegment> segments = [];
 
-        await Task.CompletedTask;
-        // if (Anime is { ExternalIds.MyAnimeList: not null } && segmentsFactory.CreateDefault() is { } segmentsProvider)
-        // {
-        //     segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value,
-        //                                                          SelectedEpisode.Number, _duration.TotalSeconds));
-        // }
+        if (Anime is { ExternalIds.MyAnimeList: not null } && segmentsFactory.CreateDefault() is { } segmentsProvider)
+        {
+            segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value,
+                                                                 SelectedEpisode.Number, _duration.TotalSeconds));
+        }
 
         var metadata = new MediaMetadata(title, source.Headers, segments);
         _media = new Media(source.Url, metadata);

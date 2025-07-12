@@ -1,5 +1,6 @@
 ﻿using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
@@ -12,6 +13,7 @@ namespace TotoroNext.Anime.ViewModels;
 
 public partial class SearchViewModel(IFactory<IMetadataService, Guid> factory,
 									 IFactory<IAnimeProvider, Guid> providerFactory,
+									 IAnimeOverridesRepository overridesRepository,
 									 IMessenger messenger) : ObservableObject, IInitializable
 {
 	private readonly IMetadataService? _metadataService = factory.CreateDefault();
@@ -32,18 +34,33 @@ public partial class SearchViewModel(IFactory<IMetadataService, Guid> factory,
 			.Subscribe(items => Items = items);
 	}
 
-	public async Task WatchAnime(AnimeModel model)
+	[RelayCommand]
+	private async Task NavigateToWatch(AnimeModel anime)
 	{
-		if (_provider is null)
+		var overrides = overridesRepository.GetOverrides(anime.Id);
+
+		var provider = overrides?.Provider is { } providerId
+			? providerFactory.Create(providerId)
+			: providerFactory.CreateDefault();
+
+		var result = await provider.SearchAndSelectAsync(anime);
+
+		if (overrides is not null)
+		{
+			messenger.Send(overrides);
+		}
+
+		if (result is null)
 		{
 			return;
 		}
 
-		if (await _provider.SearchAndSelectAsync(model) is not { } result)
-		{
-			return;
-		}
+		messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, anime)));
+	}
 
-		messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, model)));
+	[RelayCommand]
+	private void OpenAnimeDetails(AnimeModel anime)
+	{
+		messenger.Send(new PaneNavigateToDataMessage(anime, paneWidth: 750, title: anime.Title));
 	}
 }

@@ -51,6 +51,7 @@ public class App : Application
                               new Anime.Anilist.Module(),
                               new Anime.AllAnime.Module(),
                               new MediaEngine.Mpv.Module(),
+                              new Anime.Aniskip.Module(),
                           };
 
                           foreach (var module in modules)
@@ -107,7 +108,7 @@ public class DebugModuleStore : IModuleStore
         //yield return new Anime.MyAnimeList.Module();
 
         // Misc
-        //yield return new Anime.Aniskip.Module();
+        yield return new Anime.Aniskip.Module();
         //yield return new Discord.Module();
 
         // Media Players

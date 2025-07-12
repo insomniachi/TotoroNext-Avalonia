@@ -8,15 +8,11 @@
     xmlns:mod="using:TotoroNext.Module"
     xmlns:ac="using:TotoroNext.Anime.Abstractions.Controls"
     x:DataType="vm:SearchViewModel"
-    xmlns:panels="clr-namespace:Avalonia.Labs.Panels;assembly=Avalonia.Labs.Panels"
     xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     
-    <Design.DataContext>
-        <vm:SearchViewModel/>
-    </Design.DataContext>
 
     <Grid RowSpacing="8" RowDefinitions="Auto, *">
         
@@ -36,7 +32,10 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <ac:AnimeCard Anime="{Binding}" Margin="8"/>
+                        <ac:AnimeCard Anime="{Binding}" 
+                                      Margin="8"
+                                      mod:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:SearchViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}"
+                                      mod:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:SearchViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
