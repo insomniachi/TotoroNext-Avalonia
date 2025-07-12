@@ -30,9 +30,13 @@ public class App : Application
                           services.AddCoreServices();
                           services.AddTransient<MainWindowViewModel>();
                           services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
+                          services.AddSingleton<SettingsModel>();
 
                           services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                            IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.ShoppingCart,
+                           new NavMenuItemTag() { IsFooterItem = true });
+                          services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
+                           IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.Settings,
                            new NavMenuItemTag() { IsFooterItem = true });
 
                           services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))

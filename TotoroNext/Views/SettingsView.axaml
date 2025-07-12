@@ -1,0 +1,42 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:TotoroNext.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:SettingsViewModel"
+             x:Class="TotoroNext.Views.SettingsView">
+    <u:Form LabelPosition="Left" LabelWidth="*">
+        <u:FormGroup Header="Default Services">
+            <u:FormItem Label="Anime Provider">
+                <ComboBox ItemsSource="{Binding AnimeProviders}"
+                          SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
+                          SelectedValueBinding="{Binding Id}"
+                          DisplayMemberBinding="{Binding Name}"
+                          Width="300"/>
+            </u:FormItem>
+            <u:FormItem Label="Media Player">
+                <ComboBox ItemsSource="{Binding MediaEngines}"
+                          SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
+                          SelectedValueBinding="{Binding Id}"
+                          DisplayMemberBinding="{Binding Name}"
+                          Width="300"/>
+            </u:FormItem>
+            <u:FormItem Label="Anime Tracking">
+                <ComboBox ItemsSource="{Binding TrackingServices}"
+                          SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
+                          SelectedValueBinding="{Binding Id}"
+                          DisplayMemberBinding="{Binding Name}"
+                          Width="300"/>
+            </u:FormItem>
+            <u:FormItem Label="Media Segments">
+                <ComboBox ItemsSource="{Binding SegmentProviders}"
+                          SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
+                          SelectedValueBinding="{Binding Id}"
+                          DisplayMemberBinding="{Binding Name}"
+                          Width="300"/>
+            </u:FormItem>
+        </u:FormGroup>
+    </u:Form>
+</UserControl>

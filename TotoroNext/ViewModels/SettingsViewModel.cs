@@ -1,11 +1,13 @@
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
+using JetBrains.Annotations;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.ViewModels;
 
 
+[UsedImplicitly]
 public partial class SettingsModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService;
