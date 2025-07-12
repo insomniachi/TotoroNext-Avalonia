@@ -15,4 +15,8 @@
       <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\anilist.jpg" />
+    </ItemGroup>
+
 </Project>

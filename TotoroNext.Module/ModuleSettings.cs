@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TotoroNext.Module.Abstractions;
 using Path = System.IO.Path;
@@ -46,41 +48,22 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
 
     protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, Action<TSettings> settingUpdate, [CallerMemberName] string propertyName = "")
     {
-        if (SetProperty(ref field, value, propertyName))
+        if (!SetProperty(ref field, value, propertyName))
         {
-            settingUpdate(data.Value);
-            data.Save();
+            return;
         }
+
+        settingUpdate(data.Value);
+        data.Save();
     }
 }
 
-public class ResourceHelper
+public static class ResourceHelper
 {
-    public static string GetResource(string name)
+    public static Bitmap GetResource(string name)
     {
-#if DEBUG
-        return new Uri($"{Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location ?? "") ?? "",
-                        Assembly.GetCallingAssembly().GetName().Name ?? "",
-                        "Assets",
-                        name)}").AbsoluteUri;
-
-#elif WINDOWS
-        return new Uri($"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "TotoroNext",
-                "Modules",
-                Assembly.GetCallingAssembly().GetName().Name ?? "",
-                "net9.0-windows10.0.26100",
-                "Assets",
-                name)}").AbsoluteUri;
-#else
-        return new Uri($"{Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "TotoroNext",
-                "Modules",
-                Assembly.GetCallingAssembly().GetName().Name ?? "",
-                "net9.0-desktop",
-                Assembly.GetCallingAssembly().GetName().Name ?? "",
-                "Assets",
-                name)}").AbsoluteUri;
-#endif
+        return new
+            Bitmap(AssetLoader
+                       .Open(new Uri($"avares://{Assembly.GetCallingAssembly().GetName().Name}/Assets/{name}")));
     }
 }

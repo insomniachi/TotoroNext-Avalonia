@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using Avalonia.Media.Imaging;
 
 namespace TotoroNext.Module;
 
@@ -16,7 +17,7 @@ public class Descriptor
     
     public string? Description { get; init; }
     
-    public string? HeroImage { get; init; }
+    public Bitmap? HeroImage { get; init; }
     
     public Type? SettingViewModel { get; init; }
     

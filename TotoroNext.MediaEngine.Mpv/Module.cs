@@ -1,3 +1,5 @@
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.MediaEngine.Mpv.ViewModels;

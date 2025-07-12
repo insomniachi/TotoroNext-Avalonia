@@ -14,4 +14,8 @@
       <PackageReference Include="FlurlGraphQL" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\hero.png" />
+    </ItemGroup>
+
 </Project>
