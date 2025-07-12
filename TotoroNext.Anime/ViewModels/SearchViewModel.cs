@@ -16,18 +16,10 @@ public partial class SearchViewModel(IFactory<IMetadataService, Guid> factory,
 {
 	private readonly IMetadataService? _metadataService = factory.CreateDefault();
 	private readonly IAnimeProvider? _provider = providerFactory.CreateDefault();
+	
+	[ObservableProperty] public partial string Query { get; set; } = "";
 
-	// Design Instance
-	public SearchViewModel(): this(null!,null! ,null!)
-	{
-		
-	}
-
-	[ObservableProperty]
-	public partial string Query { get; set; }
-
-	[ObservableProperty]
-	public partial List<AnimeModel> Items { get; set; }
+	[ObservableProperty] public partial List<AnimeModel> Items { get; set; } = [];
 
 	public void Initialize()
 	{

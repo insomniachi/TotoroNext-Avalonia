@@ -15,15 +15,10 @@
         IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
         Title="TotoroNext">
     <u:UrsaWindow.RightContent>
-        <Button Content="Right"/>
+        <u:ThemeToggleButton
+            IsThreeState="True"
+            Mode="Controller" />
     </u:UrsaWindow.RightContent>
-
-
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
 
     <Panel>
         <Panel.Styles>

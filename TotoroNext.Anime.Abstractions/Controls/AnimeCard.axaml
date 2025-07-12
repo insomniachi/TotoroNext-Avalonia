@@ -23,6 +23,7 @@
                     <TextBlock Grid.ColumnSpan="2"
                                IsVisible="False"
                                x:Name="NextEpText"
+                               Foreground="White"
                                Padding="2"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Center"
@@ -50,7 +51,7 @@
                 Grid.Row="1"
                 Height="60"
                 Padding="3"
-                Background="{DynamicResource SemiColorBackground3}"
+                Background="{DynamicResource SemiColorTertiaryLightActive}"
                 BorderThickness="0,4,0,0">
                 <TextBlock
                     Padding="3"

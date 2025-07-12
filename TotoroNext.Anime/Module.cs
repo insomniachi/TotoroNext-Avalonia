@@ -12,8 +12,8 @@ public class Module : IModule
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        //services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>()
-        //        .AddTransient<IAnimeThemes, AnimeThemes>();
+        services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>();
+                // .AddTransient<IAnimeThemes, AnimeThemes>();
 
         //// main navigation
         services.AddMainNavigationItem<SearchView, SearchViewModel>("Search",
@@ -23,7 +23,8 @@ public class Module : IModule
 
         //// Pane navigation
         services.AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>()
-                .AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>();
+                .AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()
+                .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>();
 
         // services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
         //         .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>()

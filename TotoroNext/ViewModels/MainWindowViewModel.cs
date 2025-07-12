@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module;
@@ -42,10 +43,11 @@ public class MainWindowViewModel : ViewModelBase, INavigatorHost
                 MinWidth = message.PaneWidth,
                 IsCloseButtonVisible = message.IsInline,
                 Buttons = DialogButton.None,
-                Title = message.Title
+                Title = message.Title,
+                MaxHeight = 700,
             };
 
-            Drawer.Show(viewObj, vmObj, options: options);
+            Drawer.ShowModal(viewObj, vmObj, options: options);
         });
     }
 

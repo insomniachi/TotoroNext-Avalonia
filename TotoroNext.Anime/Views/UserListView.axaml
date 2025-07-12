@@ -47,26 +47,33 @@
                 </SplitButton.Flyout>
             </SplitButton>
         </StackPanel>
-        <ScrollViewer Grid.Row="1">
-            <ItemsControl ItemsSource="{Binding Anime}"
-                          module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <modc:WrapPanelEx
-                            ItemHeight="400"
-                            ItemWidth="250"
-                            IsFillHorizontal="True" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <ac:AnimeCard Anime="{Binding}" 
-                                      Margin="8" 
-                                      module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).OpenAnimeDetailsCommand, TargetNullValue={x:Null}}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+        
+        <u:LoadingContainer Grid.Row="1"
+                            Background="Transparent"
+                            IsLoading="{Binding IsLoading}"
+                            VerticalContentAlignment="Stretch" 
+                            HorizontalContentAlignment="Stretch">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Anime}"
+                              module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <modc:WrapPanelEx
+                                ItemHeight="400"
+                                ItemWidth="250"
+                                IsFillHorizontal="True" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ac:AnimeCard Anime="{Binding}" 
+                                          Margin="8" 
+                                          module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).OpenAnimeDetailsCommand, TargetNullValue={x:Null}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </u:LoadingContainer>
     </Grid>
     
 </UserControl>

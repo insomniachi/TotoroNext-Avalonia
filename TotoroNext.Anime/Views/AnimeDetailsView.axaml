@@ -6,6 +6,7 @@
              xmlns:ail="using:AsyncImageLoader"
              xmlns:aa="using:TotoroNext.Anime.Abstractions"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Views.AnimeDetailsView"
              Width="750"
@@ -17,9 +18,9 @@
         <Grid Grid.Row="0"
               ColumnSpacing="24"
               ColumnDefinitions="*,1.25*">
-            
+
             <Border CornerRadius="15" ClipToBounds="True">
-                <Image ail:ImageLoader.Source="{Binding Anime.Image}" Stretch="UniformToFill"/>
+                <Image ail:ImageLoader.Source="{Binding Anime.Image}" Stretch="UniformToFill" />
             </Border>
 
             <Grid Grid.Column="1" RowDefinitions="Auto,*">
@@ -27,7 +28,7 @@
                     <u:FormItem Label="Status">
                         <u:EnumSelector EnumType="{x:Type aa:ListItemStatus}"
                                         Value="{Binding Status, Mode=TwoWay}"
-                                        HorizontalAlignment="Stretch"/>
+                                        HorizontalAlignment="Stretch" />
                     </u:FormItem>
                     <u:FormItem Label="Progress">
                         <u:NumericIntUpDown Minimum="0"
@@ -37,17 +38,17 @@
                     <u:FormItem Label="Score">
                         <u:NumericIntUpDown Minimum="0"
                                             Maximum="10"
-                                            Value="{Binding Score, Mode=TwoWay}"/>
+                                            Value="{Binding Score, Mode=TwoWay}" />
                     </u:FormItem>
                     <u:FormItem Label="Start Date">
                         <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
-                                      DisplayFormat="MMMM dd, yyyy"/>
+                                      DisplayFormat="MMMM dd, yyyy" />
                     </u:FormItem>
                     <u:FormItem Label="Finish Date">
-                        <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}" 
+                        <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
-                                      DisplayFormat="MMMM dd, yyyy"/>
+                                      DisplayFormat="MMMM dd, yyyy" />
                     </u:FormItem>
                 </u:Form>
                 <ScrollViewer Grid.Row="1" Margin="0 8 0 0">
@@ -55,6 +56,26 @@
                 </ScrollViewer>
             </Grid>
         </Grid>
+
+        <TabStrip Grid.Row="1"
+                  SelectionChanged="SelectingItemsControl_OnSelectionChanged"
+                  SelectedIndex="0"
+                  x:Name="Selector">
+            <TabStripItem IsSelected="True" Content="Episodes" />
+            <TabStripItem Content="Related" />
+            <TabStripItem Content="Recommended" />
+            <TabStripItem Content="Overrides" />
+            <TabStripItem Content="Songs" />
+        </TabStrip>
+
+        <TransitioningContentControl
+            Grid.Row="2"
+            Margin="0 4"
+            module:NavigationExtensions.IsAttached="True">
+            <TransitioningContentControl.PageTransition>
+                <PageSlide Duration="0:00:00.200" />
+            </TransitioningContentControl.PageTransition>
+        </TransitioningContentControl>
 
     </Grid>
 

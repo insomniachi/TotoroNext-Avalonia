@@ -4,17 +4,28 @@
              xmlns:local="using:TotoroNext"
              xmlns:semi="https://irihi.tech/semi"
              xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
+             xmlns:u="https://irihi.tech/ursa"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://TotoroNext/Drawer.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <local:ViewLocator />
     </Application.DataTemplates>
-  
+
     <Application.Styles>
-        <semi:SemiPopupAnimations/>
-        <semi:SemiTheme Locale="en-US"/>
-        <u-semi:SemiTheme Locale="en-US"/>
+        <semi:SemiPopupAnimations />
+        <semi:SemiTheme Locale="en-US" />
+        <u-semi:SemiTheme Locale="en-US" />
         <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
+        <Style Selector="u|DefaultDrawerControl">
+            <Setter Property="Theme" Value="{StaticResource NoScrollDrawer}"/>
+        </Style>
     </Application.Styles>
 </Application>

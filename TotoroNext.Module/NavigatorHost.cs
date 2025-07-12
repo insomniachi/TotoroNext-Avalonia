@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Module;
@@ -17,6 +18,7 @@ public interface IAsyncInitializable
 
 public class NavigatorHost(TransitioningContentControl host,
                            IViewRegistry locator,
+                           ILogger<NavigatorHost> logger,
                            IServiceScopeFactory serviceScopeFactory) : INavigator
 {
     public event EventHandler<NavigationResult>? Navigated;
@@ -43,8 +45,9 @@ public class NavigatorHost(TransitioningContentControl host,
             Navigated?.Invoke(this, new(viewType, vmType));
             return true;
         }
-        catch
+        catch(Exception ex)
         {
+            logger.LogError(ex, "Navigation failed");
             return false;
         }
     }
