@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TotoroNext.Anime.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:AnimeOverridesViewModel"
+             x:Class="TotoroNext.Anime.Views.AnimeOverridesView">
+    <u:Form LabelPosition="Left" LabelWidth="200" HorizontalAlignment="Stretch">
+        <u:FormItem Label="Is Private">
+            <ToggleSwitch IsChecked="{Binding IsNsfw}"/>
+        </u:FormItem>
+        <u:FormItem Label="Provider">
+            <ComboBox ItemsSource="{Binding Providers}"
+                      SelectedValue="{Binding ProviderId}"
+                      SelectedValueBinding="{Binding Id}"
+                      DisplayMemberBinding="{Binding Name}"
+                      HorizontalAlignment="Stretch"/>
+        </u:FormItem>
+    </u:Form>
+</UserControl>

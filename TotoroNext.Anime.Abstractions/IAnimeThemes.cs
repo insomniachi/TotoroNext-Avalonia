@@ -16,15 +16,19 @@ public class AnimeTheme
     public string SongName { get; init; } = "";
     public string Artist { get; init; } = "";
 
-    public string GetDisplayName()
+    public string DisplayName
     {
-        var sb = new StringBuilder();
-        sb.Append($"({Slug}) - {SongName}");
-        if (!string.IsNullOrEmpty(Artist))
+        get
         {
-            sb.Append($" by {Artist}");
+            var sb = new StringBuilder();
+            sb.Append($"({Slug}) - {SongName}");
+            if (!string.IsNullOrEmpty(Artist))
+            {
+                sb.Append($" by {Artist}");
+            }
+
+            return sb.ToString();
         }
-        return sb.ToString();
     }
 }
 

@@ -1,0 +1,49 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:TotoroNext.Anime.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:aa="using:TotoroNext.Anime.Abstractions"
+             xmlns:icon="https://github.com/MahApps/IconPacks.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:AnimeSongsViewModel"
+             x:Class="TotoroNext.Anime.Views.AnimeSongsView">
+    <u:LoadingContainer IsLoading="{Binding IsLoading}"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Background="Transparent">
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Themes}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="aa:AnimeTheme">
+                        <Grid Margin="0 4"
+                              ColumnSpacing="8"
+                              ColumnDefinitions="*,Auto,Auto,*">
+                            <TextBlock Text="{Binding DisplayName}"
+                                       VerticalAlignment="Center"
+                                       TextWrapping="Wrap" />
+                            <Button Grid.Column="1"
+                                    Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).OpenInMediaPlayerCommand, FallbackValue={x:Null}}"
+                                    CommandParameter="{Binding}"
+                                    ToolTip.Tip="Play Video">
+                                <Viewbox Height="20" Width="20">
+                                    <icon:PackIconControl Kind="{x:Static icon:PackIconPhosphorIconsKind.MonitorPlayFill}" />
+                                </Viewbox>
+                            </Button>
+                            <Button Grid.Column="2"
+                                    Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).PlayAudioCommand, FallbackValue={x:Null}}"
+                                    CommandParameter="{Binding}"
+                                    ToolTip.Tip="Play Audio"
+                                    Height="20">
+                                <Viewbox Height="20" Width="20">
+                                    <icon:PackIconControl Kind="{x:Static icon:PackIconMaterialDesignKind.MusicNote}" />
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </u:LoadingContainer>
+</UserControl>

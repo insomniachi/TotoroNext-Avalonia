@@ -83,6 +83,8 @@ public partial class MainWindowViewModel : ObservableObject,
             MaxHeight = 700
         };
 
+        NavigationExtensions.ConfigureView(viewObj, vmObj);
+        
         Drawer.ShowModal(viewObj, vmObj, options: options);
     }
 
@@ -109,6 +111,8 @@ public partial class MainWindowViewModel : ObservableObject,
             MaxHeight = 700
         };
 
+        NavigationExtensions.ConfigureView(viewObj, vmObj);
+        
         Drawer.ShowModal(viewObj, vmObj, options: options);
     }
 

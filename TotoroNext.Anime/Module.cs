@@ -14,20 +14,23 @@ public class Module : IModule
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>();
-                // .AddTransient<IAnimeThemes, AnimeThemes>();
+        services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>()
+                .AddTransient<IAnimeThemes, AnimeThemes>();
 
-        //// main navigation
+        // main navigation
         services.AddMainNavigationItem<SearchView, SearchViewModel>("Search",
                                                                     PackIconMaterialDesignKind.Search);
         services.AddMainNavigationItem<UserListView, UserListViewModel>("My List",
                                                                         PackIconMaterialDesignKind.VideoLibrary);
 
-        //// Pane navigation
+        // Pane navigation
         services.AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>()
                 .AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()
                 .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>()
-                .AddDataViewMap<WatchView, WatchViewModel, WatchViewModelNavigationParameter>();
+                .AddDataViewMap<WatchView, WatchViewModel, WatchViewModelNavigationParameter>()
+                .AddDataViewMap<AnimeGridView, AnimeGridViewModel, List<AnimeModel>>()
+                .AddDataViewMap<AnimeOverridesView, AnimeOverridesViewModel, OverridesViewModelNavigationParameters>()
+                .AddDataViewMap<AnimeSongsView, AnimeSongsViewModel, SongsViewModelNavigationParameters>();
 
         services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
                 .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>();

@@ -36,12 +36,12 @@ public class NavigatorHost(TransitioningContentControl host,
                 return false;
             }
 
-            var page = (StyledElement)Activator.CreateInstance(viewType)!;
+            var view = (StyledElement)Activator.CreateInstance(viewType)!;
             using var scope = serviceScopeFactory.CreateScope();
             var vmObj = ActivatorUtilities.CreateInstance(scope.ServiceProvider, vmType, data);
 
-            ConfigurePage(page, vmObj);
-            Navigate(page);
+            NavigationExtensions.ConfigureView(view, vmObj);
+            Navigate(view);
             Navigated?.Invoke(this, new NavigationResult(viewType, vmType));
             return true;
         }
@@ -63,12 +63,12 @@ public class NavigatorHost(TransitioningContentControl host,
                 return false;
             }
 
-            var page = (StyledElement)Activator.CreateInstance(viewType)!;
+            var view = (StyledElement)Activator.CreateInstance(viewType)!;
             using var scope = serviceScopeFactory.CreateScope();
             var vmObj = ActivatorUtilities.CreateInstance(scope.ServiceProvider, vmType);
 
-            ConfigurePage(page, vmObj);
-            Navigate(page);
+            NavigationExtensions.ConfigureView(view, vmObj);
+            Navigate(view);
             Navigated?.Invoke(this, new NavigationResult(viewType, vmType));
 
             return true;
@@ -91,12 +91,12 @@ public class NavigatorHost(TransitioningContentControl host,
                 return false;
             }
 
-            var page = (StyledElement)Activator.CreateInstance(viewType)!;
+            var view = (StyledElement)Activator.CreateInstance(viewType)!;
             using var scope = serviceScopeFactory.CreateScope();
             var vmObj = ActivatorUtilities.CreateInstance(scope.ServiceProvider, vmType);
 
-            ConfigurePage(page, vmObj);
-            Navigate(page);
+            NavigationExtensions.ConfigureView(view, vmObj);
+            Navigate(view);
             Navigated?.Invoke(this, new NavigationResult(viewType, vmType));
 
             return true;
@@ -111,40 +111,5 @@ public class NavigatorHost(TransitioningContentControl host,
     private void Navigate(StyledElement page)
     {
         Control.Content = page;
-    }
-
-    private void ConfigurePage(StyledElement page, object vm)
-    {
-        page.DataContext = vm;
-        page.AttachedToLogicalTree += async (_, _) =>
-        {
-            switch (vm)
-            {
-                case IInitializable { } i:
-                    i.Initialize();
-                    break;
-                case IAsyncInitializable { } ia:
-                    try
-                    {
-                        await ia.InitializeAsync();
-                    }
-                    catch(Exception ex)
-                    {
-                        logger.LogError(ex, "Initialization failed");
-                    }
-                    break;
-            }
-        };
-        page.DetachedFromLogicalTree += async (_, _) =>
-        {
-            if (vm is IDisposable d)
-            {
-                d.Dispose();
-            }
-            if (vm is IAsyncDisposable ad)
-            {
-                await ad.DisposeAsync();
-            }
-        };
     }
 }

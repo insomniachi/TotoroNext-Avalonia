@@ -76,4 +76,39 @@ public class NavigationExtensions
             }
         }
     }
+
+    public static void ConfigureView(StyledElement view, object vm)
+    {
+        view.DataContext = vm;
+        view.AttachedToLogicalTree += async (_, _) =>
+        {
+            switch (vm)
+            {
+                case IInitializable { } i:
+                    i.Initialize();
+                    break;
+                case IAsyncInitializable { } ia:
+                    try
+                    {
+                        await ia.InitializeAsync();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                    break;
+            }
+        };
+        view.DetachedFromLogicalTree += async (_, _) =>
+        {
+            if (vm is IDisposable d)
+            {
+                d.Dispose();
+            }
+            if (vm is IAsyncDisposable ad)
+            {
+                await ad.DisposeAsync();
+            }
+        };
+    }
 }
