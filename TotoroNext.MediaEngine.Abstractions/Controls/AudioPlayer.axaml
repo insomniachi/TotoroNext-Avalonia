@@ -1,0 +1,20 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:icon="https://github.com/MahApps/IconPacks.Avalonia"
+             x:Class="TotoroNext.MediaEngine.Abstractions.Controls.AudioPlayer">
+    <Grid ColumnDefinitions="Auto,*" Margin="4">
+        <Button x:Name="PlayPauseButton" Click="PlayPauseButton_OnClick">
+            <Viewbox Height="20" Width="20">
+                <icon:PackIconControl Kind="{x:Static icon:PackIconMaterialDesignKind.PlayArrow}" x:Name="IconControl"/>
+            </Viewbox>
+        </Button>
+        <Slider Grid.Column="1"
+                x:Name="PositionSlider"
+                HorizontalAlignment="Stretch"
+                Margin="16 0" 
+                VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

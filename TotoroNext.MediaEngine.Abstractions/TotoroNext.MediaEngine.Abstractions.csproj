@@ -12,6 +12,9 @@
 
     <ItemGroup>
       <PackageReference Include="FFMpegCore" />
+      <PackageReference Include="LibVLCSharp" />
+      <PackageReference Include="VideoLAN.LibVLC.Mac" Condition="$([MSBuild]::IsOsPlatform('OSX'))" />
+      <PackageReference Include="VideoLAN.LibVLC.Windows" Condition="$([MSBuild]::IsOsPlatform('Windows'))"/>
     </ItemGroup>
 
 </Project>

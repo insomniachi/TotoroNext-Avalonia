@@ -15,6 +15,15 @@ public interface ISeekable
     Task SeekTo(TimeSpan position);
 }
 
+public interface IInternalMediaPlayer : IMediaPlayer, ISeekable
+{
+    void Pause();
+    void Play();
+    void Stop();
+    MediaPlayerState CurrentState { get; }
+    IObservable<MediaPlayerState> StateChanged { get; }
+}
+
 public record Media(Uri Uri, MediaMetadata Metadata);
 
 public enum MediaSectionType
@@ -24,6 +33,16 @@ public enum MediaSectionType
     Content,
     Ending,
     Preview
+}
+
+public enum MediaPlayerState
+{
+    Opening,
+    Playing,
+    Paused,
+    Stopped,
+    Ended,
+    Error
 }
 
 public record MediaSegment(MediaSectionType Type, TimeSpan Start, TimeSpan End);

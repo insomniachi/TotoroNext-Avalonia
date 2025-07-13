@@ -33,6 +33,8 @@ public class App : Application
                           services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
                           services.AddSingleton<SettingsModel>();
 
+                          services.AddInternalMediaPlayer();
+
                           services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                                                                                         PackIconMaterialDesignKind.ShoppingCart,
                                                                                         new NavMenuItemTag { IsFooterItem = true });

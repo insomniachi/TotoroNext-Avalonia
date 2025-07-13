@@ -18,6 +18,7 @@
         <PackageReference Include="Irihi.Ursa" />
         <PackageReference Include="Irihi.Ursa.Themes.Semi" />
         <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" />
         <PackageReference Include="Semi.Avalonia" />
 
         <PackageReference Include="Microsoft.Extensions.Hosting" />
