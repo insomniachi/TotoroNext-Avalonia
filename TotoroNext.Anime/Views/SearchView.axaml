@@ -24,7 +24,7 @@
                           mod:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <controls:WrapPanelEx
+                        <controls:ElasticWrapPanelEx
                             ItemHeight="400"
                             ItemWidth="250"
                             IsFillHorizontal="True" />

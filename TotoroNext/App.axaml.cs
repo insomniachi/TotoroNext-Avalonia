@@ -26,7 +26,7 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         AppHost = Host.CreateDefaultBuilder()
-                      .ConfigureServices(async (_, services) =>
+                      .ConfigureServices((_, services) =>
                       {
                           services.AddCoreServices();
                           services.AddTransient<MainWindowViewModel>();
@@ -80,6 +80,8 @@ public class App : Application
                 DataContext = AppHost.Services.GetService<MainWindowViewModel>()
             };
         }
+        
+        AppHost.StartAsync();
 
         base.OnFrameworkInitializationCompleted();
     }

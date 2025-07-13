@@ -27,7 +27,7 @@
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <modc:WrapPanelEx IsFillHorizontal="True" ItemWidth="300" />
+                    <modc:ElasticWrapPanelEx IsFillHorizontal="True" ItemWidth="300" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

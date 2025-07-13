@@ -4,6 +4,7 @@
              xmlns:local="using:TotoroNext"
              xmlns:semi="https://irihi.tech/semi"
              xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
+             xmlns:modc="using:TotoroNext.Module.Controls"
              xmlns:u="https://irihi.tech/ursa"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -26,6 +27,9 @@
         <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
         <Style Selector="u|DefaultDrawerControl">
             <Setter Property="Theme" Value="{StaticResource NoScrollDrawer}"/>
+        </Style>
+        <Style Selector="modc|ElasticWrapPanelEx[LineCount=1]">
+            <Setter Property="IsFillHorizontal" Value="False" />
         </Style>
     </Application.Styles>
 </Application>

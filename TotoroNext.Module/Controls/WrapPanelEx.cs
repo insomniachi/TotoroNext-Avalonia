@@ -6,14 +6,12 @@ using static System.Math;
 
 namespace TotoroNext.Module.Controls;
 
-public class WrapPanelEx : WrapPanel
+public class ElasticWrapPanelEx : WrapPanel
 {
-    static WrapPanelEx()
+    static ElasticWrapPanelEx()
     {
-        IsFillHorizontalProperty.Changed.AddClassHandler<Control>(OnIsFillPropertyChanged);
-        IsFillVerticalProperty.Changed.AddClassHandler<Control>(OnIsFillPropertyChanged);
-
-        AffectsMeasure<WrapPanelEx>(IsFillHorizontalProperty, IsFillVerticalProperty);
+        AffectsMeasure<ElasticWrapPanelEx>(IsFillHorizontalProperty, IsFillVerticalProperty);
+        AffectsArrange<ElasticWrapPanelEx>(IsFillHorizontalProperty, IsFillVerticalProperty);
     }
 
     #region AttachedProperty
@@ -35,7 +33,7 @@ public class WrapPanelEx : WrapPanel
     /// which will cause line breaks
     /// </summary>
     public static readonly AttachedProperty<bool> FixToRBProperty =
-        AvaloniaProperty.RegisterAttached<WrapPanelEx, Control, bool>("FixToRB");
+        AvaloniaProperty.RegisterAttached<ElasticWrapPanelEx, Control, bool>("FixToRB");
 
     #endregion
 
@@ -48,7 +46,7 @@ public class WrapPanelEx : WrapPanel
     }
 
     public static readonly StyledProperty<bool> IsFillHorizontalProperty =
-        AvaloniaProperty.Register<WrapPanelEx, bool>(nameof(IsFillHorizontal));
+        AvaloniaProperty.Register<ElasticWrapPanelEx, bool>(nameof(IsFillHorizontal));
 
     public bool IsFillVertical
     {
@@ -57,11 +55,17 @@ public class WrapPanelEx : WrapPanel
     }
 
     public static readonly StyledProperty<bool> IsFillVerticalProperty =
-        AvaloniaProperty.Register<WrapPanelEx, bool>(nameof(IsFillVertical));
+        AvaloniaProperty.Register<ElasticWrapPanelEx, bool>(nameof(IsFillVertical));
 
-    private static void OnIsFillPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
+    private int _lineCount;
+
+    public static readonly DirectProperty<ElasticWrapPanelEx, int> LineCountProperty = AvaloniaProperty.RegisterDirect<ElasticWrapPanelEx, int>(
+        nameof(LineCount), o => o.LineCount);
+
+    public int LineCount
     {
-        (d as WrapPanelEx)?.InvalidateMeasure();
+        get => _lineCount;
+        private set => SetAndRaise(LineCountProperty, ref _lineCount, value);
     }
 
     #endregion
@@ -314,19 +318,11 @@ public class WrapPanelEx : WrapPanel
             {
                 if (itemSetSize.U > 0)
                 {
-                    // Identify rows that are actually full
-                    var fullRows = lineUVCollection.Where(row =>
-                                                              row.TotalU + itemSetSize.U > uvFinalSize.U && row.Count > 0).ToList();
-
-                    if (fullRows.Count > 0)
-                    {
-                        // Take the row with max element count for spacing calc
-                        int maxElementCount = fullRows.Max(r =>
-                                                               r.UICollection.Sum(p => p.Value.ULengthCount));
-
-                        adaptULength = (uvFinalSize.U - maxElementCount * itemSetSize.U) / maxElementCount;
-                        adaptULength = Max(adaptULength, 0);
-                    }
+                    int maxElementCount = lineUVCollection
+                        .Max(uiSet => uiSet.UICollection
+                            .Sum(p => p.Value.ULengthCount));
+                    adaptULength = (uvFinalSize.U - maxElementCount * itemSetSize.U) / maxElementCount;
+                    adaptULength = Max(adaptULength, 0);
                 }
             }
 
@@ -351,7 +347,7 @@ public class WrapPanelEx : WrapPanel
 
                     double layoutSlotU = childSize.UVSize.U + childSize.ULengthCount * adaptULength;
                     double layoutSlotV = isAdaptV ? linevV : childSize.UVSize.V;
-                    if (GetIsFixToRB(child) == false)
+                    if (ElasticWrapPanelEx.GetIsFixToRB(child) == false)
                     {
                         child.Arrange(new Rect(
                             isHorizontal ? u : accumulatedV,
@@ -383,7 +379,7 @@ public class WrapPanelEx : WrapPanel
                 lineUIEles.Clear();
             }
         }
-
+        LineCount = lineUVCollection.Count;
         lineUVCollection.ForEach(col => col.Dispose());
         lineUVCollection.Clear();
         return finalSize;
