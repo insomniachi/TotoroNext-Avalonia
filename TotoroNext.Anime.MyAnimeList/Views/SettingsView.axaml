@@ -1,0 +1,26 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TotoroNext.Anime.MyAnimeList.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:SettingsViewModel"
+             x:Class="TotoroNext.Anime.MyAnimeList.Views.SettingsView">
+    <Grid RowDefinitions="Auto,*" RowSpacing="16">
+        <Image Source="avares://TotoroNext.Anime.MyAnimeList/Assets/mal.jpg" Stretch="UniformToFill" Width="600" />
+        <u:Form Grid.Row="1" LabelWidth="*" HorizontalAlignment="Stretch">
+            <u:FormItem Label="Include NSFW">
+                <ToggleSwitch IsChecked="{Binding IncludeNsfw}" />
+            </u:FormItem>
+            <u:FormItem Label="Search Limit">
+                <u:NumericIntUpDown Value="{Binding SearchLimit}" />
+            </u:FormItem>
+            <Button Content="Authenticate"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch" />
+        </u:Form>
+    </Grid>
+
+</UserControl>

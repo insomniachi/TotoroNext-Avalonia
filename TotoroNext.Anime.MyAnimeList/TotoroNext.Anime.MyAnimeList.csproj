@@ -15,10 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Views\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <AvaloniaResource Include="Assets\mal.jpg" />
     </ItemGroup>
 

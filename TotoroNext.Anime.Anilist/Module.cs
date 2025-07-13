@@ -3,6 +3,8 @@ using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Anilist.ViewModels;
+using TotoroNext.Anime.Anilist.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -18,13 +20,15 @@ public class Module : IModule<Settings>
         Name = @"Anilist",
         Components = [ComponentTypes.Metadata, ComponentTypes.Tracking],
         Description = "AniList: The next-generation anime platform Track, share, and discover your favorite anime and manga with AniList. Discover your obsessions. ",
-        HeroImage = ResourceHelper.GetResource("anilist.jpg")
+        HeroImage = ResourceHelper.GetResource("anilist.jpg"),
+        SettingViewModel = typeof(SettingsViewModel)
     };
 
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
+        services.AddViewMap<SettingsView, SettingsViewModel>();
 
         services.AddKeyedTransient<IMetadataService, AnilistMetadataService>(Descriptor.Id);
         services.AddKeyedTransient<ITrackingService, AnilistTrackingService>(Descriptor.Id);

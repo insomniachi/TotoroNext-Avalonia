@@ -3,6 +3,7 @@ using MalApi.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.MyAnimeList.ViewModels;
+using TotoroNext.Anime.MyAnimeList.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -27,7 +28,7 @@ public class Module : IModule<Settings>
     {
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
-        // services.AddViewMap<SettingsPage, SettingsViewModel>();
+        services.AddViewMap<SettingsView, SettingsViewModel>();
 
         services.AddSingleton<IMalClient, MalClient>();
         services.AddKeyedTransient<IMetadataService, MyAnimeListMetadataService>(Descriptor.Id);
@@ -40,5 +41,5 @@ public class Settings
     public const string ClientId = "748da32a6defdd448c1f47d60b4bbe69";
     public OAuthToken? Auth { get; set; }
     public bool IncludeNsfw { get; set; }
-    public double SearchLimit { get; set; } = 15;
+    public int SearchLimit { get; set; } = 15;
 }

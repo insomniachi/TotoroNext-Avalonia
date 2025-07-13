@@ -3,9 +3,9 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.MediaEngine.Vlc.ViewModels;
 
-public partial class SettingsPageViewModel : ModuleSettingsViewModel<Settings>
+public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
 {
-    public SettingsPageViewModel(IModuleSettings<Settings> settings) : base(settings)
+    public SettingsViewModel(IModuleSettings<Settings> settings) : base(settings)
     {
         Command = Settings.FileName;
         LaunchFullScreen = Settings.LaunchFullScreen;

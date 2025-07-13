@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Discord.ViewModels;
+using TotoroNext.Discord.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -20,7 +21,7 @@ public class Module : IModule<Settings>
     {
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
-        // services.AddViewMap<SettingsPage, SettingsViewModel>();
+        services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddHostedService<RpcService>();
     }
 }

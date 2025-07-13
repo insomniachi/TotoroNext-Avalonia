@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.MediaEngine.Vlc.ViewModels;
+using TotoroNext.MediaEngine.Vlc.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -15,12 +16,12 @@ public class Module : IModule<Settings>
         Description = "A module for integrating VLC media player into TotoroNext.",
         HeroImage = ResourceHelper.GetResource("vlc.jpeg"),
         Components = [ComponentTypes.MediaEngine],
-        SettingViewModel = typeof(SettingsPageViewModel)
+        SettingViewModel = typeof(SettingsViewModel)
     };
 
     public void ConfigureServices(IServiceCollection services)
     {
-        // services.AddViewMap<SettingsPage, SettingsPageViewModel>();
+        services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddKeyedTransient<IMediaPlayer, VlcMediaPlayer>(Descriptor.Id);

@@ -1,28 +1,20 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="using:TotoroNext.Discord.ViewModels"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:vm="using:TotoroNext.MediaEngine.Mpv.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SettingsViewModel"
-             x:Class="TotoroNext.MediaEngine.Mpv.Views.SettingsView">
+             x:Class="TotoroNext.Discord.Views.SettingsView">
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
-        <Image Grid.Row="0" 
-               Source="avares://TotoroNext.MediaEngine.Mpv/Assets/mpv.jpeg" 
+        <Image Grid.Row="0"
+               Source="avares://TotoroNext.Discord/Assets/discord-logo.jpg"
                Stretch="UniformToFill"
                Width="600" />
         <u:Form Grid.Row="1">
-            <u:FormItem Label="Program">
-                <u:PathPicker
-                    Title="Browse"
-                    AllowMultiple="False"
-                    SelectedPathsText="{Binding Command}"
-                    UsePickerType="OpenFile"
-                    HorizontalAlignment="Stretch" />
-            </u:FormItem>
             <u:FormItem Label="Start Fullscreen">
-                <ToggleSwitch IsChecked="{Binding LaunchFullScreen}" />
+                <ToggleSwitch IsChecked="{Binding IsEnabled}" />
             </u:FormItem>
         </u:Form>
     </Grid>
