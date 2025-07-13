@@ -10,8 +10,8 @@ using Path = System.IO.Path;
 namespace TotoroNext.Module;
 
 
-internal class ModuleSettings<TDtata> : IModuleSettings<TDtata>
-    where TDtata : class, new()
+internal class ModuleSettings<TData> : IModuleSettings<TData>
+    where TData : class, new()
 {
     private readonly string _filePath;
 
@@ -20,19 +20,21 @@ internal class ModuleSettings<TDtata> : IModuleSettings<TDtata>
         _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules", descriptor.EntryPoint, $"settings.json");
 
         Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
-        Value = new TDtata();
+        Value = new TData();
 
-        if (File.Exists(_filePath))
+        if (!File.Exists(_filePath))
         {
-            var text = File.ReadAllText(_filePath);
-            if (JsonSerializer.Deserialize<TDtata>(text) is { } data)
-            {
-                Value = data;
-            }
+            return;
+        }
+
+        var text = File.ReadAllText(_filePath);
+        if (JsonSerializer.Deserialize<TData>(text) is { } data)
+        {
+            Value = data;
         }
     }
 
-    public TDtata Value { get; private set; }
+    public TData Value { get; private set; }
 
     public void Save()
     {
