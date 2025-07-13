@@ -33,10 +33,14 @@
     <ItemGroup>
       <ProjectReference Include="..\TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj" />
       <ProjectReference Include="..\TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj" />
+      <ProjectReference Include="..\TotoroNext.Anime.AnimePahe\TotoroNext.Anime.AnimePahe.csproj" />
       <ProjectReference Include="..\TotoroNext.Anime.Aniskip\TotoroNext.Anime.Aniskip.csproj" />
+      <ProjectReference Include="..\TotoroNext.Anime.MyAnimeList\TotoroNext.Anime.MyAnimeList.csproj" />
       <ProjectReference Include="..\TotoroNext.Anime\TotoroNext.Anime.csproj" />
+      <ProjectReference Include="..\TotoroNext.Discord\TotoroNext.Discord.csproj" />
       <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj" />
       <ProjectReference Include="..\TotoroNext.MediaEngine.Mpv\TotoroNext.MediaEngine.Mpv.csproj" />
+      <ProjectReference Include="..\TotoroNext.MediaEngine.Vlc\TotoroNext.MediaEngine.Vlc.csproj" />
       <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
     </ItemGroup>
 </Project>

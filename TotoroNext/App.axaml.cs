@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using IconPacks.Avalonia.MaterialDesign;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TotoroNext.Anime.Abstractions;
@@ -33,11 +34,11 @@ public class App : Application
                           services.AddSingleton<SettingsModel>();
 
                           services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
-                           IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.ShoppingCart,
-                           new NavMenuItemTag() { IsFooterItem = true });
+                                                                                        PackIconMaterialDesignKind.ShoppingCart,
+                                                                                        new NavMenuItemTag { IsFooterItem = true });
                           services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
-                           IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.Settings,
-                           new NavMenuItemTag() { IsFooterItem = true });
+                                                                                          PackIconMaterialDesignKind.Settings,
+                                                                                          new NavMenuItemTag { IsFooterItem = true });
 
                           services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
@@ -49,9 +50,15 @@ public class App : Application
                           {
                               new Anime.Module(),
                               new Anime.Anilist.Module(),
+                              new Anime.MyAnimeList.Module(),
                               new Anime.AllAnime.Module(),
-                              new MediaEngine.Mpv.Module(),
+                              new Anime.AnimePahe.Module(),
                               new Anime.Aniskip.Module(),
+                              
+                              new MediaEngine.Mpv.Module(),
+                              new MediaEngine.Vlc.Module(),
+                              
+                              new Discord.Module()
                           };
 
                           foreach (var module in modules)
@@ -101,19 +108,19 @@ public class DebugModuleStore : IModuleStore
 
         // Anime Providers
         yield return new Anime.AllAnime.Module();
-        //yield return new Anime.AnimePahe.Module();
+        yield return new Anime.AnimePahe.Module();
 
         // Anime Tracking/Metadata
         yield return new Anime.Anilist.Module();
-        //yield return new Anime.MyAnimeList.Module();
+        yield return new Anime.MyAnimeList.Module();
 
         // Misc
         yield return new Anime.Aniskip.Module();
-        //yield return new Discord.Module();
+        yield return new Discord.Module();
 
         // Media Players
         yield return new MediaEngine.Mpv.Module();
-        //yield return new MediaEngine.Vlc.Module();
+        yield return new MediaEngine.Vlc.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)

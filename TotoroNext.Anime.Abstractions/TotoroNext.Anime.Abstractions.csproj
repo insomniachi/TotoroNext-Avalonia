@@ -10,4 +10,9 @@
     <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" />
+    <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" />
+  </ItemGroup>
+
 </Project>

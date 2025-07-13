@@ -174,7 +174,7 @@ public sealed partial class WatchViewModel(
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(nexEp => SelectedEpisode = nexEp);
 
-        if (MediaPlayer is ISeekable seekable)
+        if (MediaPlayer is ISeekable)
         {
             MediaPlayer
                 .PositionChanged
@@ -212,8 +212,8 @@ public sealed partial class WatchViewModel(
 
         if (Anime is { ExternalIds.MyAnimeList: not null } && segmentsFactory.CreateDefault() is { } segmentsProvider)
         {
-            segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value,
-                                                                 SelectedEpisode.Number, _duration.TotalSeconds));
+            segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, SelectedEpisode.Number,
+                                                                 _duration.TotalSeconds));
         }
 
         var metadata = new MediaMetadata(title, source.Headers, segments);
