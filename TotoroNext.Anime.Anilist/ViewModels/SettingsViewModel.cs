@@ -72,7 +72,7 @@ internal class AuthTokenRequest(string code)
     public string ClientId { get; } = Settings.ClientId.ToString();
 
     [JsonPropertyName("client_secret")] public string ClientSecret { get; } = Cyrpto.Decrypt("QVpa7tfm4MlTDB7DZyWCvOlskzZNNanGzt1brOJdZrejKUTh5VFPLIOm5h34XWyE");
-    
+     
     [JsonPropertyName("redirect_uri")]
     public string RedirectUrl { get; } = Settings.RedirectUrl;
     

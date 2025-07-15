@@ -17,4 +17,10 @@
       <PackageReference Include="VideoLAN.LibVLC.Windows" Condition="$([MSBuild]::IsOsPlatform('Windows'))"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="libvlc\win-x64\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>

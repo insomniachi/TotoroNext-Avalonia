@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Anime.Extensions;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -21,7 +22,7 @@ public sealed partial class WatchViewModel(
     IPlaybackProgressService progressService,
     IAnimeOverridesRepository animeOverridesRepository,
     IDialogService dialogService,
-    IMessenger messenger) : ObservableObject, IInitializable, IDisposable
+    IMessenger messenger) : ObservableObject, IAsyncInitializable, IDisposable
 {
     private TimeSpan _duration;
     private Media? _media;
@@ -55,10 +56,28 @@ public sealed partial class WatchViewModel(
         }
     }
 
-    public void Initialize()
+    public async Task InitializeAsync()
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
 
+        if (Anime is not null)
+        {
+            var infos = await Anime.GetEpisodes();
+            
+            this.WhenAnyValue(x => x.Episodes)
+                .WhereNotNull()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(eps =>
+                {
+                    foreach (var ep in eps)
+                    {
+                        // ReSharper disable once CompareOfFloatsByEqualityOperator
+                        ep.Info = infos.FirstOrDefault(x => x.EpisodeNumber == ep.Number);
+                    }
+                });
+        }
+        
+        
         this.WhenAnyValue(x => x.ProviderResult)
             .WhereNotNull()
             .Where(_ => Episodes is { Count: 0 } or null)

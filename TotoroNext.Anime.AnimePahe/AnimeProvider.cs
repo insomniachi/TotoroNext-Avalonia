@@ -76,7 +76,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
             foreach (var ep in page.Data)
             {
-                yield return new Episode(this, releaseId, ep.Session, (float)ep.Episode, ep.Title);
+                yield return new Episode(this, releaseId, ep.Session, (float)ep.Episode);
             }
         }
     }

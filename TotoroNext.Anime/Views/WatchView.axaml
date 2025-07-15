@@ -5,6 +5,8 @@
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:aam="using:TotoroNext.Anime.Abstractions.Models"
+             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:WatchViewModel"
              x:Class="TotoroNext.Anime.Views.WatchView">
@@ -15,35 +17,73 @@
               VerticalAlignment="Stretch"
               ColumnSpacing="16"
               ColumnDefinitions="Auto,*">
-            <TextBlock Text="Servers" VerticalAlignment="Center"/>
+            <TextBlock Text="Servers" VerticalAlignment="Center" />
             <u:SelectionList Grid.Column="1"
                              ItemsSource="{Binding Servers}"
                              SelectedItem="{Binding SelectedServer}"
                              DisplayMemberBinding="{Binding Name}">
                 <u:SelectionList.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
+                        <StackPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </u:SelectionList.ItemsPanel>
             </u:SelectionList>
         </Grid>
-        
-        <ListBox Grid.Row="0"
-                 Grid.Column="1" 
-                 Grid.RowSpan="2"
-                 MaxWidth="300" 
-                 MinHeight="200"
-                 ItemsSource="{Binding Episodes}"
-                 SelectedItem="{Binding SelectedEpisode}">
+
+        <StackPanel Grid.Column="1" Grid.RowSpan="2" Grid.Row="0" Spacing="16">
+            <TextBlock Text="Episodes" Classes.H1="true" Theme="{DynamicResource TitleTextBlock}"/>
+            <ListBox MaxWidth="800"
+                     MinHeight="200"
+                     ItemsSource="{Binding Episodes}"
+                     SelectedItem="{Binding SelectedEpisode}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="aam:Episode">
-                    <TextBlock>
-                        <Run Text="{Binding Number}"/>
-                        <Run Text="{Binding Name}"/>
-                    </TextBlock>
+                    <Grid ColumnDefinitions="Auto,*" Height="160">
+                        <Border>
+                            <Image asyncImageLoader:ImageLoader.Source="{Binding Info.Image, FallbackValue={x:Null}}" Stretch="UniformToFill" />
+                        </Border>
+                        <Border Grid.Column="1" Padding="8">
+                            <Grid RowDefinitions="Auto,Auto,*">
+                                <TextBlock Margin="0 0 0 8"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
+                                           FontSize="{DynamicResource SemiFontSizeHeader4}"
+                                           FontWeight="Bold">
+                                    <Run Text="Episode" Foreground="{DynamicResource SemiColorText3}"/>
+                                    <Run Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" />
+                                    <Run Text=":" Foreground="{DynamicResource SemiColorText3}"/>
+                                    <Run Text="{Binding Info.Titles.English, FallbackValue={x:Null}}" />
+                                </TextBlock>
+                                <StackPanel Grid.Row="1"
+                                            Margin="0 0 0 8"
+                                            Orientation="Horizontal"
+                                            Spacing="5">
+                                    <iconPacks:PackIconControl
+                                        Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}" Height="20"
+                                        Width="20" />
+                                    <TextBlock Text="{Binding Info.AirDate, FallbackValue={x:Null}}" Margin="0 0 16 0" />
+                                    <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
+                                                               Height="20" Width="20" />
+                                    <TextBlock>
+                                        <Run Text="{Binding Info.Runtime, FallbackValue={x:Null}}" />
+                                        <Run Text="Min" />
+                                    </TextBlock>
+                                </StackPanel>
+                                <ScrollViewer Grid.Row="2">
+                                    <TextBlock Text="{Binding Info.Overview, FallbackValue={x:Null}}"
+                                               TextWrapping="Wrap" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Background="{DynamicResource SemiColorTertiaryLightActive}"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
         </ListBox>
-        
+        </StackPanel>
     </Grid>
 </UserControl>
