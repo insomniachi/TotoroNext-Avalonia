@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.Text.Json.Serialization;
 using Avalonia.Platform.Storage;
 using Flurl.Http;
+using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -62,7 +63,7 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
     }
 }
 
-class AuthTokenRequest(string code)
+internal class AuthTokenRequest(string code)
 {
     [JsonPropertyName("grant_type")]
     public string GrantType { get; } = "authorization_code";
@@ -70,7 +71,7 @@ class AuthTokenRequest(string code)
     [JsonPropertyName("client_id")]
     public string ClientId { get; } = Settings.ClientId.ToString();
 
-    [JsonPropertyName("client_secret")] public string ClientSecret { get; } = "KKXsd8KsSMibhiWBpLiMuK4DTGehRxx8SOriD96I";
+    [JsonPropertyName("client_secret")] public string ClientSecret { get; } = Cyrpto.Decrypt("QVpa7tfm4MlTDB7DZyWCvOlskzZNNanGzt1brOJdZrejKUTh5VFPLIOm5h34XWyE");
     
     [JsonPropertyName("redirect_uri")]
     public string RedirectUrl { get; } = Settings.RedirectUrl;
