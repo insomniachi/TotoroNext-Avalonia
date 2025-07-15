@@ -9,7 +9,7 @@ public class DialogService : IDialogService
 {
     public async Task<MessageBoxResult> Question(string title, string question)
     {
-        return await MessageBox.ShowOverlayAsync(question, title, icon: MessageBoxIcon.Question);
+        return await MessageBox.ShowOverlayAsync(question, title, icon: MessageBoxIcon.Question, button: MessageBoxButton.YesNo);
     }
 
     public async Task<MessageBoxResult> AskSkip()

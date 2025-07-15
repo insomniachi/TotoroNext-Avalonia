@@ -32,7 +32,7 @@
 
         <StackPanel Grid.Column="1" Grid.RowSpan="2" Grid.Row="0" Spacing="16">
             <TextBlock Text="Episodes" Classes.H1="true" Theme="{DynamicResource TitleTextBlock}"/>
-            <ListBox MaxWidth="800"
+            <ListBox Width="800"
                      MinHeight="200"
                      ItemsSource="{Binding Episodes}"
                      SelectedItem="{Binding SelectedEpisode}">

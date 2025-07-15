@@ -43,6 +43,11 @@ public sealed class TrackingUpdater(
             return;
         }
 
+        if (message.Episode.IsCompleted)
+        {
+            return;
+        }
+
         message.Anime.Tracking ??= new Tracking
         {
             Status = ListItemStatus.Watching,
@@ -67,14 +72,7 @@ public sealed class TrackingUpdater(
             Anime = message.Anime,
             Episode = message.Episode
         });
-
-        try
-        {
-            await Task.WhenAll(tasks);
-        }
-        catch (Exception ex)
-        {
-            //this.Log().Error("Unable to update tracking", ex);
-        }
+        
+        await Task.WhenAll(tasks);
     }
 }

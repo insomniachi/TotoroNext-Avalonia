@@ -9,7 +9,7 @@ public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackPr
                                                                      IRecipient<PlaybackState>,
                                                                      IRecipient<TrackingUpdated>
 {
-    private readonly string _file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", $"progress.json");
+    private readonly string _file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", $"progress.json");
     private Dictionary<string, ProgressInfo> _progress = [];
 
     public Dictionary<float, ProgressInfo> GetProgress(long id)
