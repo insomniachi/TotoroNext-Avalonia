@@ -16,6 +16,7 @@
                         Background="Transparent">
         <ListBox ItemsSource="{Binding Episodes}"
                  SelectedItem="{Binding SelectedEpisode}"
+                 SelectionChanged="SelectingItemsControl_OnSelectionChanged"
                  SelectionMode="Single">
             <ListBox.Styles>
                 <Style Selector="ListBoxItem">

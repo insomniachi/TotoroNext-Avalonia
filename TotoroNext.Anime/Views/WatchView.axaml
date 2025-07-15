@@ -30,12 +30,14 @@
             </u:SelectionList>
         </Grid>
 
-        <StackPanel Grid.Column="1" Grid.RowSpan="2" Grid.Row="0" Spacing="16">
+        <Grid Grid.Column="1" Grid.RowSpan="2" Grid.Row="0" Grid.RowDefinitions="Auto,*" RowSpacing="16">
             <TextBlock Text="Episodes" Classes.H1="true" Theme="{DynamicResource TitleTextBlock}"/>
-            <ListBox Width="800"
+            <ListBox Grid.Row="1"
+                     Width="800"
                      MinHeight="200"
                      ItemsSource="{Binding Episodes}"
-                     SelectedItem="{Binding SelectedEpisode}">
+                     SelectedItem="{Binding SelectedEpisode}"
+                     SelectionChanged="SelectingItemsControl_OnSelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="aam:Episode">
                     <Grid ColumnDefinitions="Auto,*" Height="160">
@@ -84,6 +86,6 @@
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>
-        </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

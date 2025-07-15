@@ -98,7 +98,10 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                 {
                     pipe?.Dispose();
                 }
-                catch {}
+                catch
+                {
+	                // ignored
+                }
             };
 
             process.Start();
@@ -107,7 +110,6 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
 			{
 				if (process is { HasExited: true })
 				{
-					_playbackStoped.OnNext(Unit.Default);
 					return;
 				}
 
@@ -132,11 +134,13 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
 		catch (Exception ex)
 		{
 			Debug.WriteLine($"[MpvMediaPlayer] IPC connection failed: {ex.Message}");
-			_playbackStoped.OnNext(Unit.Default);
 		}
 		finally
 		{
-			pipe?.Dispose();
+			if (pipe is not null)
+			{
+				await pipe.DisposeAsync();
+			}
 		}
 	}
 
