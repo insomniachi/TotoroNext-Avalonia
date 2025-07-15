@@ -1,14 +1,13 @@
-using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Hosting;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public class TrackingUpdater(IFactory<ITrackingService, Guid> factory,
-                             IMessenger messenger) : IHostedService, IRecipient<PlaybackState>
+public sealed class TrackingUpdater(
+    IFactory<ITrackingService, Guid> factory,
+    IMessenger messenger) : IHostedService, IRecipient<PlaybackState>
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -44,25 +43,24 @@ public class TrackingUpdater(IFactory<ITrackingService, Guid> factory,
             return;
         }
 
-        if (message.Anime.Tracking is null)
+        message.Anime.Tracking ??= new Tracking
         {
-            message.Anime.Tracking = new Tracking
-            {
-                Status = ListItemStatus.Watching,
-                StartDate = DateTime.Now,
-            };
-        }
+            Status = ListItemStatus.Watching,
+            StartDate = DateTime.Now
+        };
 
         message.Episode.IsCompleted = true;
         var tracking = message.Anime.Tracking;
 
         tracking.WatchedEpisodes = (int)message.Episode.Number;
+        // ReSharper disable once CompareOfFloatsByEqualityOperator
         tracking.Status = message.Anime.TotalEpisodes == message.Episode.Number ? ListItemStatus.Completed : ListItemStatus.Watching;
 
         var tasks = factory.CreateAll()
                            .Select(service => new Tuple<ITrackingService, long?>(service, message.Anime.ExternalIds.GetId(service.ServiceName)))
                            .Where(x => x.Item2 is not null)
-                           .Select(tuple => tuple.Item1.Update(tuple.Item2!.Value, tracking));
+                           .Select(tuple => tuple.Item1.Update(tuple.Item2!.Value, tracking))
+                           .ToArray();
 
         messenger.Send(new TrackingUpdated
         {
@@ -79,6 +77,4 @@ public class TrackingUpdater(IFactory<ITrackingService, Guid> factory,
             //this.Log().Error("Unable to update tracking", ex);
         }
     }
-
-    protected virtual long GetId(AnimeModel anime) => anime.Id;
 }

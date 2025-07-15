@@ -15,11 +15,11 @@ public partial class AniListModelToAnimeModelConverter
     [GeneratedRegex(@"(</?i>)|(<br>)")]
     private static partial Regex DescriptionCleanRegex();
 
-    private static readonly Settings _settings = Container.Services.GetRequiredService<IModuleSettings<Settings>>().Value;
+    private static readonly Settings Settings = Container.Services.GetRequiredService<IModuleSettings<Settings>>().Value;
 
     private static string GetTitle(Media media)
     {
-        if(_settings.TitleLangauge == TitleLanguage.English)
+        if(Settings.TitleLanguage == TitleLanguage.English)
         {
             return media.Title.English ?? media.Title.Romaji;
         }

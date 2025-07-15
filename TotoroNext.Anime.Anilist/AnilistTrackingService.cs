@@ -75,23 +75,23 @@ internal class AnilistTrackingService(GraphQLHttpClient client) : ITrackingServi
 
         mediaListEntryBuilder.WithNotes();
 
-        if (tracking.Status is ListItemStatus)
+        if (tracking.Status is not null)
         {
             mediaListEntryBuilder.WithStatus();
         }
-        if (tracking.StartDate is DateTime)
+        if (tracking.StartDate is not null)
         {
             mediaListEntryBuilder.WithStartedAt(new FuzzyDateQueryBuilder().WithAllFields());
         }
-        if (tracking.FinishDate is DateTime)
+        if (tracking.FinishDate is not null)
         {
             mediaListEntryBuilder.WithCompletedAt(new FuzzyDateQueryBuilder().WithAllFields());
         }
-        if (tracking.Score is int)
+        if (tracking.Score is not null)
         {
             mediaListEntryBuilder.WithScore();
         }
-        if (tracking.WatchedEpisodes is int)
+        if (tracking.WatchedEpisodes is not null)
         {
             mediaListEntryBuilder.WithProgress();
         }

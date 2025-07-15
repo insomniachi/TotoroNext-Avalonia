@@ -19,7 +19,7 @@
             <Button Content="Authenticate"
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"
-                    HorizontalAlignment="Stretch" />
+                    HorizontalAlignment="Stretch" Click="Button_OnClick" />
         </u:Form>
     </Grid>
 </UserControl>

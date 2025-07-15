@@ -1,6 +1,8 @@
 using System.Net.Http.Headers;
+using System.Text.Json.Serialization;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Anilist.ViewModels;
@@ -10,16 +12,17 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Anilist;
 
-public class Module : IModule<Settings>
+public sealed class Module : IModule<Settings>
 {
-    internal static Guid Id { get; } = new Guid("b5d31e9b-b988-44e8-8e28-348f58cf1d04");
+    internal static Guid Id { get; } = new("b5d31e9b-b988-44e8-8e28-348f58cf1d04");
 
-    public Descriptor Descriptor { get; } = new Descriptor
+    public Descriptor Descriptor { get; } = new()
     {
         Id = Id,
         Name = @"Anilist",
         Components = [ComponentTypes.Metadata, ComponentTypes.Tracking],
-        Description = "AniList: The next-generation anime platform Track, share, and discover your favorite anime and manga with AniList. Discover your obsessions. ",
+        Description =
+            "AniList: The next-generation anime platform Track, share, and discover your favorite anime and manga with AniList. Discover your obsessions. ",
         HeroImage = ResourceHelper.GetResource("anilist.jpg"),
         SettingViewModel = typeof(SettingsViewModel)
     };
@@ -49,20 +52,26 @@ public class Module : IModule<Settings>
     }
 }
 
-
-public class Settings
+public sealed class Settings
 {
+    public const string RedirectUrl = "http://localhost:3333/callback";
+    public const int ClientId = 10588;
     public AniListAuthToken? Auth { get; set; }
     public bool IncludeNsfw { get; set; }
     public double SearchLimit { get; set; } = 15;
-    public TitleLanguage TitleLangauge { get; set; } = TitleLanguage.Romaji;
+    public TitleLanguage TitleLanguage { get; set; } = TitleLanguage.Romaji;
 }
 
-public class AniListAuthToken
+[UsedImplicitly]
+public sealed class AniListAuthToken
 {
-    public string AccessToken { get; set; } = "";
-    public long ExpiresIn { get; set; }
-    public DateTime CreatedAt { get; set; }
+    [JsonPropertyName("access_token")] public string AccessToken { get; set; } = "";
+
+    [JsonPropertyName("expires_in")] public long ExpiresIn { get; set; }
+
+    [JsonPropertyName("refresh_token")] public string RefreshToken { get; set; } = "";
+
+    public DateTime? CreatedAt { get; set; }
 }
 
 public enum TitleLanguage
