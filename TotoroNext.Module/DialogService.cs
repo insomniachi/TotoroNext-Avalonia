@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Avalonia;
+using Avalonia.Controls;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 
@@ -38,7 +39,7 @@ public class DialogService : IDialogService
         var tcs = new TaskCompletionSource<MessageBoxResult>();
         messageWindow.Closed += (_, _) =>
         {
-            var field = typeof(MessageBoxWindow).GetField("_dialogResult",
+            var field = typeof(Window).GetField("_dialogResult",
                                                           BindingFlags.Instance | BindingFlags.NonPublic);
             var value = field?.GetValue(messageWindow);
             if (value is MessageBoxResult result)
