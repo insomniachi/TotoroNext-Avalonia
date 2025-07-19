@@ -14,7 +14,6 @@
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.2" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.2" />
     <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.2" />
-    <PackageVersion Include="Avalonia" Version="11.3.2" />
     <PackageVersion Include="DiscordRichPresence" Version="1.3.0.28" />
     <PackageVersion Include="FFMpegCore" Version="5.2.0" />
     <PackageVersion Include="Flurl.Http" Version="4.0.2" />

@@ -4,5 +4,5 @@ public interface IModuleStore
 {
     IAsyncEnumerable<ModuleManifest> GetAllModules();
     Task<bool> DownloadModule(ModuleManifest manifest);
-    IAsyncEnumerable<IModule> LoadModules();
+    IEnumerable<IModule> LoadModules();
 }

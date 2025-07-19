@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -11,34 +12,34 @@ namespace TotoroNext.Module;
 public class ModuleStore : IModuleStore
 {
     private readonly HttpClient _client = new();
-    private readonly string _url = "https://raw.githubusercontent.com/insomniachi/TotoroNext/refs/heads/master/manifest.json";
+    private const string Url = "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/manifest.json";
     private readonly string _modulesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
     private readonly List<AssemblyLoadContext> _contexts = [];
 
-    public async IAsyncEnumerable<IModule> LoadModules()
+    public IEnumerable<IModule> LoadModules()
     {
-        var manifests = await GetAllModules().ToListAsync();
-
-#if WINDOWS
-        var targetFrameworkPattern = "*net9.0-windows10.0.26100";
-#else
-        var targetFrameworkPattern = "*net9.0-desktop";
-#endif
-
-        var directories = Directory.GetDirectories(_modulesPath, targetFrameworkPattern, SearchOption.AllDirectories);
+        var directories = Directory.GetDirectories(_modulesPath, "*", SearchOption.AllDirectories);
 
         foreach (var item in directories.SelectMany(x => Directory.GetFiles(x, "*.dll", SearchOption.AllDirectories)))
         {
             var fileName = Path.GetFileName(item);
 
-            if (!manifests.Any(x => x.EntryPoint == fileName))
+            if (!fileName.Contains("TotoroNext."))
+            {
+                continue;
+            }
+            
+            var context = new ModuleLoadContext(item);
+            Assembly assembly = null!;
+            try
+            {
+                assembly = context.LoadFromAssemblyPath(item);
+            }
+            catch
             {
                 continue;
             }
 
-            var context = new ModuleLoadContext(item);
-            _contexts.Add(context);
-            var assembly = context.LoadFromAssemblyPath(item);
             var modules = assembly.GetTypes().Where(x => x.IsAssignableTo(typeof(IModule)) && !x.IsAbstract).ToList();
 
             if (modules.Count == 0)
@@ -46,10 +47,13 @@ public class ModuleStore : IModuleStore
                 context.Unload();
                 continue;
             }
+            
+            _contexts.Add(context);
 
             foreach (var moduleType in modules)
             {
-                yield return (IModule)Activator.CreateInstance(moduleType)!;
+                var module = (IModule)Activator.CreateInstance(moduleType)!;
+                yield return module;
             }
         }
     }
@@ -58,13 +62,8 @@ public class ModuleStore : IModuleStore
     {
         try
         {
-#if WINDOWS
-            var targetFramework = "net9.0-windows10.0.26100";
-#else
-            var targetFramework = "net9.0-desktop";
-#endif
-            var destination = Path.Combine(_modulesPath, manifest.EntryPoint.Replace(".dll", ""), targetFramework);
-            var downloadUrl = Url.Combine(manifest.Versions[0].SourceUrl, targetFramework + ".zip");
+            var destination = Path.Combine(_modulesPath, manifest.EntryPoint.Replace(".dll", ""));
+            var downloadUrl = Flurl.Url.Combine(manifest.Versions[0].SourceUrl, ".zip");
             var stream = await _client.GetStreamAsync(downloadUrl);
             ZipFile.ExtractToDirectory(stream, destination, true);
             return true;
@@ -77,7 +76,7 @@ public class ModuleStore : IModuleStore
 
     public async IAsyncEnumerable<ModuleManifest> GetAllModules()
     {
-        var response = await _client.GetStringAsync(_url);
+        var response = await _client.GetStringAsync(Url);
         var array = JsonNode.Parse(response)?.AsArray() ?? throw new InvalidOperationException("Failed to parse module manifest.");
 
         var manifests = array.Deserialize<List<ModuleManifest>>();

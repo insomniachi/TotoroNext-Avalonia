@@ -26,7 +26,7 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         AppHost = Host.CreateDefaultBuilder()
-                      .ConfigureServices((_, services) =>
+                      .ConfigureServices(async (_, services) =>
                       {
                           services.AddCoreServices();
                           services.AddTransient<MainWindowViewModel>();
@@ -48,21 +48,16 @@ public class App : Application
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
 
-                          var modules = new List<IModule>
+#if !DEBUG
+                          var store = new DebugModuleStore();
+#else
+                          var store = new ModuleStore();
+#endif
+                          var modules = new List<IModule>()
                           {
-                              new Anime.Module(),
-                              new Anime.Anilist.Module(),
-                              new Anime.MyAnimeList.Module(),
-                              new Anime.AllAnime.Module(),
-                              new Anime.AnimePahe.Module(),
-                              new Anime.Aniskip.Module(),
-                              
-                              new MediaEngine.Mpv.Module(),
-                              new MediaEngine.Vlc.Module(),
-                              
-                              new Discord.Module()
+                              new Anime.Module()
                           };
-
+                          modules.AddRange(store.LoadModules());
                           foreach (var module in modules)
                           {
                               module.ConfigureServices(services);
@@ -83,7 +78,7 @@ public class App : Application
             };
             desktop.ShutdownRequested += async (_, _) => await AppHost.StopAsync();
         }
-        
+
         AppHost.StartAsync();
 
         base.OnFrameworkInitializationCompleted();
@@ -104,13 +99,11 @@ public class App : Application
 }
 
 
-#if DEBUG
+#if !DEBUG
 public class DebugModuleStore : IModuleStore
 {
-    public async IAsyncEnumerable<IModule> LoadModules()
+    public IEnumerable<IModule> LoadModules()
     {
-        await Task.CompletedTask;
-
         // Anime Providers
         yield return new Anime.AllAnime.Module();
         yield return new Anime.AnimePahe.Module();
