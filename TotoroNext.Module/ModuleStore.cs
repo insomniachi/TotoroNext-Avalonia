@@ -24,7 +24,7 @@ public class ModuleStore : IModuleStore
         foreach (var item in directories.SelectMany(x => Directory.GetFiles(x, "*.dll", SearchOption.AllDirectories)))
         {
             var fileName = Path.GetFileNameWithoutExtension(item);
-            var directoryName = Path.GetDirectoryName(item);
+            var directoryName = Path.GetFileName(Path.GetDirectoryName(item));
 
             if (fileName != directoryName)
             {
