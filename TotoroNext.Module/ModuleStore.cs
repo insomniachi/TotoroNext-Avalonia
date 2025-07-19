@@ -14,6 +14,7 @@ public class ModuleStore : IModuleStore
     private readonly HttpClient _client = new();
     private const string Url = "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/manifest.json";
     private readonly string _modulesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
+    // ReSharper disable once CollectionNeverQueried.Local
     private readonly List<AssemblyLoadContext> _contexts = [];
 
     public IEnumerable<IModule> LoadModules()
@@ -22,15 +23,16 @@ public class ModuleStore : IModuleStore
 
         foreach (var item in directories.SelectMany(x => Directory.GetFiles(x, "*.dll", SearchOption.AllDirectories)))
         {
-            var fileName = Path.GetFileName(item);
+            var fileName = Path.GetFileNameWithoutExtension(item);
+            var directoryName = Path.GetDirectoryName(item);
 
-            if (!fileName.Contains("TotoroNext."))
+            if (fileName != directoryName)
             {
                 continue;
             }
             
             var context = new ModuleLoadContext(item);
-            Assembly assembly = null!;
+            Assembly assembly;
             try
             {
                 assembly = context.LoadFromAssemblyPath(item);
@@ -50,9 +52,8 @@ public class ModuleStore : IModuleStore
             
             _contexts.Add(context);
 
-            foreach (var moduleType in modules)
+            foreach (var module in modules.Select(moduleType => (IModule)Activator.CreateInstance(moduleType)!))
             {
-                var module = (IModule)Activator.CreateInstance(moduleType)!;
                 yield return module;
             }
         }

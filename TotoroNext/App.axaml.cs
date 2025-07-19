@@ -47,17 +47,8 @@ public class App : Application
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
-
-#if REFER_PLUGINS
-                          var store = new DebugModuleStore();
-#else
-                          var store = new ModuleStore();
-#endif
-                          var modules = new List<IModule>()
-                          {
-                              new Anime.Module()
-                          };
-                          modules.AddRange(store.LoadModules());
+                          
+                          List<IModule> modules = [ new Anime.Module(), ..LoadInstalledModules() ];
                           foreach (var module in modules)
                           {
                               module.ConfigureServices(services);
@@ -95,6 +86,15 @@ public class App : Application
         {
             BindingPlugins.DataValidators.Remove(plugin);
         }
+    }
+
+    private static IEnumerable<IModule> LoadInstalledModules()
+    {
+#if REFER_PLUGINS
+        return new DebugModuleStore().LoadModules();
+#else
+        return new ModuleStore().LoadModules();
+#endif
     }
 }
 

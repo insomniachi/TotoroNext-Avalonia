@@ -8,9 +8,7 @@
               x:DataType="vm:MainWindowViewModel"
               xmlns:u="https://irihi.tech/ursa"
               xmlns:mod="using:TotoroNext.Module"
-              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-              xmlns:iri="https://irihi.tech/shared"
-              Icon="/Assets/avalonia-logo.ico"
+              Icon="/Assets/WindowIcon.ico"
               WindowStartupLocation="CenterScreen"
               IsFullScreenButtonVisible="{OnPlatform {x:True}, macOS={x:False}}"
               IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
@@ -51,7 +49,9 @@
                                 VerticalAlignment="Center"
                                 Background="Transparent"
                                 DockPanel.Dock="Left">
-                                <iri:IrihiLogo Width="32" Fill="{DynamicResource SemiGrey7}" />
+                                <Viewbox Height="32" Width="32" Stretch="Uniform">
+                                    <Image Source="../Assets/WindowIcon.ico" Stretch="Uniform" />
+                                </Viewbox>
                             </Panel>
                             <TextBlock
                                 VerticalAlignment="Center"
@@ -63,7 +63,7 @@
                         </DockPanel>
                     </u:NavMenu.Header>
                     <u:NavMenu.Footer>
-                        <ItemsControl ItemsSource="{Binding FooterMenuItems}"/>
+                        <ItemsControl ItemsSource="{Binding FooterMenuItems}" />
                     </u:NavMenu.Footer>
                 </u:NavMenu>
             </Border>
