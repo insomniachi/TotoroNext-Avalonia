@@ -48,7 +48,7 @@ public class App : Application
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
 
-#if !DEBUG
+#if REFER_PLUGINS
                           var store = new DebugModuleStore();
 #else
                           var store = new ModuleStore();
@@ -99,7 +99,7 @@ public class App : Application
 }
 
 
-#if !DEBUG
+#if REFER_PLUGINS
 public class DebugModuleStore : IModuleStore
 {
     public IEnumerable<IModule> LoadModules()

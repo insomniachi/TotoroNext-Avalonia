@@ -7,6 +7,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <Platforms>x64</Platforms>
+        <DefineConstants>_REFER_PLUGINS</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -36,7 +37,7 @@
         <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(DefineConstants)', '(^|;)REFER_PLUGINS(;|$)'))">
         <ProjectReference Include="..\TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.AnimePahe\TotoroNext.Anime.AnimePahe.csproj"/>
 
