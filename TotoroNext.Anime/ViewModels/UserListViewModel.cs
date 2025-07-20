@@ -80,7 +80,11 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
             ? _providerFactory.Create(providerId)
             : _providerFactory.CreateDefault();
 
-        var result = await provider.SearchAndSelectAsync(anime);
+        var term = string.IsNullOrEmpty(overrides?.SelectedResult)
+            ? anime.Title
+            : overrides.SelectedResult;
+        
+        var result = await provider.SearchAndSelectAsync(term);
 
         if (overrides is not null)
         {

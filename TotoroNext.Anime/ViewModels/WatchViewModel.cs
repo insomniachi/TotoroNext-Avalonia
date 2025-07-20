@@ -200,18 +200,7 @@ public sealed partial class WatchViewModel(
             MediaPlayer
                 .PositionChanged
                 .Where(_ => _media is not null)
-                .Select(position =>
-                {
-                    foreach (var item in _media!.Metadata.MedaSections ?? [])
-                    {
-                        if (position > item.Start && position < item.End)
-                        {
-                            return item;
-                        }
-                    }
-
-                    return null;
-                })
+                .Select(position => (_media!.Metadata.MedaSections ?? []).FirstOrDefault(item => position > item.Start && position < item.End) )
                 .WhereNotNull()
                 .DistinctUntilChanged()
                 .Subscribe(segment => CurrentSegment = segment);

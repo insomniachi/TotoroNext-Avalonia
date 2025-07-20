@@ -73,10 +73,8 @@ public sealed partial class AnimeDetailsViewModel(
             .Subscribe();
 
         this.WhenAnyValue(x => x.SelectedTab)
-            .Subscribe(tab =>
-            {
-                Navigator?.NavigateToData(tab.GetData(Anime));
-            });
+            .WhereNotNull()
+            .Subscribe(tab => Navigator?.NavigateToData(tab.GetData(Anime)));
     }
 
 

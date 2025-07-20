@@ -18,5 +18,12 @@
                       DisplayMemberBinding="{Binding Name}"
                       HorizontalAlignment="Stretch"/>
         </u:FormItem>
+        <u:FormItem Label="Provider Result">
+            <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
+                      SelectedValue="{Binding SelectedResult}"
+                      SelectedValueBinding="{Binding Title}"
+                      DisplayMemberBinding="{Binding Title}"
+                      HorizontalAlignment="Stretch"/>
+        </u:FormItem>
     </u:Form>
 </UserControl>

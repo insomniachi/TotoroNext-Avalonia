@@ -7,26 +7,30 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="AsyncImageLoader.Avalonia" />
+        <!-- Avalonia -->
         <PackageReference Include="Avalonia" />
-        <PackageReference Include="Avalonia.Controls.ItemsRepeater" />
         <PackageReference Include="Avalonia.Markup.Declarative" />
         <PackageReference Include="Avalonia.ReactiveUI" />
+        
         <PackageReference Include="Flurl.Http" />
         <PackageReference Include="Humanizer" />
+        <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" />
+        <PackageReference Include="System.Linq.Async" />
+        <PackageReference Include="JetBrains.Annotations" />
+        
+        <!-- Microsoft -->
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        
+        <!-- Avalonia OSS-->
         <PackageReference Include="IconPacks.Avalonia" />
         <PackageReference Include="Irihi.Ursa" />
         <PackageReference Include="Irihi.Ursa.Themes.Semi" />
-        <PackageReference Include="Microsoft.Extensions.Http" />
-        <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" />
+        <PackageReference Include="AsyncImageLoader.Avalonia" />
         <PackageReference Include="Semi.Avalonia" />
-
-        <PackageReference Include="Microsoft.Extensions.Hosting" />
-        <PackageReference Include="CommunityToolkit.Mvvm" />
-        <PackageReference Include="System.Linq.Async" />
         <PackageReference Include="Xaml.Behaviors.Avalonia" />
-
-        <PackageReference Include="JetBrains.Annotations" />
+        
     </ItemGroup>
     
 

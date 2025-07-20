@@ -42,8 +42,12 @@ public partial class SearchViewModel(IFactory<IMetadataService, Guid> factory,
 		var provider = overrides?.Provider is { } providerId
 			? providerFactory.Create(providerId)
 			: providerFactory.CreateDefault();
+		
+		var term = string.IsNullOrEmpty(overrides?.SelectedResult)
+			? anime.Title
+			: overrides.SelectedResult;
 
-		var result = await provider.SearchAndSelectAsync(anime);
+		var result = await provider.SearchAndSelectAsync(term);
 
 		if (overrides is not null)
 		{

@@ -1,20 +1,29 @@
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DynamicData.Binding;
+using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
+using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.ViewModels;
 
+[UsedImplicitly]
 public partial class AnimeOverridesViewModel(
     OverridesViewModelNavigationParameters parameters,
     IAnimeOverridesRepository animeOverridesRepository,
+    IFactory<IAnimeProvider, Guid> providerFactory,
     IEnumerable<Descriptor> descriptors) : ObservableObject, IInitializable
 {
     [ObservableProperty] public partial bool IsNsfw { get; set; }
 
     [ObservableProperty] public partial Guid? ProviderId { get; set; }
+
+    [ObservableProperty] public partial string? SelectedResult { get; set; }
+
+    [ObservableProperty] public partial List<SearchResult> ProviderResults { get; set; } = [];
 
     public List<Descriptor> Providers { get; } = [.. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
@@ -24,14 +33,30 @@ public partial class AnimeOverridesViewModel(
 
         IsNsfw = overrides?.IsNsfw ?? false;
         ProviderId = overrides?.Provider;
+        SelectedResult = overrides?.SelectedResult;
 
-        this.WhenAnyValue(x => x.IsNsfw, x => x.ProviderId)
-            .Skip(1)
-            .Select(x => new AnimeOverrides
+        this.WhenAnyPropertyChanged(nameof(IsNsfw), nameof(ProviderId), nameof(SelectedResult))
+            .Select(_ => new AnimeOverrides()
             {
-                IsNsfw = x.Item1,
-                Provider = x.Item2
+                IsNsfw = IsNsfw,
+                Provider = ProviderId,
+                SelectedResult = SelectedResult
             })
             .Subscribe(@override => animeOverridesRepository.CreateOrUpdate(parameters.Anime.Id, @override));
+
+        this.WhenAnyValue(x => x.ProviderId)
+            .WhereNotNull()
+            .SelectMany(id =>
+            {
+                var provider = providerFactory.Create(id!.Value);
+                return provider.SearchAsync(@parameters.Anime.Title).ToListAsync().AsTask();
+            })
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(results =>
+            {
+                var currentResult = SelectedResult;
+                ProviderResults = results;
+                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult)?.Title;
+            });
     }
 }

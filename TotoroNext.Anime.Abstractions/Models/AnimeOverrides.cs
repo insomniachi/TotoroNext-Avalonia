@@ -5,6 +5,8 @@ public sealed partial class AnimeOverrides
     public event EventHandler? Reverted;
     public bool IsNsfw { get; set; }
     public Guid? Provider { get; set; }
+    
+    public string? SelectedResult { get; set; }
 
     public void Revert()
     {

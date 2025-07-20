@@ -12,52 +12,49 @@ namespace TotoroNext.Anime.Extensions;
 
 internal static class AnimeSearchExtensions
 {
-    internal static async Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, AnimeModel model)
+    internal static Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, AnimeModel model)
     {
-        var results = await provider.SearchAsync(model.Title).ToListAsync();
+        return SearchAndSelectAsync(provider, model.Title);
+    }
+    
+    internal static async Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, string term)
+    {
+        var results = await provider.SearchAsync(term).ToListAsync();
 
-        if (results.Count == 0)
+        switch (results.Count)
         {
-            return null;
+            case 0:
+                return null;
+            case 1:
+                return results[0];
         }
 
-        if (results.Count == 1)
-        {
-            return results[0];
-        }
-
-        if (results.FirstOrDefault(x => string.Equals(x.Title, model.Title, StringComparison.OrdinalIgnoreCase)) is { } result)
+        if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
         {
             return result;
         }
-        else
-        {
-            return await Container.Services.GetRequiredService<ISelectionUserInteraction<SearchResult>>().GetValue(results);
-        }
+
+        return await Container.Services.GetRequiredService<ISelectionUserInteraction<SearchResult>>().GetValue(results);
     }
 
     internal static async Task<AnimeModel?> SearchAndSelectAsync(this IMetadataService provider, SearchResult model)
     {
         var results = await provider.SearchAnimeAsync(model.Title);
 
-        if (results.Count == 0)
+        switch (results.Count)
         {
-            return null;
-        }
-
-        if (results.Count == 1)
-        {
-            return results[0];
+            case 0:
+                return null;
+            case 1:
+                return results[0];
         }
 
         if (results.FirstOrDefault(x => string.Equals(x.Title, model.Title, StringComparison.OrdinalIgnoreCase)) is { } result)
         {
             return result;
         }
-        else
-        {
-            return await Container.Services.GetRequiredService<ISelectionUserInteraction<AnimeModel>>().GetValue(results);
-        }
+
+        return await Container.Services.GetRequiredService<ISelectionUserInteraction<AnimeModel>>().GetValue(results);
     }
 
     internal static async Task<VideoServer?> SelectServer(this Episode ep)
