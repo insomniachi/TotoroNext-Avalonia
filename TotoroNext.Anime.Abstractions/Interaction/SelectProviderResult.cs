@@ -17,9 +17,9 @@ public sealed class SelectProviderResult : SelectResult<SearchResult>
             .Margin(8)
             .Cols("Auto,*")
             .Children([
-                CreateImage(model.Image?.ToString()),
+                CreateImage(model?.Image?.ToString()),
                 new TextBlock()
-                    .Text(model.Title)
+                    .Text(model?.Title ?? "")
                     .VerticalAlignment(VerticalAlignment.Center)
                     .TextWrapping(TextWrapping.Wrap)
                     .Col(1)

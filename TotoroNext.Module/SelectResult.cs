@@ -14,12 +14,13 @@ public abstract class SelectResult<T> : ISelectionUserInteraction<T>
         var lb = new ListBox()
             .ItemsSource(input)
             .SelectionMode(SelectionMode.Single)
+            .MaxHeight(600)
             .ItemTemplate<T>(CreateElement);
         
         var options = new OverlayDialogOptions()
         {
             Buttons = DialogButton.OKCancel,
-            Title = GetTitle()
+            Title = GetTitle(),
         };
 
         var result = await OverlayDialog.ShowModal(lb, null, null, options);
@@ -35,7 +36,7 @@ public abstract class SelectResult<T> : ISelectionUserInteraction<T>
                     .Height(100)
                     .Width(75)
                     .Stretch(Stretch.UniformToFill);
-        AsyncImageLoader.ImageLoader.SetSource(image, uri?.ToString());
+        AsyncImageLoader.ImageLoader.SetSource(image, uri);
         return image;
     }
 
