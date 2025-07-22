@@ -165,7 +165,7 @@ public sealed partial class WatchViewModel(
 
     private async Task<(MediaSegment Segment, MessageBoxResult Result)> AskSkip(MediaSegment segment)
     {
-        return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip());
+        return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()));
     }
 
     private void InitializePublishers()

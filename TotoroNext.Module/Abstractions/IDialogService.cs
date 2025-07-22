@@ -5,5 +5,5 @@ namespace TotoroNext.Module.Abstractions;
 public interface IDialogService
 {
     Task<MessageBoxResult> Question(string title, string question);
-    Task<MessageBoxResult> AskSkip();
+    Task<MessageBoxResult> AskSkip(string type);
 }

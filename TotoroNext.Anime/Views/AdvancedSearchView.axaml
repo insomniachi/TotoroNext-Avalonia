@@ -1,0 +1,107 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TotoroNext.Anime.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:aa="using:TotoroNext.Anime.Abstractions.Models"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
+             xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:AdvancedSearchViewModel"
+             x:Class="TotoroNext.Anime.Views.AdvancedSearchView">
+    <Grid RowDefinitions="Auto,*"
+          RowSpacing="16">
+
+        <u:Form>
+            <u:Form.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" Columns="3" ColumnSpacing="32" />
+                </ItemsPanelTemplate>
+            </u:Form.ItemsPanel>
+            <u:FormGroup Header="Season">
+                <u:FormItem Label="Name">
+                    <u:EnumSelector EnumType="{x:Type aa:AnimeSeason}"
+                                    Value="{Binding Season, Mode=TwoWay}"
+                                    HorizontalAlignment="Stretch" />
+                </u:FormItem>
+                <u:FormItem Label="Year">
+                    <u:NumericIntUpDown Value="{Binding Year, Mode=TwoWay}"
+                                        Maximum="{Binding CurrentYear, Mode=OneTime}"
+                                        HorizontalAlignment="Stretch"
+                                        Watermark="Year" />
+                </u:FormItem>
+            </u:FormGroup>
+            
+            <u:FormGroup Header="Tags">
+                <u:FormGroup.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="16"/>
+                    </ItemsPanelTemplate>
+                </u:FormGroup.ItemsPanel>
+                <u:FormItem Label="Include">
+                    <u:TagInput
+                        AllowDuplicates="False"
+                        Separator=","
+                        Tags="{Binding IncludedGenres}"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        Width="250"
+                        Height="100"
+                        Padding="0"/>
+                </u:FormItem>
+                <u:FormItem Label="Exclude">
+                    <u:TagInput
+                        AllowDuplicates="False"
+                        Separator=","
+                        VerticalAlignment="Stretch"
+                        Tags="{Binding ExcludedGenres}"
+                        Width="250"
+                        Height="100"
+                        Padding="0"/>
+                </u:FormItem>
+            </u:FormGroup>
+            
+            <u:FormGroup Header="Score">
+                <u:FormItem Label="Minimum">
+                    <u:NumericIntUpDown Value="{Binding MinimumScore, Mode=TwoWay}"
+                                        Maximum="100"
+                                        Minimum="0"/>
+                </u:FormItem>
+                <u:FormItem Label="Maximum">
+                    <u:NumericIntUpDown Value="{Binding MaximumScore, Mode=TwoWay}"
+                                        Maximum="100"
+                                        Minimum="0"/>
+                </u:FormItem>
+            </u:FormGroup>
+        </u:Form>
+
+        <u:LoadingContainer Grid.Row="1"
+                            Background="Transparent"
+                            VerticalContentAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Anime, Mode=OneWay}"
+                              module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <controls:ElasticWrapPanelEx
+                                ItemHeight="400"
+                                ItemWidth="250"
+                                IsFillHorizontal="True" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ac:AnimeCard Anime="{Binding}"
+                                          Margin="8"
+                                          module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:AdvancedSearchViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}"
+                                          module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AdvancedSearchViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </u:LoadingContainer>
+    </Grid>
+</UserControl>

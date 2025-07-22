@@ -8,9 +8,22 @@ namespace TotoroNext.Anime.Abstractions;
 public interface IMetadataService
 {
     Task<AnimeModel> GetAnimeAsync(long id);
+    Task<List<AnimeModel>> GetAnimeAsync(Season season);
     Task<List<AnimeModel>> SearchAnimeAsync(string term);
-    Task<List<AnimeModel>> GetSeasonalAnimeAsync();
+    Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request);
     Task<List<AnimeModel>> GetAiringAnimeAsync();
+}
+
+public class AdvancedSearchRequest
+{
+    public string? Title { get; set; }
+    public AnimeSeason? SeasonName { get; set; }
+    public AnimeSource? Source { get; set; }
+    public List<string>? IncludedGenres { get; set; }
+    public List<string>? ExcludedGenres { get; set; }
+    public int? MinimumScore { get; set; }
+    public int? MaximumScore { get; set; }
+    public int? Year { get; set; }
 }
 
 [DebuggerDisplay("{Title}")]
@@ -111,4 +124,23 @@ public enum AiringStatus
 
     [Description("Not Yet Aired")]
     NotYetAired
+}
+
+public enum AnimeSource
+{
+    Original,
+    Manga,
+    LightNovel,
+    VisualNovel,
+    VideoGame,
+    Other,
+    Novel,
+    Doujinshi,
+    Anime,
+    WebNovel,
+    LiveAction,
+    Game,
+    Comic,
+    MultimediaProject,
+    PictureBook
 }

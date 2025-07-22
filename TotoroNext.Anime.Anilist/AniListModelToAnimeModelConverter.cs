@@ -176,7 +176,7 @@ public partial class AniListModelToAnimeModelConverter
         };
     }
 
-    public static MediaSeason ConvertSeason(AnimeSeason season)
+    public static MediaSeason? ConvertSeason(AnimeSeason? season)
     {
         return season switch
         {
@@ -184,8 +184,13 @@ public partial class AniListModelToAnimeModelConverter
             AnimeSeason.Summer => MediaSeason.Summer,
             AnimeSeason.Fall => MediaSeason.Fall,
             AnimeSeason.Winter => MediaSeason.Winter,
-            _ => throw new UnreachableException()
+            _ => null
         };
+    }
+
+    public static MediaSource? ConvertSource(AnimeSource? source)
+    {
+        return (MediaSource?)(int?)source;
     }
 
     public static AnimeSeason ConvertSeason(MediaSeason season)

@@ -7,7 +7,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <Platforms>x64</Platforms>
-        <DefineConstants>_REFER_PLUGINS</DefineConstants>
+        <DefineConstants>REFER_PLUGINS</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
