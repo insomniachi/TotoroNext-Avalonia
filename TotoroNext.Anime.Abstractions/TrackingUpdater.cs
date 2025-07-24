@@ -7,6 +7,7 @@ namespace TotoroNext.Anime.Abstractions;
 
 public sealed class TrackingUpdater(
     IFactory<ITrackingService, Guid> factory,
+    IFactory<IMetadataService, Guid> metadataFactory,
     IMessenger messenger) : IHostedService, IRecipient<PlaybackState>
 {
     public Task StartAsync(CancellationToken cancellationToken)
@@ -61,18 +62,44 @@ public sealed class TrackingUpdater(
         // ReSharper disable once CompareOfFloatsByEqualityOperator
         tracking.Status = message.Anime.TotalEpisodes == message.Episode.Number ? ListItemStatus.Completed : ListItemStatus.Watching;
 
-        var tasks = factory.CreateAll()
-                           .Select(service => new Tuple<ITrackingService, long?>(service, message.Anime.ExternalIds.GetId(service.ServiceName)))
-                           .Where(x => x.Item2 is not null)
-                           .Select(tuple => tuple.Item1.Update(tuple.Item2!.Value, tracking))
-                           .ToArray();
-
+        await UpdateTracking(message.Anime, tracking);
+        
         messenger.Send(new TrackingUpdated
         {
             Anime = message.Anime,
             Episode = message.Episode
         });
-        
-        await Task.WhenAll(tasks);
+    }
+
+    private async Task UpdateTracking(AnimeModel anime, Tracking tracking)
+    {
+        var trackingServices = factory.CreateAll();
+        foreach (var trackingService in trackingServices)
+        {
+            var id = anime.ExternalIds.GetId(trackingService.Name);
+            if (id is null)
+            {
+                try
+                {
+                    var metaDataService = metadataFactory.Create(trackingService.Id);
+                    if (metaDataService.Id == anime.ServiceId)
+                    {
+                        continue;
+                    }
+                    id = (await metaDataService.FindAnimeAsync(anime))?.Id;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
+            if (id is null)
+            {
+                continue;
+            }
+
+            await trackingService.Update(id.Value, tracking);
+        }
     }
 }

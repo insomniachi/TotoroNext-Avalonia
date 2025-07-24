@@ -7,11 +7,31 @@ namespace TotoroNext.Anime.Abstractions;
 
 public interface IMetadataService
 {
+    Guid Id { get; }
+    public string Name { get; }
     Task<AnimeModel> GetAnimeAsync(long id);
-    Task<List<AnimeModel>> GetAnimeAsync(Season season);
     Task<List<AnimeModel>> SearchAnimeAsync(string term);
     Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request);
-    Task<List<AnimeModel>> GetAiringAnimeAsync();
+}
+
+public static class MetadataServiceExtensions
+{
+    public static async ValueTask<AnimeModel?> FindAnimeAsync(this IMetadataService service, AnimeModel anime)
+    {
+        if (anime.ServiceId == service.Id)
+        {
+            return anime;
+        }
+        
+        var response = await service.SearchAnimeAsync(anime.Title);
+
+        return response switch
+        {
+            { Count: 0 } => null,
+            { Count: 1 } => response[0],
+            _ => response.FirstOrDefault(x => x.Season == anime.Season)
+        };
+    }
 }
 
 public class AdvancedSearchRequest
@@ -43,7 +63,8 @@ public partial class AnimeModel : ObservableObject
     public DateTime? NextEpisodeAt { get; set; }
     public int AiredEpisodes { get; set; }
     public Season? Season { get; set; }
-    public string? ServiceType { get; init; }
+    public Guid? ServiceId { get; init; }
+    public string? ServiceName { get; init; }
     public string Description { get; set; } = "";
     public IEnumerable<AnimeModel> Related { get; set; } = [];
     public IEnumerable<AnimeModel> Recommended { get; set; } = [];

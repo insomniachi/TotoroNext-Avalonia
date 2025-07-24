@@ -115,7 +115,6 @@ public sealed partial class WatchViewModel(
 
         this.WhenAnyValue(x => x.SelectedEpisode)
             .WhereNotNull()
-            .ObserveOn(RxApp.TaskpoolScheduler)
             .SelectMany(ep => ep.GetServersAsync().ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);

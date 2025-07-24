@@ -4,21 +4,21 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Flurl.Http;
 using FlurlGraphQL;
+using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.AnimeHeaven;
 
 namespace TotoroNext.Anime.AllAnime;
 
-internal partial class AnimeProvider : IAnimeProvider
+internal class AnimeProvider : IAnimeProvider
 {
     public const string Api = "https://api.allanime.day/api";
-    public const string BaseUrl = "https://allanime.to/";
 
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
         var jObject = await Api
-            .WithGraphQLQuery(SHOW_QUERY)
+            .WithGraphQLQuery(ShowQuery)
             .SetGraphQLVariable("showId", animeId)
             .PostGraphQLQueryAsync()
             .ReceiveGraphQLRawSystemTextJsonResponse();
@@ -41,7 +41,7 @@ internal partial class AnimeProvider : IAnimeProvider
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
         var jsonNode = await Api
-            .WithGraphQLQuery(EPISODE_QUERY)
+            .WithGraphQLQuery(EpisodeQuery)
             .SetGraphQLVariables(new
             {
                 showId = animeId,
@@ -51,7 +51,7 @@ internal partial class AnimeProvider : IAnimeProvider
             .PostGraphQLQueryAsync()
             .ReceiveGraphQLRawSystemTextJsonResponse();
 
-        if (jsonNode?["errors"] is { })
+        if (jsonNode?["errors"] is not null)
         {
             yield break;
         }
@@ -79,27 +79,19 @@ internal partial class AnimeProvider : IAnimeProvider
                     yield return VideoServers.WithReferer(item.SourceName, item.SourceUrl, "https://allanime.day/");
                     continue;
                 case "Vg":
-                    continue;
                 case "Fm-Hls":
-                    continue;
                 case "Sw":
-                    continue;
                 case "Ok":
-                    continue;
                 case "Ss-Hls":
-                    continue;
                 case "Vid-mp4":
                     continue;
-                default:
-                    break;
             }
 
-            string? response = "";
-            JsonObject? jObject = null;
+            JsonObject? jObject;
             try
             {
-                response = await $"https://allanime.day{item.SourceUrl.Replace("clock", "clock.json")}".GetStringAsync();
-                jObject = JsonNode.Parse(response)!.AsObject()!;
+                var response = await $"https://allanime.day{item.SourceUrl.Replace("clock", "clock.json")}".GetStringAsync();
+                jObject = JsonNode.Parse(response)!.AsObject();
             }
             catch
             {
@@ -109,26 +101,22 @@ internal partial class AnimeProvider : IAnimeProvider
             switch (item.SourceName)
             {
                 case "Luf-Mp4" or "S-mp4":
-                    var links = jObject["links"].Deserialize<List<ApiV2Reponse>>() ?? [];
+                    var links = jObject["links"].Deserialize<List<ApiV2Response>>() ?? [];
                     yield return VideoServers.WithReferer(item.SourceName, links[0].Url, "https://allanime.day/");
                     continue;
                 case "Default":
                     var hls = jObject["links"].Deserialize<List<DefaultResponse>>() ?? [];
-                    yield return new VideoServer(item.SourceName, new Uri(hls[0].link));
+                    yield return new VideoServer(item.SourceName, new Uri(hls[0].Link));
                     continue;
-                default:
-                    break;
             }
 
         }
-
-        yield break;
     }
 
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
         var jObject = await Api
-             .WithGraphQLQuery(SEARCH_QUERY)
+             .WithGraphQLQuery(SearchQuery)
              .SetGraphQLVariables(new
              {
                  search = new
@@ -144,14 +132,17 @@ internal partial class AnimeProvider : IAnimeProvider
 
         foreach (var item in jObject?["shows"]?["edges"]?.AsArray().OfType<JsonObject>() ?? [])
         {
-            var title = $"{item?["name"]}";
-            var id = $"{item?["_id"]}";
+            var title = $"{item["name"]}";
+            var id = $"{item["_id"]}";
             Uri? image = null;
             try
             {
-                image = new Uri($"{item?["thumbnail"]}");
+                image = new Uri($"{item["thumbnail"]}");
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             yield return new SearchResult(this, id, title, image);
         }
@@ -166,7 +157,7 @@ internal partial class AnimeProvider : IAnimeProvider
         return Decrypt(encrypted);
     }
 
-    public const string SEARCH_QUERY =
+    public const string SearchQuery =
     $$"""
         query( $search: SearchInput
                $limit: Int
@@ -199,7 +190,7 @@ internal partial class AnimeProvider : IAnimeProvider
         }
         """;
 
-    public const string SHOW_QUERY =
+    public const string ShowQuery =
     """
         query ($showId: String!) {
             show(
@@ -212,7 +203,7 @@ internal partial class AnimeProvider : IAnimeProvider
         }
         """;
 
-    public const string EPISODE_QUERY =
+    public const string EpisodeQuery =
     """
         query ($showId: String!, $translationType: VaildTranslationTypeEnumType!, $episodeString: String!) {
             episode(
@@ -228,21 +219,21 @@ internal partial class AnimeProvider : IAnimeProvider
         """;
 }
 
-
-class EpisodeDetails
+internal sealed class EpisodeDetails
 {
     [JsonPropertyName("sub")]
-    public List<string> Sub { get; set; } = [];
+    public List<string> Sub { get; init; } = [];
 
     [JsonPropertyName("dub")]
-    public List<string> Dub { get; set; } = [];
+    public List<string> Dub { get; init; } = [];
 
     [JsonPropertyName("raw")]
-    public List<string> Raw { get; set; } = [];
+    public List<string> Raw { get; init; } = [];
 }
 
-[DebuggerDisplay("{priority} - {sourceUrl} - {type}")]
-class SourceUrlObj
+[DebuggerDisplay("{Priority} - {SourceUrl} - {Type}")]
+[UsedImplicitly]
+internal sealed class SourceUrlObj
 {
 
     [JsonPropertyName("sourceName")]
@@ -258,7 +249,8 @@ class SourceUrlObj
     public string Type { get; set; } = "";
 }
 
-public class ApiV2Reponse
+[UsedImplicitly]
+public sealed class ApiV2Response
 {
     [JsonPropertyName("src")]
     public string Url { get; set; } = "";
@@ -267,11 +259,21 @@ public class ApiV2Reponse
     public Dictionary<string, string> Headers { get; set; } = [];
 }
 
-public class DefaultResponse
+[UsedImplicitly]
+public sealed class DefaultResponse
 {
-    public string link { get; set; } = string.Empty;
-    public bool hls { get; set; }
-    public string resolutionStr { get; set; } = string.Empty;
-    public int resolution { get; set; } = 0;
-    public string src { get; set; } = string.Empty;
+    [JsonPropertyName("link")]
+    public string Link { get; set; } = string.Empty;
+    
+    [JsonPropertyName("hls")]
+    public bool Hls { get; set; }
+    
+    [JsonPropertyName("resolutionStr")]
+    public string ResolutionString { get; set; } = string.Empty;
+    
+    [JsonPropertyName("resolution")]
+    public int Resolution { get; set; } = 0;
+    
+    [JsonPropertyName("src")]
+    public string Src { get; set; } = string.Empty;
 }

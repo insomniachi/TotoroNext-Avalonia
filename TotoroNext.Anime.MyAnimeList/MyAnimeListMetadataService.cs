@@ -50,23 +50,9 @@ internal class MyAnimeListMetadataService : IMetadataService
         return Task.FromResult<List<AnimeModel>>([]);
     }
 
-    public async Task<List<AnimeModel>> GetAiringAnimeAsync()
-    {
-        var request = _client
-                      .Anime()
-                      .Top(AnimeRankingType.Airing)
-                      .WithLimit(15)
-                      .WithFields(_commonFields);
+    public Guid Id { get; } = Module.Id;
 
-        if (_settings.IncludeNsfw)
-        {
-            request.IncludeNsfw();
-        }
-
-        var result = await request.Find();
-
-        return [.. result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime))];
-    }
+    public string Name { get; } = nameof(ExternalIds.MyAnimeList);
 
     public async Task<AnimeModel> GetAnimeAsync(long id)
     {
@@ -78,22 +64,6 @@ internal class MyAnimeListMetadataService : IMetadataService
                                     .Find();
 
         return MalToModelConverter.ConvertModel(malModel);
-    }
-
-    public async Task<List<AnimeModel>> GetAnimeAsync(Season season)
-    {
-        var request = _client.Anime()
-                             .OfSeason((AnimeSeason)(int)season.SeasonName, season.Year)
-                             .WithFields(_commonFields);
-
-        if (_settings.IncludeNsfw)
-        {
-            request.IncludeNsfw();
-        }
-
-        var pagedAnime = await request.Find();
-
-        return [.. pagedAnime.Data.Select(MalToModelConverter.ConvertModel)];
     }
 
     public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
@@ -112,5 +82,39 @@ internal class MyAnimeListMetadataService : IMetadataService
         var result = await request.Find();
 
         return [.. result.Data.Select(MalToModelConverter.ConvertModel)];
+    }
+
+    public async Task<List<AnimeModel>> GetAiringAnimeAsync()
+    {
+        var request = _client
+                      .Anime()
+                      .Top(AnimeRankingType.Airing)
+                      .WithLimit(15)
+                      .WithFields(_commonFields);
+
+        if (_settings.IncludeNsfw)
+        {
+            request.IncludeNsfw();
+        }
+
+        var result = await request.Find();
+
+        return [.. result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime))];
+    }
+
+    public async Task<List<AnimeModel>> GetAnimeAsync(Season season)
+    {
+        var request = _client.Anime()
+                             .OfSeason((AnimeSeason)(int)season.SeasonName, season.Year)
+                             .WithFields(_commonFields);
+
+        if (_settings.IncludeNsfw)
+        {
+            request.IncludeNsfw();
+        }
+
+        var pagedAnime = await request.Find();
+
+        return [.. pagedAnime.Data.Select(MalToModelConverter.ConvertModel)];
     }
 }

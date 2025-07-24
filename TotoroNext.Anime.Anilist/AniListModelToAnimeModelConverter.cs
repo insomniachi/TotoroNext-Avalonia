@@ -8,25 +8,21 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Anilist;
 
-public partial class AniListModelToAnimeModelConverter
+public static partial class AniListModelToAnimeModelConverter
 {
-    public const string ServiceType = "Anilist";
+    private static readonly Settings Settings = Container.Services.GetRequiredService<IModuleSettings<Settings>>().Value;
 
     [GeneratedRegex(@"(</?i>)|(<br>)")]
     private static partial Regex DescriptionCleanRegex();
 
-    private static readonly Settings Settings = Container.Services.GetRequiredService<IModuleSettings<Settings>>().Value;
-
     private static string GetTitle(Media media)
     {
-        if(Settings.TitleLanguage == TitleLanguage.English)
+        if (Settings.TitleLanguage == TitleLanguage.English)
         {
             return media.Title.English ?? media.Title.Romaji;
         }
-        else
-        {
-            return media.Title.Romaji ?? media.Title.English;
-        }
+
+        return media.Title.Romaji ?? media.Title.English;
     }
 
     public static AnimeModel ConvertModel(Media media)
@@ -51,32 +47,38 @@ public partial class AniListModelToAnimeModelConverter
             NextEpisodeAt = ConvertToExactTime(media.NextAiringEpisode?.TimeUntilAiring),
             AiredEpisodes = media.NextAiringEpisode?.Episode - 1 ?? 0,
             Season = GetSeason(media.Season, media.SeasonYear),
-            ServiceType = ServiceType,
+            ServiceId = Module.Id,
+            ServiceName = nameof(ExternalIds.Anilist),
             Description = DescriptionCleanRegex().Replace(media.Description ?? string.Empty, string.Empty),
             Related = ConvertSimple(media.Relations?.Nodes ?? []),
-            Recommended = ConvertSimple(media.Recommendations?.Nodes.Select(x => x.MediaRecommendation).Where(x => x is not null).Where(x => x.Type == MediaType.Anime) ?? [])
+            Recommended = ConvertSimple(media.Recommendations?.Nodes.Select(x => x.MediaRecommendation).Where(x => x is not null)
+                                             .Where(x => x.Type == MediaType.Anime) ?? [])
         };
     }
 
-    public static AnimeModel[] ConvertSimple(IEnumerable<Media> media)
+    public static AnimeModel[] ConvertSimple(IEnumerable<Media>? media)
     {
         if (media is null)
         {
             return [];
         }
 
-        return [.. media.Where(x => x.Type == MediaType.Anime)
-            .Select(x => new AnimeModel
-            {
-                Title = x.Title.Romaji ?? x.Title.English ?? string.Empty,
-                EngTitle = x.Title.English ?? x.Title.Romaji ?? string.Empty,
-                RomajiTitle = x.Title.Romaji ?? x.Title.English ?? string.Empty,
-                Id = x.Id ?? 0,
-                Image = x.CoverImage.Large,
-                Tracking = ConvertTracking(x.MediaListEntry),
-                AiringStatus = ConvertStatus(x.Status),
-                ServiceType = ServiceType,
-            })];
+        return
+        [
+            .. media.Where(x => x.Type == MediaType.Anime)
+                    .Select(x => new AnimeModel
+                    {
+                        Title = x.Title.Romaji ?? x.Title.English ?? string.Empty,
+                        EngTitle = x.Title.English ?? x.Title.Romaji ?? string.Empty,
+                        RomajiTitle = x.Title.Romaji ?? x.Title.English ?? string.Empty,
+                        Id = x.Id ?? 0,
+                        Image = x.CoverImage.Large,
+                        Tracking = ConvertTracking(x.MediaListEntry),
+                        AiringStatus = ConvertStatus(x.Status),
+                        ServiceId = Module.Id,
+                        ServiceName = nameof(ExternalIds.Anilist)
+                    })
+        ];
     }
 
     public static AiringStatus ConvertStatus(MediaStatus? status)
@@ -99,11 +101,11 @@ public partial class AniListModelToAnimeModelConverter
         return DateTime.Now + TimeSpan.FromSeconds(secondsTillAiring.Value);
     }
 
-    public static Tracking? ConvertTracking(MediaList listEntry)
+    public static Tracking? ConvertTracking(MediaList? listEntry)
     {
         if (listEntry == null)
         {
-            // uncomment for debuging other people list
+            // uncomment for debugging other people list
             //return new Tracking
             //{
             //    Status = AnimeStatus.Dropped
@@ -118,7 +120,7 @@ public partial class AniListModelToAnimeModelConverter
             Score = (int?)(listEntry.Score is > 0 ? listEntry.Score : null),
             Status = ConvertListStatus(listEntry.Status),
             StartDate = ConvertDate(listEntry.StartedAt),
-            FinishDate = ConvertDate(listEntry.CompletedAt),
+            FinishDate = ConvertDate(listEntry.CompletedAt)
         };
     }
 
@@ -151,9 +153,9 @@ public partial class AniListModelToAnimeModelConverter
     }
 
 
-    public static DateTime? ConvertDate(FuzzyDate date)
+    public static DateTime? ConvertDate(FuzzyDate? date)
     {
-        if (date is null || date.Year is null || date.Month is null || date.Day is null)
+        if (date?.Year is null || date.Month is null || date.Day is null)
         {
             return null;
         }
@@ -172,7 +174,7 @@ public partial class AniListModelToAnimeModelConverter
         {
             Year = date.Value.Year,
             Month = date.Value.Month,
-            Day = date.Value.Day,
+            Day = date.Value.Day
         };
     }
 
@@ -205,9 +207,9 @@ public partial class AniListModelToAnimeModelConverter
         };
     }
 
-    private static DayOfWeek? GetBroadcastDay(FuzzyDate date)
+    private static DayOfWeek? GetBroadcastDay(FuzzyDate? date)
     {
-        if (date is null || date.Year is null || date.Month is null || date.Day is null)
+        if (date?.Year is null || date.Month is null || date.Day is null)
         {
             return null;
         }
@@ -215,7 +217,7 @@ public partial class AniListModelToAnimeModelConverter
         return new DateOnly(date.Year.Value, date.Month.Value, date.Day.Value).DayOfWeek;
     }
 
-    private static IEnumerable<string> GetAlternateTiltes(MediaTitle title)
+    private static IEnumerable<string> GetAlternateTitles(MediaTitle title)
     {
         var list = new List<string>();
 
@@ -223,10 +225,12 @@ public partial class AniListModelToAnimeModelConverter
         {
             list.Add(title.English);
         }
+
         if (!string.IsNullOrEmpty(title.Romaji))
         {
             list.Add(title.Romaji);
         }
+
         if (!string.IsNullOrEmpty(title.Native))
         {
             list.Add(title.Native);

@@ -76,11 +76,11 @@ internal static class AnimeSearchExtensions
 
     internal static async Task<List<EpisodeInfo>> GetEpisodes(this AnimeModel anime)
     {
-        var serviceType = anime.ServiceType switch
+        var serviceType = anime.ServiceName switch
         {
             "Anilist" => "anilist_id",
-            "MyAnimeList" => "myanimelist_id",
-            _ => throw new NotSupportedException($"Service type {anime.ServiceType} is not supported.")
+            "MyAnimeList" => "mal_id",
+            _ => throw new NotSupportedException($"Service type {anime.ServiceId} is not supported.")
         };
 
         var today = TimeProvider.System.GetUtcNow();

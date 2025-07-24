@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -28,16 +29,14 @@ public sealed partial class AnimeDetailsViewModel(
     [ObservableProperty] public partial DateTime? StartDate { get; set; } = anime.Tracking?.StartDate;
 
     [ObservableProperty] public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate;
-    
+
     [ObservableProperty] public partial AnimeDetailsTabItem? SelectedTab { get; set; }
-    
-    [ObservableProperty] public partial INavigator? Navigator { get; set; }
 
     public ListItemStatus[] Statuses { get; } = [.. Enum.GetValues<ListItemStatus>()];
 
     public ObservableCollection<AnimeDetailsTabItem> Tabs { get; } =
     [
-        new("Episodes",anime => new EpisodesListViewModelNagivationParameters(anime)),
+        new("Episodes", anime => new EpisodesListViewModelNagivationParameters(anime)),
         new("Related", anime => anime.Related.ToList()),
         new("Recommended", anime => anime.Recommended.ToList()),
         new("Overrides", anime => new OverridesViewModelNavigationParameters(anime)),
@@ -59,17 +58,7 @@ public sealed partial class AnimeDetailsViewModel(
                 StartDate = x.Item4,
                 FinishDate = x.Item5
             })
-            .SelectMany(tracking =>
-            {
-                var tasks = trackerFactory.CreateAll()
-                                          .Select(tracker =>
-                                                      new ValueTuple<ITrackingService, long?>(tracker,
-                                                           Anime.ExternalIds.GetId(tracker.ServiceName)))
-                                          .Where(x => x.Item2 is not null)
-                                          .Select(x => x.Item1.Update(x.Item2!.Value, tracking));
-
-                return Task.WhenAll(tasks);
-            })
+            .SelectMany(tracking => UpdateTracking(Anime, tracking).ToObservable())
             .Subscribe();
 
         this.WhenAnyValue(x => x.SelectedTab)
@@ -77,11 +66,44 @@ public sealed partial class AnimeDetailsViewModel(
             .Subscribe(tab => Navigator?.NavigateToData(tab.GetData(Anime)));
     }
 
+    [ObservableProperty] public partial INavigator? Navigator { get; set; }
 
+    private async Task UpdateTracking(AnimeModel anime, Tracking tracking)
+    {
+        var trackingServices = trackerFactory.CreateAll();
+        foreach (var trackingService in trackingServices)
+        {
+            var id = anime.ExternalIds.GetId(trackingService.Name);
+            if (id is null)
+            {
+                try
+                {
+                    var metaDataService = metaFactory.Create(trackingService.Id);
+                    if (metaDataService.Id == anime.ServiceId)
+                    {
+                        continue;
+                    }
+
+                    id = (await metaDataService.FindAnimeAsync(anime))?.Id;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
+            if (id is null)
+            {
+                continue;
+            }
+
+            await trackingService.Update(id.Value, tracking);
+        }
+    }
 }
 
 public class AnimeDetailsTabItem(string title, Func<AnimeModel, object> getData)
 {
     public string Title { get; } = title;
-    public Func<AnimeModel,object> GetData { get; } = getData;
+    public Func<AnimeModel, object> GetData { get; } = getData;
 }

@@ -43,7 +43,9 @@ internal class MyAnimeListTrackingService : ITrackingService
         _settings = settings.Value;
     }
 
-    public string ServiceName { get; } = nameof(ExternalIds.MyAnimeList);
+    public Guid Id { get; } = Module.Id;
+
+    public string Name { get; } = nameof(ExternalIds.MyAnimeList);
 
     public async Task<List<AnimeModel>> GetUserList()
     {
@@ -127,7 +129,7 @@ internal class MyAnimeListTrackingService : ITrackingService
 
             return newTracking;
         }
-        catch (Exception ex)
+        catch
         {
             return tracking;
         }

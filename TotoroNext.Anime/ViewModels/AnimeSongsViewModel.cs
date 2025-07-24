@@ -35,7 +35,7 @@ public sealed partial class AnimeSongsViewModel(
         
         IsLoading = true;
 
-        Themes = await animeThemes.FindById(@params.Anime.Id, @params.Anime.ServiceType ?? "MyAnimeList");
+        Themes = await animeThemes.FindById(@params.Anime.Id, @params.Anime.ServiceName ?? nameof(ExternalIds.MyAnimeList));
 
         IsLoading = false;
     }

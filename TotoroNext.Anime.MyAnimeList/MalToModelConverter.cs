@@ -1,3 +1,4 @@
+using System.Globalization;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
@@ -5,8 +6,6 @@ namespace TotoroNext.Anime.MyAnimeList;
 
 public static class MalToModelConverter
 {
-    public const string ServiceType = "MyAnimeList";
-
     public static AnimeModel ConvertModel(MalApi.Anime malModel)
     {
         var engTitle = malModel.AlternativeTitles?.English;
@@ -22,8 +21,9 @@ public static class MalToModelConverter
             EngTitle = string.IsNullOrEmpty(engTitle) ? malModel.Title : engTitle,
             RomajiTitle = malModel.Title,
             Image = malModel.MainPicture?.Large ?? string.Empty,
-            ServiceType = ServiceType,
-            Description = malModel.Synopsis ?? string.Empty,
+            ServiceId = Module.Id,
+            ServiceName = nameof(ExternalIds.MyAnimeList),
+            Description = malModel.Synopsis ?? string.Empty
         };
 
         try
@@ -40,14 +40,30 @@ public static class MalToModelConverter
                     FinishDate = progress.FinishDate
                 };
             }
+
             model.AiringStatus = (AiringStatus)(int)(malModel.Status ?? MalApi.AiringStatus.NotYetAired);
             model.TotalEpisodes = malModel.TotalEpisodes;
             model.MeanScore = malModel.MeanScore;
             model.Popularity = malModel.Popularity ?? 0;
-            //if (DateTime.TryParseExact(malModel.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dt))
-            //{
-            //    model.BroadcastDay = dt.DayOfWeek;
-            //}
+            if (malModel is { Broadcast: { DayOfWeek: not null } broadcast, Status: MalApi.AiringStatus.CurrentlyAiring })
+            {
+                var parts = broadcast.StartTime.Split(":");
+                if (parts.Length == 2 &&
+                    int.TryParse(parts[0], out var hours) &&
+                    int.TryParse(parts[1], out var minutes))
+                {
+                    var ts = new TimeSpan(hours, minutes, 0);
+                    model.NextEpisodeAt = TimeUntilNext(broadcast.DayOfWeek.Value, ts);
+                    if (DateTime.TryParseExact(malModel.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+                    {
+                        var localNow = DateTime.Now;
+                        var jstZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tokyo");
+                        var jstNow = TimeZoneInfo.ConvertTime(localNow, jstZone);
+                        model.AiredEpisodes = CalculateAiredEpisodes(dt.Add(ts), jstNow);
+                    }
+                }
+            }
+
 
             //if (malModel.AlternativeTitles is { } alt)
             //{
@@ -70,7 +86,7 @@ public static class MalToModelConverter
 
             if (malModel.StartSeason is { } season)
             {
-                model.Season = new((AnimeSeason)(int)season.SeasonName, season.Year);
+                model.Season = new Season((AnimeSeason)(int)season.SeasonName, season.Year);
             }
 
             //if (malModel.Genres is { Length: > 0 } g)
@@ -90,9 +106,45 @@ public static class MalToModelConverter
         }
         catch
         {
-            //Locator.Current.GetService<ILogManager>().GetLogger<MalToModelConverter>().Error(ex);
+            // ignored
         }
 
         return model;
+    }
+
+    public static DateTime TimeUntilNext(DayOfWeek targetDay, TimeSpan targetTime)
+    {
+        var localNow = DateTime.Now;
+
+        var jstZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tokyo");
+        var jstNow = TimeZoneInfo.ConvertTime(localNow, jstZone);
+
+        var daysUntilTarget = ((int)targetDay - (int)jstNow.DayOfWeek + 7) % 7;
+
+        if (daysUntilTarget == 0 && jstNow.TimeOfDay > targetTime)
+        {
+            daysUntilTarget = 7;
+        }
+
+        var jstTarget = jstNow.Date.AddDays(daysUntilTarget) + targetTime;
+        return TimeZoneInfo.ConvertTime(jstTarget, jstZone, TimeZoneInfo.Local);
+    }
+
+    public static int CalculateAiredEpisodes(DateTime firstAirDateTime, DateTime currentTime)
+    {
+        // If nothing has aired yet
+        if (currentTime < firstAirDateTime)
+            return 0;
+
+        // Calculate number of full weeks passed
+        TimeSpan elapsed = currentTime - firstAirDateTime;
+        int weeksPassed = (int)(elapsed.TotalDays / 7);
+
+        // Check if this week’s episode has aired
+        DateTime lastScheduled = firstAirDateTime.AddDays(weeksPassed * 7);
+        if (currentTime >= lastScheduled)
+            weeksPassed++;
+
+        return weeksPassed;
     }
 }

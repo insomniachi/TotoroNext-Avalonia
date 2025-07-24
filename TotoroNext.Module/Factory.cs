@@ -29,10 +29,8 @@ public class Factory<TService, TId>(IServiceScopeFactory serviceScopeFactory,
         {
             return scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).First();
         }
-        else
-        {
-            return scope.ServiceProvider.GetKeyedService<TService>(key) ?? scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).First();
-        }
+
+        return scope.ServiceProvider.GetKeyedService<TService>(key) ?? scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).First();
     }
 
     public IEnumerable<TService> CreateAll()

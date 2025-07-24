@@ -14,11 +14,10 @@ internal class AnilistMetadataService(
     {
         try
         {
-            MediaSource x;
             var response = await client.SendQueryAsync<Query>(new GraphQLRequest
             {
                 Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
-                                                             .WithMedia(MediaQueryBuilder(), 
+                                                             .WithMedia(MediaQueryBuilder(),
                                                                         search: request.Title,
                                                                         season: AniListModelToAnimeModelConverter.ConvertSeason(request.SeasonName),
                                                                         seasonYear: request.Year,
@@ -30,6 +29,47 @@ internal class AnilistMetadataService(
                                                                         sort: new List<MediaSort?> { MediaSort.ScoreDesc },
                                                                         type: MediaType.Anime), 1,
                                                          50).Build()
+            });
+
+            if (response.Errors?.Length > 0)
+            {
+                return [];
+            }
+
+            return [.. response.Data.Page.Media.Where(FilterNsfw).Select(AniListModelToAnimeModelConverter.ConvertModel)];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public async Task<AnimeModel> GetAnimeAsync(long id)
+    {
+        var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)id,
+                                                      type: MediaType.Anime).Build();
+
+        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+        {
+            Query = query
+        });
+
+        return AniListModelToAnimeModelConverter.ConvertModel(response.Data.Media);
+    }
+
+    public Guid Id { get; } = Module.Id;
+
+    public string Name { get; } = nameof(ExternalIds.Anilist);
+
+    public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
+    {
+        try
+        {
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithMedia(MediaQueryBuilder(), search: term, type: MediaType.Anime), 1,
+                                                         (int)settings.Value.SearchLimit).Build()
             });
 
             if (response.Errors?.Length > 0)
@@ -60,43 +100,6 @@ internal class AnilistMetadataService(
         }
 
         return [.. response.Data.Page.Media.Where(FilterNsfw).Select(AniListModelToAnimeModelConverter.ConvertModel)];
-    }
-
-    public async Task<AnimeModel> GetAnimeAsync(long id)
-    {
-        var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)id,
-                                                      type: MediaType.Anime).Build();
-
-        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-        {
-            Query = query
-        });
-
-        return AniListModelToAnimeModelConverter.ConvertModel(response.Data.Media);
-    }
-
-    public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
-    {
-        try
-        {
-            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-            {
-                Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
-                                                             .WithMedia(MediaQueryBuilder(), search: term, type: MediaType.Anime), 1,
-                                                         (int)settings.Value.SearchLimit).Build()
-            });
-
-            if (response.Errors?.Length > 0)
-            {
-                return [];
-            }
-
-            return [.. response.Data.Page.Media.Where(FilterNsfw).Select(AniListModelToAnimeModelConverter.ConvertModel)];
-        }
-        catch
-        {
-            return [];
-        }
     }
 
     public async Task<List<AnimeModel>> GetAnimeAsync(Season season)
@@ -197,6 +200,13 @@ internal class AnilistMetadataService(
                .WithRecommendations(new RecommendationConnectionQueryBuilder()
                                         .WithNodes(new RecommendationQueryBuilder()
                                                        .WithMediaRecommendation(MediaQueryBuilderSimple())))
+               .WithStreamingEpisodes(new MediaStreamingEpisodeQueryBuilder()
+                                      .WithTitle()
+                                      .WithThumbnail())
+               .WithAiringSchedule(new AiringScheduleConnectionQueryBuilder()
+                                       .WithNodes(new AiringScheduleQueryBuilder()
+                                                  .WithEpisode()
+                                                  .WithAiringAt()))
                .WithMediaListEntry(new MediaListQueryBuilder()
                                    .WithScore()
                                    .WithStatus()
