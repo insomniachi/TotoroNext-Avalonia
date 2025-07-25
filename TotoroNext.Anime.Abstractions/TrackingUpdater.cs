@@ -31,11 +31,6 @@ public sealed class TrackingUpdater(
         var trackingServices = factory.CreateAll();
         foreach (var trackingService in trackingServices)
         {
-            if (trackingService.Name == nameof(ExternalIds.Anilist))
-            {
-                continue;
-            }
-
             var id = anime.ExternalIds.GetId(trackingService.Name);
             if (id is null)
             {
