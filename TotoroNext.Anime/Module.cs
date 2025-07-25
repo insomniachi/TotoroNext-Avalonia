@@ -15,6 +15,7 @@ public class Module : IModule
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>()
+                .AddSingleton<ITrackingUpdater, TrackingUpdater>()
                 .AddTransient<IAnimeThemes, AnimeThemes>();
 
         // main navigation
@@ -33,7 +34,7 @@ public class Module : IModule
         services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
                 .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>();
 
-        services.AddHostedService<TrackingUpdater>()
+        services.AddHostedService(sp => sp.GetRequiredService<ITrackingUpdater>())
                 .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>());
     }
 }

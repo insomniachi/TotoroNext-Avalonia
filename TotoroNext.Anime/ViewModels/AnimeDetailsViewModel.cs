@@ -14,7 +14,7 @@ namespace TotoroNext.Anime.ViewModels;
 public sealed partial class AnimeDetailsViewModel(
     AnimeModel anime,
     IFactory<IMetadataService, Guid> metaFactory,
-    IFactory<ITrackingService, Guid> trackerFactory) : ObservableObject, IAsyncInitializable, INavigatorHost
+    ITrackingUpdater trackingUpdater) : ObservableObject, IAsyncInitializable, INavigatorHost
 {
     private readonly IMetadataService _metadataService = metaFactory.CreateDefault();
 
@@ -22,13 +22,13 @@ public sealed partial class AnimeDetailsViewModel(
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = anime.Tracking?.Status;
 
-    [ObservableProperty] public partial int Progress { get; set; } = anime.Tracking?.WatchedEpisodes ?? 0;
+    [ObservableProperty] public partial int? Progress { get; set; } = anime.Tracking?.WatchedEpisodes;
 
-    [ObservableProperty] public partial int Score { get; set; } = anime.Tracking?.Score ?? 0;
+    [ObservableProperty] public partial int? Score { get; set; } = anime.Tracking?.Score;
 
-    [ObservableProperty] public partial DateTime? StartDate { get; set; } = anime.Tracking?.StartDate;
+    [ObservableProperty] public partial DateTime? StartDate { get; set; } = anime.Tracking?.StartDate == new DateTime() ? null : anime.Tracking?.StartDate;
 
-    [ObservableProperty] public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate;
+    [ObservableProperty] public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
     [ObservableProperty] public partial AnimeDetailsTabItem? SelectedTab { get; set; }
 
@@ -58,7 +58,7 @@ public sealed partial class AnimeDetailsViewModel(
                 StartDate = x.Item4,
                 FinishDate = x.Item5
             })
-            .SelectMany(tracking => UpdateTracking(Anime, tracking).ToObservable())
+            .SelectMany(tracking => trackingUpdater.UpdateTracking(Anime, tracking).ToObservable())
             .Subscribe();
 
         this.WhenAnyValue(x => x.SelectedTab)
@@ -67,39 +67,6 @@ public sealed partial class AnimeDetailsViewModel(
     }
 
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
-
-    private async Task UpdateTracking(AnimeModel anime, Tracking tracking)
-    {
-        var trackingServices = trackerFactory.CreateAll();
-        foreach (var trackingService in trackingServices)
-        {
-            var id = anime.ExternalIds.GetId(trackingService.Name);
-            if (id is null)
-            {
-                try
-                {
-                    var metaDataService = metaFactory.Create(trackingService.Id);
-                    if (metaDataService.Id == anime.ServiceId)
-                    {
-                        continue;
-                    }
-
-                    id = (await metaDataService.FindAnimeAsync(anime))?.Id;
-                }
-                catch
-                {
-                    continue;
-                }
-            }
-
-            if (id is null)
-            {
-                continue;
-            }
-
-            await trackingService.Update(id.Value, tracking);
-        }
-    }
 }
 
 public class AnimeDetailsTabItem(string title, Func<AnimeModel, object> getData)
