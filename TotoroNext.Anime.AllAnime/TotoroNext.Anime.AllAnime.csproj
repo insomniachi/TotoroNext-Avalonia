@@ -7,15 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj" />
+        <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="FlurlGraphQL" />
+        <PackageReference Include="FlurlGraphQL"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\hero.png" />
+        <AvaloniaResource Include="Assets\hero.png"/>
     </ItemGroup>
 
 </Project>

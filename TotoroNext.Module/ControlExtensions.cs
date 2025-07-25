@@ -57,7 +57,7 @@ public class ControlExtensions
             command.Execute(null);
         }
     }
-    
+
     private static void OnTapped(object? sender, TappedEventArgs e)
     {
         if (sender is not Control c)

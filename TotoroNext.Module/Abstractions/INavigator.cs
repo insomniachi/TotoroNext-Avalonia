@@ -18,7 +18,8 @@ public class NavigateToViewModelMessage(Type vm)
     public Type ViewModel { get; } = vm;
 }
 
-public class PaneNavigateToViewModelMessage(Type vm, string title = "", double? paneWidth = null, bool isInline = false) : NavigateToViewModelMessage(vm)
+public class PaneNavigateToViewModelMessage(Type vm, string title = "", double? paneWidth = null, bool isInline = false)
+    : NavigateToViewModelMessage(vm)
 {
     public string Title { get; } = title;
     public double? PaneWidth { get; } = paneWidth;
@@ -45,7 +46,11 @@ public class NavigateToRouteMessage(string path)
 public record NavigationResult(Type ViewType, Type ViewModelType);
 
 public class ClosePaneMessage;
+
 public class PaneClosingMessage;
+
 public class ToggleAppWindowPresenterMessage;
+
 public class FullScreenEntered;
+
 public class FullScreenExited;

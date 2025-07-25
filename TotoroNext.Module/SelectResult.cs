@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using AsyncImageLoader;
+using Avalonia.Controls;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using TotoroNext.Module.Abstractions;
@@ -12,34 +13,38 @@ public abstract class SelectResult<T> : ISelectionUserInteraction<T>
     public async Task<T?> GetValue(List<T> input)
     {
         var lb = new ListBox()
-            .ItemsSource(input)
-            .SelectionMode(SelectionMode.Single)
-            .MaxHeight(600)
-            .ItemTemplate<T>(CreateElement);
-        
-        var options = new OverlayDialogOptions()
+                 .ItemsSource(input)
+                 .SelectionMode(SelectionMode.Single)
+                 .MaxHeight(600)
+                 .ItemTemplate<T>(CreateElement);
+
+        var options = new OverlayDialogOptions
         {
             Buttons = DialogButton.OKCancel,
-            Title = GetTitle(),
+            Title = GetTitle()
         };
 
         var result = await OverlayDialog.ShowModal(lb, null, null, options);
-        
+
         return result == DialogResult.OK
             ? lb.SelectedItem as T
             : null;
     }
-    
+
     protected static Image CreateImage(string? uri)
     {
         var image = new Image()
                     .Height(100)
                     .Width(75)
                     .Stretch(Stretch.UniformToFill);
-        AsyncImageLoader.ImageLoader.SetSource(image, uri);
+        ImageLoader.SetSource(image, uri);
         return image;
     }
 
     protected abstract Control CreateElement(T model);
-    protected virtual string GetTitle() => "Select";
+
+    protected virtual string GetTitle()
+    {
+        return "Select";
+    }
 }

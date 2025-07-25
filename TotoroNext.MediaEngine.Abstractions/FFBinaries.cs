@@ -9,7 +9,7 @@ public static class FfBinaries
 {
     public static async Task DownloadLatest()
     {
-        var files = Directory.GetFiles(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
+        var files = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
 
         if (files.Any(x => x.Contains("ffprob")))
         {
@@ -51,34 +51,25 @@ public static class FfBinaries
 
 public class FfBinaryRelease
 {
-    [JsonPropertyName("version")]
-    public string Version { get; set; } = "";
+    [JsonPropertyName("version")] public string Version { get; set; } = "";
 
-    [JsonPropertyName("permalink")]
-    public string Permalink { get; set; } = "";
+    [JsonPropertyName("permalink")] public string Permalink { get; set; } = "";
 
-    [JsonPropertyName("bin")]
-    public FfReleasePlatforms Bin { get; set; } = new();
+    [JsonPropertyName("bin")] public FfReleasePlatforms Bin { get; set; } = new();
 }
 
 public class FfReleasePlatforms
 {
-    [JsonPropertyName("windows-64")]
-    public FfBinary Windows { get; set; } = new();
+    [JsonPropertyName("windows-64")] public FfBinary Windows { get; set; } = new();
 
-    [JsonPropertyName("linux-64")]
-    public FfBinary Linux { get; set; } = new();
+    [JsonPropertyName("linux-64")] public FfBinary Linux { get; set; } = new();
 
-    [JsonPropertyName("osx-64")]
-    public FfBinary Mac { get; set; } = new();
+    [JsonPropertyName("osx-64")] public FfBinary Mac { get; set; } = new();
 }
 
 public class FfBinary
 {
-    [JsonPropertyName("ffmpeg")]
-    public string FfMpeg { get; set; } = "";
+    [JsonPropertyName("ffmpeg")] public string FfMpeg { get; set; } = "";
 
-    [JsonPropertyName("ffprobe")]
-    public string FfProb { get; set; } = "";
+    [JsonPropertyName("ffprobe")] public string FfProb { get; set; } = "";
 }
-

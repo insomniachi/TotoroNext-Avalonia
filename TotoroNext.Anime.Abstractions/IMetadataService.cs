@@ -12,6 +12,7 @@ public interface IMetadataService
     Task<AnimeModel> GetAnimeAsync(long id);
     Task<List<AnimeModel>> SearchAnimeAsync(string term);
     Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request);
+    Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime);
 }
 
 public static class MetadataServiceExtensions
@@ -22,7 +23,7 @@ public static class MetadataServiceExtensions
         {
             return anime;
         }
-        
+
         var response = await service.SearchAnimeAsync(anime.Title);
 
         return response switch
@@ -68,6 +69,7 @@ public partial class AnimeModel : ObservableObject
     public string Description { get; set; } = "";
     public IEnumerable<AnimeModel> Related { get; set; } = [];
     public IEnumerable<AnimeModel> Recommended { get; set; } = [];
+    public List<EpisodeInfo> Episodes { get; set; } = [];
 }
 
 public class ExternalIds
@@ -86,7 +88,6 @@ public class ExternalIds
     }
 }
 
-
 public class Tracking
 {
     public ListItemStatus? Status { get; set; }
@@ -98,53 +99,42 @@ public class Tracking
 
     public Tracking Clone()
     {
-        return new()
+        return new Tracking
         {
             StartDate = StartDate,
             Score = Score,
             WatchedEpisodes = WatchedEpisodes,
             Status = Status,
             FinishDate = FinishDate,
-            UpdatedAt = UpdatedAt,
+            UpdatedAt = UpdatedAt
         };
     }
 }
 
-
 public enum ListItemStatus
 {
-    [Description("Watching")]
-    Watching,
+    [Description("Watching")] Watching,
 
-    [Description("Completed")]
-    Completed,
+    [Description("Completed")] Completed,
 
-    [Description("On-Hold")]
-    OnHold,
+    [Description("On-Hold")] OnHold,
 
-    [Description("Plan to Watch")]
-    PlanToWatch,
+    [Description("Plan to Watch")] PlanToWatch,
 
-    [Description("Dropped")]
-    Dropped,
+    [Description("Dropped")] Dropped,
 
-    [Description("Rewatching")]
-    Rewatching,
+    [Description("Rewatching")] Rewatching,
 
-    [Description("Select status")]
-    None
+    [Description("Select status")] None
 }
 
 public enum AiringStatus
 {
-    [Description("Finished Airing")]
-    FinishedAiring,
+    [Description("Finished Airing")] FinishedAiring,
 
-    [Description("Currently Airing")]
-    CurrentlyAiring,
+    [Description("Currently Airing")] CurrentlyAiring,
 
-    [Description("Not Yet Aired")]
-    NotYetAired
+    [Description("Not Yet Aired")] NotYetAired
 }
 
 public enum AnimeSource

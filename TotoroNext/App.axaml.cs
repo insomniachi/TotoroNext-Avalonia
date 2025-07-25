@@ -47,8 +47,8 @@ public class App : Application
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
-                          
-                          List<IModule> modules = [ new Anime.Module(), ..LoadInstalledModules() ];
+
+                          List<IModule> modules = [new Anime.Module(), ..LoadInstalledModules()];
                           foreach (var module in modules)
                           {
                               module.ConfigureServices(services);

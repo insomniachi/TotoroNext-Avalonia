@@ -40,7 +40,7 @@ public class DialogService : IDialogService
         messageWindow.Closed += (_, _) =>
         {
             var field = typeof(Window).GetField("_dialogResult",
-                                                          BindingFlags.Instance | BindingFlags.NonPublic);
+                                                BindingFlags.Instance | BindingFlags.NonPublic);
             var value = field?.GetValue(messageWindow);
             if (value is MessageBoxResult result)
             {

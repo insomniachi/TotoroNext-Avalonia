@@ -7,7 +7,7 @@
     mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="400"
     xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:local="using:TotoroNext.Anime.Abstractions.Controls">
-    
+
     <Border CornerRadius="8" ClipToBounds="True">
         <Grid RowDefinitions="*,Auto">
             <Grid>

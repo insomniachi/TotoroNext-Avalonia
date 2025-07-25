@@ -9,21 +9,21 @@
              x:Class="TotoroNext.Anime.Views.AnimeOverridesView">
     <u:Form LabelPosition="Left" LabelWidth="200" HorizontalAlignment="Stretch">
         <u:FormItem Label="Is Private">
-            <ToggleSwitch IsChecked="{Binding IsNsfw}"/>
+            <ToggleSwitch IsChecked="{Binding IsNsfw}" />
         </u:FormItem>
         <u:FormItem Label="Provider">
             <ComboBox ItemsSource="{Binding Providers}"
                       SelectedValue="{Binding ProviderId}"
                       SelectedValueBinding="{Binding Id}"
                       DisplayMemberBinding="{Binding Name}"
-                      HorizontalAlignment="Stretch"/>
+                      HorizontalAlignment="Stretch" />
         </u:FormItem>
         <u:FormItem Label="Provider Result">
             <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
                       SelectedValue="{Binding SelectedResult}"
                       SelectedValueBinding="{Binding Title}"
                       DisplayMemberBinding="{Binding Title}"
-                      HorizontalAlignment="Stretch"/>
+                      HorizontalAlignment="Stretch" />
         </u:FormItem>
     </u:Form>
 </UserControl>

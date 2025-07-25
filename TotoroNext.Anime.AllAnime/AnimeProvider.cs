@@ -15,13 +15,74 @@ internal class AnimeProvider : IAnimeProvider
 {
     public const string Api = "https://api.allanime.day/api";
 
+    public const string SearchQuery =
+        """
+        query( $search: SearchInput
+               $limit: Int
+               $page: Int
+               $translationType: VaildTranslationTypeEnumType
+               $countryOrigin: VaildCountryOriginEnumType )
+        {
+            shows( search: $search
+                    limit: $limit
+                    page: $page
+                    translationType: $translationType
+                    countryOrigin: $countryOrigin )
+            {
+                pageInfo
+                {
+                    total
+                }
+                edges 
+                {
+                    _id,
+                    name,
+                    availableEpisodesDetail,
+                    season,
+                    score,
+                    thumbnail,
+                    malId,
+                    aniListId
+                }
+            }
+        }
+        """;
+
+    public const string ShowQuery =
+        """
+        query ($showId: String!) {
+            show(
+                _id: $showId
+            ) {
+                availableEpisodesDetail,
+                malId,
+                aniListId
+            }
+        }
+        """;
+
+    public const string EpisodeQuery =
+        """
+        query ($showId: String!, $translationType: VaildTranslationTypeEnumType!, $episodeString: String!) {
+            episode(
+                showId: $showId
+                translationType: $translationType
+                episodeString: $episodeString
+            ) {
+                episodeString,
+                sourceUrls,
+                notes
+            }
+        }
+        """;
+
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
         var jObject = await Api
-            .WithGraphQLQuery(ShowQuery)
-            .SetGraphQLVariable("showId", animeId)
-            .PostGraphQLQueryAsync()
-            .ReceiveGraphQLRawSystemTextJsonResponse();
+                            .WithGraphQLQuery(ShowQuery)
+                            .SetGraphQLVariable("showId", animeId)
+                            .PostGraphQLQueryAsync()
+                            .ReceiveGraphQLRawSystemTextJsonResponse();
 
         var episodeDetails = jObject?["show"]?["availableEpisodesDetail"] as JsonObject;
 
@@ -41,15 +102,15 @@ internal class AnimeProvider : IAnimeProvider
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
         var jsonNode = await Api
-            .WithGraphQLQuery(EpisodeQuery)
-            .SetGraphQLVariables(new
-            {
-                showId = animeId,
-                translationType = "sub",
-                episodeString = episodeId
-            })
-            .PostGraphQLQueryAsync()
-            .ReceiveGraphQLRawSystemTextJsonResponse();
+                             .WithGraphQLQuery(EpisodeQuery)
+                             .SetGraphQLVariables(new
+                             {
+                                 showId = animeId,
+                                 translationType = "sub",
+                                 episodeString = episodeId
+                             })
+                             .PostGraphQLQueryAsync()
+                             .ReceiveGraphQLRawSystemTextJsonResponse();
 
         if (jsonNode?["errors"] is not null)
         {
@@ -74,6 +135,7 @@ internal class AnimeProvider : IAnimeProvider
                     {
                         yield return server;
                     }
+
                     continue;
                 case "Yt-mp4":
                     yield return VideoServers.WithReferer(item.SourceName, item.SourceUrl, "https://allanime.day/");
@@ -109,26 +171,25 @@ internal class AnimeProvider : IAnimeProvider
                     yield return new VideoServer(item.SourceName, new Uri(hls[0].Link));
                     continue;
             }
-
         }
     }
 
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
         var jObject = await Api
-             .WithGraphQLQuery(SearchQuery)
-             .SetGraphQLVariables(new
-             {
-                 search = new
-                 {
-                     allowAdult = true,
-                     allowUnknown = true,
-                     query
-                 },
-                 limit = 40
-             })
-             .PostGraphQLQueryAsync()
-             .ReceiveGraphQLRawSystemTextJsonResponse();
+                            .WithGraphQLQuery(SearchQuery)
+                            .SetGraphQLVariables(new
+                            {
+                                search = new
+                                {
+                                    allowAdult = true,
+                                    allowUnknown = true,
+                                    query
+                                },
+                                limit = 40
+                            })
+                            .PostGraphQLQueryAsync()
+                            .ReceiveGraphQLRawSystemTextJsonResponse();
 
         foreach (var item in jObject?["shows"]?["edges"]?.AsArray().OfType<JsonObject>() ?? [])
         {
@@ -148,7 +209,10 @@ internal class AnimeProvider : IAnimeProvider
         }
     }
 
-    private static string Decrypt(string target) => string.Join("", Convert.FromHexString(target).Select(x => (char)(x ^ 56)));
+    private static string Decrypt(string target)
+    {
+        return string.Join("", Convert.FromHexString(target).Select(x => (char)(x ^ 56)));
+    }
 
     private static string DecryptSourceUrl(string sourceUrl)
     {
@@ -156,124 +220,48 @@ internal class AnimeProvider : IAnimeProvider
         var encrypted = sourceUrl[index..];
         return Decrypt(encrypted);
     }
-
-    public const string SearchQuery =
-    $$"""
-        query( $search: SearchInput
-               $limit: Int
-               $page: Int
-               $translationType: VaildTranslationTypeEnumType
-               $countryOrigin: VaildCountryOriginEnumType )
-        {
-            shows( search: $search
-                    limit: $limit
-                    page: $page
-                    translationType: $translationType
-                    countryOrigin: $countryOrigin )
-            {
-                pageInfo
-                {
-                    total
-                }
-                edges 
-                {
-                    _id,
-                    name,
-                    availableEpisodesDetail,
-                    season,
-                    score,
-                    thumbnail,
-                    malId,
-                    aniListId
-                }
-            }
-        }
-        """;
-
-    public const string ShowQuery =
-    """
-        query ($showId: String!) {
-            show(
-                _id: $showId
-            ) {
-                availableEpisodesDetail,
-                malId,
-                aniListId
-            }
-        }
-        """;
-
-    public const string EpisodeQuery =
-    """
-        query ($showId: String!, $translationType: VaildTranslationTypeEnumType!, $episodeString: String!) {
-            episode(
-                showId: $showId
-                translationType: $translationType
-                episodeString: $episodeString
-            ) {
-                episodeString,
-                sourceUrls,
-                notes
-            }
-        }
-        """;
 }
 
 internal sealed class EpisodeDetails
 {
-    [JsonPropertyName("sub")]
-    public List<string> Sub { get; init; } = [];
+    [JsonPropertyName("sub")] public List<string> Sub { get; init; } = [];
 
-    [JsonPropertyName("dub")]
-    public List<string> Dub { get; init; } = [];
+    [JsonPropertyName("dub")] public List<string> Dub { get; init; } = [];
 
-    [JsonPropertyName("raw")]
-    public List<string> Raw { get; init; } = [];
+    [JsonPropertyName("raw")] public List<string> Raw { get; init; } = [];
 }
 
 [DebuggerDisplay("{Priority} - {SourceUrl} - {Type}")]
 [UsedImplicitly]
 internal sealed class SourceUrlObj
 {
+    [JsonPropertyName("sourceName")] public string SourceName { get; set; } = "";
 
-    [JsonPropertyName("sourceName")]
-    public string SourceName { get; set; } = "";
+    [JsonPropertyName("sourceUrl")] public string SourceUrl { get; set; } = "";
 
-    [JsonPropertyName("sourceUrl")]
-    public string SourceUrl { get; set; } = "";
+    [JsonPropertyName("priority")] public double Priority { get; set; }
 
-    [JsonPropertyName("priority")]
-    public double Priority { get; set; }
-
-    [JsonPropertyName("type")]
-    public string Type { get; set; } = "";
+    [JsonPropertyName("type")] public string Type { get; set; } = "";
 }
 
 [UsedImplicitly]
 public sealed class ApiV2Response
 {
-    [JsonPropertyName("src")]
-    public string Url { get; set; } = "";
+    [JsonPropertyName("src")] public string Url { get; set; } = "";
 
-    [JsonPropertyName("headers")]
-    public Dictionary<string, string> Headers { get; set; } = [];
+    [JsonPropertyName("headers")] public Dictionary<string, string> Headers { get; set; } = [];
 }
 
 [UsedImplicitly]
 public sealed class DefaultResponse
 {
-    [JsonPropertyName("link")]
-    public string Link { get; set; } = string.Empty;
-    
-    [JsonPropertyName("hls")]
-    public bool Hls { get; set; }
-    
-    [JsonPropertyName("resolutionStr")]
-    public string ResolutionString { get; set; } = string.Empty;
-    
-    [JsonPropertyName("resolution")]
-    public int Resolution { get; set; } = 0;
-    
-    [JsonPropertyName("src")]
-    public string Src { get; set; } = string.Empty;
+    [JsonPropertyName("link")] public string Link { get; set; } = string.Empty;
+
+    [JsonPropertyName("hls")] public bool Hls { get; set; }
+
+    [JsonPropertyName("resolutionStr")] public string ResolutionString { get; set; } = string.Empty;
+
+    [JsonPropertyName("resolution")] public int Resolution { get; set; } = 0;
+
+    [JsonPropertyName("src")] public string Src { get; set; } = string.Empty;
 }

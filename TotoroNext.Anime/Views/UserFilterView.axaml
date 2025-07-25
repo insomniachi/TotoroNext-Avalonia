@@ -9,8 +9,8 @@
              x:DataType="vm:UserListFilterViewModel">
     <u:Form>
         <u:FormGroup>
-            <TextBox Width="300" u:FormItem.Label="Title" Text="{Binding Filter.Term, UpdateSourceTrigger=LostFocus}"/>
-            <TextBox Width="300" u:FormItem.Label="Year" Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}"/>
+            <TextBox Width="300" u:FormItem.Label="Title" Text="{Binding Filter.Term, UpdateSourceTrigger=LostFocus}" />
+            <TextBox Width="300" u:FormItem.Label="Year" Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}" />
         </u:FormGroup>
     </u:Form>
 </UserControl>

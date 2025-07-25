@@ -28,8 +28,11 @@ internal class AnimeThemes(IHttpClientFactory httpClientFactory) : IAnimeThemes
                 Type = Enum.Parse<AnimeThemeType>(x.Type),
                 Slug = x.Slug,
                 SongName = x.Song.Title,
-                Video = x.AnimeThemeEntries.SelectMany(entry => entry.Videos).MaxBy(video => video.Resolution)?.Link is { } link ? new Uri(link) : null,
-                Audio = x.AnimeThemeEntries.SelectMany(entry => entry.Videos.Select(video => video.Audio)).FirstOrDefault() is { Link: not null } audio
+                Video = x.AnimeThemeEntries.SelectMany(entry => entry.Videos).MaxBy(video => video.Resolution)?.Link is { } link
+                    ? new Uri(link)
+                    : null,
+                Audio = x.AnimeThemeEntries.SelectMany(entry => entry.Videos.Select(video => video.Audio)).FirstOrDefault() is
+                    { Link: not null } audio
                     ? new Uri(audio.Link)
                     : null,
                 Artist = string.Join(",", x.Song.Artists.Select(artist => artist.Name))

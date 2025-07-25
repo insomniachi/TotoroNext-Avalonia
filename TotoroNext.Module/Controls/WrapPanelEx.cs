@@ -14,66 +14,10 @@ public class ElasticWrapPanelEx : WrapPanel
         AffectsArrange<ElasticWrapPanelEx>(IsFillHorizontalProperty, IsFillVerticalProperty);
     }
 
-    #region AttachedProperty
-
-    public static void SetFixToRB(Control element, bool value)
-    {
-        _ = element ?? throw new ArgumentNullException(nameof(element));
-        element.SetValue(FixToRBProperty, value);
-    }
-
-    public static bool GetIsFixToRB(Control element)
-    {
-        _ = element ?? throw new ArgumentNullException(nameof(element));
-        return element.GetValue(FixToRBProperty);
-    }
-
-    /// <summary>
-    /// Fixed to [Right (Horizontal Mode) | Bottom (Vertical Mode)]
-    /// which will cause line breaks
-    /// </summary>
-    public static readonly AttachedProperty<bool> FixToRBProperty =
-        AvaloniaProperty.RegisterAttached<ElasticWrapPanelEx, Control, bool>("FixToRB");
-
-    #endregion
-
-    #region StyledProperty
-
-    public bool IsFillHorizontal
-    {
-        get => GetValue(IsFillHorizontalProperty);
-        set => SetValue(IsFillHorizontalProperty, value);
-    }
-
-    public static readonly StyledProperty<bool> IsFillHorizontalProperty =
-        AvaloniaProperty.Register<ElasticWrapPanelEx, bool>(nameof(IsFillHorizontal));
-
-    public bool IsFillVertical
-    {
-        get => GetValue(IsFillVerticalProperty);
-        set => SetValue(IsFillVerticalProperty, value);
-    }
-
-    public static readonly StyledProperty<bool> IsFillVerticalProperty =
-        AvaloniaProperty.Register<ElasticWrapPanelEx, bool>(nameof(IsFillVertical));
-
-    private int _lineCount;
-
-    public static readonly DirectProperty<ElasticWrapPanelEx, int> LineCountProperty = AvaloniaProperty.RegisterDirect<ElasticWrapPanelEx, int>(
-        nameof(LineCount), o => o.LineCount);
-
-    public int LineCount
-    {
-        get => _lineCount;
-        private set => SetAndRaise(LineCountProperty, ref _lineCount, value);
-    }
-
-    #endregion
-
     protected override Size MeasureOverride(Size constraint)
     {
-        double itemWidth = ItemWidth;
-        double itemHeight = ItemHeight;
+        var itemWidth = ItemWidth;
+        var itemHeight = ItemHeight;
         var orientation = Orientation;
         var children = Children;
 
@@ -85,15 +29,15 @@ public class ElasticWrapPanelEx : WrapPanel
 
         // Measure UVSize with the given space constraint, used for measuring elements when ItemWidth and ItemHeight are not set
         var uvConstraint = new UVSize(orientation, constraint.Width, constraint.Height);
-        bool itemWidthSet = !double.IsNaN(itemWidth);
-        bool itemHeightSet = !double.IsNaN(itemHeight);
+        var itemWidthSet = !double.IsNaN(itemWidth);
+        var itemHeightSet = !double.IsNaN(itemHeight);
 
         var childConstraint = new Size(
-            itemWidthSet ? itemWidth : constraint.Width,
-            itemHeightSet ? itemHeight : constraint.Height);
+                                       itemWidthSet ? itemWidth : constraint.Width,
+                                       itemHeightSet ? itemHeight : constraint.Height);
 
         // Measurement space for elements with FixToRB=True
-        Size childFixConstraint = new Size(constraint.Width, constraint.Height);
+        var childFixConstraint = new Size(constraint.Width, constraint.Height);
         switch (orientation)
         {
             case Orientation.Horizontal when itemHeightSet:
@@ -105,9 +49,9 @@ public class ElasticWrapPanelEx : WrapPanel
         }
 
         // This is the size for non-space measurement
-        UVSize itemSetSize = new UVSize(orientation,
-            itemWidthSet ? itemWidth : 0,
-            itemHeightSet ? itemHeight : 0);
+        var itemSetSize = new UVSize(orientation,
+                                     itemWidthSet ? itemWidth : 0,
+                                     itemHeightSet ? itemHeight : 0);
 
         foreach (var child in children)
         {
@@ -159,8 +103,8 @@ public class ElasticWrapPanelEx : WrapPanel
 
                 // This is the size of the child in UV space
                 sz = new UVSize(orientation,
-                    itemWidthSet ? itemWidth : child.DesiredSize.Width,
-                    itemHeightSet ? itemHeight : child.DesiredSize.Height);
+                                itemWidthSet ? itemWidth : child.DesiredSize.Width,
+                                itemHeightSet ? itemHeight : child.DesiredSize.Height);
 
                 if (MathHelpers.GreaterThan(curLineSize.U + sz.U, uvConstraint.U)) // Need to switch to another line
                 {
@@ -193,24 +137,24 @@ public class ElasticWrapPanelEx : WrapPanel
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        bool itemWidthSet = !double.IsNaN(ItemWidth);
-        bool itemHeightSet = !double.IsNaN(ItemHeight);
+        var itemWidthSet = !double.IsNaN(ItemWidth);
+        var itemHeightSet = !double.IsNaN(ItemHeight);
 
         // This is the size for non-space measurement
-        UVSize itemSetSize = new UVSize(Orientation,
-            itemWidthSet ? ItemWidth : 0,
-            itemHeightSet ? ItemHeight : 0);
+        var itemSetSize = new UVSize(Orientation,
+                                     itemWidthSet ? ItemWidth : 0,
+                                     itemHeightSet ? ItemHeight : 0);
 
         // Measure UVSize with the given space constraint, used for measuring elements when ItemWidth and ItemHeight are not set
-        UVSize uvFinalSize = new UVSize(Orientation, finalSize.Width, finalSize.Height);
+        var uvFinalSize = new UVSize(Orientation, finalSize.Width, finalSize.Height);
 
         // Collection of elements in the same direction (row/column)
-        List<UVCollection> lineUVCollection = new List<UVCollection>();
+        var lineUVCollection = new List<UVCollection>();
 
         #region Get the collection of elements in the same direction
 
         // Current collection of elements in a row/column
-        UVCollection curLineUIs = new UVCollection(Orientation, itemSetSize);
+        var curLineUIs = new UVCollection(Orientation, itemSetSize);
 
         // Iterate over the child elements
         var children = Children;
@@ -261,8 +205,8 @@ public class ElasticWrapPanelEx : WrapPanel
             else
             {
                 sz = new UVSize(Orientation,
-                    itemWidthSet ? ItemWidth : child.DesiredSize.Width,
-                    itemHeightSet ? ItemHeight : child.DesiredSize.Height);
+                                itemWidthSet ? ItemWidth : child.DesiredSize.Width,
+                                itemHeightSet ? ItemHeight : child.DesiredSize.Height);
 
                 if (MathHelpers.GreaterThan(curLineUIs.TotalU + sz.U, uvFinalSize.U)) // Need to switch to another line
                 {
@@ -293,8 +237,8 @@ public class ElasticWrapPanelEx : WrapPanel
 
         #endregion
 
-        bool isFillU = false;
-        bool isFillV = false;
+        var isFillU = false;
+        var isFillV = false;
         switch (Orientation)
         {
             case Orientation.Horizontal:
@@ -312,15 +256,15 @@ public class ElasticWrapPanelEx : WrapPanel
         {
             double accumulatedV = 0;
             double adaptULength = 0;
-            bool isAdaptV = false;
+            var isAdaptV = false;
             double adaptVLength = 0;
             if (isFillU)
             {
                 if (itemSetSize.U > 0)
                 {
-                    int maxElementCount = lineUVCollection
+                    var maxElementCount = lineUVCollection
                         .Max(uiSet => uiSet.UICollection
-                            .Sum(p => p.Value.ULengthCount));
+                                           .Sum(p => p.Value.ULengthCount));
                     adaptULength = (uvFinalSize.U - maxElementCount * itemSetSize.U) / maxElementCount;
                     adaptULength = Max(adaptULength, 0);
                 }
@@ -335,25 +279,25 @@ public class ElasticWrapPanelEx : WrapPanel
                 }
             }
 
-            bool isHorizontal = Orientation == Orientation.Horizontal;
+            var isHorizontal = Orientation == Orientation.Horizontal;
             foreach (var uvCollection in lineUVCollection)
             {
                 double u = 0;
                 var lineUIEles = uvCollection.UICollection.Keys.ToList();
-                double linevV = isAdaptV ? adaptVLength : uvCollection.LineV;
+                var linevV = isAdaptV ? adaptVLength : uvCollection.LineV;
                 foreach (var child in lineUIEles)
                 {
-                    UVLengthSize childSize = uvCollection.UICollection[child];
+                    var childSize = uvCollection.UICollection[child];
 
-                    double layoutSlotU = childSize.UVSize.U + childSize.ULengthCount * adaptULength;
-                    double layoutSlotV = isAdaptV ? linevV : childSize.UVSize.V;
-                    if (ElasticWrapPanelEx.GetIsFixToRB(child) == false)
+                    var layoutSlotU = childSize.UVSize.U + childSize.ULengthCount * adaptULength;
+                    var layoutSlotV = isAdaptV ? linevV : childSize.UVSize.V;
+                    if (GetIsFixToRB(child) == false)
                     {
                         child.Arrange(new Rect(
-                            isHorizontal ? u : accumulatedV,
-                            isHorizontal ? accumulatedV : u,
-                            isHorizontal ? layoutSlotU : layoutSlotV,
-                            isHorizontal ? layoutSlotV : layoutSlotU));
+                                               isHorizontal ? u : accumulatedV,
+                                               isHorizontal ? accumulatedV : u,
+                                               isHorizontal ? layoutSlotU : layoutSlotV,
+                                               isHorizontal ? layoutSlotV : layoutSlotU));
                     }
                     else
                     {
@@ -361,15 +305,15 @@ public class ElasticWrapPanelEx : WrapPanel
                         {
                             layoutSlotU = childSize.ULengthCount * itemSetSize.U +
                                           childSize.ULengthCount * adaptULength;
-                            double leaveULength = uvFinalSize.U - u;
+                            var leaveULength = uvFinalSize.U - u;
                             layoutSlotU = Min(leaveULength, layoutSlotU);
                         }
 
                         child.Arrange(new Rect(
-                            isHorizontal ? Max(0, uvFinalSize.U - layoutSlotU) : accumulatedV,
-                            isHorizontal ? accumulatedV : Max(0, uvFinalSize.U - layoutSlotU),
-                            isHorizontal ? layoutSlotU : layoutSlotV,
-                            isHorizontal ? layoutSlotV : layoutSlotU));
+                                               isHorizontal ? Max(0, uvFinalSize.U - layoutSlotU) : accumulatedV,
+                                               isHorizontal ? accumulatedV : Max(0, uvFinalSize.U - layoutSlotU),
+                                               isHorizontal ? layoutSlotU : layoutSlotV,
+                                               isHorizontal ? layoutSlotV : layoutSlotU));
                     }
 
                     u += layoutSlotU;
@@ -379,11 +323,68 @@ public class ElasticWrapPanelEx : WrapPanel
                 lineUIEles.Clear();
             }
         }
+
         LineCount = lineUVCollection.Count;
         lineUVCollection.ForEach(col => col.Dispose());
         lineUVCollection.Clear();
         return finalSize;
     }
+
+    #region AttachedProperty
+
+    public static void SetFixToRB(Control element, bool value)
+    {
+        _ = element ?? throw new ArgumentNullException(nameof(element));
+        element.SetValue(FixToRBProperty, value);
+    }
+
+    public static bool GetIsFixToRB(Control element)
+    {
+        _ = element ?? throw new ArgumentNullException(nameof(element));
+        return element.GetValue(FixToRBProperty);
+    }
+
+    /// <summary>
+    ///     Fixed to [Right (Horizontal Mode) | Bottom (Vertical Mode)]
+    ///     which will cause line breaks
+    /// </summary>
+    public static readonly AttachedProperty<bool> FixToRBProperty =
+        AvaloniaProperty.RegisterAttached<ElasticWrapPanelEx, Control, bool>("FixToRB");
+
+    #endregion
+
+    #region StyledProperty
+
+    public bool IsFillHorizontal
+    {
+        get => GetValue(IsFillHorizontalProperty);
+        set => SetValue(IsFillHorizontalProperty, value);
+    }
+
+    public static readonly StyledProperty<bool> IsFillHorizontalProperty =
+        AvaloniaProperty.Register<ElasticWrapPanelEx, bool>(nameof(IsFillHorizontal));
+
+    public bool IsFillVertical
+    {
+        get => GetValue(IsFillVerticalProperty);
+        set => SetValue(IsFillVerticalProperty, value);
+    }
+
+    public static readonly StyledProperty<bool> IsFillVerticalProperty =
+        AvaloniaProperty.Register<ElasticWrapPanelEx, bool>(nameof(IsFillVertical));
+
+    private int _lineCount;
+
+    public static readonly DirectProperty<ElasticWrapPanelEx, int> LineCountProperty = AvaloniaProperty.RegisterDirect<ElasticWrapPanelEx, int>(
+         nameof(LineCount), o => o.LineCount);
+
+    public int LineCount
+    {
+        get => _lineCount;
+        private set => SetAndRaise(LineCountProperty, ref _lineCount, value);
+    }
+
+    #endregion
 
     #region Protected Methods
 
@@ -405,52 +406,62 @@ public class ElasticWrapPanelEx : WrapPanel
 
         internal double U;
         internal double V;
-        private Orientation _orientation;
+        private readonly Orientation _orientation;
 
         internal double Width
         {
-            get { return _orientation == Orientation.Horizontal ? U : V; }
+            get => _orientation == Orientation.Horizontal ? U : V;
             set
             {
-                if (_orientation == Orientation.Horizontal) U = value;
-                else V = value;
+                if (_orientation == Orientation.Horizontal)
+                {
+                    U = value;
+                }
+                else
+                {
+                    V = value;
+                }
             }
         }
 
         internal double Height
         {
-            get { return _orientation == Orientation.Horizontal ? V : U; }
+            get => _orientation == Orientation.Horizontal ? V : U;
             set
             {
-                if (_orientation == Orientation.Horizontal) V = value;
-                else U = value;
+                if (_orientation == Orientation.Horizontal)
+                {
+                    V = value;
+                }
+                else
+                {
+                    U = value;
+                }
             }
         }
     }
 
     private class UVLengthSize
     {
-        public UVSize UVSize { get; set; }
-
-        public int ULengthCount { get; set; }
-
         public UVLengthSize(UVSize uvSize, int uLengthCount)
         {
-            this.UVSize = uvSize;
-            this.ULengthCount = uLengthCount;
+            UVSize = uvSize;
+            ULengthCount = uLengthCount;
         }
+
+        public UVSize UVSize { get; }
+
+        public int ULengthCount { get; }
     }
 
     /// <summary>
-    /// Elements used to store the same row/column
+    ///     Elements used to store the same row/column
     /// </summary>
     private class UVCollection : IDisposable
     {
-        public Dictionary<Control, UVLengthSize> UICollection { get; }
+        private UVSize ItemSetSize;
 
         private UVSize LineDesireUVSize;
-
-        private UVSize ItemSetSize;
 
         public UVCollection(Orientation orientation, UVSize itemSetSize)
         {
@@ -459,25 +470,29 @@ public class ElasticWrapPanelEx : WrapPanel
             ItemSetSize = itemSetSize;
         }
 
+        public Dictionary<Control, UVLengthSize> UICollection { get; }
+
         public double TotalU => LineDesireUVSize.U;
 
         public double LineV => LineDesireUVSize.V;
-
-        public void Add(Control element, UVSize childSize, int itemULength = 1)
-        {
-            if (UICollection.ContainsKey(element))
-                throw new InvalidOperationException("The element already exists and cannot be added repeatedly.");
-
-            UICollection[element] = new UVLengthSize(childSize, itemULength);
-            LineDesireUVSize.U += childSize.U;
-            LineDesireUVSize.V = Max(LineDesireUVSize.V, childSize.V);
-        }
 
         public int Count => UICollection.Count;
 
         public void Dispose()
         {
             UICollection.Clear();
+        }
+
+        public void Add(Control element, UVSize childSize, int itemULength = 1)
+        {
+            if (UICollection.ContainsKey(element))
+            {
+                throw new InvalidOperationException("The element already exists and cannot be added repeatedly.");
+            }
+
+            UICollection[element] = new UVLengthSize(childSize, itemULength);
+            LineDesireUVSize.U += childSize.U;
+            LineDesireUVSize.V = Max(LineDesireUVSize.V, childSize.V);
         }
     }
 

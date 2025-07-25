@@ -7,13 +7,13 @@ namespace TotoroNext.Module;
 
 public class LocalSettingsService : ILocalSettingsService
 {
-    private readonly JsonObject _settings = [];
     private readonly string _file;
     private readonly JsonSerializerOptions _options;
+    private readonly JsonObject _settings = [];
 
     public LocalSettingsService()
     {
-        _options = new JsonSerializerOptions()
+        _options = new JsonSerializerOptions
         {
             WriteIndented = true,
             Converters =
@@ -23,7 +23,7 @@ public class LocalSettingsService : ILocalSettingsService
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
         };
 
-        _file = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "settings.json");
+        _file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "settings.json");
         if (File.Exists(_file))
         {
             _settings = JsonNode.Parse(File.ReadAllText(_file))!.AsObject();

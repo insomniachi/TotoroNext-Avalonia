@@ -7,15 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj" />
+        <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MalApi.V2" />
+        <PackageReference Include="JikanDotNet"/>
+        <PackageReference Include="MalApi.V2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\mal.jpg" />
+        <AvaloniaResource Include="Assets\mal.jpg"/>
     </ItemGroup>
 
 </Project>

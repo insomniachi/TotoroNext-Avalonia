@@ -9,8 +9,8 @@ using DynamicData.Binding;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Anime.Extensions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -42,13 +42,13 @@ public partial class AdvancedSearchViewModel(
                                     .Select(_ => Unit.Default);
 
         var includedGenresChanged = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                                               h => IncludedGenres.CollectionChanged += h,
-                                               h => IncludedGenres.CollectionChanged -= h)
+                                                   h => IncludedGenres.CollectionChanged += h,
+                                                   h => IncludedGenres.CollectionChanged -= h)
                                               .Select(_ => Unit.Default);
 
         var excludedGenresChanged = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
-                                               h => ExcludedGenres.CollectionChanged += h,
-                                               h => ExcludedGenres.CollectionChanged -= h)
+                                                   h => ExcludedGenres.CollectionChanged += h,
+                                                   h => ExcludedGenres.CollectionChanged -= h)
                                               .Select(_ => Unit.Default);
 
         var trigger = Observable.Merge(propertiesChanged, includedGenresChanged, excludedGenresChanged);

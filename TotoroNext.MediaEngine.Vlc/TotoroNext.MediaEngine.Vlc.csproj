@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj" />
+        <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\vlc.jpeg" />
+        <AvaloniaResource Include="Assets\vlc.jpeg"/>
     </ItemGroup>
 
 </Project>

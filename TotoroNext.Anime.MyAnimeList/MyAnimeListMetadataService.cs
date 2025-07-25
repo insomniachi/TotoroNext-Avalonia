@@ -1,7 +1,10 @@
 using MalApi;
 using MalApi.Interfaces;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
+using AnimeSeason = MalApi.AnimeSeason;
 using Season = TotoroNext.Anime.Abstractions.Models.Season;
 
 namespace TotoroNext.Anime.MyAnimeList;
@@ -9,7 +12,9 @@ namespace TotoroNext.Anime.MyAnimeList;
 internal class MyAnimeListMetadataService : IMetadataService
 {
     private const string RecursiveAnimeProperties = $"my_list_status,status,{AnimeFieldNames.TotalEpisodes},{AnimeFieldNames.Mean}";
+
     private readonly IMalClient _client;
+    // private readonly IJikan _jikanClient = new Jikan();
 
     private readonly string[] _commonFields =
     [
@@ -43,6 +48,35 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         _client = client;
         _settings = settings.Value;
+    }
+
+    public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
+    {
+        return await anime.GetEpisodes();
+        // var jikanResponse = await _jikanClient.GetAnimeEpisodesAsync(anime.Id);
+        // var response = new List<EpisodeInfo>();
+        // do
+        // {
+        //     foreach (var pair in jikanResponse.Data.Index())
+        //     {
+        //         var (index, jikanEp) = pair;
+        //         response.Add(new EpisodeInfo()
+        //         {
+        //             EpisodeNumber = (int)jikanEp.MalId,
+        //             Titles = new Titles()
+        //             {
+        //                 English = jikanEp.Title,
+        //                 Romaji = jikanEp.TitleJapanese,
+        //                 Japanese = jikanEp.TitleJapanese
+        //             },
+        //             Overview = jikanEp.Synopsis,
+        //             Runtime = jikanEp.Duration ?? 0,
+        //             AirDateUtc = jikanEp.Aired
+        //         });
+        //     }
+        // } while (jikanResponse.Pagination.HasNextPage);
+        //
+        // return response;
     }
 
     public Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)

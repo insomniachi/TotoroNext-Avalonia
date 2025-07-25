@@ -9,15 +9,12 @@ namespace TotoroNext.MediaEngine.Vlc;
 
 internal class HttpInterface
 {
-    private readonly string _password;
     private readonly string _api;
     private readonly Subject<TimeSpan> _durationChanged = new();
+    private readonly string _password;
     private readonly Subject<TimeSpan> _timeChanged = new();
     private int _prevLength;
     private int _prevPosition;
-
-    public IObservable<TimeSpan> DurationChanged => _durationChanged;
-    public IObservable<TimeSpan> PositionChanged => _timeChanged;
 
     public HttpInterface(Process process, string password)
     {
@@ -27,24 +24,27 @@ internal class HttpInterface
         _password = password;
 
         Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(1))
-            .Where(_ => !process.HasExited)
-            .SelectMany(_ => GetStatus())
-            .Where(s => s is not null)
-            .Subscribe(status =>
-            {
-                if(status!.Length != _prevLength)
-                {
-                    _durationChanged.OnNext(TimeSpan.FromSeconds(status.Length));
-                    _prevLength = status.Length;
-                }
+                  .Where(_ => !process.HasExited)
+                  .SelectMany(_ => GetStatus())
+                  .Where(s => s is not null)
+                  .Subscribe(status =>
+                  {
+                      if (status!.Length != _prevLength)
+                      {
+                          _durationChanged.OnNext(TimeSpan.FromSeconds(status.Length));
+                          _prevLength = status.Length;
+                      }
 
-                if(status.Time !=  _prevPosition)
-                {
-                    _timeChanged.OnNext(TimeSpan.FromSeconds(status.Time));
-                    _prevPosition = status.Time;
-                }
-            });
+                      if (status.Time != _prevPosition)
+                      {
+                          _timeChanged.OnNext(TimeSpan.FromSeconds(status.Time));
+                          _prevPosition = status.Time;
+                      }
+                  });
     }
+
+    public IObservable<TimeSpan> DurationChanged => _durationChanged;
+    public IObservable<TimeSpan> PositionChanged => _timeChanged;
 
 
     public async Task<VlcStatus?> GetStatus()
@@ -54,8 +54,8 @@ internal class HttpInterface
         try
         {
             result = await _api
-                .AppendPathSegment("/requests/status.json")
-                .WithBasicAuth("", _password).GetAsync();
+                           .AppendPathSegment("/requests/status.json")
+                           .WithBasicAuth("", _password).GetAsync();
         }
         catch { }
 
@@ -75,51 +75,44 @@ internal class HttpInterface
     public async Task SeekTo(TimeSpan timeSpan)
     {
         _ = await _api
-             .AppendPathSegment("/requests/status.json")
-             .SetQueryParam("command", "seek")
-             .SetQueryParam("val", (int)timeSpan.TotalSeconds)
-             .WithBasicAuth("", _password)
-             .GetAsync();
+                  .AppendPathSegment("/requests/status.json")
+                  .SetQueryParam("command", "seek")
+                  .SetQueryParam("val", (int)timeSpan.TotalSeconds)
+                  .WithBasicAuth("", _password)
+                  .GetAsync();
     }
 
     public async Task SetVolume(int percent)
     {
         _ = await _api
-         .AppendPathSegment("/requests/status.json")
-         .SetQueryParam("command", "volume")
-         .SetQueryParam("val", $"{percent}%")
-         .WithBasicAuth("", _password)
-         .GetAsync();
+                  .AppendPathSegment("/requests/status.json")
+                  .SetQueryParam("command", "volume")
+                  .SetQueryParam("val", $"{percent}%")
+                  .WithBasicAuth("", _password)
+                  .GetAsync();
     }
 }
 
-
 internal class VlcStatus
 {
-    [JsonPropertyName("time")]
-    public int Time { get; set; }
+    [JsonPropertyName("time")] public int Time { get; set; }
 
-    [JsonPropertyName("length")]
-    public int Length { get; set; }
+    [JsonPropertyName("length")] public int Length { get; set; }
 
-    [JsonPropertyName("information")]
-    public Information Information { get; set; } = new Information();
+    [JsonPropertyName("information")] public Information Information { get; set; } = new();
 }
 
 internal class Information
 {
-    [JsonPropertyName("category")]
-    public Category Category { get; set; } = new();
+    [JsonPropertyName("category")] public Category Category { get; set; } = new();
 }
 
 internal class Category
 {
-    [JsonPropertyName("meta")]
-    public Meta Meta { get; set; } = new();
+    [JsonPropertyName("meta")] public Meta Meta { get; set; } = new();
 }
 
 internal class Meta
 {
-    [JsonPropertyName("filename")]
-    public string FileName { get; set; } = string.Empty;
+    [JsonPropertyName("filename")] public string FileName { get; set; } = string.Empty;
 }

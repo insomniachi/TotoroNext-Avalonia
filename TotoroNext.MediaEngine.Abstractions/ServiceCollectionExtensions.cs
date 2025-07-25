@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IInternalMediaPlayer, InternalMediaPlayer>();
         services.AddKeyedTransient<IMediaPlayer, InternalMediaPlayer>(Guid.Empty);
-        
+
         return services;
     }
 }

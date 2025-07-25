@@ -1,12 +1,12 @@
 namespace TotoroNext.Anime.Abstractions.Models;
 
-public sealed partial class AnimeOverrides
+public sealed class AnimeOverrides
 {
-    public event EventHandler? Reverted;
     public bool IsNsfw { get; set; }
     public Guid? Provider { get; set; }
-    
+
     public string? SelectedResult { get; set; }
+    public event EventHandler? Reverted;
 
     public void Revert()
     {

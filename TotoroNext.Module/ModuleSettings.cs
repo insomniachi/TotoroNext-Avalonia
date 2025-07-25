@@ -9,7 +9,6 @@ using Path = System.IO.Path;
 
 namespace TotoroNext.Module;
 
-
 internal class ModuleSettings<TData> : IModuleSettings<TData>
     where TData : class, new()
 {
@@ -17,7 +16,8 @@ internal class ModuleSettings<TData> : IModuleSettings<TData>
 
     internal ModuleSettings(Descriptor descriptor)
     {
-        _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules", descriptor.EntryPoint, $"settings.json");
+        _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules",
+                                 descriptor.EntryPoint, "settings.json");
 
         Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
         Value = new TData();
@@ -34,7 +34,7 @@ internal class ModuleSettings<TData> : IModuleSettings<TData>
         }
     }
 
-    public TData Value { get; private set; }
+    public TData Value { get; }
 
     public void Save()
     {
@@ -42,13 +42,13 @@ internal class ModuleSettings<TData> : IModuleSettings<TData>
     }
 }
 
-
 public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettings> data) : ObservableObject
     where TSettings : class, new()
 {
     protected TSettings Settings => data.Value;
 
-    protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, Action<TSettings> settingUpdate, [CallerMemberName] string propertyName = "")
+    protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, Action<TSettings> settingUpdate,
+                                                 [CallerMemberName] string propertyName = "")
     {
         if (!SetProperty(ref field, value, propertyName))
         {

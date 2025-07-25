@@ -15,4 +15,3 @@ public class TrackingUpdated
     public required AnimeModel Anime { get; init; }
     public required Episode Episode { get; init; }
 }
-

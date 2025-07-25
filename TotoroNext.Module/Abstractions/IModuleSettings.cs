@@ -6,4 +6,3 @@ public interface IModuleSettings<out TData>
     TData Value { get; }
     void Save();
 }
-

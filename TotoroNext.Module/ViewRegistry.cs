@@ -25,13 +25,11 @@ public class ViewRegistry(IEnumerable<ViewMap> map) : IViewRegistry
     }
 }
 
-
 public record ViewMap(Type View, Type ViewModel);
 
 public record ViewMap<TView, TViewModel>() : ViewMap(typeof(TView), typeof(TViewModel))
     where TView : class, new()
     where TViewModel : class;
-
 
 public record KeyedViewMap(Type View, Type ViewModel, string Key) : ViewMap(View, ViewModel);
 

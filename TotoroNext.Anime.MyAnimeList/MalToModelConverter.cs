@@ -134,16 +134,20 @@ public static class MalToModelConverter
     {
         // If nothing has aired yet
         if (currentTime < firstAirDateTime)
+        {
             return 0;
+        }
 
         // Calculate number of full weeks passed
-        TimeSpan elapsed = currentTime - firstAirDateTime;
-        int weeksPassed = (int)(elapsed.TotalDays / 7);
+        var elapsed = currentTime - firstAirDateTime;
+        var weeksPassed = (int)(elapsed.TotalDays / 7);
 
         // Check if this week’s episode has aired
-        DateTime lastScheduled = firstAirDateTime.AddDays(weeksPassed * 7);
+        var lastScheduled = firstAirDateTime.AddDays(weeksPassed * 7);
         if (currentTime >= lastScheduled)
+        {
             weeksPassed++;
+        }
 
         return weeksPassed;
     }

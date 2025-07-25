@@ -12,8 +12,11 @@ public partial class UserListFilter : ObservableObject
 
     [ObservableProperty] public partial string Year { get; set; } = "";
 
-    public void Refresh() => OnPropertyChanged(nameof(Status));
-    
+    public void Refresh()
+    {
+        OnPropertyChanged(nameof(Status));
+    }
+
     public bool IsVisible(AnimeModel model)
     {
         if (model.Tracking is null)
@@ -49,4 +52,3 @@ public partial class UserListFilter : ObservableObject
     [GeneratedRegex(@"(19[5-9][0-9])|(20\d{2})")]
     private partial Regex YearRegex();
 }
-

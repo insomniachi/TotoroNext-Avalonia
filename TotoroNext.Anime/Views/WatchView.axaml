@@ -31,61 +31,65 @@
         </Grid>
 
         <Grid Grid.Column="1" Grid.RowSpan="2" Grid.Row="0" Grid.RowDefinitions="Auto,*" RowSpacing="16">
-            <TextBlock Text="Episodes" Classes.H1="true" Theme="{DynamicResource TitleTextBlock}"/>
+            <TextBlock Text="Episodes" Classes.H1="true" Theme="{DynamicResource TitleTextBlock}" />
             <ListBox Grid.Row="1"
                      Width="800"
                      MinHeight="200"
                      ItemsSource="{Binding Episodes}"
                      SelectedItem="{Binding SelectedEpisode}"
                      SelectionChanged="SelectingItemsControl_OnSelectionChanged">
-            <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="aam:Episode">
-                    <Grid ColumnDefinitions="Auto,*" Height="160">
-                        <Border>
-                            <Image asyncImageLoader:ImageLoader.Source="{Binding Info.Image, FallbackValue={x:Null}}" Stretch="UniformToFill" />
-                        </Border>
-                        <Border Grid.Column="1" Padding="8">
-                            <Grid RowDefinitions="Auto,Auto,*">
-                                <TextBlock Margin="0 0 0 8"
-                                           TextTrimming="CharacterEllipsis"
-                                           TextWrapping="NoWrap"
-                                           FontSize="{DynamicResource SemiFontSizeHeader4}"
-                                           FontWeight="Bold">
-                                    <Run Text="Episode" Foreground="{DynamicResource SemiColorText3}"/>
-                                    <Run Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" />
-                                    <Run Text=":" Foreground="{DynamicResource SemiColorText3}"/>
-                                    <Run Text="{Binding Info.Titles.English, FallbackValue={x:Null}}" />
-                                </TextBlock>
-                                <StackPanel Grid.Row="1"
-                                            Margin="0 0 0 8"
-                                            Orientation="Horizontal"
-                                            Spacing="5">
-                                    <iconPacks:PackIconControl
-                                        Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}" Height="20"
-                                        Width="20" />
-                                    <TextBlock Text="{Binding Info.AirDate, FallbackValue={x:Null}}" Margin="0 0 16 0" />
-                                    <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
-                                                               Height="20" Width="20" />
-                                    <TextBlock>
-                                        <Run Text="{Binding Info.Runtime, FallbackValue={x:Null}}" />
-                                        <Run Text="Min" />
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="aam:Episode">
+                        <Grid ColumnDefinitions="Auto,*" Height="160">
+                            <Border>
+                                <Image
+                                    asyncImageLoader:ImageLoader.Source="{Binding Info.Image, FallbackValue={x:Null}}"
+                                    Stretch="UniformToFill" />
+                            </Border>
+                            <Border Grid.Column="1" Padding="8">
+                                <Grid RowDefinitions="Auto,Auto,*">
+                                    <TextBlock Margin="0 0 0 8"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               FontSize="{DynamicResource SemiFontSizeHeader4}"
+                                               FontWeight="Bold">
+                                        <Run Text="Episode" Foreground="{DynamicResource SemiColorText3}" />
+                                        <Run Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" />
+                                        <Run Text=":" Foreground="{DynamicResource SemiColorText3}" />
+                                        <Run Text="{Binding Info.Titles.English, FallbackValue={x:Null}}" />
                                     </TextBlock>
-                                </StackPanel>
-                                <ScrollViewer Grid.Row="2">
-                                    <TextBlock Text="{Binding Info.Overview, FallbackValue={x:Null}}"
-                                               TextWrapping="Wrap" />
-                                </ScrollViewer>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Background="{DynamicResource SemiColorTertiaryLightActive}"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-        </ListBox>
+                                    <StackPanel Grid.Row="1"
+                                                Margin="0 0 0 8"
+                                                Orientation="Horizontal"
+                                                Spacing="5">
+                                        <iconPacks:PackIconControl
+                                            Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}" Height="20"
+                                            Width="20" />
+                                        <TextBlock Text="{Binding Info.AirDate, FallbackValue={x:Null}}"
+                                                   Margin="0 0 16 0" />
+                                        <iconPacks:PackIconControl
+                                            Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
+                                            Height="20" Width="20" />
+                                        <TextBlock>
+                                            <Run Text="{Binding Info.Runtime, FallbackValue={x:Null}}" />
+                                            <Run Text="Min" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <ScrollViewer Grid.Row="2">
+                                        <TextBlock Text="{Binding Info.Overview, FallbackValue={x:Null}}"
+                                                   TextWrapping="Wrap" />
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Background="{DynamicResource SemiColorTertiaryLightActive}" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
         </Grid>
     </Grid>
 </UserControl>

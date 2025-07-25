@@ -11,7 +11,7 @@ public class NavigationExtensions
 {
     public static readonly AttachedProperty<bool> IsAttachedProperty =
         AvaloniaProperty.RegisterAttached<NavigationExtensions, TransitioningContentControl, bool>(
-             "IsAttached");
+                                                                                                   "IsAttached");
 
     public static readonly AttachedProperty<Type> NavigateToViewModelProperty =
         AvaloniaProperty.RegisterAttached<NavigationExtensions, NavMenuItem, Type>("NavigateToViewModel");
@@ -29,10 +29,7 @@ public class NavigationExtensions
             return;
         }
 
-        menu.Tapped += (_, _) =>
-        {
-            WeakReferenceMessenger.Default.Send(new NavigateToViewModelMessage(type));
-        };
+        menu.Tapped += (_, _) => { WeakReferenceMessenger.Default.Send(new NavigateToViewModelMessage(type)); };
     }
 
     public static void SetNavigateToViewModel(AvaloniaObject element, Type value)
@@ -92,10 +89,11 @@ public class NavigationExtensions
                     {
                         await ia.InitializeAsync();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex);
                     }
+
                     break;
             }
         };
@@ -105,6 +103,7 @@ public class NavigationExtensions
             {
                 d.Dispose();
             }
+
             if (vm is IAsyncDisposable ad)
             {
                 await ad.DisposeAsync();

@@ -6,9 +6,8 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.ViewModels;
 
-
 [UsedImplicitly]
-public partial class SettingsModel : ObservableObject
+public class SettingsModel : ObservableObject
 {
     private readonly ILocalSettingsService _localSettingsService;
 
@@ -16,6 +15,30 @@ public partial class SettingsModel : ObservableObject
     {
         _localSettingsService = localSettingsService;
         Initialize();
+    }
+
+    public Guid SelectedMediaEngine
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    }
+
+    public Guid SelectedAnimeProvider
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    }
+
+    public Guid SelectedTrackingService
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    }
+
+    public Guid SelectedSegmentsProvider
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
     }
 
     protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, [CallerMemberName] string propertyName = "")
@@ -33,8 +56,8 @@ public partial class SettingsModel : ObservableObject
     public void Initialize()
     {
         var readSettingMethod = typeof(ILocalSettingsService)
-            .GetMethods()
-            .First(m => m.Name == nameof(ILocalSettingsService.ReadSetting) && m.IsGenericMethod);
+                                .GetMethods()
+                                .First(m => m.Name == nameof(ILocalSettingsService.ReadSetting) && m.IsGenericMethod);
 
         foreach (var prop in GetType().GetProperties().Where(x => x.CanWrite))
         {
@@ -49,16 +72,7 @@ public partial class SettingsModel : ObservableObject
             prop.SetValue(this, value);
         }
     }
-
-    public Guid SelectedMediaEngine { get; set => SetAndSaveProperty(ref field, value); }
-
-    public Guid SelectedAnimeProvider { get; set => SetAndSaveProperty(ref field, value); }
-
-    public Guid SelectedTrackingService { get; set => SetAndSaveProperty(ref field, value); }
-
-    public Guid SelectedSegmentsProvider { get; set => SetAndSaveProperty(ref field, value); }
 }
-
 
 public partial class SettingsViewModel : ObservableObject, IInitializable
 {
@@ -82,8 +96,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
     public List<Descriptor> SegmentProviders { get; }
 
 
-    [ObservableProperty]
-    public partial SettingsModel? Settings { get; private set; }
+    [ObservableProperty] public partial SettingsModel? Settings { get; private set; }
 
     public void Initialize()
     {

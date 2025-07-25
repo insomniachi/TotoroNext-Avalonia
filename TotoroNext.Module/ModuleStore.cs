@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Flurl;
 using TotoroNext.Module.Abstractions;
 using Path = System.IO.Path;
 
@@ -11,11 +10,14 @@ namespace TotoroNext.Module;
 
 public class ModuleStore : IModuleStore
 {
-    private readonly HttpClient _client = new();
     private const string Url = "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/manifest.json";
-    private readonly string _modulesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
+    private readonly HttpClient _client = new();
+
     // ReSharper disable once CollectionNeverQueried.Local
     private readonly List<AssemblyLoadContext> _contexts = [];
+
+    private readonly string _modulesPath =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
 
     public IEnumerable<IModule> LoadModules()
     {
@@ -30,7 +32,7 @@ public class ModuleStore : IModuleStore
             {
                 continue;
             }
-            
+
             var context = new ModuleLoadContext(item);
             Assembly assembly;
             try
@@ -49,7 +51,7 @@ public class ModuleStore : IModuleStore
                 context.Unload();
                 continue;
             }
-            
+
             _contexts.Add(context);
 
             foreach (var module in modules.Select(moduleType => (IModule)Activator.CreateInstance(moduleType)!))

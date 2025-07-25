@@ -3,7 +3,7 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.MediaEngine.Vlc.ViewModels;
 
-public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
+public class SettingsViewModel : ModuleSettingsViewModel<Settings>
 {
     public SettingsViewModel(IModuleSettings<Settings> settings) : base(settings)
     {

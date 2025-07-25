@@ -35,14 +35,11 @@ public partial class MainWindowViewModel : ObservableObject,
             .FirstAsync()
             .Subscribe(navigator =>
             {
-                navigator.Navigated += (_, args) =>
-                {
-                    UpdateSelection(args);
-                };
+                navigator.Navigated += (_, args) => { UpdateSelection(args); };
 
                 navigator.NavigateToRoute("My List");
             });
-        
+
         messenger.RegisterAll(this);
     }
 
@@ -50,42 +47,14 @@ public partial class MainWindowViewModel : ObservableObject,
     public List<NavMenuItem> FooterMenuItems { get; }
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
 
-    public void Receive(NavigateToViewModelMessage message)
-    {
-        Navigator?.NavigateViewModel(message.ViewModel);
-    }
-
     public void Receive(NavigateToDataMessage message)
     {
         Navigator?.NavigateToData(message.Data);
     }
 
-    public void Receive(PaneNavigateToViewModelMessage message)
+    public void Receive(NavigateToViewModelMessage message)
     {
-        var map = _locator.FindByViewModel(message.ViewModel);
-        if (map is not { View: { } viewType, ViewModel: { } vmType })
-        {
-            return;
-        }
-
-        var viewObj = (Control)Activator.CreateInstance(viewType)!;
-        var vmObj = ActivatorUtilities.CreateInstance(Container.Services, vmType);
-
-        var options = new DrawerOptions
-        {
-            CanResize = true,
-            CanLightDismiss = !message.IsInline,
-            Position = Position.Right,
-            MinWidth = message.PaneWidth,
-            IsCloseButtonVisible = message.IsInline,
-            Buttons = DialogButton.None,
-            Title = message.Title,
-            MaxHeight = 700
-        };
-
-        NavigationExtensions.ConfigureView(viewObj, vmObj);
-        
-        Drawer.ShowModal(viewObj, vmObj, options: options);
+        Navigator?.NavigateViewModel(message.ViewModel);
     }
 
     public void Receive(PaneNavigateToDataMessage message)
@@ -112,7 +81,35 @@ public partial class MainWindowViewModel : ObservableObject,
         };
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
-        
+
+        Drawer.ShowModal(viewObj, vmObj, options: options);
+    }
+
+    public void Receive(PaneNavigateToViewModelMessage message)
+    {
+        var map = _locator.FindByViewModel(message.ViewModel);
+        if (map is not { View: { } viewType, ViewModel: { } vmType })
+        {
+            return;
+        }
+
+        var viewObj = (Control)Activator.CreateInstance(viewType)!;
+        var vmObj = ActivatorUtilities.CreateInstance(Container.Services, vmType);
+
+        var options = new DrawerOptions
+        {
+            CanResize = true,
+            CanLightDismiss = !message.IsInline,
+            Position = Position.Right,
+            MinWidth = message.PaneWidth,
+            IsCloseButtonVisible = message.IsInline,
+            Buttons = DialogButton.None,
+            Title = message.Title,
+            MaxHeight = 700
+        };
+
+        NavigationExtensions.ConfigureView(viewObj, vmObj);
+
         Drawer.ShowModal(viewObj, vmObj, options: options);
     }
 

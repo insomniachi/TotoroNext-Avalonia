@@ -33,11 +33,11 @@
                                         Watermark="Year" />
                 </u:FormItem>
             </u:FormGroup>
-            
+
             <u:FormGroup Header="Tags">
                 <u:FormGroup.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="16"/>
+                        <StackPanel Orientation="Horizontal" Spacing="16" />
                     </ItemsPanelTemplate>
                 </u:FormGroup.ItemsPanel>
                 <u:FormItem Label="Include">
@@ -49,7 +49,7 @@
                         HorizontalAlignment="Stretch"
                         Width="250"
                         Height="100"
-                        Padding="0"/>
+                        Padding="0" />
                 </u:FormItem>
                 <u:FormItem Label="Exclude">
                     <u:TagInput
@@ -59,20 +59,20 @@
                         Tags="{Binding ExcludedGenres}"
                         Width="250"
                         Height="100"
-                        Padding="0"/>
+                        Padding="0" />
                 </u:FormItem>
             </u:FormGroup>
-            
+
             <u:FormGroup Header="Score">
                 <u:FormItem Label="Minimum">
                     <u:NumericIntUpDown Value="{Binding MinimumScore, Mode=TwoWay}"
                                         Maximum="100"
-                                        Minimum="0"/>
+                                        Minimum="0" />
                 </u:FormItem>
                 <u:FormItem Label="Maximum">
                     <u:NumericIntUpDown Value="{Binding MaximumScore, Mode=TwoWay}"
                                         Maximum="100"
-                                        Minimum="0"/>
+                                        Minimum="0" />
                 </u:FormItem>
             </u:FormGroup>
         </u:Form>
@@ -97,7 +97,7 @@
                             <ac:AnimeCard Anime="{Binding}"
                                           Margin="8"
                                           module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:AdvancedSearchViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}"
-                                          module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AdvancedSearchViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}"/>
+                                          module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AdvancedSearchViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

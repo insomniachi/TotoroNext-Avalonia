@@ -22,7 +22,7 @@ public sealed partial class AnimeSongsViewModel(
     [ObservableProperty] public partial Uri? SelectedTheme { get; set; }
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
-    
+
     [ObservableProperty] public partial bool IsPlayingOrPaused { get; set; }
 
     public IInternalMediaPlayer InternalMediaPlayer { get; } = (IInternalMediaPlayer)mediaPlayerFactory.Create(Guid.Empty);
@@ -32,7 +32,7 @@ public sealed partial class AnimeSongsViewModel(
         InternalMediaPlayer.StateChanged
                            .ObserveOn(RxApp.MainThreadScheduler)
                            .Subscribe(state => IsPlayingOrPaused = state is MediaPlayerState.Playing or MediaPlayerState.Paused);
-        
+
         IsLoading = true;
 
         Themes = await animeThemes.FindById(@params.Anime.Id, @params.Anime.ServiceName ?? nameof(ExternalIds.MyAnimeList));

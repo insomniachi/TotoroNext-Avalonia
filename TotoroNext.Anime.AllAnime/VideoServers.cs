@@ -4,6 +4,7 @@ using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
 namespace TotoroNext.AnimeHeaven;
+
 internal static partial class VideoServers
 {
     internal static async Task<VideoServer?> FromMp4Upload(string name, string url)
@@ -17,7 +18,7 @@ internal static partial class VideoServers
             {
                 Headers =
                 {
-                    [HeaderNames.Referer] = "https://www.mp4upload.com/",
+                    [HeaderNames.Referer] = "https://www.mp4upload.com/"
                 }
             };
         }
@@ -33,7 +34,7 @@ internal static partial class VideoServers
         {
             Headers =
             {
-                [HeaderNames.Referer] = referer,
+                [HeaderNames.Referer] = referer
             }
         };
     }

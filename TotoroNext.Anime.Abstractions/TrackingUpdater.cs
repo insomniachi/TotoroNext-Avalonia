@@ -35,7 +35,7 @@ public sealed class TrackingUpdater(
             {
                 continue;
             }
-            
+
             var id = anime.ExternalIds.GetId(trackingService.Name);
             if (id is null)
             {

@@ -3,9 +3,10 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Module;
 
-public class Factory<TService, TId>(IServiceScopeFactory serviceScopeFactory,
-                                    ILocalSettingsService localSettingsService,
-                                    string defaultKey) : IFactory<TService, TId>
+public class Factory<TService, TId>(
+    IServiceScopeFactory serviceScopeFactory,
+    ILocalSettingsService localSettingsService,
+    string defaultKey) : IFactory<TService, TId>
     where TService : notnull
 {
     public TService Create(TId? id)
@@ -23,7 +24,7 @@ public class Factory<TService, TId>(IServiceScopeFactory serviceScopeFactory,
     {
         using var scope = serviceScopeFactory.CreateScope();
 
-        var key = localSettingsService.ReadSetting<TId>(defaultKey, default);
+        var key = localSettingsService.ReadSetting<TId>(defaultKey);
 
         if (EqualityComparer<TId>.Default.Equals(key, default))
         {
@@ -39,5 +40,8 @@ public class Factory<TService, TId>(IServiceScopeFactory serviceScopeFactory,
         return scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey);
     }
 
-    public bool CanCreate() => CreateAll().Any();
+    public bool CanCreate()
+    {
+        return CreateAll().Any();
+    }
 }

@@ -1,6 +1,7 @@
 using GraphQL;
 using GraphQL.Client.Http;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 
@@ -10,6 +11,11 @@ internal class AnilistMetadataService(
     GraphQLHttpClient client,
     IModuleSettings<Settings> settings) : IMetadataService
 {
+    public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
+    {
+        return await anime.GetEpisodes();
+    }
+
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
         try

@@ -26,9 +26,11 @@ public sealed partial class AnimeDetailsViewModel(
 
     [ObservableProperty] public partial int? Score { get; set; } = anime.Tracking?.Score;
 
-    [ObservableProperty] public partial DateTime? StartDate { get; set; } = anime.Tracking?.StartDate == new DateTime() ? null : anime.Tracking?.StartDate;
+    [ObservableProperty]
+    public partial DateTime? StartDate { get; set; } = anime.Tracking?.StartDate == new DateTime() ? null : anime.Tracking?.StartDate;
 
-    [ObservableProperty] public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
+    [ObservableProperty]
+    public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
     [ObservableProperty] public partial AnimeDetailsTabItem? SelectedTab { get; set; }
 

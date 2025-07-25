@@ -17,7 +17,7 @@ public class Animations
     static Animations()
     {
         ItemsReorderAnimationDurationProperty.Changed.AddClassHandler<ItemsControl>(
-             OnItemsReorderAnimationDurationChanged);
+                                                                                    OnItemsReorderAnimationDurationChanged);
     }
 
     private static void OnItemsReorderAnimationDurationChanged(ItemsControl sender,

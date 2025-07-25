@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" />
-    <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="HtmlAgilityPack"/>
+        <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore"/>
+    </ItemGroup>
 
 </Project>

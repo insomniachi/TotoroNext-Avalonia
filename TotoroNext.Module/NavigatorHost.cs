@@ -16,14 +16,14 @@ public interface IAsyncInitializable
     Task InitializeAsync();
 }
 
-public class NavigatorHost(TransitioningContentControl host,
-                           IViewRegistry locator,
-                           ILogger<NavigatorHost> logger,
-                           IServiceScopeFactory serviceScopeFactory) : INavigator
+public class NavigatorHost(
+    TransitioningContentControl host,
+    IViewRegistry locator,
+    ILogger<NavigatorHost> logger,
+    IServiceScopeFactory serviceScopeFactory) : INavigator
 {
-    public event EventHandler<NavigationResult>? Navigated;
-
     private TransitioningContentControl Control { get; } = host;
+    public event EventHandler<NavigationResult>? Navigated;
 
     public bool NavigateToData(object data)
     {
@@ -45,7 +45,7 @@ public class NavigatorHost(TransitioningContentControl host,
             Navigated?.Invoke(this, new NavigationResult(viewType, vmType));
             return true;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             logger.LogError(ex, "Navigation failed");
             return false;
@@ -73,7 +73,7 @@ public class NavigatorHost(TransitioningContentControl host,
 
             return true;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             logger.LogError(ex, "Navigation failed");
             return true;
@@ -101,7 +101,7 @@ public class NavigatorHost(TransitioningContentControl host,
 
             return true;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             logger.LogError(ex, "Navigation failed");
             return false;

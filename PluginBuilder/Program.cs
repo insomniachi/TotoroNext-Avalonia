@@ -17,24 +17,24 @@ var plugins = new List<PluginProject>
     },
     new("TotoroNext.Anime.AllAnime")
     {
-        Dependencies = 
+        Dependencies =
         [
             "FlurlGraphQL",
             "Macross.Json.Extensions"
         ]
     },
-    new ("TotoroNext.Discord")
+    new("TotoroNext.Discord")
     {
-        Dependencies = 
+        Dependencies =
         [
             "DiscordRPC",
-            "Newtonsoft.Json",
+            "Newtonsoft.Json"
         ]
     },
     new("TotoroNext.Anime.AnimePahe"),
     new("TotoroNext.MediaEngine.Mpv"),
     new("TotoroNext.MediaEngine.Vlc"),
-    new("TotoroNext.Anime.Aniskip"),
+    new("TotoroNext.Anime.Aniskip")
 };
 
 var moduleDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
@@ -53,17 +53,17 @@ void CleanBin(string projectBin, PluginProject project)
     foreach (var file in Directory.GetFiles(projectBin, "*"))
     {
         var fileName = Path.GetFileName(file);
-        
+
         if (fileName.Contains(project.Name))
         {
             continue;
         }
-        
+
         if (project.Dependencies.Any(x => fileName.Contains(x)))
         {
             continue;
         }
-        
+
         File.Delete(file);
     }
 
@@ -78,7 +78,7 @@ void MovePlugin(string baseModuleDir, string projectBin, PluginProject project)
 {
     var pluginDir = Path.Combine(baseModuleDir, project.Name);
     Directory.CreateDirectory(pluginDir);
-    
+
     // Move files
     foreach (var filePath in Directory.GetFiles(projectBin))
     {
@@ -112,7 +112,7 @@ void CopyDirectory(string sourceDir, string destinationDir)
     {
         var fileName = Path.GetFileName(filePath);
         var destFile = Path.Combine(destinationDir, fileName);
-        File.Copy(filePath, destFile, overwrite: true);
+        File.Copy(filePath, destFile, true);
     }
 
     // Recursively copy subdirectories

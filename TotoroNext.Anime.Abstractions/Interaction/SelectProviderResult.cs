@@ -13,17 +13,14 @@ public sealed class SelectProviderResult : SelectResult<SearchResult>
 {
     protected override Control CreateElement(SearchResult model)
     {
-        return new Grid() { ColumnSpacing = 8}
-            .Margin(8)
-            .Cols("Auto,*")
-            .Children([
-                CreateImage(model?.Image?.ToString()),
-                new TextBlock()
-                    .Text(model?.Title ?? "")
-                    .VerticalAlignment(VerticalAlignment.Center)
-                    .TextWrapping(TextWrapping.Wrap)
-                    .Col(1)
-            ]);
+        return new Grid { ColumnSpacing = 8 }
+               .Margin(8)
+               .Cols("Auto,*")
+               .Children(CreateImage(model?.Image?.ToString()), new TextBlock()
+                                                                .Text(model?.Title ?? "")
+                                                                .VerticalAlignment(VerticalAlignment.Center)
+                                                                .TextWrapping(TextWrapping.Wrap)
+                                                                .Col(1));
     }
 }
 
@@ -32,16 +29,13 @@ public sealed class SelectAnimeResult : SelectResult<AnimeModel>
 {
     protected override Control CreateElement(AnimeModel model)
     {
-        return new Grid() { ColumnSpacing = 8}
+        return new Grid { ColumnSpacing = 8 }
                .Margin(8)
                .Cols("Auto,*")
-               .Children([
-                   CreateImage(model.Image),
-                   new TextBlock()
-                       .Text(model.Title)
-                       .VerticalAlignment(VerticalAlignment.Center)
-                       .TextWrapping(TextWrapping.Wrap)
-                       .Col(1)
-               ]);
+               .Children(CreateImage(model.Image), new TextBlock()
+                                                   .Text(model.Title)
+                                                   .VerticalAlignment(VerticalAlignment.Center)
+                                                   .TextWrapping(TextWrapping.Wrap)
+                                                   .Col(1));
     }
 }

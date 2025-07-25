@@ -14,28 +14,28 @@
                           SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
                           SelectedValueBinding="{Binding Id}"
                           DisplayMemberBinding="{Binding Name}"
-                          Width="300"/>
+                          Width="300" />
             </u:FormItem>
             <u:FormItem Label="Media Player">
                 <ComboBox ItemsSource="{Binding MediaEngines}"
                           SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
                           SelectedValueBinding="{Binding Id}"
                           DisplayMemberBinding="{Binding Name}"
-                          Width="300"/>
+                          Width="300" />
             </u:FormItem>
             <u:FormItem Label="Anime Tracking">
                 <ComboBox ItemsSource="{Binding TrackingServices}"
                           SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
                           SelectedValueBinding="{Binding Id}"
                           DisplayMemberBinding="{Binding Name}"
-                          Width="300"/>
+                          Width="300" />
             </u:FormItem>
             <u:FormItem Label="Media Segments">
                 <ComboBox ItemsSource="{Binding SegmentProviders}"
                           SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
                           SelectedValueBinding="{Binding Id}"
                           DisplayMemberBinding="{Binding Name}"
-                          Width="300"/>
+                          Width="300" />
             </u:FormItem>
         </u:FormGroup>
     </u:Form>

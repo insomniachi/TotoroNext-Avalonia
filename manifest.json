@@ -4,7 +4,9 @@
     "Name": "Allanime",
     "Description": "All Manga's goal is to provide you with the highest possible amount of daily anime episodes/manga chapters for free and without any kind of limitation. As a very dedicated website, we try to improve each month bringing new updates to improve the user experience as much as possible.",
     "Owner": "Totoro",
-    "Categories": [ "Anime Provider" ],
+    "Categories": [
+      "Anime Provider"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AllAnime/Assets/hero.png",
     "EntryPoint": "TotoroNext.Anime.AllAnime.dll",
     "Versions": [
@@ -21,7 +23,9 @@
     "Name": "Anime Pahe",
     "Description": "AnimePahe is an encode \"group\" (me and my lovely bot), was founded in July 2014 by I, me and myself.\r\nWe encode on going anime, completed anime and anime movie.",
     "Owner": "Totoro",
-    "Categories": [ "Anime Provider" ],
+    "Categories": [
+      "Anime Provider"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimePahe/Assets/pahe.jpg",
     "EntryPoint": "TotoroNext.Anime.AnimePahe.dll",
     "Versions": [
@@ -38,7 +42,9 @@
     "Name": "MPV",
     "Description": "MPV Media Player is a free, open-source, and cross-platform media player known for its versatility and powerful performance. It supports a wide variety of media file formats, audio and video codecs, and subtitle types, making it suitable for both casual and advanced users. MPV is particularly noted for its scripting capabilities, allowing users to customize their experience extensively.",
     "Owner": "Totoro",
-    "Categories": [ "Media Engine" ],
+    "Categories": [
+      "Media Engine"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.MediaEngine.Mpv/Assets/mpv.jpeg",
     "EntryPoint": "TotoroNext.MediaEngine.Mpv.dll",
     "Versions": [
@@ -55,7 +61,9 @@
     "Name": "Vlc",
     "Description": "VLC media player (previously the VideoLAN Client) is a free and open-source, portable, cross-platform media player software and streaming media server developed by the VideoLAN project.",
     "Owner": "Totoro",
-    "Categories": [ "Media Engine" ],
+    "Categories": [
+      "Media Engine"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.MediaEngine.Vlc/Assets/vlc.jpeg",
     "EntryPoint": "TotoroNext.MediaEngine.Vlc.dll",
     "Versions": [
@@ -72,7 +80,9 @@
     "Name": "Anilist",
     "Description": "AniList.co is an English-language website where you can follow and share manga books, anime series, movies, ONA and OVA releases. AniList.co runs alongside AniChart.net. The site is owned by the people behind the usernames Nazo and TehNut. ",
     "Owner": "Totoro",
-    "Categories": [ "Metadata" ],
+    "Categories": [
+      "Metadata"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Anilist/Assets/anilist.jpg",
     "EntryPoint": "TotoroNext.Anime.Anilist.dll",
     "Versions": [
@@ -89,7 +99,9 @@
     "Name": "MyAnimeList",
     "Description": "MyAnimeList, often abbreviated as MAL, is an anime and manga social networking and social cataloging application website run by volunteers. The site provides its users with a list-like system to organize and score anime and manga. It facilitates finding users who share similar tastes and provides a large database on anime and manga",
     "Owner": "Totoro",
-    "Categories": [ "Metadata" ],
+    "Categories": [
+      "Metadata"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.MyAnimeList/Assets/mal.jpg",
     "EntryPoint": "TotoroNext.Anime.Anilist.dll",
     "Versions": [
@@ -106,7 +118,9 @@
     "Name": "Aniskip",
     "Description": "Provides a browser extension (and 3rd party integrations in the future) to allow users to submit and vote on timestamp ranges for segments of episodes to skip.",
     "Owner": "Totoro",
-    "Categories": [ "Segments" ],
+    "Categories": [
+      "Segments"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Aniskip/Assets/aniskip.png",
     "EntryPoint": "TotoroNext.Anime.Aniskip.dll",
     "Versions": [
@@ -123,7 +137,9 @@
     "Name": "Discord Rich Presence",
     "Description": "Custom discord rich presence while watching",
     "Owner": "Totoro",
-    "Categories": [ "Misc" ],
+    "Categories": [
+      "Misc"
+    ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Discord/Assets/discord-logo.jpg",
     "EntryPoint": "TotoroNext.Discord.dll",
     "Versions": [

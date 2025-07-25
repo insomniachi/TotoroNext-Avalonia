@@ -11,26 +11,16 @@ namespace TotoroNext.MediaEngine.Mpv;
 
 internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer, ISeekable
 {
-    private Process? _process;
+    private readonly Subject<TimeSpan> _durationSubject = new();
+    private readonly Subject<Unit> _playbackStoped = new();
+    private readonly Subject<TimeSpan> _positionSubject = new();
     private readonly Settings _settings = settings.Value;
     private NamedPipeClientStream? _ipcStream;
-    private readonly Subject<TimeSpan> _durationSubject = new();
-    private readonly Subject<TimeSpan> _positionSubject = new();
-    private readonly Subject<Unit> _playbackStoped = new();
+    private Process? _process;
 
     public IObservable<TimeSpan> DurationChanged => _durationSubject;
     public IObservable<TimeSpan> PositionChanged => _positionSubject;
     public IObservable<Unit> PlaybackStopped => _playbackStoped;
-
-    public async Task SeekTo(TimeSpan timestamp)
-    {
-        if(_ipcStream is null)
-        {
-            return;
-        }
-
-        await SendIpcCommand(_ipcStream, new { command = new object[] { "seek", timestamp.TotalSeconds, "absolute+exact" } });
-    }
 
     public void Play(Media media, TimeSpan startPosition)
     {
@@ -49,10 +39,10 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                 $"--title={media.Metadata.Title}",
                 $"--force-media-title={media.Metadata.Title}",
                 $"--input-ipc-server={pipePath}"
-            },
+            }
         };
 
-        if(startPosition.TotalSeconds > 0)
+        if (startPosition.TotalSeconds > 0)
         {
             startInfo.ArgumentList.Add($"--start={startPosition.TotalSeconds}");
         }
@@ -84,14 +74,24 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
         Task.Run(() => IpcLoop(_process, pipeName));
     }
 
-	private async Task IpcLoop(Process process, string pipeName)
-	{
-		NamedPipeClientStream? pipe = null;
-		try
-		{
-			pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
-			_ipcStream = pipe;
-			
+    public async Task SeekTo(TimeSpan timestamp)
+    {
+        if (_ipcStream is null)
+        {
+            return;
+        }
+
+        await SendIpcCommand(_ipcStream, new { command = new object[] { "seek", timestamp.TotalSeconds, "absolute+exact" } });
+    }
+
+    private async Task IpcLoop(Process process, string pipeName)
+    {
+        NamedPipeClientStream? pipe = null;
+        try
+        {
+            pipe = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+            _ipcStream = pipe;
+
             process.Exited += (_, _) =>
             {
                 try
@@ -100,66 +100,66 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                 }
                 catch
                 {
-	                // ignored
+                    // ignored
                 }
             };
 
             process.Start();
-			// Retry until connected or process exits
-			while (!await TryConnectPipeAsync(pipe))
-			{
-				if (process is { HasExited: true })
-				{
-					return;
-				}
+            // Retry until connected or process exits
+            while (!await TryConnectPipeAsync(pipe))
+            {
+                if (process is { HasExited: true })
+                {
+                    return;
+                }
 
-				await Task.Delay(500);
-			}
+                await Task.Delay(500);
+            }
 
-			using var reader = new StreamReader(pipe, Encoding.UTF8);
+            using var reader = new StreamReader(pipe, Encoding.UTF8);
 
-			while (pipe.IsConnected)
-			{
-				var line = await reader.ReadLineAsync();
-				if (!string.IsNullOrWhiteSpace(line))
-				{
-					await HandleIpcMessage(pipe, line);
-				}
-				else
-				{
-					await Task.Delay(100);
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			Debug.WriteLine($"[MpvMediaPlayer] IPC connection failed: {ex.Message}");
-		}
-		finally
-		{
-			if (pipe is not null)
-			{
-				await pipe.DisposeAsync();
-			}
-		}
-	}
+            while (pipe.IsConnected)
+            {
+                var line = await reader.ReadLineAsync();
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    await HandleIpcMessage(pipe, line);
+                }
+                else
+                {
+                    await Task.Delay(100);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[MpvMediaPlayer] IPC connection failed: {ex.Message}");
+        }
+        finally
+        {
+            if (pipe is not null)
+            {
+                await pipe.DisposeAsync();
+            }
+        }
+    }
 
-	private static async Task<bool> TryConnectPipeAsync(NamedPipeClientStream pipe)
-	{
-		try
-		{
-			await pipe.ConnectAsync(1000); // 1 second timeout per attempt
-			return pipe.IsConnected;
-		}
-		catch (TimeoutException)
-		{
-			return false;
-		}
-		catch (IOException)
-		{
-			return false;
-		}
-	}
+    private static async Task<bool> TryConnectPipeAsync(NamedPipeClientStream pipe)
+    {
+        try
+        {
+            await pipe.ConnectAsync(1000); // 1 second timeout per attempt
+            return pipe.IsConnected;
+        }
+        catch (TimeoutException)
+        {
+            return false;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+    }
 
     private static async Task SendIpcCommand(NamedPipeClientStream pipe, object command)
     {
@@ -190,7 +190,7 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                     _positionSubject.OnNext(TimeSpan.FromSeconds(data.GetDouble()));
                 }
             }
-            else if(eventType == "file-loaded")
+            else if (eventType == "file-loaded")
             {
                 // Observe properties
                 await SendIpcCommand(pipe, new { command = new object[] { "observe_property", 1, "duration" } });

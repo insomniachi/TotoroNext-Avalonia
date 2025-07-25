@@ -5,8 +5,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Anime.Extensions;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -47,15 +47,6 @@ public sealed partial class WatchViewModel(
 
     [ObservableProperty] public partial MediaSegment? CurrentSegment { get; set; }
 
-    public void Dispose()
-    {
-        messenger.Send(new PlaybackEnded());
-        if (Anime?.Id is { } id)
-        {
-            animeOverridesRepository.Revert(id);
-        }
-    }
-
     public async Task InitializeAsync()
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
@@ -63,7 +54,7 @@ public sealed partial class WatchViewModel(
         if (Anime is not null)
         {
             var infos = await Anime.GetEpisodes();
-            
+
             this.WhenAnyValue(x => x.Episodes)
                 .WhereNotNull()
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -76,8 +67,8 @@ public sealed partial class WatchViewModel(
                     }
                 });
         }
-        
-        
+
+
         this.WhenAnyValue(x => x.ProviderResult)
             .WhereNotNull()
             .Where(_ => Episodes is { Count: 0 } or null)
@@ -162,6 +153,15 @@ public sealed partial class WatchViewModel(
         InitializePublishers();
     }
 
+    public void Dispose()
+    {
+        messenger.Send(new PlaybackEnded());
+        if (Anime?.Id is { } id)
+        {
+            animeOverridesRepository.Revert(id);
+        }
+    }
+
     private async Task<(MediaSegment Segment, MessageBoxResult Result)> AskSkip(MediaSegment segment)
     {
         return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()));
@@ -199,7 +199,7 @@ public sealed partial class WatchViewModel(
             MediaPlayer
                 .PositionChanged
                 .Where(_ => _media is not null)
-                .Select(position => (_media!.Metadata.MedaSections ?? []).FirstOrDefault(item => position > item.Start && position < item.End) )
+                .Select(position => (_media!.Metadata.MedaSections ?? []).FirstOrDefault(item => position > item.Start && position < item.End))
                 .WhereNotNull()
                 .DistinctUntilChanged()
                 .Subscribe(segment => CurrentSegment = segment);

@@ -20,8 +20,8 @@
                  SelectionMode="Single">
             <ListBox.Styles>
                 <Style Selector="ListBoxItem">
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0 4"/>
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Margin" Value="0 4" />
                 </Style>
             </ListBox.Styles>
             <ListBox.ItemTemplate>
@@ -29,7 +29,7 @@
                     <Grid ColumnDefinitions="Auto,*" Height="160">
                         <Grid>
                             <Border>
-                                <Image ail:ImageLoader.Source="{Binding Image}" Stretch="UniformToFill"/>
+                                <Image ail:ImageLoader.Source="{Binding Image}" Stretch="UniformToFill" />
                             </Border>
                             <ProgressBar Margin="8"
                                          x:Name="Progress"
@@ -37,33 +37,36 @@
                                          HorizontalAlignment="Stretch"
                                          Maximum="{Binding Progress.Total, FallbackValue={x:Static x:Double.MaxValue}}"
                                          Value="{Binding Progress.Position, FallbackValue=0}"
-                                         IsVisible="{Binding Progress, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                                         IsVisible="{Binding Progress, Converter={x:Static ObjectConverters.IsNotNull}}" />
                         </Grid>
                         <Border Grid.Column="1" Padding="8">
                             <Grid RowDefinitions="Auto,Auto,*">
                                 <TextBlock Margin="0 0 0 8"
                                            TextTrimming="CharacterEllipsis"
                                            TextWrapping="NoWrap">
-                                    <Run Text="Episode"/>
-                                    <Run Text="{Binding EpisodeNumber}"/>
-                                    <Run Text=":"/>
-                                    <Run Text="{Binding Titles.English}"/>
+                                    <Run Text="Episode" />
+                                    <Run Text="{Binding EpisodeNumber}" />
+                                    <Run Text=":" />
+                                    <Run Text="{Binding Titles.English}" />
                                 </TextBlock>
                                 <StackPanel Grid.Row="1"
                                             Margin="0 0 0 8"
                                             Orientation="Horizontal"
                                             Spacing="5">
-                                    <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}" Height="20" Width="20"/>
-                                    <TextBlock Text="{Binding AirDate}" Margin="0 0 16 0"/>
-                                    <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}" Height="20" Width="20"/>
+                                    <iconPacks:PackIconControl
+                                        Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}" Height="20"
+                                        Width="20" />
+                                    <TextBlock Text="{Binding AirDate}" Margin="0 0 16 0" />
+                                    <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
+                                                               Height="20" Width="20" />
                                     <TextBlock>
-                                        <Run Text="{Binding Runtime}"/>
-                                        <Run Text="Min"/>
+                                        <Run Text="{Binding Runtime}" />
+                                        <Run Text="Min" />
                                     </TextBlock>
                                 </StackPanel>
                                 <ScrollViewer Grid.Row="2">
                                     <TextBlock Text="{Binding Overview}"
-                                               TextWrapping="Wrap"/>
+                                               TextWrapping="Wrap" />
                                 </ScrollViewer>
                             </Grid>
                         </Border>
@@ -72,7 +75,7 @@
             </ListBox.ItemTemplate>
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <VirtualizingStackPanel/>
+                    <VirtualizingStackPanel />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
         </ListBox>

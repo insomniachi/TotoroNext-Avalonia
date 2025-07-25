@@ -5,8 +5,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Anime.Extensions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -15,6 +15,7 @@ namespace TotoroNext.Anime.ViewModels;
 [UsedImplicitly]
 public partial class AnimeEpisodesListViewModel(
     EpisodesListViewModelNagivationParameters @params,
+    IFactory<IMetadataService, Guid> metadataFactory,
     IPlaybackProgressService playbackProgressService,
     IFactory<IAnimeProvider, Guid> providerFactory,
     IMessenger messenger) : ObservableObject, IAsyncInitializable
@@ -61,17 +62,18 @@ public partial class AnimeEpisodesListViewModel(
         }
 
         messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(searchResult,
-                                                  Anime,
-                                                  episodes,
-                                                  selectedEpisode,
-                                                  false)));
+                                                                                       Anime,
+                                                                                       episodes,
+                                                                                       selectedEpisode,
+                                                                                       false)));
     }
 
     private async Task UpdateEpisodes()
     {
         IsLoading = true;
 
-        var eps = await Anime.GetEpisodes();
+        var metadataService = metadataFactory.CreateDefault();
+        var eps = await metadataService.GetEpisodesAsync(Anime);
         var progress = playbackProgressService.GetProgress(Anime.Id);
 
         foreach (var item in progress)

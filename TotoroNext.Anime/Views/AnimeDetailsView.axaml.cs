@@ -2,7 +2,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
 using ReactiveUI;
 using TotoroNext.Anime.ViewModels;
 
@@ -73,8 +72,6 @@ public partial class AnimeDetailsView : UserControl
                 break;
             case "Songs":
                 vm.Navigator?.NavigateToData(new SongsViewModelNavigationParameters(vm.Anime));
-                break;
-            default:
                 break;
         }
     }

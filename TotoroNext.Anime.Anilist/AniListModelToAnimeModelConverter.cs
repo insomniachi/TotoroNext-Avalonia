@@ -52,8 +52,51 @@ public static partial class AniListModelToAnimeModelConverter
             Description = DescriptionCleanRegex().Replace(media.Description ?? string.Empty, string.Empty),
             Related = ConvertSimple(media.Relations?.Nodes ?? []),
             Recommended = ConvertSimple(media.Recommendations?.Nodes.Select(x => x.MediaRecommendation).Where(x => x is not null)
-                                             .Where(x => x.Type == MediaType.Anime) ?? [])
+                                             .Where(x => x.Type == MediaType.Anime) ?? []),
+            Episodes = ConvertEpisodes(media)
         };
+    }
+
+    private static List<EpisodeInfo> ConvertEpisodes(Media media)
+    {
+        if (media.StreamingEpisodes is null or { Count: 0 })
+        {
+            return [];
+        }
+
+        var result = new List<EpisodeInfo>();
+        foreach (var episode in media.AiringSchedule.Nodes.Index())
+        {
+            var (index, node) = episode;
+            if (node is null)
+            {
+                continue;
+            }
+
+            if (node.TimeUntilAiring is not null)
+            {
+                break;
+            }
+
+            var ep = new EpisodeInfo
+            {
+                EpisodeNumber = node.Episode ?? 0
+            };
+
+            if (media.StreamingEpisodes.Count > index)
+            {
+                var streamingEp = media.StreamingEpisodes.ElementAt(index);
+                ep.Titles = new Titles
+                {
+                    English = streamingEp.Title
+                };
+                ep.Image = streamingEp.Thumbnail;
+            }
+
+            result.Add(ep);
+        }
+
+        return result;
     }
 
     public static AnimeModel[] ConvertSimple(IEnumerable<Media>? media)

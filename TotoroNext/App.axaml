@@ -26,7 +26,7 @@
         <u-semi:SemiTheme Locale="en-US" />
         <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
         <Style Selector="u|DefaultDrawerControl">
-            <Setter Property="Theme" Value="{StaticResource NoScrollDrawer}"/>
+            <Setter Property="Theme" Value="{StaticResource NoScrollDrawer}" />
         </Style>
         <Style Selector="modc|ElasticWrapPanelEx[LineCount=1]">
             <Setter Property="IsFillHorizontal" Value="False" />

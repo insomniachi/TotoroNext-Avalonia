@@ -19,43 +19,44 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
-    
+
     public static IServiceCollection AddModuleSettings<TData>(this IServiceCollection services, IModule<TData> module)
         where TData : class, new()
     {
         return services.AddSingleton<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
     }
-    
-    public static IServiceCollection AddMainNavigationItem<TView,TViewModel>(this IServiceCollection services, string header, Enum icon, NavMenuItemTag? tag = null)
+
+    public static IServiceCollection AddMainNavigationItem<TView, TViewModel>(this IServiceCollection services, string header, Enum icon,
+                                                                              NavMenuItemTag? tag = null)
         where TView : class, new()
         where TViewModel : class
     {
         tag ??= new NavMenuItemTag();
         tag.ViewModelType = typeof(TViewModel);
-        
+
         services.AddKeyedViewMap<TView, TViewModel>(header);
         services.AddTransient(sp =>
         {
-            var item = new NavMenuItem()
+            var item = new NavMenuItem
             {
                 Header = header,
-                Icon = new Viewbox()
+                Icon = new Viewbox
                 {
-                    Child = new PackIconControl()
+                    Child = new PackIconControl
                     {
                         Kind = icon
                     }
                 },
-                Tag = tag,
+                Tag = tag
             };
-            
+
             NavigationExtensions.SetNavigateToViewModel(item, typeof(TViewModel));
-            
+
             return item;
         });
         return services;
     }
-    
+
     public static IServiceCollection AddViewMap<TView, TViewModel>(this IServiceCollection services)
         where TView : class, new()
         where TViewModel : class
@@ -85,7 +86,7 @@ public static class ServiceCollectionExtensions
     {
         return services.AddViewMap(new KeyedViewMap<TView, TViewModel>(key));
     }
-    
+
     public static IServiceCollection RegisterFactory<TService>(this IServiceCollection services, string key)
         where TService : notnull
     {
@@ -98,7 +99,7 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
-    
+
     public static IServiceCollection AddSelectionUserInteraction<TImpl, TType>(this IServiceCollection services)
         where TImpl : class, ISelectionUserInteraction<TType>
     {

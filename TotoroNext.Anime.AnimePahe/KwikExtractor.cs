@@ -43,7 +43,7 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
         var httpResponse = await client.HttpClient.PostAsync(postUrl, content);
         if (httpResponse.StatusCode == HttpStatusCode.Found)
         {
-            yield return new VideoSource() { Url = new(httpResponse!.Headers!.Location!.AbsoluteUri) };
+            yield return new VideoSource { Url = new Uri(httpResponse!.Headers!.Location!.AbsoluteUri) };
         }
     }
 
@@ -59,12 +59,14 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
                 s += fullString[i];
                 i++;
             }
+
             var j = 0;
             while (j < key.Length)
             {
                 s = s.Replace(key[j].ToString(), j.ToString());
                 j++;
             }
+
             r += (char)(int.Parse(GetString(s, v2, 10)) - v1);
             i++;
         }
@@ -74,7 +76,7 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
 
     private static string GetString(string content, int s1, int s2)
     {
-        var slice = CharacterMap.AsSpan()[0..s2];
+        var slice = CharacterMap.AsSpan()[..s2];
         var acc = 0;
         var index = 0;
         foreach (var item in content.Reverse())
@@ -87,7 +89,7 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
         while (acc > 0)
         {
             k = slice[acc % s2] + k;
-            acc = (acc - (acc % s2)) / s2;
+            acc = (acc - acc % s2) / s2;
         }
 
         return string.IsNullOrEmpty(k) ? "0" : k;
@@ -105,5 +107,4 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
 
     [GeneratedRegex(@"value=""(.+?)""")]
     private static partial Regex KwikDecryptTokenRegex();
-
 }

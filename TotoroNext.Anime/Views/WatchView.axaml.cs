@@ -1,6 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
 namespace TotoroNext.Anime.Views;
 
@@ -17,7 +15,7 @@ public partial class WatchView : UserControl
         {
             return;
         }
-        
+
         if (e.AddedItems is not { Count: 1 })
         {
             return;
@@ -27,8 +25,7 @@ public partial class WatchView : UserControl
         {
             return;
         }
-        
+
         lb.ScrollIntoView(item);
-        
     }
 }

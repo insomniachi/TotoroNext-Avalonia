@@ -15,10 +15,10 @@ public interface IComponentRegistry
     IEnumerable<Descriptor> GetComponents(string componentType);
 }
 
-
 public class ComponentRegistry : IComponentRegistry
 {
     private readonly Dictionary<string, List<Descriptor>> _components = [];
+
     public void RegisterComponent(string componentType, Descriptor descriptor)
     {
         if (_components.TryGetValue(componentType, out var list))

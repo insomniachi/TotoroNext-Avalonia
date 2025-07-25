@@ -7,15 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="DiscordRichPresence" />
+        <PackageReference Include="DiscordRichPresence"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj" />
+        <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\discord-logo.jpg" />
+        <AvaloniaResource Include="Assets\discord-logo.jpg"/>
     </ItemGroup>
 
 </Project>

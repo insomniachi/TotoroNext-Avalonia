@@ -20,7 +20,7 @@
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"
                     HorizontalAlignment="Stretch"
-                    Click="Button_OnClick"/>
+                    Click="Button_OnClick" />
         </u:Form>
     </Grid>
 

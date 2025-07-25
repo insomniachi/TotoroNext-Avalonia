@@ -7,7 +7,7 @@ using DynamicData;
 using DynamicData.Binding;
 using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
-using TotoroNext.Anime.Extensions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -83,7 +83,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
         var term = string.IsNullOrEmpty(overrides?.SelectedResult)
             ? anime.Title
             : overrides.SelectedResult;
-        
+
         var result = await provider.SearchAndSelectAsync(term);
 
         if (overrides is not null)

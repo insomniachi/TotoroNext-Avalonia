@@ -16,10 +16,10 @@
                         Background="Transparent">
         <ScrollViewer>
             <Grid RowDefinitions="Auto,*" RowSpacing="16">
-                
+
                 <mac:AudioPlayer MediaPlayer="{Binding InternalMediaPlayer}"
-                                 IsVisible="{Binding IsPlayingOrPaused, Mode=OneWay}"/>
-                
+                                 IsVisible="{Binding IsPlayingOrPaused, Mode=OneWay}" />
+
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Themes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="aa:AnimeTheme">
@@ -34,7 +34,8 @@
                                         CommandParameter="{Binding}"
                                         ToolTip.Tip="Play Video">
                                     <Viewbox Height="20" Width="20">
-                                        <icon:PackIconControl Kind="{x:Static icon:PackIconPhosphorIconsKind.MonitorPlayFill}" />
+                                        <icon:PackIconControl
+                                            Kind="{x:Static icon:PackIconPhosphorIconsKind.MonitorPlayFill}" />
                                     </Viewbox>
                                 </Button>
                                 <Button Grid.Column="2"
@@ -43,7 +44,8 @@
                                         ToolTip.Tip="Play Audio"
                                         Height="20">
                                     <Viewbox Height="20" Width="20">
-                                        <icon:PackIconControl Kind="{x:Static icon:PackIconMaterialDesignKind.MusicNote}" />
+                                        <icon:PackIconControl
+                                            Kind="{x:Static icon:PackIconMaterialDesignKind.MusicNote}" />
                                     </Viewbox>
                                 </Button>
                             </Grid>

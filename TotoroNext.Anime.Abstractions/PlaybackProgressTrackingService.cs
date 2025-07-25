@@ -9,7 +9,9 @@ public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackPr
                                                                      IRecipient<PlaybackState>,
                                                                      IRecipient<TrackingUpdated>
 {
-    private readonly string _file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", $"progress.json");
+    private readonly string _file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext",
+                                                 "progress.json");
+
     private Dictionary<string, ProgressInfo> _progress = [];
 
     public Dictionary<float, ProgressInfo> GetProgress(long id)
@@ -31,37 +33,6 @@ public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackPr
         }
 
         return result;
-    }
-
-    public void Receive(PlaybackState message)
-    {
-        if (message.Position < TimeSpan.FromSeconds(30))
-        {
-            return;
-        }
-
-        var key = $"{message.Anime.Id}_{message.Episode.Number}";
-        if (_progress.TryGetValue(key, out var info))
-        {
-            info.Position = message.Position.TotalSeconds;
-        }
-        else
-        {
-            _progress[key] = new ProgressInfo
-            {
-                Position = message.Position.TotalSeconds,
-                Total = message.Duration.TotalSeconds,
-            };
-        }
-    }
-
-    public void Receive(TrackingUpdated message)
-    {
-        var key = $"{message.Anime.Id}_{message.Episode.Number}";
-        if (_progress.TryGetValue(key, out var info))
-        {
-            info.IsCompleted = true;
-        }
     }
 
 
@@ -90,6 +61,37 @@ public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackPr
         messenger.Unregister<PlaybackState>(this);
         messenger.Unregister<TrackingUpdated>(this);
     }
+
+    public void Receive(PlaybackState message)
+    {
+        if (message.Position < TimeSpan.FromSeconds(30))
+        {
+            return;
+        }
+
+        var key = $"{message.Anime.Id}_{message.Episode.Number}";
+        if (_progress.TryGetValue(key, out var info))
+        {
+            info.Position = message.Position.TotalSeconds;
+        }
+        else
+        {
+            _progress[key] = new ProgressInfo
+            {
+                Position = message.Position.TotalSeconds,
+                Total = message.Duration.TotalSeconds
+            };
+        }
+    }
+
+    public void Receive(TrackingUpdated message)
+    {
+        var key = $"{message.Anime.Id}_{message.Episode.Number}";
+        if (_progress.TryGetValue(key, out var info))
+        {
+            info.IsCompleted = true;
+        }
+    }
 }
 
 public class ProgressInfo
@@ -98,6 +100,5 @@ public class ProgressInfo
 
     public double Total { get; set; }
 
-    [JsonIgnore]
-    public bool IsCompleted { get; set; }
+    [JsonIgnore] public bool IsCompleted { get; set; }
 }

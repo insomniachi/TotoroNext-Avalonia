@@ -3,21 +3,20 @@ using System.Text.Json.Nodes;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.DependencyInjection;
-using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
-namespace TotoroNext.Anime.Extensions;
+namespace TotoroNext.Anime.Abstractions.Extensions;
 
-internal static class AnimeSearchExtensions
+public static class AnimeSearchExtensions
 {
-    internal static Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, AnimeModel model)
+    public static Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, AnimeModel model)
     {
         return SearchAndSelectAsync(provider, model.Title);
     }
-    
-    internal static async Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, string term)
+
+    public static async Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, string term)
     {
         var results = await provider.SearchAsync(term).ToListAsync();
 
@@ -37,7 +36,7 @@ internal static class AnimeSearchExtensions
         return await Container.Services.GetRequiredService<ISelectionUserInteraction<SearchResult>>().GetValue(results);
     }
 
-    internal static async Task<AnimeModel?> SearchAndSelectAsync(this IMetadataService provider, SearchResult model)
+    public static async Task<AnimeModel?> SearchAndSelectAsync(this IMetadataService provider, SearchResult model)
     {
         var results = await provider.SearchAnimeAsync(model.Title);
 
@@ -57,7 +56,7 @@ internal static class AnimeSearchExtensions
         return await Container.Services.GetRequiredService<ISelectionUserInteraction<AnimeModel>>().GetValue(results);
     }
 
-    internal static async Task<VideoServer?> SelectServer(this Episode ep)
+    public static async Task<VideoServer?> SelectServer(this Episode ep)
     {
         var servers = await ep.GetServersAsync().ToListAsync();
 
@@ -74,7 +73,7 @@ internal static class AnimeSearchExtensions
         return await Container.Services.GetRequiredService<ISelectionUserInteraction<VideoServer>>().GetValue(servers);
     }
 
-    internal static async Task<List<EpisodeInfo>> GetEpisodes(this AnimeModel anime)
+    public static async Task<List<EpisodeInfo>> GetEpisodes(this AnimeModel anime)
     {
         var serviceType = anime.ServiceName switch
         {

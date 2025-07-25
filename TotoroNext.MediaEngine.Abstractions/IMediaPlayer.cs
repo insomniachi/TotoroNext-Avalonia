@@ -17,11 +17,11 @@ public interface ISeekable
 
 public interface IInternalMediaPlayer : IMediaPlayer, ISeekable
 {
+    MediaPlayerState CurrentState { get; }
+    IObservable<MediaPlayerState> StateChanged { get; }
     void Pause();
     void Play();
     void Stop();
-    MediaPlayerState CurrentState { get; }
-    IObservable<MediaPlayerState> StateChanged { get; }
 }
 
 public record Media(Uri Uri, MediaMetadata Metadata);

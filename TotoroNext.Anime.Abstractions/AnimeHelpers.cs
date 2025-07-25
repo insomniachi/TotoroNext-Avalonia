@@ -1,6 +1,7 @@
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions;
+
 public class AnimeHelpers
 {
     public static Season PrevSeason()
@@ -23,7 +24,7 @@ public class AnimeHelpers
             year--;
         }
 
-        return new(current, year);
+        return new Season(current, year);
     }
 
     public static Season NextSeason()
@@ -46,7 +47,7 @@ public class AnimeHelpers
             year++;
         }
 
-        return new(current, year);
+        return new Season(current, year);
     }
 
     public static Season CurrentSeason()
@@ -64,16 +65,20 @@ public class AnimeHelpers
             _ => throw new InvalidOperationException()
         };
 
-        return new(current, year);
+        return new Season(current, year);
     }
 
-    public static double ScoreToRating(int? score) => score is > 0 ? score.Value / 2.0 : -1;
+    public static double ScoreToRating(int? score)
+    {
+        return score is > 0 ? score.Value / 2.0 : -1;
+    }
 
     public static string Progress(Tracking tracking, int? totalEpisodes)
     {
         var watched = (tracking.WatchedEpisodes ?? 0) == 0
-            ? "-" : tracking.WatchedEpisodes.ToString();
-        var total = (totalEpisodes == 0 ? "??" : totalEpisodes.ToString());
+            ? "-"
+            : tracking.WatchedEpisodes.ToString();
+        var total = totalEpisodes == 0 ? "??" : totalEpisodes.ToString();
         return $"{watched}/{total}";
     }
 

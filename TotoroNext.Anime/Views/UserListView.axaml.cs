@@ -1,6 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
 
 namespace TotoroNext.Anime.Views;
 

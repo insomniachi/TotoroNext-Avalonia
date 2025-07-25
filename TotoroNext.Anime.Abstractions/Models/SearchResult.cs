@@ -11,5 +11,8 @@ public class SearchResult(IAnimeProvider provider, string id, string title, Uri?
     public string Title { get; } = title;
     public Uri? Image { get; } = image;
 
-    public IAsyncEnumerable<Episode> GetEpisodes() => _provider.GetEpisodes(Id);
+    public IAsyncEnumerable<Episode> GetEpisodes()
+    {
+        return _provider.GetEpisodes(Id);
+    }
 }

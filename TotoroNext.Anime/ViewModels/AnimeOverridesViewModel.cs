@@ -36,7 +36,7 @@ public partial class AnimeOverridesViewModel(
         SelectedResult = overrides?.SelectedResult;
 
         this.WhenAnyPropertyChanged(nameof(IsNsfw), nameof(ProviderId), nameof(SelectedResult))
-            .Select(_ => new AnimeOverrides()
+            .Select(_ => new AnimeOverrides
             {
                 IsNsfw = IsNsfw,
                 Provider = ProviderId,
@@ -49,7 +49,7 @@ public partial class AnimeOverridesViewModel(
             .SelectMany(id =>
             {
                 var provider = providerFactory.Create(id!.Value);
-                return provider.SearchAsync(@parameters.Anime.Title).ToListAsync().AsTask();
+                return provider.SearchAsync(parameters.Anime.Title).ToListAsync().AsTask();
             })
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(results =>
