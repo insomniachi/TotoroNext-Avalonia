@@ -213,7 +213,7 @@ public sealed partial class WatchViewModel(
             return;
         }
 
-        IEnumerable<string?> parts = [ProviderResult?.Title, $"Episode {SelectedEpisode.Number}", source.Title];
+        IEnumerable<string?> parts = [ProviderResult?.Title, $"Episode {SelectedEpisode.Number}", source.Title ?? SelectedEpisode.Info?.Titles.English];
         var title = string.Join(" - ", parts.Where(x => !string.IsNullOrEmpty(x)));
 
         _duration = MediaHelper.GetDuration(source.Url, source.Headers);

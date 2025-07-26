@@ -6,6 +6,7 @@
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
              xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeGridViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeGridView">
@@ -13,7 +14,9 @@
         <ItemsControl ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="aa:AnimeModel">
-                    <ac:AnimeCard Margin="8" Anime="{Binding}" />
+                    <ac:AnimeCard Margin="8" 
+                                  Anime="{Binding}"
+                                  module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AnimeGridViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>

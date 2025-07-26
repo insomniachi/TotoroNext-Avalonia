@@ -60,7 +60,7 @@ internal class RpcService(
             p.Details = message.Anime.Title;
             p.State = $"Episode {message.Episode.Number}";
             p.Assets ??= new Assets();
-            p.Assets.LargeImageKey = message.Anime.Image ?? "icon";
+            p.Assets.LargeImageKey = message.Anime.Image;
             p.Timestamps = new Timestamps
             {
                 Start = now - message.Position,

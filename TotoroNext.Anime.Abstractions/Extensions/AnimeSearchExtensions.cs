@@ -105,6 +105,26 @@ public static class AnimeSearchExtensions
             result.Add(ep);
         }
 
+        var first = result.FirstOrDefault();
+        var max = result.Max(x => x.EpisodeNumber);
+        if (first is null)
+        {
+            return result;
+        }
+
+        var firstEp = first.EpisodeNumber;
+        foreach (var episode in result)
+        {
+            if (episode.EpisodeNumber < firstEp)
+            {
+                episode.EpisodeNumber = max + 1;
+            }
+            else
+            {
+                episode.EpisodeNumber -= firstEp - 1;
+            }
+        }
+
         return result;
     }
 }
