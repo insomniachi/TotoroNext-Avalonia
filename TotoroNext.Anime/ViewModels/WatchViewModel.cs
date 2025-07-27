@@ -129,6 +129,7 @@ public sealed partial class WatchViewModel(
 
         this.WhenAnyValue(x => x.SelectedSource)
             .WhereNotNull()
+            .ObserveOn(RxApp.TaskpoolScheduler)
             .SelectMany(x => Play(x).ToObservable())
             .Subscribe();
 
