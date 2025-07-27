@@ -24,6 +24,7 @@ public partial class AdvancedSearchViewModel(
     IAnimeOverridesRepository overridesRepository) : ObservableObject, IInitializable
 {
     private readonly IMetadataService _metadataService = metadataFactory.CreateDefault();
+    private bool _isChangeNotificationsEnabled = true;
 
     [ObservableProperty] public partial AnimeSeason? Season { get; set; }
     [ObservableProperty] public partial int? Year { get; set; }
@@ -54,6 +55,7 @@ public partial class AdvancedSearchViewModel(
         var trigger = Observable.Merge(propertiesChanged, includedGenresChanged, excludedGenresChanged);
 
         trigger
+            .Where(_ => _isChangeNotificationsEnabled)
             .Select(_ => new AdvancedSearchRequest
             {
                 Title = Title,
@@ -101,5 +103,21 @@ public partial class AdvancedSearchViewModel(
     private void OpenAnimeDetails(AnimeModel anime)
     {
         messenger.Send(new PaneNavigateToDataMessage(anime, paneWidth: 750, title: anime.Title));
+    }
+
+    [RelayCommand]
+    private void ClearSearchFilters()
+    {
+        _isChangeNotificationsEnabled = false;
+
+        Title = string.Empty;
+        Season = null;
+        Year = null;
+        IncludedGenres = [];
+        ExcludedGenres = [];
+        MinimumScore = null;
+        MaximumScore = null;
+
+        _isChangeNotificationsEnabled = true;
     }
 }

@@ -43,12 +43,14 @@
                     <u:FormItem Label="Start Date">
                         <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
-                                      DisplayFormat="MMMM dd, yyyy" />
+                                      DisplayFormat="MMMM dd, yyyy" 
+                                      Classes="ClearButton"/>
                     </u:FormItem>
                     <u:FormItem Label="Finish Date">
                         <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
-                                      DisplayFormat="MMMM dd, yyyy" />
+                                      DisplayFormat="MMMM dd, yyyy"
+                                      Classes="ClearButton"/>
                     </u:FormItem>
                 </u:Form>
                 <ScrollViewer Grid.Row="1" Margin="0 8 0 0">

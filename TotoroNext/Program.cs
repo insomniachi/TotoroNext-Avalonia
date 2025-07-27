@@ -1,9 +1,11 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Declarative;
 using Avalonia.ReactiveUI;
+using JetBrains.Annotations;
 
 namespace TotoroNext;
 
+[UsedImplicitly]
 internal sealed class Program
 {
     // Initialization code. Don't use any Avalonia, third-party APIs or any

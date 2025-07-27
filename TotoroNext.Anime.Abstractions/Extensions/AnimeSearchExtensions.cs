@@ -106,12 +106,12 @@ public static class AnimeSearchExtensions
         }
 
         var first = result.FirstOrDefault();
-        var max = result.Max(x => x.EpisodeNumber);
         if (first is null)
         {
             return result;
         }
-
+        
+        var max = result.Max(x => x.EpisodeNumber);
         var firstEp = first.EpisodeNumber;
         foreach (var episode in result)
         {

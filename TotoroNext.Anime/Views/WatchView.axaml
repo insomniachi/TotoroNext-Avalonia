@@ -30,8 +30,16 @@
             </u:SelectionList>
         </Grid>
 
-        <Grid Grid.Column="1" Grid.RowSpan="2" Grid.Row="0" Grid.RowDefinitions="Auto,*" RowSpacing="16">
-            <TextBlock Text="Episodes" Classes.H1="true" Theme="{DynamicResource TitleTextBlock}" />
+        <Grid Grid.Column="1"
+              Grid.RowSpan="2"
+              Grid.Row="0"
+              RowDefinitions="Auto,*" 
+              RowSpacing="16" 
+              Background="{DynamicResource SemiColorTertiaryLightActive}">
+            <TextBlock Text="Episodes" 
+                       Classes.H1="true"
+                       Margin="8 0 0 0"
+                       Theme="{DynamicResource TitleTextBlock}" />
             <ListBox Grid.Row="1"
                      Width="800"
                      MinHeight="200"
@@ -84,11 +92,6 @@
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Background="{DynamicResource SemiColorTertiaryLightActive}" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
             </ListBox>
         </Grid>
     </Grid>

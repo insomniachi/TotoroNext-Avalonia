@@ -11,73 +11,76 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AdvancedSearchViewModel"
              x:Class="TotoroNext.Anime.Views.AdvancedSearchView">
-    <Grid RowDefinitions="Auto,*"
-          RowSpacing="16">
-
-        <u:Form>
+    <Grid ColumnDefinitions="*,300"
+          ColumnSpacing="16">
+        <u:Form Grid.Column="1" 
+                HorizontalAlignment="Stretch">
+            <u:Form.Styles>
+                <Style Selector="u|FormItem">
+                    <Setter Property="Margin" Value="16 16 16 0 "/>
+                </Style>
+                <Style Selector="u|Form > u|FormItem:nth-child(1)">
+                    <Setter Property="Margin" Value="16 16 16 0"/>
+                </Style>
+                <Style Selector="u|Form > u|FormItem:nth-last-child(1)">
+                    <Setter Property="Margin" Value="16 32 16 0"/>
+                </Style>
+            </u:Form.Styles>
+            <u:FormItem Label="Name" Margin="16 16 16  0">
+                <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            </u:FormItem>
             <u:Form.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Rows="1" Columns="3" ColumnSpacing="32" />
+                    <StackPanel Background="{DynamicResource SemiColorTertiaryLightActive}"/>
                 </ItemsPanelTemplate>
             </u:Form.ItemsPanel>
-            <u:FormGroup Header="Season">
-                <u:FormItem Label="Name">
-                    <u:EnumSelector EnumType="{x:Type aa:AnimeSeason}"
-                                    Value="{Binding Season, Mode=TwoWay}"
-                                    HorizontalAlignment="Stretch" />
-                </u:FormItem>
-                <u:FormItem Label="Year">
-                    <u:NumericIntUpDown Value="{Binding Year, Mode=TwoWay}"
-                                        Maximum="{Binding CurrentYear, Mode=OneTime}"
-                                        HorizontalAlignment="Stretch"
-                                        Watermark="Year" />
-                </u:FormItem>
-            </u:FormGroup>
+            <u:FormItem Label="Season Name">
+                <u:EnumSelector EnumType="{x:Type aa:AnimeSeason}"
+                                Value="{Binding Season, Mode=TwoWay}"
+                                HorizontalAlignment="Stretch" />
+            </u:FormItem>
+            <u:FormItem Label="Year">
+                <u:NumericIntUpDown Value="{Binding Year, Mode=TwoWay}"
+                                    Maximum="{Binding CurrentYear, Mode=OneTime}"
+                                    HorizontalAlignment="Stretch"
+                                    Watermark="Year" />
+            </u:FormItem>
+            <u:FormItem Label="Include">
+                <u:TagInput
+                    AllowDuplicates="False"
+                    Separator=","
+                    Tags="{Binding IncludedGenres}"
+                    VerticalAlignment="Stretch"
+                    HorizontalAlignment="Stretch"
+                    Padding="0" />
+            </u:FormItem>
+            <u:FormItem Label="Exclude">
+                <u:TagInput
+                    AllowDuplicates="False"
+                    Separator=","
+                    VerticalAlignment="Stretch"
+                    Tags="{Binding ExcludedGenres}"
+                    Padding="0" />
+            </u:FormItem>
 
-            <u:FormGroup Header="Tags">
-                <u:FormGroup.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="16" />
-                    </ItemsPanelTemplate>
-                </u:FormGroup.ItemsPanel>
-                <u:FormItem Label="Include">
-                    <u:TagInput
-                        AllowDuplicates="False"
-                        Separator=","
-                        Tags="{Binding IncludedGenres}"
-                        VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
-                        Width="250"
-                        Height="100"
-                        Padding="0" />
-                </u:FormItem>
-                <u:FormItem Label="Exclude">
-                    <u:TagInput
-                        AllowDuplicates="False"
-                        Separator=","
-                        VerticalAlignment="Stretch"
-                        Tags="{Binding ExcludedGenres}"
-                        Width="250"
-                        Height="100"
-                        Padding="0" />
-                </u:FormItem>
-            </u:FormGroup>
-
-            <u:FormGroup Header="Score">
-                <u:FormItem Label="Minimum">
-                    <u:NumericIntUpDown Value="{Binding MinimumScore, Mode=TwoWay}"
-                                        Maximum="100"
-                                        Minimum="0" />
-                </u:FormItem>
-                <u:FormItem Label="Maximum">
-                    <u:NumericIntUpDown Value="{Binding MaximumScore, Mode=TwoWay}"
-                                        Maximum="100"
-                                        Minimum="0" />
-                </u:FormItem>
-            </u:FormGroup>
+            <u:FormItem Label="Minimum">
+                <u:NumericIntUpDown Value="{Binding MinimumScore, Mode=TwoWay}"
+                                    Maximum="100"
+                                    Minimum="0" />
+            </u:FormItem>
+            <u:FormItem Label="Maximum">
+                <u:NumericIntUpDown Value="{Binding MaximumScore, Mode=TwoWay}"
+                                    Maximum="100"
+                                    Minimum="0" />
+            </u:FormItem>
+            
+            <Button Content="Clear"
+                    Command="{Binding ClearSearchFiltersCommand}"
+                    Theme="{DynamicResource SolidButton}" 
+                    u:FormItem.NoLabel="True" HorizontalAlignment="Stretch"/>
         </u:Form>
 
-        <u:LoadingContainer Grid.Row="1"
+        <u:LoadingContainer Grid.Column="0"
                             Background="Transparent"
                             VerticalContentAlignment="Stretch"
                             HorizontalContentAlignment="Stretch">
