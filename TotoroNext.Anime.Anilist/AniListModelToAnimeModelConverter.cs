@@ -53,7 +53,8 @@ public static partial class AniListModelToAnimeModelConverter
             Related = ConvertSimple(media.Relations?.Nodes ?? []),
             Recommended = ConvertSimple(media.Recommendations?.Nodes.Select(x => x.MediaRecommendation).Where(x => x is not null)
                                              .Where(x => x.Type == MediaType.Anime) ?? []),
-            Episodes = ConvertEpisodes(media)
+            Episodes = ConvertEpisodes(media),
+            Url = $"https://anilist.co/anime/{media.Id}/"
         };
     }
 

@@ -70,6 +70,7 @@ public partial class AnimeModel : ObservableObject
     public IEnumerable<AnimeModel> Related { get; set; } = [];
     public IEnumerable<AnimeModel> Recommended { get; set; } = [];
     public List<EpisodeInfo> Episodes { get; set; } = [];
+    public string Url { get; set; } = "";
 }
 
 public class ExternalIds

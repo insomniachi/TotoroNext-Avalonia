@@ -23,7 +23,8 @@ public static class MalToModelConverter
             Image = malModel.MainPicture?.Large ?? string.Empty,
             ServiceId = Module.Id,
             ServiceName = nameof(ExternalIds.MyAnimeList),
-            Description = malModel.Synopsis ?? string.Empty
+            Description = malModel.Synopsis ?? string.Empty,
+            Url = $"https://myanimelist.net/anime/{malModel.Id}/"
         };
 
         try

@@ -66,6 +66,14 @@ internal class RpcService(
                 Start = now - message.Position,
                 End = now + (message.Duration - message.Position)
             };
+            p.Buttons = 
+            [
+                new Button()
+                {
+                    Label = message.Anime.ServiceName,
+                    Url = message.Anime.Url,
+                }
+            ];
         });
     }
 
