@@ -66,7 +66,7 @@ public sealed class TrackingUpdater(
             return;
         }
 
-        if (message.Duration - message.Position > TimeSpan.FromMinutes(2))
+        if (IsNotCompleted(message))
         {
             return;
         }
@@ -96,5 +96,14 @@ public sealed class TrackingUpdater(
             Anime = message.Anime,
             Episode = message.Episode
         });
+    }
+
+    private static bool IsNotCompleted(PlaybackState message)
+    {
+        var creditsDuration = message.Anime.MediaFormat is AnimeMediaFormat.Movie
+            ? TimeSpan.FromMinutes(6)
+            : TimeSpan.FromMinutes(2);
+
+        return message.Duration - message.Position > creditsDuration;
     }
 }
