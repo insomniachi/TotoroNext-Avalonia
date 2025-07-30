@@ -1,6 +1,9 @@
 using System.Globalization;
+using MalApi;
 using TotoroNext.Anime.Abstractions;
-using TotoroNext.Anime.Abstractions.Models;
+using AiringStatus = TotoroNext.Anime.Abstractions.AiringStatus;
+using AnimeSeason = TotoroNext.Anime.Abstractions.Models.AnimeSeason;
+using Season = TotoroNext.Anime.Abstractions.Models.Season;
 
 namespace TotoroNext.Anime.MyAnimeList;
 
@@ -24,7 +27,8 @@ public static class MalToModelConverter
             ServiceId = Module.Id,
             ServiceName = nameof(ExternalIds.MyAnimeList),
             Description = malModel.Synopsis ?? string.Empty,
-            Url = $"https://myanimelist.net/anime/{malModel.Id}/"
+            Url = $"https://myanimelist.net/anime/{malModel.Id}/",
+            MediaFormat = ConvertFormat(malModel.MediaType)
         };
 
         try
@@ -111,6 +115,21 @@ public static class MalToModelConverter
         }
 
         return model;
+    }
+
+    private static AnimeMediaFormat ConvertFormat(AnimeMediaType? malModelMediaType)
+    {
+        return malModelMediaType switch
+        {
+            AnimeMediaType.Unknown => AnimeMediaFormat.Unknown,
+            AnimeMediaType.TV => AnimeMediaFormat.Tv,
+            AnimeMediaType.OVA => AnimeMediaFormat.Ova,
+            AnimeMediaType.Movie => AnimeMediaFormat.Movie,
+            AnimeMediaType.Special => AnimeMediaFormat.Special,
+            AnimeMediaType.ONA => AnimeMediaFormat.Ona,
+            AnimeMediaType.Music => AnimeMediaFormat.Music,
+            _ => AnimeMediaFormat.Unknown
+        };
     }
 
     public static DateTime TimeUntilNext(DayOfWeek targetDay, TimeSpan targetTime)

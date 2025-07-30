@@ -50,10 +50,10 @@ public class AdvancedSearchRequest
 [DebuggerDisplay("{Title}")]
 public partial class AnimeModel : ObservableObject
 {
-    public long Id { get; set; }
-    public ExternalIds ExternalIds { get; set; } = new();
+    public long Id { get; init; }
+    public ExternalIds ExternalIds { get; init; } = new();
     public string Image { get; set; } = "";
-    public string Title { get; set; } = "";
+    public string Title { get; init; } = "";
     public string EngTitle { get; set; } = "";
     public string RomajiTitle { get; set; } = "";
     [ObservableProperty] public partial Tracking? Tracking { get; set; }
@@ -70,12 +70,13 @@ public partial class AnimeModel : ObservableObject
     public IEnumerable<AnimeModel> Related { get; set; } = [];
     public IEnumerable<AnimeModel> Recommended { get; set; } = [];
     public List<EpisodeInfo> Episodes { get; set; } = [];
-    public string Url { get; set; } = "";
+    public string Url { get; init; } = "";
+    public AnimeMediaFormat MediaFormat { get; init; } = AnimeMediaFormat.Unknown;
 }
 
 public class ExternalIds
 {
-    public long? MyAnimeList { get; set; }
+    public long? MyAnimeList { get; init; }
     public long? Anilist { get; set; }
 
     public long? GetId(string serviceType)
@@ -92,11 +93,11 @@ public class ExternalIds
 public class Tracking
 {
     public ListItemStatus? Status { get; set; }
-    public int? Score { get; set; }
+    public int? Score { get; init; }
     public int? WatchedEpisodes { get; set; }
-    public DateTime? StartDate { get; set; }
-    public DateTime? FinishDate { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? StartDate { get; init; }
+    public DateTime? FinishDate { get; init; }
+    public DateTime? UpdatedAt { get; init; }
 
     public Tracking Clone()
     {
@@ -136,6 +137,17 @@ public enum AiringStatus
     [Description("Currently Airing")] CurrentlyAiring,
 
     [Description("Not Yet Aired")] NotYetAired
+}
+
+public enum AnimeMediaFormat
+{
+    Unknown,
+    Tv,
+    Ova,
+    Movie,
+    Special,
+    Ona,
+    Music,
 }
 
 public enum AnimeSource

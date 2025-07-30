@@ -46,11 +46,19 @@ public sealed partial class WatchViewModel(
     [ObservableProperty] public partial List<VideoSource> Sources { get; set; } = [];
 
     [ObservableProperty] public partial MediaSegment? CurrentSegment { get; set; }
+    
+    [ObservableProperty] public partial bool IsMovie { get; set; }
 
     public async Task InitializeAsync()
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
 
+        this.WhenAnyValue(x => x.Anime)
+            .WhereNotNull()
+            .Select(x => x is { MediaFormat: AnimeMediaFormat.Movie })
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(isMovie => IsMovie = isMovie);
+        
         if (Anime is not null)
         {
             var infos = await Anime.GetEpisodes();
@@ -83,24 +91,31 @@ public sealed partial class WatchViewModel(
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(eps =>
                 {
-                    var nextUp = (Anime?.Tracking?.WatchedEpisodes ?? 0) + 1;
-
-                    // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    if (eps.FirstOrDefault(x => x.Number == nextUp) is not { } nextEp)
+                    if (IsMovie)
                     {
-                        return;
+                        SelectedEpisode = eps.FirstOrDefault();
                     }
-
-                    if (Anime?.Id is { } id)
+                    else
                     {
-                        var progress = progressService.GetProgress(id);
-                        if (progress.TryGetValue(nextUp, out var epProgress))
+                        var nextUp = (Anime?.Tracking?.WatchedEpisodes ?? 0) + 1;
+
+                        // ReSharper disable once CompareOfFloatsByEqualityOperator
+                        if (eps.FirstOrDefault(x => x.Number == nextUp) is not { } nextEp)
                         {
-                            nextEp.StartPosition = TimeSpan.FromSeconds(epProgress.Position);
+                            return;
                         }
-                    }
 
-                    SelectedEpisode = nextEp;
+                        if (Anime?.Id is { } id)
+                        {
+                            var progress = progressService.GetProgress(id);
+                            if (progress.TryGetValue(nextUp, out var epProgress))
+                            {
+                                nextEp.StartPosition = TimeSpan.FromSeconds(epProgress.Position);
+                            }
+                        }
+
+                        SelectedEpisode = nextEp;
+                    }
                 });
         }
 

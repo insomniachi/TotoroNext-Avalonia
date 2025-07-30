@@ -47,7 +47,7 @@ public partial class AnimeCard : UserControl
     private static void UpdateBadge(AnimeCard card, AnimeModel anime)
     {
         var count = ToUnWatchedEpisodes(anime);
-        if (count is <= 0)
+        if (count <= 0)
         {
             return;
         }
@@ -70,14 +70,12 @@ public partial class AnimeCard : UserControl
 
     private static int ToUnWatchedEpisodes(AnimeModel? anime)
     {
-        if (anime?.Tracking?.WatchedEpisodes is null)
+        if (anime is null)
         {
             return 0;
         }
-
-        return anime.AiredEpisodes == 0
-            ? 0
-            : anime.AiredEpisodes - anime.Tracking.WatchedEpisodes.Value;
+        
+        return anime.AiredEpisodes - (anime.Tracking?.WatchedEpisodes ?? 0);
     }
 
     private static string ToNextEpisodeAiringTime(AnimeModel? anime)

@@ -35,10 +35,11 @@
               Grid.Row="0"
               RowDefinitions="Auto,*" 
               RowSpacing="16" 
-              Background="{DynamicResource SemiColorTertiaryLightActive}">
+              Background="{DynamicResource SemiColorTertiaryLightActive}"
+              IsVisible="{Binding IsMovie, Converter={x:Static BoolConverters.Not}}">
             <TextBlock Text="Episodes" 
                        Classes.H1="true"
-                       Margin="8 0 0 0"
+                       Margin="8 8 0 0"
                        Theme="{DynamicResource TitleTextBlock}" />
             <ListBox Grid.Row="1"
                      Width="800"

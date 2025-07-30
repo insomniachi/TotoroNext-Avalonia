@@ -54,7 +54,23 @@ public static partial class AniListModelToAnimeModelConverter
             Recommended = ConvertSimple(media.Recommendations?.Nodes.Select(x => x.MediaRecommendation).Where(x => x is not null)
                                              .Where(x => x.Type == MediaType.Anime) ?? []),
             Episodes = ConvertEpisodes(media),
-            Url = $"https://anilist.co/anime/{media.Id}/"
+            Url = $"https://anilist.co/anime/{media.Id}/",
+            MediaFormat = ConvertMediaFormat(media.Format),
+        };
+    }
+
+    private static AnimeMediaFormat ConvertMediaFormat(MediaFormat? mediaFormat)
+    {
+        return mediaFormat switch
+        {
+            MediaFormat.Tv => AnimeMediaFormat.Tv,
+            MediaFormat.TvShort => AnimeMediaFormat.Tv,
+            MediaFormat.Movie => AnimeMediaFormat.Movie,
+            MediaFormat.Special => AnimeMediaFormat.Special,
+            MediaFormat.Ova => AnimeMediaFormat.Ova,
+            MediaFormat.Ona => AnimeMediaFormat.Ona,
+            MediaFormat.Music => AnimeMediaFormat.Music,
+            _ => AnimeMediaFormat.Unknown
         };
     }
 
