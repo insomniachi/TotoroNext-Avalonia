@@ -37,6 +37,7 @@
             <u:FormItem Label="Season Name">
                 <u:EnumSelector EnumType="{x:Type aa:AnimeSeason}"
                                 Value="{Binding Season, Mode=TwoWay}"
+                                DisplayDescription="True"
                                 HorizontalAlignment="Stretch" />
             </u:FormItem>
             <u:FormItem Label="Year">

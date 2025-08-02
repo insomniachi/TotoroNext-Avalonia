@@ -28,6 +28,7 @@
                     <u:FormItem Label="Status">
                         <u:EnumSelector EnumType="{x:Type aa:ListItemStatus}"
                                         Value="{Binding Status, Mode=TwoWay}"
+                                        DisplayDescription="True"
                                         HorizontalAlignment="Stretch" />
                     </u:FormItem>
                     <u:FormItem Label="Progress">

@@ -7,6 +7,10 @@
     mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="400"
     xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:local="using:TotoroNext.Anime.Abstractions.Controls">
+    
+    <UserControl.Resources>
+        <SolidColorBrush Color="Black" Opacity="0.35" x:Key="BackgroundOnImage"/>
+    </UserControl.Resources>
 
     <Border CornerRadius="8" ClipToBounds="True">
         <Grid RowDefinitions="*,Auto">
@@ -16,10 +20,8 @@
 
                 <Grid VerticalAlignment="Top"
                       ColumnDefinitions="*,Auto"
+                      Background="{StaticResource BackgroundOnImage}"
                       x:Name="BadgeContainer">
-                    <Grid.Background>
-                        <SolidColorBrush Color="Black" Opacity="0.35" />
-                    </Grid.Background>
                     <TextBlock Grid.ColumnSpan="2"
                                IsVisible="False"
                                x:Name="NextEpText"
@@ -45,6 +47,9 @@
                             FontWeight="Bold" />
                     </Border>
                 </Grid>
+                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="{StaticResource BackgroundOnImage}" Padding="8">
+                    <TextBlock Text="{Binding $parent[local:AnimeCard].Anime.MeanScore, Mode=OneWay}" FontSize="18" FontWeight="Bold"/>
+                </Border>
             </Grid>
             <Border
                 x:Name="StatusBorder"

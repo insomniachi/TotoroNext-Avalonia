@@ -1,0 +1,44 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TotoroNext.Anime.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:converters="clr-namespace:TotoroNext.Module.Converters;assembly=TotoroNext.Module"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TotoroNext.Anime.Views.UserListSortAndFilterView"
+             x:DataType="vm:UserListSortAndFilterViewModel">
+    <UserControl.Resources>
+        <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+    </UserControl.Resources>
+    <u:Form Margin="0">
+        <u:FormGroup Header="Filters">
+            <TextBox Width="300" u:FormItem.Label="Title" Text="{Binding Filter.Term, UpdateSourceTrigger=LostFocus}" />
+            <TextBox Width="300" u:FormItem.Label="Year" Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}" />
+        </u:FormGroup>
+        <u:FormGroup Header="Sort Direction">
+            <RadioButton IsChecked="{Binding Sort.IsAscending, Mode=TwoWay}" GroupName="Direction"
+                         Content="Ascending" />
+            <RadioButton IsChecked="{Binding !Sort.IsAscending}" GroupName="Direction"
+                         Content="Descending" />
+        </u:FormGroup>
+        <u:FormGroup Header="Sort By">
+            <RadioButton
+                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Title}"
+                Content="Title"
+                GroupName="Field" />
+            <RadioButton
+                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=UserScore}"
+                Content="User Score"
+                GroupName="Field" />
+            <RadioButton
+                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=MeanScore}"
+                Content="Community Score"
+                GroupName="Field" />
+            <RadioButton
+                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=DateCompleted}"
+                Content="Date Completed"
+                GroupName="Field" />
+        </u:FormGroup>
+    </u:Form>
+</UserControl>

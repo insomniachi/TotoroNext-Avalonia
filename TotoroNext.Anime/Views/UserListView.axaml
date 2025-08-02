@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:modcv="using:TotoroNext.Module.Converters"
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
@@ -11,12 +12,22 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:UserListViewModel"
              x:Class="TotoroNext.Anime.Views.UserListView">
+    
+    <UserControl.Resources>
+        <modcv:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
+    </UserControl.Resources>
+    
 
     <Grid RowDefinitions="Auto, *" RowSpacing="16">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="18">
             <u:SelectionList
                 ItemsSource="{Binding AllStatus}"
                 SelectedItem="{Binding Filter.Status}">
+                <u:SelectionList.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding ., Converter={StaticResource EnumDescriptionConverter}}"/>
+                    </DataTemplate>
+                </u:SelectionList.ItemTemplate>
                 <u:SelectionList.Styles>
                     <Style Selector="u|SelectionListItem">
                         <Setter Property="Classes.Large" Value="true" />
@@ -33,10 +44,11 @@
             <SplitButton Height="40" Command="{Binding OpenFilterPaneCommand}">
                 <SplitButton.Content>
                     <StackPanel Spacing="8" Orientation="Horizontal">
-                        <Viewbox Height="20" Width="20">
-                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Filter}" />
-                        </Viewbox>
-                        <TextBlock Text="Filter" VerticalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconLucideKind.ArrowUpDown}" Height="20" Width="20"/>
+                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Filter}" Height="20" Width="20" />
+                        </StackPanel>
+                        <TextBlock Text="Sort &amp; Filter" VerticalAlignment="Center" />
                     </StackPanel>
                 </SplitButton.Content>
                 <SplitButton.Flyout>

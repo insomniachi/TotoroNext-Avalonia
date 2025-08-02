@@ -37,13 +37,16 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
         _animeCache
             .Connect()
             .RefCount()
+            .AutoRefresh()
             .Filter(Filter.WhenAnyPropertyChanged().Select(x => (Func<AnimeModel, bool>)x!.IsVisible))
+            .Sort(Sort.Comparer)
             .Bind(out _anime)
             .DisposeMany()
             .Subscribe();
     }
 
     public UserListFilter Filter { get; } = new();
+    public UserListSort Sort { get; } = new();
 
     public List<ListItemStatus> AllStatus { get; } =
         [ListItemStatus.Watching, ListItemStatus.PlanToWatch, ListItemStatus.Completed, ListItemStatus.OnHold];
@@ -109,7 +112,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
     [RelayCommand]
     private void OpenFilterPane()
     {
-        _messenger.Send(new PaneNavigateToDataMessage(Filter, "Filter"));
+        _messenger.Send(new PaneNavigateToDataMessage(new UserListSortAndFilter(Sort, Filter), title: null!));
     }
 
     [RelayCommand]
@@ -118,3 +121,5 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
         Filter.Clear();
     }
 }
+
+public record UserListSortAndFilter(UserListSort Sort, UserListFilter Filter);

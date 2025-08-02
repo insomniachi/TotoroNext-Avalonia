@@ -40,7 +40,8 @@
                                     Name="PART_ContentPresenter"
                                     Margin="24,8"
                                     Content="{TemplateBinding Content}" />
-                                <Grid Grid.Row="0" ColumnDefinitions=" *, Auto">
+                                <Grid Grid.Row="0" ColumnDefinitions=" *, Auto"
+                                      IsVisible="{Binding #PART_Title.Text, Converter={x:Static ObjectConverters.IsNotNull}}">
                                     <TextBlock
                                         Name="PART_Title"
                                         Grid.Column="0"

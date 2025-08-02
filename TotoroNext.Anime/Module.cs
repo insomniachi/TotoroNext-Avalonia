@@ -23,7 +23,7 @@ public class Module : IModule
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", PackIconMaterialDesignKind.Search);
 
         // Pane navigation
-        services.AddDataViewMap<UserListFilterView, UserListFilterViewModel, UserListFilter>()
+        services.AddDataViewMap<UserListSortAndFilterView, UserListSortAndFilterViewModel, UserListSortAndFilter>()
                 .AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()
                 .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>()
                 .AddDataViewMap<WatchView, WatchViewModel, WatchViewModelNavigationParameter>()

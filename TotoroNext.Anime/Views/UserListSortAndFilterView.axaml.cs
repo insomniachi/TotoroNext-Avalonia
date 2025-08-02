@@ -2,9 +2,9 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class UserListFilterView : UserControl
+public partial class UserListSortAndFilterView : UserControl
 {
-    public UserListFilterView()
+    public UserListSortAndFilterView()
     {
         InitializeComponent();
     }
