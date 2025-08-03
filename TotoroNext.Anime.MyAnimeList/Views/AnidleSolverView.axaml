@@ -1,0 +1,55 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:vm="clr-namespace:TotoroNext.Anime.MyAnimeList.ViewModels"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
+             xmlns:controls1="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="vm:AnidleSolverViewModel"
+             x:Class="TotoroNext.Anime.MyAnimeList.Views.AnidleSolverView">
+    <Grid ColumnDefinitions="*,Auto"
+          RowDefinitions="Auto,*">
+
+        <StackPanel Spacing="8" Orientation="Horizontal">
+            <u:AutoCompleteBox
+                Text="{Binding Query}"
+                ItemsSource="{Binding Suggestions}"
+                SelectedItem="{Binding SelectedSuggestion}"
+                ValueMemberBinding="{Binding Title}"
+                Width="400" />
+            <u:DatePicker SelectedDate="{Binding Date}"
+                          Width="200" />
+        </StackPanel>
+
+        <u:LoadingContainer Grid.Row="1" Grid.Column="0"
+                            Background="Transparent"
+                            VerticalContentAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding PossibleAnswers, Mode=OneWay}"
+                              module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <controls:ElasticWrapPanelEx
+                                ItemHeight="400"
+                                ItemWidth="250"
+                                IsFillHorizontal="True" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls1:AnimeCard Anime="{Binding}"
+                                                 Margin="8"
+                                                 module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AnidleSolverViewModel)DataContext).AttemptGuessCommand, FallbackValue={x:Null}}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </u:LoadingContainer>
+
+
+    </Grid>
+</UserControl>

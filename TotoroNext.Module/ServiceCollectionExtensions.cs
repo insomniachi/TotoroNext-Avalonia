@@ -42,6 +42,8 @@ public static class ServiceCollectionExtensions
                 Header = header,
                 Icon = new Viewbox
                 {
+                    Height = 20,
+                    Width = 20,
                     Child = new PackIconControl
                     {
                         Kind = icon

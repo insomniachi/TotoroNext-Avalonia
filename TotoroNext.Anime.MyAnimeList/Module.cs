@@ -29,6 +29,8 @@ public class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
+        services.AddMainNavigationItem<AnidleSolverView, AnidleSolverViewModel>("Anidle",
+                                                                                IconPacks.Avalonia.ForkAwesome.PackIconForkAwesomeKind.Magic);
 
         services.AddSingleton<IMalClient, MalClient>();
         services.AddKeyedTransient<IMetadataService, MyAnimeListMetadataService>(Descriptor.Id);

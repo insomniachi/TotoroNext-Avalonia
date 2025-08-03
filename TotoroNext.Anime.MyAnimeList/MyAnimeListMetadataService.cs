@@ -112,20 +112,20 @@ internal class MyAnimeListMetadataService : IMetadataService
             uri.AppendQueryParam("end_date", $"{maxYear}-12-31");
         }
 
-        if (request.IncludedGenres is { } includedGenres)
+        if (request.IncludedGenres is { Count: > 0 } includedGenres)
         {
-            var includedGenreIds = includedGenres.Select(x => _genres.First(g => g.Name == x).MalId);
+            var includedGenreIds = includedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
             uri.AppendQueryParam("genres",  string.Join(",", includedGenreIds));
         }
 
-        if (request.ExcludedGenres is { } excludedGenres)
+        if (request.ExcludedGenres is { Count: > 0 } excludedGenres)
         {
-            var excludedGenreIds = excludedGenres.Select(x => _genres.First(g => g.Name == x).MalId);
+            var excludedGenreIds = excludedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
             uri.AppendQueryParam("genres_exclude",  string.Join(",", excludedGenreIds));
         }
 
         var response = await uri.GetJsonAsync<PaginatedJikanResponse<ICollection<JikanDotNet.Anime>>>();
-        return [..response.Data.Select(MalToModelConverter.ConvertJikanModel)];
+        return [..response.Data.Where(x => x.Year is not null).Select(MalToModelConverter.ConvertJikanModel)];
     }
 
     public Guid Id { get; } = Module.Id;
