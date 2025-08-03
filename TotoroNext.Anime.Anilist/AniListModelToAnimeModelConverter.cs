@@ -56,6 +56,7 @@ public static partial class AniListModelToAnimeModelConverter
             Episodes = ConvertEpisodes(media),
             Url = $"https://anilist.co/anime/{media.Id}/",
             MediaFormat = ConvertMediaFormat(media.Format),
+            Genres = [ ..media.Genres]
         };
     }
 

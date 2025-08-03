@@ -9,6 +9,30 @@ namespace TotoroNext.Anime.MyAnimeList;
 
 public static class MalToModelConverter
 {
+    public static AnimeModel ConvertJikanModel(JikanDotNet.Anime jikanModel)
+    {
+        return new AnimeModel
+        {
+            Id = jikanModel.MalId ?? long.MinValue,
+            ExternalIds = new ExternalIds
+            {
+                MyAnimeList = jikanModel.MalId ?? long.MinValue,
+            },
+            Title = GetTitle(jikanModel, "English"),
+            Image = jikanModel.Images.JPG.ImageUrl,
+            ServiceId = Module.Id,
+            ServiceName = nameof(ExternalIds.MyAnimeList),
+            Description = jikanModel.Synopsis,
+            Url = $"https://myanimelist.net/anime/{jikanModel.MalId}/",
+            MeanScore = (float?)jikanModel.Score
+        };
+
+        string GetTitle(JikanDotNet.Anime model, string type)
+        {
+            return model.Titles.FirstOrDefault(x => x.Type == type)?.Title ?? model.Titles.FirstOrDefault(x => x.Type == "Default")?.Title ?? "";
+        }
+    }
+    
     public static AnimeModel ConvertModel(MalApi.Anime malModel)
     {
         var engTitle = malModel.AlternativeTitles?.English;
@@ -28,7 +52,8 @@ public static class MalToModelConverter
             ServiceName = nameof(ExternalIds.MyAnimeList),
             Description = malModel.Synopsis ?? string.Empty,
             Url = $"https://myanimelist.net/anime/{malModel.Id}/",
-            MediaFormat = ConvertFormat(malModel.MediaType)
+            MediaFormat = ConvertFormat(malModel.MediaType),
+            Genres = malModel.Genres is not { } genres ? [] : [ ..genres.Select(x => x.Name)]
         };
 
         try
@@ -93,11 +118,6 @@ public static class MalToModelConverter
             {
                 model.Season = new Season((AnimeSeason)(int)season.SeasonName, season.Year);
             }
-
-            //if (malModel.Genres is { Length: > 0 } g)
-            //{
-            //    model.Genres = g.Select(x => x.Name).ToArray();
-            //}
 
             if (malModel.RelatedAnime is { Length: > 0 } ra)
             {

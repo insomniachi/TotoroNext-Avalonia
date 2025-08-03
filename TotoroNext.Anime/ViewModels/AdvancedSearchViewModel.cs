@@ -21,26 +21,35 @@ public partial class AdvancedSearchViewModel(
     IFactory<IMetadataService, Guid> metadataFactory,
     IFactory<IAnimeProvider, Guid> providerFactory,
     IMessenger messenger,
-    IAnimeOverridesRepository overridesRepository) : ObservableObject, IInitializable
+    IAnimeOverridesRepository overridesRepository) : ObservableObject, IAsyncInitializable
 {
     private readonly IMetadataService _metadataService = metadataFactory.CreateDefault();
     private bool _isChangeNotificationsEnabled = true;
 
     [ObservableProperty] public partial AnimeSeason? Season { get; set; }
-    [ObservableProperty] public partial int? Year { get; set; }
-    [ObservableProperty] public partial int? MinimumScore { get; set; }
-    [ObservableProperty] public partial int? MaximumScore { get; set; }
+    [ObservableProperty] public partial int? MinimumYear { get; set; }
+    [ObservableProperty] public partial int? MaximumYear { get; set; }
+    [ObservableProperty] public partial float? MinimumScore { get; set; }
+    [ObservableProperty] public partial float? MaximumScore { get; set; }
     [ObservableProperty] public partial string? Title { get; set; }
     [ObservableProperty] public partial List<AnimeModel> Anime { get; set; } = [];
     [ObservableProperty] public partial ObservableCollection<string> IncludedGenres { get; set; } = [];
     [ObservableProperty] public partial ObservableCollection<string> ExcludedGenres { get; set; } = [];
+    [ObservableProperty] public partial List<string> AllGenres { get; set; } = [];
 
     public int CurrentYear { get; } = DateTime.Now.Year;
 
-    public void Initialize()
+    public async Task InitializeAsync()
     {
-        var propertiesChanged = this.WhenAnyPropertyChanged(nameof(Title), nameof(Year), nameof(Season), nameof(MinimumScore), nameof(MaximumScore))
-                                    .Select(_ => Unit.Default);
+        AllGenres = await _metadataService.GetGenresAsync();
+
+        var propertiesChanged = this.WhenAnyPropertyChanged(nameof(Title),
+                                                                            nameof(MinimumYear),
+                                                                            nameof(Season), 
+                                                                            nameof(MinimumScore),
+                                                                            nameof(MaximumScore),
+                                                                            nameof(MaximumYear))
+                                                    .Select(_ => Unit.Default);
 
         var includedGenresChanged = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                                                    h => IncludedGenres.CollectionChanged += h,
@@ -60,7 +69,8 @@ public partial class AdvancedSearchViewModel(
             {
                 Title = Title,
                 SeasonName = Season,
-                Year = Year,
+                MinYear = MinimumYear,
+                MaxYear = MaximumYear,
                 IncludedGenres = IncludedGenres.Count > 0 ? [..IncludedGenres] : null,
                 ExcludedGenres = ExcludedGenres.Count > 0 ? [..ExcludedGenres] : null,
                 MinimumScore = MinimumScore,
@@ -112,12 +122,14 @@ public partial class AdvancedSearchViewModel(
 
         Title = string.Empty;
         Season = null;
-        Year = null;
+        MinimumYear = null;
+        MaximumYear = null;
         IncludedGenres = [];
         ExcludedGenres = [];
         MinimumScore = null;
         MaximumScore = null;
-
+        Anime = [];
+        
         _isChangeNotificationsEnabled = true;
     }
 }

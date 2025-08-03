@@ -40,39 +40,38 @@
                                 DisplayDescription="True"
                                 HorizontalAlignment="Stretch" />
             </u:FormItem>
-            <u:FormItem Label="Year">
-                <u:NumericIntUpDown Value="{Binding Year, Mode=TwoWay}"
+            <u:FormItem Label="Minimum Year">
+                <u:NumericIntUpDown Value="{Binding MinimumYear, Mode=TwoWay}"
                                     Maximum="{Binding CurrentYear, Mode=OneTime}"
-                                    HorizontalAlignment="Stretch"
-                                    Watermark="Year" />
+                                    HorizontalAlignment="Stretch"/>
+            </u:FormItem>
+            <u:FormItem Label="Maximum Year">
+                <u:NumericIntUpDown Value="{Binding MaximumYear, Mode=TwoWay}"
+                                    Maximum="{Binding CurrentYear, Mode=OneTime}"
+                                    HorizontalAlignment="Stretch"/>
             </u:FormItem>
             <u:FormItem Label="Include">
-                <u:TagInput
-                    AllowDuplicates="False"
-                    Separator=","
-                    Tags="{Binding IncludedGenres}"
-                    VerticalAlignment="Stretch"
-                    HorizontalAlignment="Stretch"
-                    Padding="0" />
+                <u:MultiComboBox WrapSelection="True"
+                                 HorizontalAlignment="Stretch"
+                                 ItemsSource="{Binding AllGenres}"
+                                 SelectedItems="{Binding IncludedGenres}"/>
             </u:FormItem>
             <u:FormItem Label="Exclude">
-                <u:TagInput
-                    AllowDuplicates="False"
-                    Separator=","
-                    VerticalAlignment="Stretch"
-                    Tags="{Binding ExcludedGenres}"
-                    Padding="0" />
+                <u:MultiComboBox WrapSelection="True"
+                                 HorizontalAlignment="Stretch"
+                                 ItemsSource="{Binding AllGenres}"
+                                 SelectedItems="{Binding ExcludedGenres}"/>
             </u:FormItem>
 
             <u:FormItem Label="Minimum">
-                <u:NumericIntUpDown Value="{Binding MinimumScore, Mode=TwoWay}"
-                                    Maximum="100"
-                                    Minimum="0" />
+                <u:NumericFloatUpDown Value="{Binding MinimumScore, Mode=TwoWay}"
+                                      Maximum="10"
+                                      Minimum="0" />
             </u:FormItem>
             <u:FormItem Label="Maximum">
-                <u:NumericIntUpDown Value="{Binding MaximumScore, Mode=TwoWay}"
-                                    Maximum="100"
-                                    Minimum="0" />
+                <u:NumericFloatUpDown Value="{Binding MaximumScore, Mode=TwoWay}"
+                                      Maximum="10"
+                                      Minimum="0" />
             </u:FormItem>
             
             <Button Content="Clear"

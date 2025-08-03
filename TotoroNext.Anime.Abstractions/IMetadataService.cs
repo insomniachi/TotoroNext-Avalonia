@@ -13,6 +13,7 @@ public interface IMetadataService
     Task<List<AnimeModel>> SearchAnimeAsync(string term);
     Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request);
     Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime);
+    Task<List<string>> GetGenresAsync();
 }
 
 public static class MetadataServiceExtensions
@@ -37,14 +38,15 @@ public static class MetadataServiceExtensions
 
 public class AdvancedSearchRequest
 {
-    public string? Title { get; set; }
-    public AnimeSeason? SeasonName { get; set; }
+    public string? Title { get; init; }
+    public AnimeSeason? SeasonName { get; init; }
     public AnimeSource? Source { get; set; }
-    public List<string>? IncludedGenres { get; set; }
-    public List<string>? ExcludedGenres { get; set; }
-    public int? MinimumScore { get; set; }
-    public int? MaximumScore { get; set; }
-    public int? Year { get; set; }
+    public List<string>? IncludedGenres { get; init; }
+    public List<string>? ExcludedGenres { get; init; }
+    public float? MinimumScore { get; init; }
+    public float? MaximumScore { get; init; }
+    public int? MaxYear { get; init; }
+    public int? MinYear { get; init; }
 }
 
 [DebuggerDisplay("{Title}")]
@@ -72,6 +74,7 @@ public partial class AnimeModel : ObservableObject
     public List<EpisodeInfo> Episodes { get; set; } = [];
     public string Url { get; init; } = "";
     public AnimeMediaFormat MediaFormat { get; init; } = AnimeMediaFormat.Unknown;
+    public IReadOnlyCollection<string> Genres { get; init; } = [];
 }
 
 public class ExternalIds

@@ -13,7 +13,7 @@
                Stretch="UniformToFill"
                Width="600" />
         <u:Form Grid.Row="1">
-            <u:FormItem Label="Start Fullscreen">
+            <u:FormItem Label="Enabled">
                 <ToggleSwitch IsChecked="{Binding IsEnabled}" />
             </u:FormItem>
         </u:Form>

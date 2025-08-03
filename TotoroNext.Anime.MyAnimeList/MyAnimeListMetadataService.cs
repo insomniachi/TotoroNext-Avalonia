@@ -1,3 +1,6 @@
+using Flurl;
+using Flurl.Http;
+using JikanDotNet;
 using MalApi;
 using MalApi.Interfaces;
 using TotoroNext.Anime.Abstractions;
@@ -5,6 +8,7 @@ using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 using AnimeSeason = MalApi.AnimeSeason;
+using Genre = JikanDotNet.Genre;
 using Season = TotoroNext.Anime.Abstractions.Models.Season;
 
 namespace TotoroNext.Anime.MyAnimeList;
@@ -12,9 +16,10 @@ namespace TotoroNext.Anime.MyAnimeList;
 internal class MyAnimeListMetadataService : IMetadataService
 {
     private const string RecursiveAnimeProperties = $"my_list_status,status,{AnimeFieldNames.TotalEpisodes},{AnimeFieldNames.Mean}";
+    private List<Genre> _genres = [];
 
     private readonly IMalClient _client;
-    // private readonly IJikan _jikanClient = new Jikan();
+    private readonly IJikan _jikanClient = new Jikan();
 
     private readonly string[] _commonFields =
     [
@@ -79,9 +84,48 @@ internal class MyAnimeListMetadataService : IMetadataService
         // return response;
     }
 
-    public Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
+    public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
-        return Task.FromResult<List<AnimeModel>>([]);
+        var uri = new Url("https://api.jikan.moe/v4/anime");
+        if (!string.IsNullOrEmpty(request.Title))
+        {
+            uri.AppendQueryParam("q", request.Title);
+        }
+
+        if (request.MaximumScore is { } maxScore)
+        {
+            uri.AppendQueryParam("max_score", maxScore);
+        }
+
+        if (request.MinimumScore is { } minScore)
+        {
+            uri.AppendQueryParam("min_score", minScore);
+        }
+
+        if (request.MinYear is { } minYear)
+        {
+            uri.AppendQueryParam("start_date", $"{minYear}-01-01");
+        }
+
+        if (request.MaxYear is { } maxYear)
+        {
+            uri.AppendQueryParam("end_date", $"{maxYear}-12-31");
+        }
+
+        if (request.IncludedGenres is { } includedGenres)
+        {
+            var includedGenreIds = includedGenres.Select(x => _genres.First(g => g.Name == x).MalId);
+            uri.AppendQueryParam("genres",  string.Join(",", includedGenreIds));
+        }
+
+        if (request.ExcludedGenres is { } excludedGenres)
+        {
+            var excludedGenreIds = excludedGenres.Select(x => _genres.First(g => g.Name == x).MalId);
+            uri.AppendQueryParam("genres_exclude",  string.Join(",", excludedGenreIds));
+        }
+
+        var response = await uri.GetJsonAsync<PaginatedJikanResponse<ICollection<JikanDotNet.Anime>>>();
+        return [..response.Data.Select(MalToModelConverter.ConvertJikanModel)];
     }
 
     public Guid Id { get; } = Module.Id;
@@ -99,7 +143,14 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         return MalToModelConverter.ConvertModel(malModel);
     }
-
+    
+    public async Task<List<string>> GetGenresAsync()
+    {
+        var response = await _jikanClient.GetAnimeGenresAsync();
+        _genres = response.Data.ToList();
+        return [.._genres.Select(x => x.Name).Order()];
+    }
+    
     public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
     {
         var request = _client

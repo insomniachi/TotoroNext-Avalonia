@@ -26,12 +26,13 @@ internal class AnilistMetadataService(
                                                              .WithMedia(MediaQueryBuilder(),
                                                                         search: request.Title,
                                                                         season: AniListModelToAnimeModelConverter.ConvertSeason(request.SeasonName),
-                                                                        seasonYear: request.Year,
+                                                                        startDate: request.MinYear is { } minYear ? new DateTime(minYear, 1, 1) : null,
+                                                                        endDate: request.MaxYear is { } maxYear ? new DateTime(maxYear, 12, 31) : null,
                                                                         source: AniListModelToAnimeModelConverter.ConvertSource(request.Source),
                                                                         genreIn: request.IncludedGenres,
                                                                         genreNotIn: request.ExcludedGenres,
-                                                                        averageScoreGreater: request.MinimumScore,
-                                                                        averageScoreLesser: request.MaximumScore,
+                                                                        averageScoreGreater: (int?)(request.MinimumScore * 100),
+                                                                        averageScoreLesser: (int?)(request.MaximumScore * 100),
                                                                         sort: new List<MediaSort?> { MediaSort.ScoreDesc },
                                                                         type: MediaType.Anime), 1,
                                                          50).Build()
@@ -61,6 +62,18 @@ internal class AnilistMetadataService(
         });
 
         return AniListModelToAnimeModelConverter.ConvertModel(response.Data.Media);
+    }
+
+    public async Task<List<string>> GetGenresAsync()
+    {
+        var query = new QueryQueryBuilder().WithGenreCollection().Build();
+        
+        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+        {
+            Query = query
+        });
+
+        return response.Data.GenreCollection.ToList();
     }
 
     public Guid Id { get; } = Module.Id;

@@ -7,6 +7,7 @@
              xmlns:ail="using:AsyncImageLoader"
              xmlns:aam="using:TotoroNext.Anime.Abstractions.Models"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeEpisodesListViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeEpisodesListView">
@@ -26,7 +27,8 @@
             </ListBox.Styles>
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="aam:EpisodeInfo">
-                    <Grid ColumnDefinitions="Auto,*" Height="160">
+                    <Grid ColumnDefinitions="Auto,*" Height="160"
+                          module:ControlExtensions.DoubleTappedCommand="{Binding $parent[ListBox].((vm:AnimeEpisodesListViewModel)DataContext).WatchEpisodeCommand, FallbackValue={x:Null}}">
                         <Grid>
                             <Border>
                                 <Image ail:ImageLoader.Source="{Binding Image}" Stretch="UniformToFill" />

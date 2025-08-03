@@ -38,7 +38,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
             .Connect()
             .RefCount()
             .AutoRefresh()
-            .Filter(Filter.WhenAnyPropertyChanged().Select(x => (Func<AnimeModel, bool>)x!.IsVisible))
+            .Filter(Filter.Predicate)
             .Sort(Sort.Comparer)
             .Bind(out _anime)
             .DisposeMany()

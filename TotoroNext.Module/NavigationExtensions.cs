@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.LogicalTree;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module.Abstractions;
@@ -79,35 +81,94 @@ public class NavigationExtensions
         view.DataContext = vm;
         view.AttachedToLogicalTree += async (_, _) =>
         {
-            switch (vm)
-            {
-                case IInitializable { } i:
-                    i.Initialize();
-                    break;
-                case IAsyncInitializable { } ia:
-                    try
-                    {
-                        await ia.InitializeAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                    }
-
-                    break;
-            }
+            HandleClosable(view, vm);
+            HandleInitializable(vm);
+            await HandleIAsyncInitializable(vm);
         };
+                    
         view.DetachedFromLogicalTree += async (_, _) =>
         {
-            if (vm is IDisposable d)
+            HandleDisposable(vm);
+            await HandleAsyncDisposable(vm);
+        };
+    }
+
+    private static void HandleClosable(StyledElement view, object vm)
+    {
+        if (vm is not ICloseable closeable)
+        {
+            return;
+        }
+        
+        closeable.Closed += (_, _) =>
+        {
+            if (FindLogicalParentOfType<DefaultDrawerControl>(view) is not { } drawer)
             {
-                d.Dispose();
+                return;
             }
 
-            if (vm is IAsyncDisposable ad)
-            {
-                await ad.DisposeAsync();
-            }
+            drawer.Close();
         };
+    }
+
+    private static void HandleInitializable(object vm)
+    {
+        if (vm is not IInitializable i)
+        {
+            return;
+        }
+        
+        i.Initialize();
+    }
+
+    private static async Task HandleIAsyncInitializable(object vm)
+    {
+        if (vm is not IAsyncInitializable ia)
+        {
+            return;
+        }
+        
+        try
+        {
+            await ia.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
+    private static void HandleDisposable(object vm)
+    {
+        if (vm is not IDisposable disposable)
+        {
+            return;
+        }
+        
+        disposable.Dispose();
+    }
+
+    private static async Task HandleAsyncDisposable(object vm)
+    {
+        if (vm is not IAsyncDisposable asyncDisposable)
+        {
+            return;
+        }
+
+        await asyncDisposable.DisposeAsync();
+    }
+
+    private static T? FindLogicalParentOfType<T>(ILogical? control) where T : class
+    {
+        while (control != null)
+        {
+            control = control.LogicalParent;
+            if (control is T typedParent)
+            {
+                return typedParent;
+            }
+        }
+
+        return null;
     }
 }

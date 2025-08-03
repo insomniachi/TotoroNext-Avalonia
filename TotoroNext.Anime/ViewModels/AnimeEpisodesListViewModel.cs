@@ -1,4 +1,5 @@
 using System.Reactive.Linq;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -18,7 +19,7 @@ public partial class AnimeEpisodesListViewModel(
     IFactory<IMetadataService, Guid> metadataFactory,
     IPlaybackProgressService playbackProgressService,
     IFactory<IAnimeProvider, Guid> providerFactory,
-    IMessenger messenger) : ObservableObject, IAsyncInitializable
+    IMessenger messenger) : ObservableObject, IAsyncInitializable, ICloseable
 {
     [ObservableProperty] public partial AnimeModel Anime { get; set; } = @params.Anime;
 
@@ -27,8 +28,8 @@ public partial class AnimeEpisodesListViewModel(
     [ObservableProperty] public partial EpisodeInfo? SelectedEpisode { get; set; }
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
-
-    public async Task InitializeAsync()
+    
+public async Task InitializeAsync()
     {
         await UpdateEpisodes();
 
@@ -60,12 +61,16 @@ public partial class AnimeEpisodesListViewModel(
         {
             selectedEpisode.StartPosition = TimeSpan.FromSeconds(info.Position);
         }
+        
+                
+        Closed?.Invoke(this, EventArgs.Empty);
 
         messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(searchResult,
                                                                                        Anime,
                                                                                        episodes,
                                                                                        selectedEpisode,
                                                                                        false)));
+
     }
 
     private async Task UpdateEpisodes()
@@ -96,4 +101,6 @@ public partial class AnimeEpisodesListViewModel(
             ? Episodes.FirstOrDefault()
             : Episodes.FirstOrDefault(x => x.EpisodeNumber == (Anime.Tracking?.WatchedEpisodes ?? 0) + 1);
     }
+
+    public event EventHandler? Closed;
 }

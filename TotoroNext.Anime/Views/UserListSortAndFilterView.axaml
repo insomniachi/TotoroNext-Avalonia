@@ -5,6 +5,7 @@
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:converters="clr-namespace:TotoroNext.Module.Converters;assembly=TotoroNext.Module"
+             xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Views.UserListSortAndFilterView"
              x:DataType="vm:UserListSortAndFilterViewModel">
@@ -15,6 +16,18 @@
         <u:FormGroup Header="Filters">
             <TextBox Width="300" u:FormItem.Label="Title" Text="{Binding Filter.Term, UpdateSourceTrigger=LostFocus}" />
             <TextBox Width="300" u:FormItem.Label="Year" Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}" />
+            <u:FormItem Label="Format">
+                <u:EnumSelector EnumType="aa:AnimeMediaFormat"
+                                Value="{Binding Filter.Format, Mode=TwoWay}" 
+                                DisplayDescription="True"
+                                HorizontalAlignment="Stretch"/>
+            </u:FormItem>
+            <u:FormItem Label="Genres">
+                <u:MultiComboBox SelectedItems="{Binding Filter.Genres, Mode=TwoWay}"
+                                 ItemsSource="{Binding Genres, Mode=OneWay}"
+                                 HorizontalAlignment="Stretch"
+                                 WrapSelection="True"/>
+            </u:FormItem>
         </u:FormGroup>
         <u:FormGroup Header="Sort Direction">
             <RadioButton IsChecked="{Binding Sort.IsAscending, Mode=TwoWay}" GroupName="Direction"
