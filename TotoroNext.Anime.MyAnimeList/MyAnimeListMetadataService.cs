@@ -125,7 +125,10 @@ internal class MyAnimeListMetadataService : IMetadataService
         }
 
         var response = await uri.GetJsonAsync<PaginatedJikanResponse<ICollection<JikanDotNet.Anime>>>();
-        return [..response.Data.Where(x => x.Year is not null).Select(MalToModelConverter.ConvertJikanModel)];
+        var items = response.Data
+                            .Where(x => x is { Year: not null, Score: not null, Titles.Count: > 0})
+                            .Select(MalToModelConverter.ConvertJikanModel);
+        return [..items];
     }
 
     public Guid Id { get; } = Module.Id;

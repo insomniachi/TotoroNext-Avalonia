@@ -7,22 +7,33 @@
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
              xmlns:controls1="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:views="clr-namespace:TotoroNext.Anime.MyAnimeList.Views"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnidleSolverViewModel"
              x:Class="TotoroNext.Anime.MyAnimeList.Views.AnidleSolverView">
-    <Grid ColumnDefinitions="*,Auto"
-          RowDefinitions="Auto,*">
 
-        <StackPanel Spacing="8" Orientation="Horizontal">
-            <u:AutoCompleteBox
+    <UserControl.Resources>
+        <views:AnidleCriteriaForegroundConverter x:Key="ForegroundConverter" />
+        <views:AnidleCriteriaIconConverter x:Key="IconConverter"/>
+    </UserControl.Resources>
+
+    <Grid ColumnDefinitions="*,*"
+          RowDefinitions="Auto,*"
+          ColumnSpacing="16">
+
+        <Grid ColumnDefinitions="*,150,Auto" ColumnSpacing="8">
+            <AutoCompleteBox
                 Text="{Binding Query}"
-                ItemsSource="{Binding Suggestions}"
+                ItemsSource="{Binding AutoCompleteData}"
                 SelectedItem="{Binding SelectedSuggestion}"
-                ValueMemberBinding="{Binding Title}"
-                Width="400" />
+                HorizontalAlignment="Stretch"/>
             <u:DatePicker SelectedDate="{Binding Date}"
-                          Width="200" />
-        </StackPanel>
+                          Grid.Column="1"
+                          HorizontalAlignment="Stretch"/>
+            <CheckBox IsChecked="{Binding AutoSolve}" Content="Auto Solve"
+                      Grid.Column="2" VerticalAlignment="Center" HorizontalContentAlignment="Center" />
+        </Grid>
 
         <u:LoadingContainer Grid.Row="1" Grid.Column="0"
                             Background="Transparent"
@@ -49,6 +60,69 @@
                 </ItemsControl>
             </ScrollViewer>
         </u:LoadingContainer>
+
+        <StackPanel Grid.RowSpan="2" Grid.Row="0" Grid.Column="1" Spacing="8">
+            <ItemsControl ItemsSource="{Binding AttemptedAnswers}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:AnidleAnswerResponse">
+                        <Border Background="{DynamicResource SemiColorNavBackground}" Padding="16" MinHeight="80">
+                            <UniformGrid Columns="5">
+                                <UniformGrid.Styles>
+                                    <Style Selector="TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Style>
+                                </UniformGrid.Styles>
+                                <TextBlock Text="{Binding Data.Title.Value}"
+                                           Foreground="{Binding Data.Title, Converter={StaticResource ForegroundConverter}}"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="WrapWithOverflow" />
+                                <ItemsControl ItemsSource="{Binding Data.Genre}" VerticalAlignment="Center"
+                                              HorizontalAlignment="Center">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{ReflectionBinding Value}"
+                                                       Foreground="{ReflectionBinding Path=., Converter={StaticResource ForegroundConverter}}"
+                                                       HorizontalAlignment="Center"
+                                                       TextAlignment="Center" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding Data.Theme}" VerticalAlignment="Center"
+                                              HorizontalAlignment="Center">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{ReflectionBinding Value}"
+                                                       Foreground="{ReflectionBinding Path=., Converter={StaticResource ForegroundConverter}}"
+                                                       HorizontalAlignment="Center"
+                                                       TextAlignment="Center" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
+                                            HorizontalAlignment="Center">
+                                    <iconPacks:PackIconMaterialDesign Kind="{Binding Data.Year, Converter={StaticResource IconConverter}}"
+                                                                      Foreground="Red"/>
+                                    <TextBlock Text="{Binding Data.Year.Value}"
+                                               Foreground="{Binding Data.Year, Converter={StaticResource ForegroundConverter}}" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
+                                            HorizontalAlignment="Center">
+                                    <iconPacks:PackIconMaterialDesign Kind="{Binding Data.Score, Converter={StaticResource IconConverter}}"
+                                                                      Foreground="Red"/>
+                                    <TextBlock Text="{Binding Data.Score.Value}"
+                                               Foreground="{Binding Data.Score, Converter={StaticResource ForegroundConverter}}" />
+                                </StackPanel>
+                            </UniformGrid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="8" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
 
 
     </Grid>
