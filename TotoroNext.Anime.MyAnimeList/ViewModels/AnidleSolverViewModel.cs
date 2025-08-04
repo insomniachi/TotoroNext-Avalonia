@@ -22,7 +22,7 @@ public partial class AnidleSolverViewModel(IFactory<IMetadataService, Guid> meta
     [ObservableProperty] public partial string Query { get; set; } = "";
     [ObservableProperty] public partial string SelectedSuggestion { get; set; } = "";
     [ObservableProperty] public partial string Answer { get; set; } = "";
-    [ObservableProperty] public partial DateTime? Date { get; set; } = new DateTime(2025, 2, 3);
+    [ObservableProperty] public partial DateTime? Date { get; set; } = DateTime.Today;
     [ObservableProperty] public partial List<AnimeModel> PossibleAnswers { get; set; } = [];
     [ObservableProperty] public partial List<string> AutoCompleteData { get; set; } = [];
     [ObservableProperty] public partial bool AutoSolve { get; set; } = true;

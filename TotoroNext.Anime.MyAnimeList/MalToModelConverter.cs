@@ -65,9 +65,9 @@ public static class MalToModelConverter
                     WatchedEpisodes = progress.WatchedEpisodes,
                     Status = progress.IsRewatching ? ListItemStatus.Rewatching : (ListItemStatus)(int)progress.Status,
                     Score = (int)progress.Score,
-                    UpdatedAt = progress.UpdatedAt,
-                    StartDate = progress.StartDate,
-                    FinishDate = progress.FinishDate
+                    UpdatedAt = progress.UpdatedAt == default ? null : progress.UpdatedAt,
+                    StartDate = progress.StartDate == default ? null : progress.StartDate,
+                    FinishDate = progress.FinishDate == default ? null : progress.FinishDate
                 };
             }
 
