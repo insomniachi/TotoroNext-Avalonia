@@ -55,11 +55,35 @@ public partial class AnidleSolverViewModel(IFactory<IMetadataService, Guid> meta
     }
 
     [RelayCommand]
+    private void Reset()
+    {
+        ErrorCount = 0;
+        PossibleAnswers = [];
+        Round = 1;
+        AttemptedAnswers.Clear();
+        AggregatedAnswer.Clear();
+    }
+
+    [RelayCommand]
+    private void PreviousDay()
+    {
+        Reset();
+        Date = Date?.AddDays(-1);
+    }
+
+    [RelayCommand]
+    private void NextDay()
+    {
+        Reset();
+        Date = Date?.AddDays(1);
+    }
+
+    [RelayCommand]
     private void AttemptGuess(AnimeModel anime)
     {
         Answer = anime.Title;
     }
-
+    
     private async Task<Unit> TryAnswer(string answer)
     {
         if (Date is null || string.IsNullOrEmpty(answer))
@@ -71,6 +95,8 @@ public partial class AnidleSolverViewModel(IFactory<IMetadataService, Guid> meta
                              .AppendQueryParam("answer", answer)
                              .AppendQueryParam("round", Round)
                              .AppendQueryParam("date", Date.Value.ToString("yyyyMMdd"))
+                             .WithHeader(HeaderNames.Referer, "https://aniguessr.com/")
+                             .WithHeader(HeaderNames.UserAgent, Http.UserAgent)
                              .GetJsonAsync<AnidleAnswerResponse>();
 
         // Error
@@ -177,6 +203,14 @@ public class AnidleAggregatedAnswer
     public int? MaximumYear { get; set; }
     public float? MinimumScore { get; set; }
     public float? MaximumScore { get; set; }
+
+    public void Clear()
+    {
+        CorrectGenres.Clear();
+        IncorrectGenres.Clear();
+        MinimumYear = MaximumYear = null;
+        MinimumScore = MaximumScore = null;
+    }
 
     public void UpdateGenres(IEnumerable<AnidleCriteria<string>> genresAndThemes)
     {

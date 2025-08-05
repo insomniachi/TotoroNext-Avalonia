@@ -16,7 +16,7 @@ public static class MalToModelConverter
             Id = jikanModel.MalId ?? long.MinValue,
             ExternalIds = new ExternalIds
             {
-                MyAnimeList = jikanModel.MalId ?? long.MinValue,
+                MyAnimeList = jikanModel.MalId ?? long.MinValue
             },
             Title = GetTitle(jikanModel, "English"),
             Image = jikanModel.Images.JPG.ImageUrl,
@@ -32,7 +32,7 @@ public static class MalToModelConverter
             return model.Titles.FirstOrDefault(x => x.Type == type)?.Title ?? model.Titles.FirstOrDefault(x => x.Type == "Default")?.Title ?? "";
         }
     }
-    
+
     public static AnimeModel ConvertModel(MalApi.Anime malModel)
     {
         var engTitle = malModel.AlternativeTitles?.English;
@@ -53,7 +53,7 @@ public static class MalToModelConverter
             Description = malModel.Synopsis ?? string.Empty,
             Url = $"https://myanimelist.net/anime/{malModel.Id}/",
             MediaFormat = ConvertFormat(malModel.MediaType),
-            Genres = malModel.Genres is not { } genres ? [] : [ ..genres.Select(x => x.Name)]
+            Genres = malModel.Genres is not { } genres ? [] : [..genres.Select(x => x.Name)]
         };
 
         try

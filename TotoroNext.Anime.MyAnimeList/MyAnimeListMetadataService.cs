@@ -16,10 +16,8 @@ namespace TotoroNext.Anime.MyAnimeList;
 internal class MyAnimeListMetadataService : IMetadataService
 {
     private const string RecursiveAnimeProperties = $"my_list_status,status,{AnimeFieldNames.TotalEpisodes},{AnimeFieldNames.Mean}";
-    private List<Genre> _genres = [];
 
     private readonly IMalClient _client;
-    private readonly IJikan _jikanClient = new Jikan();
 
     private readonly string[] _commonFields =
     [
@@ -40,7 +38,10 @@ internal class MyAnimeListMetadataService : IMetadataService
         AnimeFieldNames.MediaType
     ];
 
+    private readonly IJikan _jikanClient = new Jikan();
+
     private readonly Settings _settings;
+    private List<Genre> _genres = [];
 
     public MyAnimeListMetadataService(IMalClient client, IModuleSettings<Settings> settings)
     {
@@ -115,18 +116,17 @@ internal class MyAnimeListMetadataService : IMetadataService
         if (request.IncludedGenres is { Count: > 0 } includedGenres)
         {
             var includedGenreIds = includedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
-            uri.AppendQueryParam("genres",  string.Join(",", includedGenreIds));
+            uri.AppendQueryParam("genres", string.Join(",", includedGenreIds));
         }
 
         if (request.ExcludedGenres is { Count: > 0 } excludedGenres)
         {
             var excludedGenreIds = excludedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
-            uri.AppendQueryParam("genres_exclude",  string.Join(",", excludedGenreIds));
+            uri.AppendQueryParam("genres_exclude", string.Join(",", excludedGenreIds));
         }
 
         var response = await uri.GetJsonAsync<PaginatedJikanResponse<ICollection<JikanDotNet.Anime>>>();
         var items = response.Data
-                            .Where(x => x is { Year: not null, Score: not null, Titles.Count: > 0})
                             .Select(MalToModelConverter.ConvertJikanModel);
         return [..items];
     }
@@ -146,14 +146,14 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         return MalToModelConverter.ConvertModel(malModel);
     }
-    
+
     public async Task<List<string>> GetGenresAsync()
     {
         var response = await _jikanClient.GetAnimeGenresAsync();
         _genres = response.Data.ToList();
         return [.._genres.Select(x => x.Name).Order()];
     }
-    
+
     public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
     {
         var request = _client

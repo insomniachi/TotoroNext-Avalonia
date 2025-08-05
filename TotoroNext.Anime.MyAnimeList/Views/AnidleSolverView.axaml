@@ -15,7 +15,7 @@
 
     <UserControl.Resources>
         <views:AnidleCriteriaForegroundConverter x:Key="ForegroundConverter" />
-        <views:AnidleCriteriaIconConverter x:Key="IconConverter"/>
+        <views:AnidleCriteriaIconConverter x:Key="IconConverter" />
     </UserControl.Resources>
 
     <Grid ColumnDefinitions="*,*"
@@ -27,10 +27,10 @@
                 Text="{Binding Query}"
                 ItemsSource="{Binding AutoCompleteData}"
                 SelectedItem="{Binding SelectedSuggestion}"
-                HorizontalAlignment="Stretch"/>
+                HorizontalAlignment="Stretch" />
             <u:DatePicker SelectedDate="{Binding Date}"
                           Grid.Column="1"
-                          HorizontalAlignment="Stretch"/>
+                          HorizontalAlignment="Stretch" />
             <CheckBox IsChecked="{Binding AutoSolve}" Content="Auto Solve"
                       Grid.Column="2" VerticalAlignment="Center" HorizontalContentAlignment="Center" />
         </Grid>
@@ -61,69 +61,84 @@
             </ScrollViewer>
         </u:LoadingContainer>
 
-        <StackPanel Grid.RowSpan="2" Grid.Row="0" Grid.Column="1" Spacing="8">
-            <ItemsControl ItemsSource="{Binding AttemptedAnswers}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="vm:AnidleAnswerResponse">
-                        <Border Background="{DynamicResource SemiColorNavBackground}" Padding="16" MinHeight="80">
-                            <UniformGrid Columns="5">
-                                <UniformGrid.Styles>
-                                    <Style Selector="TextBlock">
-                                        <Setter Property="FontWeight" Value="Bold" />
-                                    </Style>
-                                </UniformGrid.Styles>
-                                <TextBlock Text="{Binding Data.Title.Value}"
-                                           Foreground="{Binding Data.Title, Converter={StaticResource ForegroundConverter}}"
-                                           VerticalAlignment="Center"
-                                           TextWrapping="WrapWithOverflow" />
-                                <ItemsControl ItemsSource="{Binding Data.Genre}" VerticalAlignment="Center"
-                                              HorizontalAlignment="Center">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{ReflectionBinding Value}"
-                                                       Foreground="{ReflectionBinding Path=., Converter={StaticResource ForegroundConverter}}"
-                                                       HorizontalAlignment="Center"
-                                                       TextAlignment="Center" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <ItemsControl ItemsSource="{Binding Data.Theme}" VerticalAlignment="Center"
-                                              HorizontalAlignment="Center">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{ReflectionBinding Value}"
-                                                       Foreground="{ReflectionBinding Path=., Converter={StaticResource ForegroundConverter}}"
-                                                       HorizontalAlignment="Center"
-                                                       TextAlignment="Center" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
-                                            HorizontalAlignment="Center">
-                                    <iconPacks:PackIconMaterialDesign Kind="{Binding Data.Year, Converter={StaticResource IconConverter}}"
-                                                                      Foreground="Red"/>
-                                    <TextBlock Text="{Binding Data.Year.Value}"
-                                               Foreground="{Binding Data.Year, Converter={StaticResource ForegroundConverter}}" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
-                                            HorizontalAlignment="Center">
-                                    <iconPacks:PackIconMaterialDesign Kind="{Binding Data.Score, Converter={StaticResource IconConverter}}"
-                                                                      Foreground="Red"/>
-                                    <TextBlock Text="{Binding Data.Score.Value}"
-                                               Foreground="{Binding Data.Score, Converter={StaticResource ForegroundConverter}}" />
-                                </StackPanel>
-                            </UniformGrid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </StackPanel>
-
-
+        <Grid Grid.RowSpan="2" Grid.Row="0" Grid.Column="1"
+              RowDefinitions="*,Auto"
+              RowSpacing="8">
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding AttemptedAnswers}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:AnidleAnswerResponse">
+                            <Border Background="{DynamicResource SemiColorNavBackground}" Padding="16" MinHeight="80">
+                                <UniformGrid Columns="5">
+                                    <UniformGrid.Styles>
+                                        <Style Selector="TextBlock">
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                        </Style>
+                                    </UniformGrid.Styles>
+                                    <TextBlock Text="{Binding Data.Title.Value}"
+                                               Foreground="{Binding Data.Title, Converter={StaticResource ForegroundConverter}}"
+                                               VerticalAlignment="Center"
+                                               TextWrapping="WrapWithOverflow" />
+                                    <ItemsControl ItemsSource="{Binding Data.Genre}" VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{ReflectionBinding Value}"
+                                                           Foreground="{ReflectionBinding Path=., Converter={StaticResource ForegroundConverter}}"
+                                                           HorizontalAlignment="Center"
+                                                           TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <ItemsControl ItemsSource="{Binding Data.Theme}" VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{ReflectionBinding Value}"
+                                                           Foreground="{ReflectionBinding Path=., Converter={StaticResource ForegroundConverter}}"
+                                                           HorizontalAlignment="Center"
+                                                           TextAlignment="Center" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
+                                                HorizontalAlignment="Center">
+                                        <iconPacks:PackIconMaterialDesign
+                                            Kind="{Binding Data.Year, Converter={StaticResource IconConverter}}"
+                                            Foreground="Red" />
+                                        <TextBlock Text="{Binding Data.Year.Value}"
+                                                   Foreground="{Binding Data.Year, Converter={StaticResource ForegroundConverter}}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center"
+                                                HorizontalAlignment="Center">
+                                        <iconPacks:PackIconMaterialDesign
+                                            Kind="{Binding Data.Score, Converter={StaticResource IconConverter}}"
+                                            Foreground="Red" />
+                                        <TextBlock Text="{Binding Data.Score.Value}"
+                                                   Foreground="{Binding Data.Score, Converter={StaticResource ForegroundConverter}}" />
+                                    </StackPanel>
+                                </UniformGrid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="8" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
+            
+            <UniformGrid Grid.Row="1" Columns="3" ColumnSpacing="8" Margin="8">
+                <UniformGrid.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    </Style>
+                </UniformGrid.Styles>
+                <Button Content="Previous Day" Command="{Binding PreviousDayCommand}"/>
+                <Button Content="Reset" Command="{Binding ResetCommand}"/>
+                <Button Content="Next Day" Command="{Binding NextDayCommand}"/>
+            </UniformGrid>
+        </Grid>
     </Grid>
 </UserControl>
