@@ -9,6 +9,7 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:modc="using:TotoroNext.Module.Controls"
+             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Behaviors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:UserListViewModel"
              x:Class="TotoroNext.Anime.Views.UserListView">
@@ -81,7 +82,12 @@
                             <ac:AnimeCard Anime="{Binding}"
                                           Margin="8"
                                           module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}"
-                                          module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}" />
+                                          module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}">
+                                <Interaction.Behaviors>
+                                    <behaviors:UnwatchedEpisodesBehavior/>
+                                    <behaviors:AiringStatusBehavior/>
+                                </Interaction.Behaviors>
+                            </ac:AnimeCard>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

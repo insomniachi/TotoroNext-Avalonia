@@ -28,6 +28,11 @@
                                  HorizontalAlignment="Stretch"
                                  WrapSelection="True"/>
             </u:FormItem>
+            <u:FormItem Label="User score">
+                <u:EnumSelector EnumType="vm:UserScoreFilter"
+                                Value="{Binding Filter.ScoreFilter}"
+                                HorizontalAlignment="Stretch"/>
+            </u:FormItem>
         </u:FormGroup>
         <u:FormGroup Header="Sort Direction">
             <RadioButton IsChecked="{Binding Sort.IsAscending, Mode=TwoWay}" GroupName="Direction"

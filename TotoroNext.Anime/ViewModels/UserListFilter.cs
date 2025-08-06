@@ -10,6 +10,13 @@ namespace TotoroNext.Anime.ViewModels;
 
 public partial class UserListFilter : ObservableObject
 {
+    public UserListFilter()
+    {
+        var propertyChanged = this.WhenAnyPropertyChanged().Select(_ => Unit.Default);
+        var genresChanged = Genres.ToObservableChangeSet().Select(_ => Unit.Default);
+        Predicate = propertyChanged.Merge(genresChanged).Select(_ => (Func<AnimeModel, bool>)IsVisible);
+    }
+
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = ListItemStatus.Watching;
 
     [ObservableProperty] public partial string Term { get; set; } = "";
@@ -17,17 +24,12 @@ public partial class UserListFilter : ObservableObject
     [ObservableProperty] public partial string Year { get; set; } = "";
 
     [ObservableProperty] public partial AnimeMediaFormat Format { get; set; } = AnimeMediaFormat.Unknown;
-    
-    [ObservableProperty] public partial ObservableCollection<string> Genres { get; set; } = [];
-    
-    public IObservable<Func<AnimeModel, bool>> Predicate { get; }
 
-    public UserListFilter()
-    {
-        var propertyChanged = this.WhenAnyPropertyChanged().Select(_ => Unit.Default);
-        var genresChanged = Genres.ToObservableChangeSet().Select(_ => Unit.Default);
-        Predicate = propertyChanged.Merge(genresChanged).Select(_ => (Func<AnimeModel, bool>)IsVisible);
-    }
+    [ObservableProperty] public partial ObservableCollection<string> Genres { get; set; } = [];
+
+    [ObservableProperty] public partial UserScoreFilter ScoreFilter { get; set; }
+
+    public IObservable<Func<AnimeModel, bool>> Predicate { get; }
 
     public void Refresh()
     {
@@ -47,20 +49,19 @@ public partial class UserListFilter : ObservableObject
 
         var searchTextStatus = string.IsNullOrEmpty(Term) ||
                                model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase);
-
         var formatCheck = Format == AnimeMediaFormat.Unknown || model.MediaFormat == Format;
         var genresCheck = Genres.All(x => model.Genres.Contains(x));
+        var userScoreCheck = ScoreFilter switch
+        {
+            UserScoreFilter.All => true,
+            UserScoreFilter.Scored => model.Tracking.Score > 0,
+            UserScoreFilter.Unscored => model.Tracking.Score is null or 0,
+            _ => true
+        };
 
-        //var searchTextStatus = string.IsNullOrEmpty(Term) ||
-        //                       model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
-        //                       model.AlternativeTitles.Any(x => x.Contains(Term, StringComparison.InvariantCultureIgnoreCase));
         var yearCheck = string.IsNullOrEmpty(Year) || !YearRegex().IsMatch(Year) || model.Season?.Year.ToString() == Year;
-        //var genresCheck = !Genres.Any() || Genres.All(x => model.Genres.Any(y => string.Equals(y, x, StringComparison.InvariantCultureIgnoreCase)));
-        //var airingStatusCheck = AiringStatus is null || AiringStatus == model.AiringStatus;
 
-        var isVisible = listStatusCheck && searchTextStatus && yearCheck && formatCheck && genresCheck /* && genresCheck && airingStatusCheck*/;
-
-        return isVisible;
+        return listStatusCheck && searchTextStatus && yearCheck && formatCheck && genresCheck && userScoreCheck;
     }
 
     public void Clear()
@@ -73,4 +74,11 @@ public partial class UserListFilter : ObservableObject
 
     [GeneratedRegex(@"(19[5-9][0-9])|(20\d{2})")]
     private partial Regex YearRegex();
+}
+
+public enum UserScoreFilter
+{
+    All,
+    Scored,
+    Unscored
 }
