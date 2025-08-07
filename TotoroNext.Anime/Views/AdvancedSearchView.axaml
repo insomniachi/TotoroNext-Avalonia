@@ -40,12 +40,12 @@
                                 DisplayDescription="True"
                                 HorizontalAlignment="Stretch" />
             </u:FormItem>
-            <u:FormItem Label="Minimum Year">
+            <u:FormItem Label="Released On Or After Year">
                 <u:NumericIntUpDown Value="{Binding MinimumYear, Mode=TwoWay}"
                                     Maximum="{Binding CurrentYear, Mode=OneTime}"
                                     HorizontalAlignment="Stretch"/>
             </u:FormItem>
-            <u:FormItem Label="Maximum Year">
+            <u:FormItem Label="Released On Or Before Year">
                 <u:NumericIntUpDown Value="{Binding MaximumYear, Mode=TwoWay}"
                                     Maximum="{Binding CurrentYear, Mode=OneTime}"
                                     HorizontalAlignment="Stretch"/>
@@ -63,12 +63,12 @@
                                  SelectedItems="{Binding ExcludedGenres}"/>
             </u:FormItem>
 
-            <u:FormItem Label="Minimum">
+            <u:FormItem Label="Minimum Score">
                 <u:NumericFloatUpDown Value="{Binding MinimumScore, Mode=TwoWay}"
                                       Maximum="10"
                                       Minimum="0" />
             </u:FormItem>
-            <u:FormItem Label="Maximum">
+            <u:FormItem Label="Maximum Score">
                 <u:NumericFloatUpDown Value="{Binding MaximumScore, Mode=TwoWay}"
                                       Maximum="10"
                                       Minimum="0" />
