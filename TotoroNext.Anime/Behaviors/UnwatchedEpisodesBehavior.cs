@@ -54,7 +54,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         var total = anime.AiredEpisodes;
         var diff = total - watched;
 
-        if (diff == 0)
+        if (diff <= 0)
         {
             return Unit.Default;
         }
@@ -64,7 +64,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         var actualDiff = actuallyAired - watched;
 
         // Episode aired on TV, but not uploaded on the provider
-        if (actualDiff == 0)
+        if (actualDiff <= 0)
         {
             AssociatedObject.Badge.Background = NotUploadedBrush;
             AssociatedObject.BadgeText.Text = diff.ToString();

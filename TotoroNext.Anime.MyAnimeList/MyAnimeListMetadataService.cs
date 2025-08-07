@@ -38,7 +38,7 @@ internal class MyAnimeListMetadataService : IMetadataService
         AnimeFieldNames.MediaType
     ];
 
-    private readonly IJikan _jikanClient = new Jikan();
+    private readonly Jikan _jikanClient = new Jikan();
 
     private readonly Settings _settings;
     private List<Genre> _genres = [];
@@ -59,30 +59,6 @@ internal class MyAnimeListMetadataService : IMetadataService
     public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
     {
         return await anime.GetEpisodes();
-        // var jikanResponse = await _jikanClient.GetAnimeEpisodesAsync(anime.Id);
-        // var response = new List<EpisodeInfo>();
-        // do
-        // {
-        //     foreach (var pair in jikanResponse.Data.Index())
-        //     {
-        //         var (index, jikanEp) = pair;
-        //         response.Add(new EpisodeInfo()
-        //         {
-        //             EpisodeNumber = (int)jikanEp.MalId,
-        //             Titles = new Titles()
-        //             {
-        //                 English = jikanEp.Title,
-        //                 Romaji = jikanEp.TitleJapanese,
-        //                 Japanese = jikanEp.TitleJapanese
-        //             },
-        //             Overview = jikanEp.Synopsis,
-        //             Runtime = jikanEp.Duration ?? 0,
-        //             AirDateUtc = jikanEp.Aired
-        //         });
-        //     }
-        // } while (jikanResponse.Pagination.HasNextPage);
-        //
-        // return response;
     }
 
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
