@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using IconPacks.Avalonia.MaterialDesign;
+using IconPacks.Avalonia.Octicons;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TotoroNext.Anime.Abstractions;
@@ -35,6 +36,12 @@ public class App : Application
 
                           services.AddInternalMediaPlayer();
 
+                          #if DEBUG
+                          services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
+                                                                                          PackIconOcticonsKind.Beaker16,
+                                                                                          new NavMenuItemTag { IsFooterItem = true });
+                          #endif
+                          
                           services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                                                                                         PackIconMaterialDesignKind.ShoppingCart,
                                                                                         new NavMenuItemTag { IsFooterItem = true });

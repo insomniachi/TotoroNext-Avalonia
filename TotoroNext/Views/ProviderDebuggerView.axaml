@@ -1,0 +1,55 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.ViewModels"
+             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:ProviderDebuggerViewModel"
+             x:Class="TotoroNext.Views.ProviderDebuggerView">
+    <Grid RowDefinitions="Auto,*"
+          ColumnDefinitions="*,*">
+        <Grid ColumnSpacing="8" ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding Query}" HorizontalAlignment="Stretch" />
+            <ComboBox ItemsSource="{Binding Descriptors}"
+                      Grid.Column="1"
+                      DisplayMemberBinding="{Binding Name}"
+                      SelectedValue="{Binding ProviderId, Mode=TwoWay}"
+                      SelectedValueBinding="{Binding Id}" />
+        </Grid>
+
+        <ListBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Result}"
+                 SelectedItem="{Binding SelectedResult}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="models:SearchResult">
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+            <ListBox ItemsSource="{Binding Episodes}"
+                     SelectedItem="{Binding SelectedEpisode}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:Episode">
+                        <TextBlock Text="{Binding Number}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+            <ListBox ItemsSource="{Binding Servers}"
+                     SelectedItem="{Binding SelectedServer}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="models:VideoServer">
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+    </Grid>
+</UserControl>
