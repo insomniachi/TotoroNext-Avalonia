@@ -45,6 +45,7 @@
     <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(DefineConstants)', '(^|;)REFER_PLUGINS(;|$)'))">
         <ProjectReference Include="..\TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.AnimePahe\TotoroNext.Anime.AnimePahe.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.AnimeHeaven\TotoroNext.Anime.AnimeHeaven.csproj"/>
 
         <ProjectReference Include="..\TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.MyAnimeList\TotoroNext.Anime.MyAnimeList.csproj"/>

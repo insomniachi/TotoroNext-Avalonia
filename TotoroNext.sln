@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.MediaEngine.Vlc"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginBuilder", "PluginBuilder\PluginBuilder.csproj", "{5EA4EC60-6BF5-417C-9341-3831E25E03B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AnimeHeaven", "TotoroNext.Anime.AnimeHeaven\TotoroNext.Anime.AnimeHeaven.csproj", "{91F639EB-93C6-477A-A42B-5A6852C5F672}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -113,6 +115,10 @@ Global
 		{5EA4EC60-6BF5-417C-9341-3831E25E03B9}.Debug|x64.Build.0 = Debug|x64
 		{5EA4EC60-6BF5-417C-9341-3831E25E03B9}.Release|x64.ActiveCfg = Release|x64
 		{5EA4EC60-6BF5-417C-9341-3831E25E03B9}.Release|x64.Build.0 = Release|x64
+		{91F639EB-93C6-477A-A42B-5A6852C5F672}.Debug|x64.ActiveCfg = Debug|x64
+		{91F639EB-93C6-477A-A42B-5A6852C5F672}.Debug|x64.Build.0 = Debug|x64
+		{91F639EB-93C6-477A-A42B-5A6852C5F672}.Release|x64.ActiveCfg = Release|x64
+		{91F639EB-93C6-477A-A42B-5A6852C5F672}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -135,5 +141,6 @@ Global
 		{45769F16-5B36-4320-A19A-852C71195A61} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
 		{FDE9276F-04A3-4FFA-A2C1-2C0B8C301C9C} = {5CAC8F68-6477-49F3-A75E-AE2D62688E6D}
 		{4E2FCC19-D0D2-40B8-ACEA-B61F87F63A6B} = {8D8DC43D-B6AB-4EE5-B2C0-AF29333BD684}
+		{91F639EB-93C6-477A-A42B-5A6852C5F672} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
 	EndGlobalSection
 EndGlobal
