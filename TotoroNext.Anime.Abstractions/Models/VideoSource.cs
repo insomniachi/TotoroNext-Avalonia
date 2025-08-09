@@ -9,4 +9,5 @@ public class VideoSource
     public string? Quality { get; init; }
     public required Uri Url { get; init; }
     public Dictionary<string, string> Headers { get; init; } = [];
+    public string? Subtitle { get; init; }
 }

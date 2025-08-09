@@ -4,40 +4,52 @@ using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
-using Ursa.Controls;
+using Media = TotoroNext.MediaEngine.Abstractions.Media;
 
 namespace TotoroNext.ViewModels;
 
 [UsedImplicitly]
-public partial class ProviderDebuggerViewModel(IEnumerable<Descriptor> descriptors,
-                                       IFactory<IAnimeProvider, Guid> providerFactory) : ObservableObject, IInitializable
+public partial class ProviderDebuggerViewModel(
+    IEnumerable<Descriptor> descriptors,
+    IFactory<IAnimeProvider, Guid> providerFactory,
+    IFactory<IMediaPlayer, Guid> playerFactory,
+    SettingsModel settings) : ObservableObject, IInitializable
 {
-        private IAnimeProvider? _provider;
-    
-    public List<Descriptor> Descriptors { get; } =
-        [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
-    
+    private IAnimeProvider? _provider;
+
+    [ObservableProperty] public partial List<Descriptor> AnimeProviders { get; set; } = [];
+
+    [ObservableProperty] public partial List<Descriptor> MediaPlayers { get; set; } = [];
+
     [ObservableProperty] public partial Guid? ProviderId { get; set; }
+
+    [ObservableProperty] public partial Guid? MediaPlayerId { get; set; }
 
     [ObservableProperty] public partial string Query { get; set; } = "";
 
     [ObservableProperty] public partial List<SearchResult> Result { get; set; } = [];
-    
+
     [ObservableProperty] public partial SearchResult? SelectedResult { get; set; }
 
     [ObservableProperty] public partial List<Episode> Episodes { get; set; } = [];
-    
+
     [ObservableProperty] public partial Episode? SelectedEpisode { get; set; }
 
     [ObservableProperty] public partial List<VideoServer> Servers { get; set; } = [];
 
     [ObservableProperty] public partial VideoServer? SelectedServer { get; set; }
-   
+
     public void Initialize()
     {
-        ProviderId = Descriptors.FirstOrDefault()?.Id;
+        List<Descriptor> all = [..descriptors];
+        AnimeProviders = all.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider)).ToList();
+        MediaPlayers = all.Where(x => x.Components.Contains(ComponentTypes.MediaEngine)).ToList();
+        
+        ProviderId = settings.SelectedAnimeProvider;
+        MediaPlayerId = settings.SelectedMediaEngine;
 
         this.WhenAnyValue(x => x.ProviderId)
             .WhereNotNull()
@@ -65,7 +77,27 @@ public partial class ProviderDebuggerViewModel(IEnumerable<Descriptor> descripto
 
         this.WhenAnyValue(x => x.SelectedServer)
             .WhereNotNull()
+            .SelectMany(x => x.Extract().ToListAsync().AsTask())
+            .Select(x => x.FirstOrDefault())
+            .WhereNotNull()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(server => MessageBox.ShowAsync(server.Url.ToString(), server.Name));
+            .Subscribe(Play);
+    }
+
+    private void Play(VideoSource source)
+    {
+        if (SelectedEpisode is null || MediaPlayerId is null)
+        {
+            return;
+        }
+
+        IEnumerable<string?> parts =
+            [SelectedResult?.Title, $"Episode {SelectedEpisode.Number}", source.Title ?? SelectedEpisode.Info?.Titles.English];
+        var title = string.Join(" - ", parts.Where(x => !string.IsNullOrEmpty(x)));
+
+        var metadata = new MediaMetadata(title, source.Headers, Subtitle: source.Subtitle);
+        var media = new Media(source.Url, metadata);
+        var player = playerFactory.Create(MediaPlayerId.Value);
+        player.Play(media, SelectedEpisode.StartPosition);
     }
 }

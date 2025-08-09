@@ -67,8 +67,6 @@ public class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
@@ -82,7 +80,7 @@ public class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void DisableAvaloniaDataAnnotationValidation()
+    private static void DisableAvaloniaDataAnnotationValidation()
     {
         // Get an array of plugins to remove
         var dataValidationPluginsToRemove =
@@ -114,7 +112,7 @@ public class DebugModuleStore : IModuleStore
         // Anime Providers
         yield return new Anime.AllAnime.Module();
         yield return new Anime.AnimePahe.Module();
-        yield return new Anime.AnimeHeaven.Module();
+        yield return new Anime.AnimeParadise.Module();
 
         // Anime Tracking/Metadata
         yield return new Anime.Anilist.Module();

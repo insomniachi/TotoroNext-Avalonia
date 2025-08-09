@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
+using Flurl.Http;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module.Abstractions;
 
@@ -16,6 +17,7 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
     private CompositeDisposable? _disposable;
     private Process? _process;
     private HttpInterface? _webInterface;
+    private string _subtitleFile = "";
 
     public IObservable<TimeSpan> DurationChanged => _durationSubject;
     public IObservable<TimeSpan> PositionChanged => _positionSubject;
@@ -23,16 +25,7 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
 
     public void Play(Media media, TimeSpan startPosition)
     {
-        if (_disposable is null)
-        {
-            _disposable = [];
-        }
-        else if (!_disposable.IsDisposed)
-        {
-            _disposable.Dispose();
-            _disposable = [];
-        }
-
+        _disposable ??= [];
         _process?.Kill();
 
         var password = Guid.NewGuid().ToString();
@@ -65,13 +58,30 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
             startInfo.ArgumentList.Add($"--http-referrer={referer}");
         }
 
+        if (!string.IsNullOrEmpty(media.Metadata.Subtitle))
+        {
+            var content = media.Metadata.Subtitle.GetStringAsync().GetAwaiter().GetResult();
+            _subtitleFile = Path.GetTempFileName();
+            File.WriteAllText(_subtitleFile, content);
+            startInfo.ArgumentList.Add($"--sub-file={_subtitleFile}");
+        }
+
         if (startPosition > TimeSpan.Zero)
         {
             startInfo.ArgumentList.Add($"--start-time={startPosition.TotalSeconds}");
         }
 
         _process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
-        _process.Exited += (_, _) => _playbackStoppedSubject.OnNext(Unit.Default);
+        _process.Exited += (_, _) =>
+        {
+            _playbackStoppedSubject.OnNext(Unit.Default);
+            if (File.Exists(_subtitleFile))
+            {
+                File.Delete(_subtitleFile);
+            }
+            _disposable.Dispose();
+            _disposable = [];
+        };
         _process.Start();
 
         _webInterface = new HttpInterface(_process, password);

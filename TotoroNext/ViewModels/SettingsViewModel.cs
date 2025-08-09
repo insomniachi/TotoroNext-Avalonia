@@ -74,6 +74,7 @@ public class SettingsModel : ObservableObject
     }
 }
 
+[UsedImplicitly]
 public partial class SettingsViewModel : ObservableObject, IInitializable
 {
     private readonly SettingsModel _settings;

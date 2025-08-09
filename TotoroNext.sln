@@ -51,7 +51,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.MediaEngine.Vlc"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginBuilder", "PluginBuilder\PluginBuilder.csproj", "{5EA4EC60-6BF5-417C-9341-3831E25E03B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AnimeHeaven", "TotoroNext.Anime.AnimeHeaven\TotoroNext.Anime.AnimeHeaven.csproj", "{91F639EB-93C6-477A-A42B-5A6852C5F672}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AnimeParadise", "TotoroNext.Anime.AnimeParadise\TotoroNext.Anime.AnimeParadise.csproj", "{91F639EB-93C6-477A-A42B-5A6852C5F672}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

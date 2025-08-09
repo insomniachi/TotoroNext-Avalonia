@@ -8,13 +8,20 @@
              x:DataType="viewModels:ProviderDebuggerViewModel"
              x:Class="TotoroNext.Views.ProviderDebuggerView">
     <Grid RowDefinitions="Auto,*"
-          ColumnDefinitions="*,*">
-        <Grid ColumnSpacing="8" ColumnDefinitions="*,Auto">
+          RowSpacing="16"
+          ColumnSpacing="16"
+          ColumnDefinitions="*,*,*,*">
+        <Grid ColumnSpacing="8" ColumnDefinitions="*,Auto,Auto" ColumnSpan="4">
             <TextBox Text="{Binding Query}" HorizontalAlignment="Stretch" />
-            <ComboBox ItemsSource="{Binding Descriptors}"
+            <ComboBox ItemsSource="{Binding AnimeProviders}"
                       Grid.Column="1"
                       DisplayMemberBinding="{Binding Name}"
                       SelectedValue="{Binding ProviderId, Mode=TwoWay}"
+                      SelectedValueBinding="{Binding Id}" />
+            <ComboBox ItemsSource="{Binding MediaPlayers}"
+                      Grid.Column="2"
+                      DisplayMemberBinding="{Binding Name}"
+                      SelectedValue="{Binding MediaPlayerId, Mode=TwoWay}"
                       SelectedValueBinding="{Binding Id}" />
         </Grid>
 
@@ -26,30 +33,25 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        
+        <ListBox Grid.Column="1" Grid.Row="1"
+                 ItemsSource="{Binding Episodes}"
+                 SelectedItem="{Binding SelectedEpisode}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:Episode">
+                    <TextBlock Text="{Binding Number}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
-        <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
-            <ListBox ItemsSource="{Binding Episodes}"
-                     SelectedItem="{Binding SelectedEpisode}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:Episode">
-                        <TextBlock Text="{Binding Number}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ListBox.ItemsPanel>
-            </ListBox>
-            <ListBox ItemsSource="{Binding Servers}"
-                     SelectedItem="{Binding SelectedServer}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:VideoServer">
-                        <TextBlock Text="{Binding Name}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </StackPanel>
+        <ListBox Grid.Column="2" Grid.Row="1" ItemsSource="{Binding Servers}"
+                 SelectedItem="{Binding SelectedServer}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:VideoServer">
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
     </Grid>
 </UserControl>

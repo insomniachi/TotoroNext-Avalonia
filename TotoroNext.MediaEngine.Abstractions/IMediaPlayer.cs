@@ -50,4 +50,5 @@ public record MediaSegment(MediaSectionType Type, TimeSpan Start, TimeSpan End);
 public record MediaMetadata(
     string Title,
     IDictionary<string, string>? Headers = null,
-    IReadOnlyList<MediaSegment>? MedaSections = null);
+    IReadOnlyList<MediaSegment>? MedaSections = null,
+    string? Subtitle = null);
