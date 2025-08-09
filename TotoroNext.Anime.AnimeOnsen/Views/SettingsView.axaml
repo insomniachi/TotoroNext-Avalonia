@@ -16,6 +16,11 @@
             <TextBox Text="{Binding Token, Mode=TwoWay}" u:FormItem.Label="Api Token"
                      AcceptsReturn="True"
                      TextWrapping="WrapWithOverflow"/>
+            <Button Content="Authenticate"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding GetTokenCommand}"/>
         </u:Form>
     </Grid>
 </UserControl>

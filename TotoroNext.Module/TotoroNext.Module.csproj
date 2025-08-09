@@ -14,6 +14,7 @@
 
         <PackageReference Include="Flurl.Http"/>
         <PackageReference Include="Humanizer"/>
+        <PackageReference Include="Microsoft.Playwright" />
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator"/>
         <PackageReference Include="System.Linq.Async"/>
         <PackageReference Include="JetBrains.Annotations"/>

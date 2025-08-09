@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Flurl.Http;
 using JetBrains.Annotations;
+using Microsoft.Playwright;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
