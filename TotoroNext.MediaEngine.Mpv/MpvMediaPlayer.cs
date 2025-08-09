@@ -64,6 +64,11 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
             startInfo.ArgumentList.Add($"--chapters-file={file}");
         }
 
+        if (!string.IsNullOrEmpty(media.Metadata.Subtitle))
+        {
+            startInfo.ArgumentList.Add($"--sub-file={media.Metadata.Subtitle}");
+        }
+
         _process = new Process
         {
             StartInfo = startInfo,

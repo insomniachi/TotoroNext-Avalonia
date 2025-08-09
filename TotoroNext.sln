@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginBuilder", "PluginBuil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AnimeParadise", "TotoroNext.Anime.AnimeParadise\TotoroNext.Anime.AnimeParadise.csproj", "{91F639EB-93C6-477A-A42B-5A6852C5F672}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AnimeOnsen", "TotoroNext.Anime.AnimeOnsen\TotoroNext.Anime.AnimeOnsen.csproj", "{91EA8930-7251-4A68-83F5-E5D58AAAE25D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -119,6 +121,10 @@ Global
 		{91F639EB-93C6-477A-A42B-5A6852C5F672}.Debug|x64.Build.0 = Debug|x64
 		{91F639EB-93C6-477A-A42B-5A6852C5F672}.Release|x64.ActiveCfg = Release|x64
 		{91F639EB-93C6-477A-A42B-5A6852C5F672}.Release|x64.Build.0 = Release|x64
+		{91EA8930-7251-4A68-83F5-E5D58AAAE25D}.Debug|x64.ActiveCfg = Debug|x64
+		{91EA8930-7251-4A68-83F5-E5D58AAAE25D}.Debug|x64.Build.0 = Debug|x64
+		{91EA8930-7251-4A68-83F5-E5D58AAAE25D}.Release|x64.ActiveCfg = Release|x64
+		{91EA8930-7251-4A68-83F5-E5D58AAAE25D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,5 +148,6 @@ Global
 		{FDE9276F-04A3-4FFA-A2C1-2C0B8C301C9C} = {5CAC8F68-6477-49F3-A75E-AE2D62688E6D}
 		{4E2FCC19-D0D2-40B8-ACEA-B61F87F63A6B} = {8D8DC43D-B6AB-4EE5-B2C0-AF29333BD684}
 		{91F639EB-93C6-477A-A42B-5A6852C5F672} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
+		{91EA8930-7251-4A68-83F5-E5D58AAAE25D} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
 	EndGlobalSection
 EndGlobal

@@ -70,10 +70,10 @@ public partial class MainWindowViewModel : ObservableObject,
 
         var options = new DrawerOptions
         {
-            CanResize = true,
+            CanResize = false,
             CanLightDismiss = !message.IsInline,
             Position = Position.Right,
-            MinWidth = message.PaneWidth,
+            MaxWidth = message.PaneWidth,
             IsCloseButtonVisible = message.IsInline,
             Buttons = DialogButton.None,
             Title = message.Title,
@@ -98,10 +98,10 @@ public partial class MainWindowViewModel : ObservableObject,
 
         var options = new DrawerOptions
         {
-            CanResize = true,
+            CanResize = false,
             CanLightDismiss = !message.IsInline,
             Position = Position.Right,
-            MinWidth = message.PaneWidth,
+            MaxWidth = message.PaneWidth,
             IsCloseButtonVisible = message.IsInline,
             Buttons = DialogButton.None,
             Title = message.Title,

@@ -37,6 +37,15 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
             return Unit.Default;
         }
 
+        var watched = anime.Tracking?.WatchedEpisodes ?? 0;
+        var total = anime.AiredEpisodes;
+        var diff = total - watched;
+
+        if (diff <= 0)
+        {
+            return Unit.Default;
+        }
+        
         var overrides = Overrides.GetOverrides(anime.Id);
         var provider = overrides?.Provider is not { } id
             ? ProviderFactory.CreateDefault()
@@ -46,15 +55,6 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         var result = await provider.SearchAndSelectAsync(title);
 
         if (result is null)
-        {
-            return Unit.Default;
-        }
-
-        var watched = anime.Tracking?.WatchedEpisodes ?? 0;
-        var total = anime.AiredEpisodes;
-        var diff = total - watched;
-
-        if (diff <= 0)
         {
             return Unit.Default;
         }
