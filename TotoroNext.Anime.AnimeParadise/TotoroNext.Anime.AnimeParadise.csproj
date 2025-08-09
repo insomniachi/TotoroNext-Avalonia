@@ -10,4 +10,9 @@
         <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Assets\animeparadise.jpg" />
+      <AvaloniaResource Include="Assets\animeparadise.jpg" />
+    </ItemGroup>
+
 </Project>
