@@ -114,6 +114,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.AnimePahe.Module();
         yield return new Anime.AnimeParadise.Module();
         yield return new Anime.AnimeOnsen.Module();
+        yield return new Anime.Anizone.Module();
 
         // Anime Tracking/Metadata
         yield return new Anime.Anilist.Module();
