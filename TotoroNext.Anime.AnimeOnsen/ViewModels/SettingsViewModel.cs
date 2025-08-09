@@ -32,7 +32,7 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
 
         var tokenSource = new TaskCompletionSource<string>();
         
-        page.Request += (sender, request) =>
+        page.Request += (_, request) =>
         {
             if (request.Url != "https://api.animeonsen.xyz/v4/content/index/recent/spotlight")
             {
