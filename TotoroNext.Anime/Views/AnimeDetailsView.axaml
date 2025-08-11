@@ -13,7 +13,8 @@
              x:DataType="vm:AnimeDetailsViewModel">
 
     <Grid RowSpacing="8"
-          RowDefinitions="435,Auto,*">
+          RowDefinitions="435,Auto,*"
+          Margin="16">
 
         <Grid Grid.Row="0"
               ColumnSpacing="24"
