@@ -18,9 +18,9 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
     {
         var response = await "https://api.animeparadise.moe/search"
                              .AppendQueryParam("q", query)
-                             .GetJsonAsync<SearchResponse>();
+                             .GetJsonAsync<SearchResponseRoot>();
 
-        foreach (var item in response.Data)
+        foreach (var item in response.Data.Items)
         {
             yield return new SearchResult(this, item.Id, item.Title, new Uri(item.PosterImage.Original));
         }
@@ -28,24 +28,27 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
-        var response = await $"https://www.animeparadise.moe/_next/data/YF6IP0M9Ftup5FCI243ui/en/watch/{episodeId}.json"
+        var response = await $"https://www.animeparadise.moe/watch/{episodeId}"
                              .AppendQueryParam("origin", animeId)
-                             .AppendQueryParam("id", episodeId)
-                             .GetStringAsync();
+                             .WithHeader("next-action", "60553ef556eeb58ac6b7604ec273a67f0202e7dda1")
+                             .PostStringAsync($"""["{episodeId}","{animeId}"]""")
+                             .ReceiveString();
 
-        var doc = JsonDocument.Parse(response);
-        var pageProps = doc.RootElement.GetProperty("pageProps");
-        var episode = pageProps.GetProperty("episode");
+        var payload = response.Split('\n', StringSplitOptions.RemoveEmptyEntries).Last()["1:".Length..];
+        var doc = JsonDocument.Parse(payload);
+        var episode = doc.RootElement.GetProperty("episode");
         var url = episode.GetProperty("streamLink").GetString() ?? "";
         var actualUrl = "https://stream.animeparadise.moe/m3u8".AppendQueryParam("url", url).ToUri();
         var subData = episode.GetProperty("subData");
+        var skipData = episode.GetProperty("skipData").Deserialize<SkipData>();
 
         var server = new VideoServer("Default", actualUrl)
         {
             Headers =
             {
                 [HeaderNames.Referer] = "https://www.animeparadise.moe/"
-            }
+            },
+            SkipData = GetSkipData(skipData)
         };
 
         var englishSubtitle = "";
@@ -90,18 +93,55 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
             yield return new Episode(this, animeId, item.Id, number);
         }
     }
+    
+    private static TotoroNext.Anime.Abstractions.Models.SkipData? GetSkipData(SkipData? skipData)
+    {
+        if (skipData is null)
+        {
+            return null;
+        }
+
+        var data = new TotoroNext.Anime.Abstractions.Models.SkipData();
+        
+        if (skipData.Intro.End > 0)
+        {
+            data.Opening = new Segment()
+            {
+                Start = TimeSpan.FromSeconds(skipData.Intro.Start),
+                End = TimeSpan.FromSeconds(skipData.Intro.End)
+            };
+        }
+
+        if (skipData.Outro.End > 0)
+        {
+            data.Ending = new Segment()
+            {
+                Start = TimeSpan.FromSeconds(skipData.Outro.Start),
+                End = TimeSpan.FromSeconds(skipData.Outro.End)
+            };
+        }
+
+        return data;
+    }
+}
+
+[UsedImplicitly]
+internal class SearchResponseRoot
+{
+    [JsonPropertyName("data")] public SearchResponse Data { get; set; }
 }
 
 [UsedImplicitly]
 internal class SearchResponse
 {
-    [JsonPropertyName("data")] public IReadOnlyList<AnimeParadiseModel> Data { get; init; } = [];
+    [JsonPropertyName("total")] public int Total { get; set; }
+    [JsonPropertyName("searchData")] public List<AnimeParadiseModel> Items { get; init; } = [];
 }
 
 [UsedImplicitly]
 internal class EpisodeResponse
 {
-    [JsonPropertyName("data")] public IReadOnlyList<AnimeParadiseEpisode> Data { get; init; } = [];
+    [JsonPropertyName("data")] public List<AnimeParadiseEpisode> Data { get; init; } = [];
 }
 
 [UsedImplicitly]
@@ -127,4 +167,16 @@ internal class AnimeParadiseEpisode
     [JsonPropertyName("title")] public string Title { get; init; } = "";
     [JsonPropertyName("image")] public string PosterImage { get; init; } = "";
     [JsonPropertyName("number")] public string Number { get; set; } = "";
+}
+
+internal class SkipDataItem
+{
+    [JsonPropertyName("start")] public int Start { get; set; }
+    [JsonPropertyName("end")] public int End { get; set; }
+}
+
+internal class SkipData
+{
+    [JsonPropertyName("intro")] public SkipDataItem Intro { get; set; } = new();
+    [JsonPropertyName("outro")] public SkipDataItem Outro { get; set; } = new();
 }

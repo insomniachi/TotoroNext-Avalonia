@@ -10,6 +10,7 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
     public string? Quality { get; set; }
     public Dictionary<string, string> Headers { get; init; } = [];
     public string? Subtitle { get; set; }
+    public SkipData? SkipData { get; init; }
 
     public async IAsyncEnumerable<VideoSource> Extract()
     {
@@ -20,7 +21,8 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
                 Url = Url,
                 Quality = Quality,
                 Headers = Headers,
-                Subtitle = Subtitle
+                Subtitle = Subtitle,
+                SkipData = SkipData
             };
         }
         else
@@ -31,4 +33,16 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
             }
         }
     }
+}
+
+public class Segment
+{
+    public TimeSpan Start { get; set; }
+    public TimeSpan End { get; set; }
+}
+
+public class SkipData
+{
+    public Segment? Opening { get; set; }
+    public Segment? Ending { get; set; }
 }

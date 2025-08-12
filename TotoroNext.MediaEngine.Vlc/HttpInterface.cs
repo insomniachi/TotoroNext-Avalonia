@@ -18,7 +18,7 @@ internal class HttpInterface
 
     public HttpInterface(Process process, string password)
     {
-        var host = "127.0.0.1";
+        var host = "localhost";
         var port = "8080";
         _api = $"http://{host}:{port}";
         _password = password;
@@ -57,7 +57,10 @@ internal class HttpInterface
                            .AppendPathSegment("/requests/status.json")
                            .WithBasicAuth("", _password).GetAsync();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
 
         if (result is null)
         {

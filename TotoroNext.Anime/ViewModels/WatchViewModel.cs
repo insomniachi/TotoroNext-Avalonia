@@ -46,7 +46,7 @@ public sealed partial class WatchViewModel(
     [ObservableProperty] public partial List<VideoSource> Sources { get; set; } = [];
 
     [ObservableProperty] public partial MediaSegment? CurrentSegment { get; set; }
-    
+
     [ObservableProperty] public partial bool IsMovie { get; set; }
 
     public async Task InitializeAsync()
@@ -58,7 +58,7 @@ public sealed partial class WatchViewModel(
             .Select(x => x is { MediaFormat: AnimeMediaFormat.Movie })
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(isMovie => IsMovie = isMovie);
-        
+
         if (Anime is not null)
         {
             var infos = await Anime.GetEpisodes();
@@ -232,19 +232,11 @@ public sealed partial class WatchViewModel(
         IEnumerable<string?> parts = Anime?.MediaFormat is AnimeMediaFormat.Movie
             ? [ProviderResult?.Title]
             : [ProviderResult?.Title, $"Episode {SelectedEpisode.Number}", source.Title ?? SelectedEpisode.Info?.Titles.English];
-        
+
         var title = string.Join(" - ", parts.Where(x => !string.IsNullOrEmpty(x)));
-
-        _duration = MediaHelper.GetDuration(source.Url, source.Headers);
-        List<MediaSegment> segments = [];
-        
-        if (Anime is { ExternalIds.MyAnimeList: not null } && segmentsFactory.CreateDefault() is { } segmentsProvider)
-        {
-            segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, SelectedEpisode.Number,
-                                                                 _duration.TotalSeconds));
-        }
-
+        var segments = await GetMediaSegments(source, SelectedEpisode);
         var metadata = new MediaMetadata(title, source.Headers, segments, source.Subtitle);
+        
         _media = new Media(source.Url, metadata);
 
         MediaPlayer.Play(_media, SelectedEpisode.StartPosition);
@@ -267,5 +259,33 @@ public sealed partial class WatchViewModel(
         return answer is MessageBoxResult.Yes
             ? nextEp
             : null;
+    }
+
+    private async ValueTask<List<MediaSegment>> GetMediaSegments(VideoSource source, Episode episode)
+    {
+        List<MediaSegment> segments = [];
+
+        if (source.SkipData is { } skipData)
+        {
+            if (skipData.Opening is { } op)
+            {
+                segments.Add(new MediaSegment(MediaSectionType.Opening, op.Start, op.End));
+            }
+
+            if (skipData.Ending is { } ed)
+            {
+                segments.Add(new MediaSegment(MediaSectionType.Ending, ed.Start, ed.End));
+            }
+        }
+        else
+        {
+            _duration = MediaHelper.GetDuration(source.Url, source.Headers);
+            if (Anime is { ExternalIds.MyAnimeList: not null } && segmentsFactory.CreateDefault() is { } segmentsProvider)
+            {
+                segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, episode.Number, _duration.TotalSeconds));
+            }
+        }
+
+        return segments;
     }
 }

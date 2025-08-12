@@ -36,8 +36,9 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
             ArgumentList =
             {
                 media.Uri.ToString(),
-                "--http-host=127.0.0.1",
+                "--http-host=localhost",
                 "--http-port=8080",
+                "--extraintf=http",
                 $"--meta-title={media.Metadata.Title}",
                 $"--http-password={password}"
             }

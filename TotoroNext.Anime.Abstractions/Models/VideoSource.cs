@@ -10,4 +10,5 @@ public class VideoSource
     public required Uri Url { get; init; }
     public Dictionary<string, string> Headers { get; init; } = [];
     public string? Subtitle { get; init; }
+    public SkipData? SkipData { get; init; }
 }
