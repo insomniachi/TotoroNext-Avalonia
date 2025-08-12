@@ -68,8 +68,8 @@
             <TabStripItem IsSelected="True" Content="Episodes" />
             <TabStripItem Content="Related" />
             <TabStripItem Content="Recommended" />
-            <TabStripItem Content="Options" />
             <TabStripItem Content="Songs" />
+            <TabStripItem Content="Options" />
         </TabStrip>
 
         <TransitioningContentControl

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.MediaEngine.Abstractions;
 
@@ -8,7 +9,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<IInternalMediaPlayer, InternalMediaPlayer>();
         services.AddKeyedTransient<IMediaPlayer, InternalMediaPlayer>(Guid.Empty);
-
+        services.AddTransient<IInitializer, Initializer>();
+        
         return services;
     }
 }

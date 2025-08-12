@@ -1,7 +1,9 @@
 ﻿using System.Reactive;
 using System.Reactive.Linq;
 using LibVLCSharp.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveMarbles.ObservableEvents;
+using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.MediaEngine.Abstractions;
 
@@ -63,5 +65,15 @@ public class InternalMediaPlayer : IInternalMediaPlayer
             VLCState.Ended => MediaPlayerState.Ended,
             _ => MediaPlayerState.Error
         };
+    }
+}
+
+internal class Initializer(IServiceScopeFactory serviceScopeFactory) : IInitializer
+{
+    public Task InitializeAsync()
+    {
+        using var scope = serviceScopeFactory.CreateScope();
+        scope.ServiceProvider.GetService<IInternalMediaPlayer>(); // Force VLC initialization
+        return Task.CompletedTask;
     }
 }

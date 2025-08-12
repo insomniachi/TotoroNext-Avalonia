@@ -51,6 +51,11 @@ public static class MediaHelper
     public static IEnumerable<MediaSegment> MakeContiguousSegments(this List<MediaSegment> segments,
                                                                    TimeSpan mediaLength)
     {
+        if (segments.Count == 0)
+        {
+            return segments;
+        }
+        
         var newSegments = new List<MediaSegment>();
         for (var i = 0; i < segments.Count - 1; i++)
         {
