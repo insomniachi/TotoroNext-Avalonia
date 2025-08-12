@@ -9,11 +9,11 @@ public sealed partial class Initializer(SettingsViewModel vm) : IInitializer
 {
     public async Task InitializeAsync()
     {
-        await vm.UpdateToken();
-        await GetSearchToken();
+        await UpdateSearchToken();
+        await vm.UpdateApiToken();
     }
     
-    private static async Task GetSearchToken()
+    private static async Task UpdateSearchToken()
     {
         var content = await "https://www.animeonsen.xyz/".GetStringAsync();
         var match = GetTokenRegex().Match(content);

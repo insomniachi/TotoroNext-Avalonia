@@ -44,7 +44,7 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 
         yield return new VideoServer("Default", new Uri(response.Url))
         {
-            Subtitle = response.Subtitles.English,
+            Subtitle = response.Subtitles.Get(settings.Value.SubtitleLanguage),
             Headers =
             {
                 [HeaderNames.Referer] = "https://www.animeonsen.xyz/"

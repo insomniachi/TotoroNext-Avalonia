@@ -42,6 +42,25 @@ internal class AnimeOnsenStream
 internal class AnimeOnsenSubtitles
 {
     [JsonPropertyName("en-US")] public string English { get; set; } = "";
+    [JsonPropertyName("de-DE")] public string German { get; set; } = "";
+    [JsonPropertyName("es-LA")] public string Spanish { get; set; } = "";
+    [JsonPropertyName("fr-FR")] public string French { get; set; } = "";
+    [JsonPropertyName("it-IT")] public string Italian { get; set; } = "";
+    [JsonPropertyName("pt-BR")] public string PortugueseBrazil { get; set; } = "";
+
+    public string Get(string language)
+    {
+        return language switch
+        {
+            "en-US" => English,
+            "de-DE" => German,
+            "es-LA" => Spanish,
+            "fr-FR" => French,
+            "it-IT" => Italian,
+            "pt-BR" => PortugueseBrazil,
+            _ => English,
+        };
+    }
 }
 
 [Serializable]

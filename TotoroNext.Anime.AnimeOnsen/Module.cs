@@ -31,6 +31,7 @@ public class Module : IModule<Settings>
 
 public class Settings
 {
+    public string SubtitleLanguage { get; set; } = "en-US";
     public string ApiToken { get; set; } = "";
     public static readonly TaskCompletionSource<string> SearchTokenTaskCompletionSource = new();
 }

@@ -10,6 +10,7 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
     public SettingsViewModel(IModuleSettings<Settings> settings) : base(settings)
     {
         Token = settings.Value.ApiToken;
+        SubtitleLanguage = settings.Value.SubtitleLanguage;
     }
     
     public string Token
@@ -17,9 +18,25 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
         get;
         set => SetAndSaveProperty(ref field, value, x => x.ApiToken = value);
     }
+
+    public string SubtitleLanguage
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value, x => x.SubtitleLanguage = value);
+    }
+
+    public Dictionary<string, string> Languages { get; } = new()
+    {
+        ["English"] = "en-US",
+        ["French"] = "fr-FR",
+        ["Spanish"] = "es-LA",
+        ["Portuguese (Brazil)"] = "pt-BR",
+        ["Italian"] = "it-IT",
+        ["German"] = "de-DE",
+    };
     
     [RelayCommand]
-    public async Task UpdateToken()
+    public async Task UpdateApiToken()
     {
         using var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
