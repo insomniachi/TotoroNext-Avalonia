@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -41,6 +42,18 @@ public class SettingsModel : ObservableObject
         set => SetAndSaveProperty(ref field, value);
     }
 
+    public SkipMethod OpeningSkipMethod
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    } = SkipMethod.Ask;
+
+    public SkipMethod EndingSkipMethod
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    } = SkipMethod.Ask;
+
     protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, [CallerMemberName] string propertyName = "")
     {
         if (EqualityComparer<TProperty>.Default.Equals(field, value))
@@ -57,7 +70,7 @@ public class SettingsModel : ObservableObject
     {
         var readSettingMethod = typeof(ILocalSettingsService)
                                 .GetMethods()
-                                .First(m => m.Name == nameof(ILocalSettingsService.ReadSetting) && m.IsGenericMethod);
+                                .First(m => m is { Name: nameof(ILocalSettingsService.ReadSetting), IsGenericMethod: true });
 
         foreach (var prop in GetType().GetProperties().Where(x => x.CanWrite))
         {

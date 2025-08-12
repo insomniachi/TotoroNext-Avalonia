@@ -27,7 +27,10 @@ internal class RpcService(
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _client.Deinitialize();
+        if (_client.IsInitialized)
+        {
+            _client.Deinitialize();
+        }
         messenger.Unregister<PlaybackState>(this);
         messenger.Unregister<PlaybackEnded>(this);
         messenger.Unregister<AnimeOverrides>(this);

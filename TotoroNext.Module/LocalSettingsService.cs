@@ -32,13 +32,14 @@ public class LocalSettingsService : ILocalSettingsService
 
     public T? ReadSetting<T>(string key, T? deafultValue = default)
     {
-        if (!_settings.ContainsKey(key))
+        if (_settings.ContainsKey(key))
         {
-            SaveSetting(key, deafultValue);
-            return deafultValue;
+            return _settings[key].Deserialize<T>(_options);
         }
 
-        return _settings[key].Deserialize<T>(_options);
+        SaveSetting(key, deafultValue);
+        return deafultValue;
+
     }
 
     public void RemoveSetting(string key)

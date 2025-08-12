@@ -20,7 +20,7 @@
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"
                     HorizontalAlignment="Stretch"
-                    Command="{Binding GetTokenCommand}"/>
+                    Command="{Binding UpdateTokenCommand}"/>
         </u:Form>
     </Grid>
 </UserControl>

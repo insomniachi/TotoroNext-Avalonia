@@ -21,14 +21,16 @@ public class Module : IModule<Settings>
     
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddTransient(_ => Descriptor);
-        services.AddModuleSettings(this);
-        services.AddViewMap<SettingsView, SettingsViewModel>();
-        services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
+        services.AddTransient(_ => Descriptor)
+                .AddModuleSettings(this)
+                .AddTransient<IInitializer, Initializer>()
+                .AddViewMap<SettingsView, SettingsViewModel>()
+                .AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
     }
 }
 
 public class Settings
 {
     public string ApiToken { get; set; } = "";
+    public static readonly TaskCompletionSource<string> SearchTokenTaskCompletionSource = new();
 }

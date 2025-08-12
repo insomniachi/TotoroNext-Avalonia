@@ -22,7 +22,8 @@ public sealed partial class WatchViewModel(
     IPlaybackProgressService progressService,
     IAnimeOverridesRepository animeOverridesRepository,
     IDialogService dialogService,
-    IMessenger messenger) : ObservableObject, IAsyncInitializable, IDisposable
+    IMessenger messenger,
+    ILocalSettingsService localSettingsService) : ObservableObject, IAsyncInitializable, IDisposable
 {
     private TimeSpan _duration;
     private Media? _media;
@@ -180,7 +181,27 @@ public sealed partial class WatchViewModel(
 
     private async Task<(MediaSegment Segment, MessageBoxResult Result)> AskSkip(MediaSegment segment)
     {
-        return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()));
+        if (Anime is null)
+        {
+            return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()));
+        }
+        
+        var @override = animeOverridesRepository.GetOverrides(Anime.Id);
+        var method = segment.Type switch
+        {
+            MediaSectionType.Opening => @override?.OpeningSkipMethod ??
+                                        localSettingsService.ReadSetting<SkipMethod>(nameof(@override.OpeningSkipMethod)),
+            MediaSectionType.Ending => @override?.EndingSkipMethod ??
+                                       localSettingsService.ReadSetting<SkipMethod>(nameof(@override.EndingSkipMethod)),
+            _ => SkipMethod.Ask
+        };
+
+        return method switch
+        {
+            SkipMethod.Always => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.Yes),
+            SkipMethod.Never => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.No),
+            _ => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString())),
+        };
     }
 
     private void InitializePublishers()

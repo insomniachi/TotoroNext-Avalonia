@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeOverridesViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeOverridesView">
@@ -24,6 +25,16 @@
                       SelectedValueBinding="{Binding Title}"
                       DisplayMemberBinding="{Binding Title}"
                       HorizontalAlignment="Stretch" />
+        </u:FormItem>
+        <u:FormItem Label="Opening Skip Method">
+            <u:EnumSelector EnumType="models:SkipMethod"
+                            Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
+                            HorizontalAlignment="Stretch"/>
+        </u:FormItem>
+        <u:FormItem Label="Ending Skip Method">
+            <u:EnumSelector EnumType="models:SkipMethod"
+                            Value="{Binding EndingSkipMethod, Mode=TwoWay }"
+                            HorizontalAlignment="Stretch"/>
         </u:FormItem>
     </u:Form>
 </UserControl>

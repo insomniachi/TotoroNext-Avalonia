@@ -19,7 +19,7 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
     }
     
     [RelayCommand]
-    private async Task GetToken()
+    public async Task UpdateToken()
     {
         using var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions

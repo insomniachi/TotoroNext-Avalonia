@@ -67,7 +67,7 @@ public partial class AnimeDetailsView : UserControl
             case "Recommended":
                 vm.Navigator?.NavigateToData(vm.Anime.Recommended.ToList());
                 break;
-            case "Overrides":
+            case "Options":
                 vm.Navigator?.NavigateToData(new OverridesViewModelNavigationParameters(vm.Anime));
                 break;
             case "Songs":

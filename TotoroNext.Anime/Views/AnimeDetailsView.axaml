@@ -68,7 +68,7 @@
             <TabStripItem IsSelected="True" Content="Episodes" />
             <TabStripItem Content="Related" />
             <TabStripItem Content="Recommended" />
-            <TabStripItem Content="Overrides" />
+            <TabStripItem Content="Options" />
             <TabStripItem Content="Songs" />
         </TabStrip>
 

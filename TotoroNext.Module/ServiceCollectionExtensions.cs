@@ -11,12 +11,12 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
-        // services.AddHttpClient();
         services.AddSingleton<IViewRegistry, ViewRegistry>();
         services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
         services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
         services.AddTransient<IDialogService, DialogService>();
-
+        services.AddHostedService<InitializerService>();
+        
         return services;
     }
 
@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
         tag.ViewModelType = typeof(TViewModel);
 
         services.AddKeyedViewMap<TView, TViewModel>(header);
-        services.AddTransient(sp =>
+        services.AddTransient(_ =>
         {
             var item = new NavMenuItem
             {

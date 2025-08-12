@@ -24,6 +24,10 @@ public partial class AnimeOverridesViewModel(
     [ObservableProperty] public partial string? SelectedResult { get; set; }
 
     [ObservableProperty] public partial List<SearchResult> ProviderResults { get; set; } = [];
+    
+    [ObservableProperty] public partial SkipMethod OpeningSkipMethod { get; set; }
+    
+    [ObservableProperty] public partial SkipMethod EndingSkipMethod { get; set; }
 
     public List<Descriptor> Providers { get; } = [.. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
@@ -34,13 +38,17 @@ public partial class AnimeOverridesViewModel(
         IsNsfw = overrides?.IsNsfw ?? false;
         ProviderId = overrides?.Provider;
         SelectedResult = overrides?.SelectedResult;
+        OpeningSkipMethod = overrides?.OpeningSkipMethod ?? SkipMethod.Ask;
+        EndingSkipMethod = overrides?.EndingSkipMethod ?? SkipMethod.Ask;
 
-        this.WhenAnyPropertyChanged(nameof(IsNsfw), nameof(ProviderId), nameof(SelectedResult))
+        this.WhenAnyPropertyChanged()
             .Select(_ => new AnimeOverrides
             {
                 IsNsfw = IsNsfw,
                 Provider = ProviderId,
-                SelectedResult = SelectedResult
+                SelectedResult = SelectedResult,
+                OpeningSkipMethod = OpeningSkipMethod,
+                EndingSkipMethod = EndingSkipMethod,
             })
             .Subscribe(@override => animeOverridesRepository.CreateOrUpdate(parameters.Anime.Id, @override));
 
