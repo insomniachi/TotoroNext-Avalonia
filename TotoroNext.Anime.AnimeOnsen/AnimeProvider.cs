@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Flurl.Http;
 using JetBrains.Annotations;
@@ -35,20 +36,27 @@ public partial class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeP
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
-        var response = await $"https://api.animeonsen.xyz/v4/content/{animeId}/video/{episodeId}"
-                             .WithOAuthBearerToken(_apiToken)
-                             .GetJsonAsync<AnimeOnsenStreamResult>();
+        var stream = await $"https://api.animeonsen.xyz/v4/content/{animeId}/video/{episodeId}"
+                      .WithOAuthBearerToken(_apiToken)
+                      .GetStreamAsync();
 
-        yield return new VideoServer("Default", new Uri(response.Stream.Url))
+        var doc = await JsonDocument.ParseAsync(stream);
+        var response = doc.RootElement.GetProperty("uri").Deserialize<AnimeOnsenStream>()!;
+        var metadata = doc.RootElement.GetProperty("metadata");
+        var episode = metadata.GetProperty("episode");
+        var skipData = episode.EnumerateArray().ElementAt(1).Deserialize<AnimeOnsenSkipData>();
+
+        yield return new VideoServer("Default", new Uri(response.Url))
         {
-            Subtitle = response.Stream.Subtitles.English,
+            Subtitle = response.Subtitles.English,
             Headers =
             {
                 [HeaderNames.Referer] = "https://www.animeonsen.xyz/"
-            }
+            },
+            SkipData = CovertSkipData(skipData)
         };
     }
-
+    
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
         var response = await $"https://api.animeonsen.xyz/v4/content/{animeId}/episodes"
@@ -87,6 +95,36 @@ public partial class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeP
                     <meta name="ao-search-token" content="(?<Token>.*)"
                     """)]
     private static partial Regex GetTokenRegex();
+    
+    private static SkipData? CovertSkipData(AnimeOnsenSkipData? skipData)
+    {
+        if (skipData is null)
+        {
+            return null;
+        }
+
+        var data = new SkipData();
+        if (skipData.OpeningEnd is not "" or "0")
+        {
+            data.Opening = new Segment()
+            {
+                Start = TimeSpan.FromSeconds(int.Parse(skipData.OpeningStart)),
+                End = TimeSpan.FromSeconds(int.Parse(skipData.OpeningEnd))
+            };
+        }
+
+        if (skipData.EndingEnd is not "" or "0")
+        {
+            data.Opening = new Segment()
+            {
+                Start = TimeSpan.FromSeconds(int.Parse(skipData.EndingStart)),
+                End = TimeSpan.FromSeconds(int.Parse(skipData.EndingEnd))
+            };
+        }
+
+        return data;
+    }
+
 }
 
 [UsedImplicitly]
@@ -127,4 +165,12 @@ internal class AnimeOnsenStream
 internal class AnimeOnsenSubtitles
 {
     [JsonPropertyName("en-US")] public string English { get; set; } = "";
+}
+
+internal class AnimeOnsenSkipData
+{
+    [JsonPropertyName("skipIntro_s")] public string OpeningStart { get; init; } = "";
+    [JsonPropertyName("skipIntro_e")] public string OpeningEnd { get; init; } = "";
+    [JsonPropertyName("skipOutro_s")] public string EndingStart { get; init; } = "";
+    [JsonPropertyName("skipOutro_e")] public string EndingEnd { get; init; } = "";
 }

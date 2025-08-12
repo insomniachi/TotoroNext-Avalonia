@@ -264,6 +264,7 @@ public sealed partial class WatchViewModel(
     private async ValueTask<List<MediaSegment>> GetMediaSegments(VideoSource source, Episode episode)
     {
         List<MediaSegment> segments = [];
+        _duration = MediaHelper.GetDuration(source.Url, source.Headers);
 
         if (source.SkipData is { } skipData)
         {
@@ -277,15 +278,18 @@ public sealed partial class WatchViewModel(
                 segments.Add(new MediaSegment(MediaSectionType.Ending, ed.Start, ed.End));
             }
         }
-        else
+
+        if (segments.Count >= 2 || 
+            Anime is not { ExternalIds.MyAnimeList: not null } || 
+            segmentsFactory.CreateDefault() is not { } segmentsProvider)
         {
-            _duration = MediaHelper.GetDuration(source.Url, source.Headers);
-            if (Anime is { ExternalIds.MyAnimeList: not null } && segmentsFactory.CreateDefault() is { } segmentsProvider)
-            {
-                segments.AddRange(await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, episode.Number, _duration.TotalSeconds));
-            }
+            return [.. segments.MakeContiguousSegments(_duration)];
         }
 
-        return segments;
+        var providerSegments =  await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, episode.Number, _duration.TotalSeconds);
+        var extras = providerSegments.Where(x => segments.All(s => s.Type != x.Type));
+        segments.AddRange(extras);
+
+        return [.. segments.MakeContiguousSegments(_duration)];
     }
 }

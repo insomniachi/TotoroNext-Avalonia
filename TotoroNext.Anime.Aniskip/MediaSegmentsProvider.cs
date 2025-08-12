@@ -20,11 +20,9 @@ internal class MediaSegmentsProvider(IAniskipClient client) : IMediaSegmentsProv
                 return [];
             }
 
-            var segments = result.Results
-                                 .OrderBy(x => x.Interval.StartTime)
-                                 .Select(CreateMediaSegment).ToList();
-
-            return [.. segments.MakeContiguousSegments(TimeSpan.FromSeconds(mediaLength))];
+            return result.Results
+                         .OrderBy(x => x.Interval.StartTime)
+                         .Select(CreateMediaSegment).ToList();
         }
         catch
         {
