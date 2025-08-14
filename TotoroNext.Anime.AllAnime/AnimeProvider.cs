@@ -1,99 +1,32 @@
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using Flurl.Http;
 using FlurlGraphQL;
-using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.AnimeHeaven;
+using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.AllAnime;
 
-internal class AnimeProvider : IAnimeProvider
+internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
-    public const string Api = "https://api.allanime.day/api";
-
-    public const string SearchQuery =
-        """
-        query( $search: SearchInput
-               $limit: Int
-               $page: Int
-               $translationType: VaildTranslationTypeEnumType
-               $countryOrigin: VaildCountryOriginEnumType )
-        {
-            shows( search: $search
-                    limit: $limit
-                    page: $page
-                    translationType: $translationType
-                    countryOrigin: $countryOrigin )
-            {
-                pageInfo
-                {
-                    total
-                }
-                edges 
-                {
-                    _id,
-                    name,
-                    availableEpisodesDetail,
-                    season,
-                    score,
-                    thumbnail,
-                    malId,
-                    aniListId
-                }
-            }
-        }
-        """;
-
-    public const string ShowQuery =
-        """
-        query ($showId: String!) {
-            show(
-                _id: $showId
-            ) {
-                availableEpisodesDetail,
-                malId,
-                aniListId
-            }
-        }
-        """;
-
-    public const string EpisodeQuery =
-        """
-        query ($showId: String!, $translationType: VaildTranslationTypeEnumType!, $episodeString: String!) {
-            episode(
-                showId: $showId
-                translationType: $translationType
-                episodeString: $episodeString
-            ) {
-                episodeString,
-                sourceUrls,
-                notes
-            }
-        }
-        """;
-
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
-        var jObject = await Api
-                            .WithGraphQLQuery(ShowQuery)
-                            .SetGraphQLVariable("showId", animeId)
-                            .PostGraphQLQueryAsync()
-                            .ReceiveGraphQLRawSystemTextJsonResponse();
+        var jObject = await GraphQl.Api
+                                   .WithGraphQLQuery(GraphQl.ShowQuery)
+                                   .SetGraphQLVariable("showId", animeId)
+                                   .PostGraphQLQueryAsync()
+                                   .ReceiveGraphQLRawSystemTextJsonResponse();
 
-        var episodeDetails = jObject?["show"]?["availableEpisodesDetail"] as JsonObject;
-
-        if (episodeDetails is null)
+        if (jObject?["show"]?["availableEpisodesDetail"] is not JsonObject episodeDetails)
         {
             yield break;
         }
 
         var details = episodeDetails.Deserialize<EpisodeDetails>();
 
-        foreach (var episode in Enumerable.Reverse(details?.Sub ?? []))
+        foreach (var episode in Enumerable.Reverse(GetEpisodeDetails(details, settings.Value.TranslationType)))
         {
             yield return new Episode(this, animeId, episode, float.Parse(episode));
         }
@@ -101,16 +34,16 @@ internal class AnimeProvider : IAnimeProvider
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
-        var jsonNode = await Api
-                             .WithGraphQLQuery(EpisodeQuery)
-                             .SetGraphQLVariables(new
-                             {
-                                 showId = animeId,
-                                 translationType = "sub",
-                                 episodeString = episodeId
-                             })
-                             .PostGraphQLQueryAsync()
-                             .ReceiveGraphQLRawSystemTextJsonResponse();
+        var jsonNode = await GraphQl.Api
+                                    .WithGraphQLQuery(GraphQl.EpisodeQuery)
+                                    .SetGraphQLVariables(new
+                                    {
+                                        showId = animeId,
+                                        translationType = GetTranslationType(settings.Value.TranslationType),
+                                        episodeString = episodeId
+                                    })
+                                    .PostGraphQLQueryAsync()
+                                    .ReceiveGraphQLRawSystemTextJsonResponse();
 
         if (jsonNode?["errors"] is not null)
         {
@@ -176,20 +109,20 @@ internal class AnimeProvider : IAnimeProvider
 
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
-        var jObject = await Api
-                            .WithGraphQLQuery(SearchQuery)
-                            .SetGraphQLVariables(new
-                            {
-                                search = new
-                                {
-                                    allowAdult = true,
-                                    allowUnknown = true,
-                                    query
-                                },
-                                limit = 40
-                            })
-                            .PostGraphQLQueryAsync()
-                            .ReceiveGraphQLRawSystemTextJsonResponse();
+        var jObject = await GraphQl.Api
+                                   .WithGraphQLQuery(GraphQl.SearchQuery)
+                                   .SetGraphQLVariables(new
+                                   {
+                                       search = new
+                                       {
+                                           allowAdult = true,
+                                           allowUnknown = true,
+                                           query
+                                       },
+                                       limit = 40
+                                   })
+                                   .PostGraphQLQueryAsync()
+                                   .ReceiveGraphQLRawSystemTextJsonResponse();
 
         foreach (var item in jObject?["shows"]?["edges"]?.AsArray().OfType<JsonObject>() ?? [])
         {
@@ -220,48 +153,29 @@ internal class AnimeProvider : IAnimeProvider
         var encrypted = sourceUrl[index..];
         return Decrypt(encrypted);
     }
-}
 
-internal sealed class EpisodeDetails
-{
-    [JsonPropertyName("sub")] public List<string> Sub { get; init; } = [];
+    private static List<string> GetEpisodeDetails(EpisodeDetails? details, TranslationType type)
+    {
+        if (details is null)
+        {
+            return [];
+        }
 
-    [JsonPropertyName("dub")] public List<string> Dub { get; init; } = [];
+        return type switch
+        {
+            TranslationType.Dub => details.Dub,
+            TranslationType.Raw => details.Raw,
+            _ => details.Sub
+        };
+    }
 
-    [JsonPropertyName("raw")] public List<string> Raw { get; init; } = [];
-}
-
-[DebuggerDisplay("{Priority} - {SourceUrl} - {Type}")]
-[UsedImplicitly]
-internal sealed class SourceUrlObj
-{
-    [JsonPropertyName("sourceName")] public string SourceName { get; set; } = "";
-
-    [JsonPropertyName("sourceUrl")] public string SourceUrl { get; set; } = "";
-
-    [JsonPropertyName("priority")] public double Priority { get; set; }
-
-    [JsonPropertyName("type")] public string Type { get; set; } = "";
-}
-
-[UsedImplicitly]
-public sealed class ApiV2Response
-{
-    [JsonPropertyName("src")] public string Url { get; set; } = "";
-
-    [JsonPropertyName("headers")] public Dictionary<string, string> Headers { get; set; } = [];
-}
-
-[UsedImplicitly]
-public sealed class DefaultResponse
-{
-    [JsonPropertyName("link")] public string Link { get; set; } = string.Empty;
-
-    [JsonPropertyName("hls")] public bool Hls { get; set; }
-
-    [JsonPropertyName("resolutionStr")] public string ResolutionString { get; set; } = string.Empty;
-
-    [JsonPropertyName("resolution")] public int Resolution { get; set; } = 0;
-
-    [JsonPropertyName("src")] public string Src { get; set; } = string.Empty;
+    private static string GetTranslationType(TranslationType type)
+    {
+        return type switch
+        {
+            TranslationType.Raw => "raw",
+            TranslationType.Dub => "dub",
+            _ => "sub"
+        };
+    }
 }

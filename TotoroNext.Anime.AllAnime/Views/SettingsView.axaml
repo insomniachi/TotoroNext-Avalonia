@@ -1,0 +1,24 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:allAnime="clr-namespace:TotoroNext.Anime.AllAnime"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.AllAnime.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:SettingsViewModel"
+             x:Class="TotoroNext.Anime.AllAnime.Views.SettingsView">
+    <Grid RowDefinitions="Auto,*" RowSpacing="16">
+        <Image Grid.Row="0"
+               Source="avares://TotoroNext.Anime.AllAnime/Assets/hero.png"
+               Stretch="UniformToFill"
+               Width="600" />
+        <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
+            <u:FormItem Label="Type">
+                <u:EnumSelector EnumType="allAnime:TranslationType"
+                                Value="{Binding TranslationType}" 
+                                HorizontalAlignment="Stretch"/>
+            </u:FormItem>
+        </u:Form>
+    </Grid>
+</UserControl>

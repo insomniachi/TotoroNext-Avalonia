@@ -7,12 +7,12 @@ public static class MediaHelper
 {
     public static TimeSpan GetDuration(Uri url, IDictionary<string, string>? headers = null)
     {
-        var ffprobePath = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
+        var executable = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
                                    .FirstOrDefault(x => x.Contains("ffprobe"))!;
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = ffprobePath,
+            FileName = executable,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
@@ -40,12 +40,7 @@ public static class MediaHelper
         var output = process.StandardOutput.ReadToEnd();
         process.WaitForExit();
 
-        if (double.TryParse(output.Trim(), out var seconds))
-        {
-            return TimeSpan.FromSeconds(seconds);
-        }
-
-        return TimeSpan.Zero;
+        return double.TryParse(output.Trim(), out var seconds) ? TimeSpan.FromSeconds(seconds) : TimeSpan.Zero;
     }
 
     public static IEnumerable<MediaSegment> MakeContiguousSegments(this List<MediaSegment> segments,
@@ -55,7 +50,7 @@ public static class MediaHelper
         {
             return segments;
         }
-        
+
         var newSegments = new List<MediaSegment>();
         for (var i = 0; i < segments.Count - 1; i++)
         {
