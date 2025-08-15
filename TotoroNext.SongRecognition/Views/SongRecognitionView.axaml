@@ -1,0 +1,56 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.SongRecognition.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:SongRecognitionViewModel"
+             x:Class="TotoroNext.SongRecognition.Views.SongRecognitionView">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <StackPanel Spacing="8" Margin="0 0 0 16">
+            <Button Content="Clear" Command="{Binding ClearCommand}" />
+        </StackPanel>
+
+        <Grid Grid.Row="2"
+              RowDefinitions="Auto, *"
+              ColumnDefinitions="Auto,Auto,*,*"
+              ColumnSpacing="32">
+
+            <TextBlock Text="Song" Grid.Row="0" Grid.Column="0" Classes="H4" Theme="{DynamicResource TitleTextBlock}"
+                       Margin="13 0 0 0" />
+            <TextBlock Text="Anime" Grid.Row="0" Grid.Column="1" Classes="H4" Theme="{DynamicResource TitleTextBlock}"
+                       Margin="13 0 0 0 " />
+            <TextBox Grid.Row="0" Grid.Column="2"
+                     Watermark="Search Song"
+                     Text="{Binding SearchText, Mode=TwoWay}"
+                     HorizontalAlignment="Stretch" />
+
+            <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding SongTitles}" MinWidth="300" />
+            <ListBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding AnimeTitles}" MinWidth="300">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding SearchedSongs}"
+                     SelectedItem="{Binding SelectedSong}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox Grid.Row="1" Grid.Column="3" ItemsSource="{Binding SearchedAnimeTitles}" MinWidth="300">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+    </Grid>
+
+</UserControl>

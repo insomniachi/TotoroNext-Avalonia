@@ -13,6 +13,8 @@
         <PackageReference Include="Avalonia.ReactiveUI"/>
 
         <PackageReference Include="Flurl.Http"/>
+
+        <PackageReference Include="HtmlAgilityPack" />
         <PackageReference Include="Humanizer"/>
         <PackageReference Include="Microsoft.Playwright" />
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator"/>

@@ -36,12 +36,12 @@ public class App : Application
 
                           services.AddInternalMediaPlayer();
 
-                          #if DEBUG
+#if DEBUG
                           services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
-                                                                                          PackIconOcticonsKind.Beaker16,
-                                                                                          new NavMenuItemTag { IsFooterItem = true });
-                          #endif
-                          
+                               PackIconOcticonsKind.Beaker16,
+                               new NavMenuItemTag { IsFooterItem = true });
+#endif
+
                           services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                                                                                         PackIconMaterialDesignKind.ShoppingCart,
                                                                                         new NavMenuItemTag { IsFooterItem = true });
@@ -55,7 +55,13 @@ public class App : Application
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
 
-                          List<IModule> modules = [new Anime.Module(), ..LoadInstalledModules()];
+                          List<IModule> modules =
+                          [
+                              new Anime.Module(),
+                              new SongRecognition.Module(),
+                              ..LoadInstalledModules()
+                          ];
+                          
                           foreach (var module in modules)
                           {
                               module.ConfigureServices(services);
