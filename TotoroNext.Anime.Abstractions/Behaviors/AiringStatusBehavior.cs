@@ -1,9 +1,8 @@
 ﻿using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
-using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Controls;
 
-namespace TotoroNext.Anime.Behaviors;
+namespace TotoroNext.Anime.Abstractions.Behaviors;
 
 public class AiringStatusBehavior : Behavior<AnimeCard>
 {

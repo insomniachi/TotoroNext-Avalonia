@@ -3,13 +3,12 @@ using System.Text;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
-using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Controls;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
-namespace TotoroNext.Anime.Behaviors;
+namespace TotoroNext.Anime.Abstractions.Behaviors;
 
 public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
 {
@@ -93,10 +92,16 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
     {
         var airingAt = anime?.NextEpisodeAt;
         var current = anime?.AiredEpisodes;
+        if (airingAt is null)
+        {
+            return string.Empty;
+        }
 
-        return airingAt is null
-            ? string.Empty
-            : $"EP{current + 1}: {HumanizeTimeSpan(airingAt.Value - DateTime.Now)}";
+        var remaining = airingAt.Value - DateTime.Now;
+        
+        return remaining < TimeSpan.Zero 
+            ? "Aired" 
+            : $"EP{current + 1}: {HumanizeTimeSpan(remaining)}";
     }
 
     private static string HumanizeTimeSpan(TimeSpan ts)

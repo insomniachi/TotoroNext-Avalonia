@@ -153,7 +153,7 @@ public sealed partial class WatchViewModel(
             .WhereNotNull()
             .Where(x => x is { Type : MediaSectionType.Opening or MediaSectionType.Ending })
             .ObserveOn(RxApp.MainThreadScheduler)
-            .SelectMany(AskSkip)
+            .SelectMany(OnPlayingOpeningOrEnding)
             .SelectMany(x =>
             {
                 if (MediaPlayer is not ISeekable seekable)
@@ -179,7 +179,7 @@ public sealed partial class WatchViewModel(
         }
     }
 
-    private async Task<(MediaSegment Segment, MessageBoxResult Result)> AskSkip(MediaSegment segment)
+    private async Task<(MediaSegment Segment, MessageBoxResult Result)> OnPlayingOpeningOrEnding(MediaSegment segment)
     {
         if (Anime is null)
         {
@@ -284,8 +284,13 @@ public sealed partial class WatchViewModel(
 
     private async ValueTask<List<MediaSegment>> GetMediaSegments(VideoSource source, Episode episode)
     {
-        List<MediaSegment> segments = [];
+        List<MediaSegment> segments = [ ..await MediaHelper.GetChapters(source.Url, source.Headers)];
         _duration = MediaHelper.GetDuration(source.Url, source.Headers);
+        
+        if (segments.Count >= 2)
+        {
+            return [.. segments.MakeContiguousSegments(_duration)];
+        }
 
         if (source.SkipData is { } skipData)
         {

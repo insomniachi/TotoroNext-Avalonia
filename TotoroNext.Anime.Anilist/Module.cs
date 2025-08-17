@@ -32,7 +32,9 @@ public sealed class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
+        services.AddMainNavigationItem<AiringScheduleView, AiringScheduleViewModel>("Schedule", IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.CalendarViewWeek);
 
+        services.AddTransient<IAnilistMetadataService, AnilistMetadataService>();
         services.AddKeyedTransient<IMetadataService, AnilistMetadataService>(Descriptor.Id);
         services.AddKeyedTransient<ITrackingService, AnilistTrackingService>(Descriptor.Id);
 

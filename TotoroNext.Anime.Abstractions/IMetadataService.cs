@@ -49,6 +49,13 @@ public class AdvancedSearchRequest
     public int? MinYear { get; init; }
 }
 
+public class ScheduledAnime(AnimeModel anime)
+{
+    public DateTime Start { get; set; }
+    public DateTime End { get; set; }
+    public AnimeModel Anime { get; } = anime;
+}
+
 [DebuggerDisplay("{Title}")]
 public partial class AnimeModel : ObservableObject
 {

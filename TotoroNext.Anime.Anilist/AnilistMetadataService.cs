@@ -7,9 +7,14 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Anilist;
 
+public interface IAnilistMetadataService : IMetadataService
+{
+    Task<List<ScheduledAnime>> GetAiringSchedule(int start, int end);
+}
+
 internal class AnilistMetadataService(
     GraphQLHttpClient client,
-    IModuleSettings<Settings> settings) : IMetadataService
+    IModuleSettings<Settings> settings) : IAnilistMetadataService
 {
     public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
     {
@@ -26,8 +31,12 @@ internal class AnilistMetadataService(
                                                              .WithMedia(MediaQueryBuilder(),
                                                                         search: request.Title,
                                                                         season: AniListModelToAnimeModelConverter.ConvertSeason(request.SeasonName),
-                                                                        startDate: request.MinYear is { } minYear ? new DateTime(minYear, 1, 1) : null,
-                                                                        endDate: request.MaxYear is { } maxYear ? new DateTime(maxYear, 12, 31) : null,
+                                                                        startDate: request.MinYear is { } minYear
+                                                                            ? new DateTime(minYear, 1, 1)
+                                                                            : null,
+                                                                        endDate: request.MaxYear is { } maxYear
+                                                                            ? new DateTime(maxYear, 12, 31)
+                                                                            : null,
                                                                         source: AniListModelToAnimeModelConverter.ConvertSource(request.Source),
                                                                         genreIn: request.IncludedGenres,
                                                                         genreNotIn: request.ExcludedGenres,
@@ -67,7 +76,7 @@ internal class AnilistMetadataService(
     public async Task<List<string>> GetGenresAsync()
     {
         var query = new QueryQueryBuilder().WithGenreCollection().Build();
-        
+
         var response = await client.SendQueryAsync<Query>(new GraphQLRequest
         {
             Query = query
@@ -104,42 +113,65 @@ internal class AnilistMetadataService(
         }
     }
 
-    public async Task<List<AnimeModel>> GetAiringAnimeAsync()
+    public async Task<List<ScheduledAnime>> GetAiringSchedule(int start, int end)
     {
-        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-        {
-            Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
-                                                         .WithMedia(MediaQueryBuilder(), type: MediaType.Anime, status: MediaStatus.Releasing), 1, 20)
-                                           .Build()
-        });
+        var page = 1;
+        var jstZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tokyo");
+        var result = new List<ScheduledAnime>();
+        try
+        { 
+            bool hasNextPage;
+            do
+            {
+                var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+                {
+                    Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithPageInfo(new PageInfoQueryBuilder()
+                                                                               .WithHasNextPage())
+                                                             .WithAiringSchedules(new AiringScheduleQueryBuilder()
+                                                                                  .WithId()
+                                                                                  .WithEpisode()
+                                                                                  .WithAiringAt()
+                                                                                  .WithMedia(MediaQueryBuilder()),
+                                                                                  airingAtGreater: start,
+                                                                                  airingAtLesser: end),
+                                                             page).Build()
+                });
 
-        if (response.Errors?.Length > 0)
+                foreach (var item in response.Data.Page.AiringSchedules)
+                {
+                    if (item.AiringAt is null)
+                    {
+                        continue;
+                    }
+
+                    if (item.Media.MediaListEntry is null)
+                    {
+                        continue;
+                    }
+
+                    var startTime = TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeSeconds(item.AiringAt.Value).DateTime, jstZone);
+                    var endTime = startTime.AddMinutes(25);
+                    var anime = AniListModelToAnimeModelConverter.ConvertModel(item.Media);
+                    anime.NextEpisodeAt = startTime;
+
+                    result.Add(new ScheduledAnime(anime)
+                    {
+                        Start = startTime,
+                        End = endTime
+                    });
+                }
+
+                hasNextPage = response.Data.Page.PageInfo.HasNextPage ?? false;
+                page++;
+            } while (hasNextPage);
+        }
+        catch
         {
             return [];
         }
 
-        return [.. response.Data.Page.Media.Where(FilterNsfw).Select(AniListModelToAnimeModelConverter.ConvertModel)];
-    }
-
-    public async Task<List<AnimeModel>> GetAnimeAsync(Season season)
-    {
-        var query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
-                                                         .WithMedia(MediaQueryBuilder(),
-                                                                    season: AniListModelToAnimeModelConverter.ConvertSeason(season.SeasonName),
-                                                                    seasonYear: season.Year,
-                                                                    type: MediaType.Anime), 1, 50).Build();
-
-        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-        {
-            Query = query
-        });
-
-        if (response.Errors?.Length > 0)
-        {
-            return [];
-        }
-
-        return [.. response.Data.Page.Media.Where(FilterNsfw).Select(AniListModelToAnimeModelConverter.ConvertModel)];
+        return result;
     }
 
     private bool FilterNsfw(Media m)
