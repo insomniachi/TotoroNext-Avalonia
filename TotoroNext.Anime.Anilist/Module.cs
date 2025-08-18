@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
-using JetBrains.Annotations;
+using IconPacks.Avalonia.ForkAwesome;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Anilist.ViewModels;
@@ -32,7 +32,7 @@ public sealed class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
-        services.AddMainNavigationItem<AiringScheduleView, AiringScheduleViewModel>("Schedule", IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.CalendarViewWeek);
+        services.AddMainNavigationItem<AiringScheduleView, AiringScheduleViewModel>("Schedule", PackIconForkAwesomeKind.Calendar);
 
         services.AddTransient<IAnilistMetadataService, AnilistMetadataService>();
         services.AddKeyedTransient<IMetadataService, AnilistMetadataService>(Descriptor.Id);
@@ -64,7 +64,7 @@ public sealed class Settings
     public TitleLanguage TitleLanguage { get; set; } = TitleLanguage.Romaji;
 }
 
-[UsedImplicitly]
+[Serializable]
 public sealed class AniListAuthToken
 {
     [JsonPropertyName("access_token")] public string AccessToken { get; set; } = "";
