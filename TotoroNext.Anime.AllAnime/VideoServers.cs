@@ -3,7 +3,7 @@ using Flurl.Http;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
-namespace TotoroNext.AnimeHeaven;
+namespace TotoroNext.Anime.AllAnime;
 
 internal static partial class VideoServers
 {

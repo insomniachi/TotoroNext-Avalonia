@@ -4,7 +4,6 @@ using Flurl.Http;
 using FlurlGraphQL;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.AnimeHeaven;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.AllAnime;
@@ -97,7 +96,10 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
             {
                 case "Luf-Mp4" or "S-mp4":
                     var links = jObject["links"].Deserialize<List<ApiV2Response>>() ?? [];
-                    yield return VideoServers.WithReferer(item.SourceName, links[0].Url, "https://allanime.day/");
+                    if (!string.IsNullOrEmpty(links[0].Url))
+                    {
+                        yield return VideoServers.WithReferer(item.SourceName, links[0].Url, "https://allanime.day/");
+                    }
                     continue;
                 case "Default":
                     var hls = jObject["links"].Deserialize<List<DefaultResponse>>() ?? [];
