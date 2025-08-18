@@ -1,3 +1,4 @@
+using IconPacks.Avalonia.ForkAwesome;
 using MalApi;
 using MalApi.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +30,7 @@ public class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
-        services.AddMainNavigationItem<AnidleSolverView, AnidleSolverViewModel>("Anidle",
-                                                                                IconPacks.Avalonia.ForkAwesome.PackIconForkAwesomeKind.Magic);
+        services.AddChildNavigationViewItem<AnidleSolverView, AnidleSolverViewModel>("AniGuesser", "Anidle", PackIconForkAwesomeKind.Magic);
 
         services.AddSingleton<IMalClient, MalClient>();
         services.AddKeyedTransient<IMetadataService, MyAnimeListMetadataService>(Descriptor.Id);

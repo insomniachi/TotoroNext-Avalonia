@@ -26,9 +26,10 @@ public partial class MainWindowViewModel : ObservableObject,
                                IMessenger messenger)
     {
         _locator = locator;
-        var items = menuItems.ToList();
-        MenuItems = [..items.Where(x => x.Tag is not NavMenuItemTag { IsFooterItem: true })];
-        FooterMenuItems = [..items.Where(x => x.Tag is NavMenuItemTag { IsFooterItem: true })];
+        var items = menuItems.OrderBy(x => x.Tag is not NavMenuItemTag tag ? 0 : tag.Order).ToList();
+        MapChildren(items);
+        MenuItems = [..items.Where(x => IsTopLevelNavItem(x) && !IsFooterNavItem(x))];
+        FooterMenuItems = [..items.Where(x => IsTopLevelNavItem(x) && IsFooterNavItem(x))];
 
         this.WhenAnyValue(x => x.Navigator)
             .WhereNotNull()
@@ -36,7 +37,6 @@ public partial class MainWindowViewModel : ObservableObject,
             .Subscribe(navigator =>
             {
                 navigator.Navigated += (_, args) => { UpdateSelection(args); };
-
                 navigator.NavigateToRoute("My List");
             });
 
@@ -136,5 +136,34 @@ public partial class MainWindowViewModel : ObservableObject,
 
             item.IsSelected = result.ViewModelType == tag.ViewModelType;
         }
+    }
+
+    private static bool IsTopLevelNavItem(NavMenuItem item)
+    {
+        if (item.Tag is not NavMenuItemTag tag)
+        {
+            return false;
+        }
+
+        return tag.Parent is null;
+    }
+
+    private static bool IsFooterNavItem(NavMenuItem item)
+    {
+        return item.Tag is NavMenuItemTag { IsFooterItem: true };
+    }
+
+    private static void MapChildren(List<NavMenuItem> items)
+    {
+        List<NavMenuItem> children = [.. items.Where(x => x.Tag is NavMenuItemTag { Parent: not null })];
+        foreach (var item in children)
+        {
+            var tag = (NavMenuItemTag)item.Tag!;
+            if (items.FirstOrDefault(x => x.Header?.ToString() == tag.Parent) is { } parent)
+            {
+                parent.Items.Add(item);
+            }
+        }
+
     }
 }

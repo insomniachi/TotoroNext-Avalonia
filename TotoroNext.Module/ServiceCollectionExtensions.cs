@@ -59,6 +59,42 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    public static IServiceCollection AddChildNavigationViewItem<TView, TViewModel>(this IServiceCollection services, string parent, string header,
+                                                                                   Enum icon)
+        where TView : class, new()
+        where TViewModel : class
+    {
+        var tag = new NavMenuItemTag
+        {
+            Parent = parent
+        };
+
+        return services.AddMainNavigationItem<TView, TViewModel>(header, icon, tag);
+    }
+
+    public static IServiceCollection AddParentNavigationViewItem(this IServiceCollection services, string header, Enum icon, NavMenuItemTag? tag = null)
+    {
+        tag ??= new NavMenuItemTag();
+        return services.AddTransient(_ =>
+        {
+            var item = new NavMenuItem
+            {
+                Header = header,
+                Icon = new Viewbox
+                {
+                    Height = 20,
+                    Width = 20,
+                    Child = new PackIconControl
+                    {
+                        Kind = icon
+                    }
+                },
+                Tag = tag
+            };
+            return item;
+        });
+    }
+
     public static IServiceCollection AddViewMap<TView, TViewModel>(this IServiceCollection services)
         where TView : class, new()
         where TViewModel : class
@@ -113,4 +149,6 @@ public class NavMenuItemTag
 {
     public Type? ViewModelType { get; set; }
     public bool IsFooterItem { get; init; }
+    public int Order { get; init; }
+    public string? Parent { get; init; }
 }

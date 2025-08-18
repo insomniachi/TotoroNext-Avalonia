@@ -36,10 +36,13 @@ public class App : Application
 
                           services.AddInternalMediaPlayer();
 
+                          services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
+                                                               new NavMenuItemTag { Order = 3 });
+
 #if DEBUG
                           services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
-                               PackIconOcticonsKind.Beaker16,
-                               new NavMenuItemTag { IsFooterItem = true });
+                           PackIconOcticonsKind.Beaker16,
+                           new NavMenuItemTag { IsFooterItem = true });
 #endif
 
                           services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
@@ -61,7 +64,7 @@ public class App : Application
                               new SongRecognition.Module(),
                               ..LoadInstalledModules()
                           ];
-                          
+
                           foreach (var module in modules)
                           {
                               module.ConfigureServices(services);
