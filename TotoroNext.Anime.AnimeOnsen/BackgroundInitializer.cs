@@ -5,9 +5,9 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.AnimeOnsen;
 
-public sealed partial class Initializer(SettingsViewModel vm) : IInitializer
+public sealed partial class BackgroundInitializer(SettingsViewModel vm) : IBackgroundInitializer
 {
-    public async Task InitializeAsync()
+    public async Task BackgroundInitializeAsync()
     {
         await UpdateSearchToken();
         await vm.UpdateApiToken();

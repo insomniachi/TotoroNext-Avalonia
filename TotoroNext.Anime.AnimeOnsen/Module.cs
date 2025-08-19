@@ -23,7 +23,7 @@ public class Module : IModule<Settings>
     {
         services.AddTransient(_ => Descriptor)
                 .AddModuleSettings(this)
-                .AddTransient<IInitializer, Initializer>()
+                .AddTransient<IBackgroundInitializer, BackgroundInitializer>()
                 .AddViewMap<SettingsView, SettingsViewModel>()
                 .AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
     }

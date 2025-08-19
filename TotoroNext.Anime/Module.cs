@@ -19,7 +19,7 @@ public class Module : IModule
                 .AddTransient<IAnimeThemes, AnimeThemes>();
 
         // main navigation
-        services.AddMainNavigationItem<UserListView, UserListViewModel>("My List", PackIconMaterialDesignKind.VideoLibrary);
+        services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", PackIconMaterialDesignKind.List);
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", PackIconMaterialDesignKind.Search);
 
         // Pane navigation

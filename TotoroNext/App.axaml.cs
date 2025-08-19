@@ -35,28 +35,14 @@ public class App : Application
                           services.AddSingleton<SettingsModel>();
 
                           services.AddInternalMediaPlayer();
-
-                          services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
-                                                               new NavMenuItemTag { Order = 3 });
-
-#if DEBUG
-                          services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
-                           PackIconOcticonsKind.Beaker16,
-                           new NavMenuItemTag { IsFooterItem = true });
-#endif
-
-                          services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
-                                                                                        PackIconMaterialDesignKind.ShoppingCart,
-                                                                                        new NavMenuItemTag { IsFooterItem = true });
-                          services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
-                                                                                          PackIconMaterialDesignKind.Settings,
-                                                                                          new NavMenuItemTag { IsFooterItem = true });
-
+                          
                           services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
+                          
+                          RegisterNavigationViewItems(services);
 
                           List<IModule> modules =
                           [
@@ -71,8 +57,16 @@ public class App : Application
                           }
                       })
                       .Build();
-
+ 
         Container.SetServiceProvider(AppHost.Services);
+
+        if (AppHost.Services.GetService<IEnumerable<IInitializer>>() is { } initializers)
+        {
+            foreach (var initializer in initializers)
+            {
+                initializer.Initialize();
+            }
+        }
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -109,6 +103,26 @@ public class App : Application
 #else
         return new ModuleStore().LoadModules();
 #endif
+    }
+
+    private static void RegisterNavigationViewItems(IServiceCollection services)
+    {
+        
+#if DEBUG
+        services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
+                                                                                        PackIconOcticonsKind.Beaker16,
+                                                                                        new NavMenuItemTag { IsFooterItem = true });
+        
+        services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
+                                             new NavMenuItemTag { Order = 3 });
+#endif
+
+        services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
+                                                                      PackIconMaterialDesignKind.ShoppingCart,
+                                                                      new NavMenuItemTag { IsFooterItem = true });
+        services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
+                                                                        PackIconMaterialDesignKind.Settings,
+                                                                        new NavMenuItemTag { IsFooterItem = true });
     }
 }
 

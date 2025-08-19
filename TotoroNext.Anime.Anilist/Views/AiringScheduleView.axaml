@@ -4,10 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.Anilist.ViewModels"
-             xmlns:controls="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:views="clr-namespace:TotoroNext.Anime.Anilist.Views"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             xmlns:controls="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:u="https://irihi.tech/ursa"
              x:DataType="viewModels:AiringScheduleViewModel"
              x:Class="TotoroNext.Anime.Anilist.Views.AiringScheduleView">
     <UserControl.Resources>
@@ -19,175 +20,75 @@
             <Setter Property="FontSize" Value="20" />
         </Style>
         <Style Selector="TextBlock.Today">
-            <Setter Property="Foreground" Value="Red"/>
+            <Setter Property="Foreground" Value="Red" />
         </Style>
     </UserControl.Styles>
 
-    <Grid ColumnDefinitions="*,*,*,*,*,*,*"
-          ColumnSpacing="36"
-          RowSpacing="16"
-          RowDefinitions="Auto,*">
-        <TextBlock Grid.Row="0" Grid.Column="0"
-                   Text="Monday"
-                   Classes.DayOfWeek="true"
-                   Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Monday}}" />
-        <TextBlock Grid.Row="0" Grid.Column="1"
-                   Text="Tuesday"
-                   Classes.DayOfWeek="true" 
-                   Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Tuesday}}" />
-        <TextBlock Grid.Row="0" Grid.Column="2"
-                   Text="Wednesday"
-                   Classes.DayOfWeek="true" 
-                   Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Wednesday}}" />
-        <TextBlock Grid.Row="0" Grid.Column="3"
-                   Text="Thursday"
-                   Classes.DayOfWeek="true" 
-                   Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Thursday}}" />
-        <TextBlock Grid.Row="0" Grid.Column="4"
-                   Text="Friday"
-                   Classes.DayOfWeek="true"
-                   Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Friday}}" />
-        <TextBlock Grid.Row="0" Grid.Column="5"
-                   Text="Saturday"
-                   Classes.DayOfWeek="true" 
-                   Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Saturday}}" />
-        <TextBlock Grid.Row="0" Grid.Column="6" 
-                   Text="Sunday"
-                   Classes.DayOfWeek="true" 
-                   Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Sunday}}" />
+    <Grid RowDefinitions="Auto, *"
+          RowSpacing="16">
+        <UniformGrid Columns="7"
+                     ColumnSpacing="36">
+            <TextBlock
+                Text="Monday"
+                Classes.DayOfWeek="true"
+                Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Monday}}" />
+            <TextBlock
+                Text="Tuesday"
+                Classes.DayOfWeek="true"
+                Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Tuesday}}" />
+            <TextBlock
+                Text="Wednesday"
+                Classes.DayOfWeek="true"
+                Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Wednesday}}" />
+            <TextBlock
+                Text="Thursday"
+                Classes.DayOfWeek="true"
+                Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Thursday}}" />
+            <TextBlock
+                Text="Friday"
+                Classes.DayOfWeek="true"
+                Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Friday}}" />
+            <TextBlock
+                Text="Saturday"
+                Classes.DayOfWeek="true"
+                Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Saturday}}" />
+            <TextBlock
+                Text="Sunday"
+                Classes.DayOfWeek="true"
+                Classes.Today="{Binding Today, Converter={StaticResource IsTodayConverter}, ConverterParameter={x:Static system:DayOfWeek.Sunday}}" />
+        </UniformGrid>
 
-        <ScrollViewer Grid.Row="1" Grid.Column="0">
-            <ItemsControl ItemsSource="{Binding Monday}">
+        <u:LoadingContainer IsLoading="{Binding IsLoading}" Grid.Row="1">
+            <ItemsControl
+                ItemsSource="{Binding Schedule}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <controls:AnimeCard Anime="{Binding}">
-                            <Interaction.Behaviors>
-                                <behaviors:UnwatchedEpisodesBehavior/>
-                            </Interaction.Behaviors>
-                        </controls:AnimeCard>
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <ItemsControl ItemsSource="{Binding}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:AnimeCard Anime="{Binding}">
+                                            <Interaction.Behaviors>
+                                                <behaviors:UnwatchedEpisodesBehavior />
+                                            </Interaction.Behaviors>
+                                        </controls:AnimeCard>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Spacing="8" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </ScrollViewer>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
+                        <UniformGrid Columns="7" ColumnSpacing="36" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="1">
-            <ItemsControl ItemsSource="{Binding Tuesday}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:AnimeCard Anime="{Binding}">
-                            <Interaction.Behaviors>
-                                <behaviors:UnwatchedEpisodesBehavior/>
-                            </Interaction.Behaviors>
-                        </controls:AnimeCard>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="2">
-            <ItemsControl ItemsSource="{Binding Wednesday}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:AnimeCard Anime="{Binding}">
-                            <Interaction.Behaviors>
-                                <behaviors:UnwatchedEpisodesBehavior/>
-                            </Interaction.Behaviors>
-                        </controls:AnimeCard>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="3">
-            <ItemsControl ItemsSource="{Binding Thursday}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:AnimeCard Anime="{Binding}">
-                            <Interaction.Behaviors>
-                                <behaviors:UnwatchedEpisodesBehavior/>
-                            </Interaction.Behaviors>
-                        </controls:AnimeCard>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="4">
-            <ItemsControl ItemsSource="{Binding Friday}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:AnimeCard Anime="{Binding}">
-                            <Interaction.Behaviors>
-                                <behaviors:UnwatchedEpisodesBehavior/>
-                            </Interaction.Behaviors>
-                        </controls:AnimeCard>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="5">
-            <ItemsControl ItemsSource="{Binding Saturday}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:AnimeCard Anime="{Binding}">
-                            <Interaction.Behaviors>
-                                <behaviors:UnwatchedEpisodesBehavior/>
-                            </Interaction.Behaviors>
-                        </controls:AnimeCard>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="6">
-            <ItemsControl ItemsSource="{Binding Sunday}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:AnimeCard Anime="{Binding}">
-                            <Interaction.Behaviors>
-                                <behaviors:UnwatchedEpisodesBehavior/>
-                            </Interaction.Behaviors>
-                        </controls:AnimeCard>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
-
+        </u:LoadingContainer>
     </Grid>
 </UserControl>

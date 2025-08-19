@@ -116,7 +116,6 @@ internal class AnilistMetadataService(
     public async Task<List<ScheduledAnime>> GetAiringSchedule(int start, int end)
     {
         var page = 1;
-        var jstZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tokyo");
         var result = new List<ScheduledAnime>();
         try
         { 
@@ -150,15 +149,18 @@ internal class AnilistMetadataService(
                         continue;
                     }
 
-                    var startTime = TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeSeconds(item.AiringAt.Value).DateTime, jstZone);
-                    var endTime = startTime.AddMinutes(25);
+                    var startTime = DateTimeOffset.FromUnixTimeSeconds(item.AiringAt.Value).DateTime.ToLocalTime();
                     var anime = AniListModelToAnimeModelConverter.ConvertModel(item.Media);
                     anime.NextEpisodeAt = startTime;
+                    if (item.Episode is { } ep)
+                    {
+                        anime.AiredEpisodes = ep - 1;
+                    }
+
 
                     result.Add(new ScheduledAnime(anime)
                     {
                         Start = startTime,
-                        End = endTime
                     });
                 }
 

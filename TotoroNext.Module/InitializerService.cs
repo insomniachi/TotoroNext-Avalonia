@@ -9,11 +9,11 @@ public class InitializerService(IServiceScopeFactory serviceScopeFactory) : IHos
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var scope =  serviceScopeFactory.CreateScope();
-        foreach (var service in scope.ServiceProvider.GetServices<IInitializer>())
+        foreach (var service in scope.ServiceProvider.GetServices<IBackgroundInitializer>())
         {
             try
             {
-                await service.InitializeAsync();
+                await service.BackgroundInitializeAsync();
             }
             catch (Exception e)
             {

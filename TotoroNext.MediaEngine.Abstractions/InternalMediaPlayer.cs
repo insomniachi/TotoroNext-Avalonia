@@ -68,9 +68,9 @@ public class InternalMediaPlayer : IInternalMediaPlayer
     }
 }
 
-internal class Initializer(IServiceScopeFactory serviceScopeFactory) : IInitializer
+internal class BackgroundInitializer(IServiceScopeFactory serviceScopeFactory) : IBackgroundInitializer
 {
-    public Task InitializeAsync()
+    public Task BackgroundInitializeAsync()
     {
         using var scope = serviceScopeFactory.CreateScope();
         scope.ServiceProvider.GetService<IInternalMediaPlayer>(); // Force VLC initialization

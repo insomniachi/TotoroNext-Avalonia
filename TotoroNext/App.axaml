@@ -31,5 +31,10 @@
         <Style Selector="modc|ElasticWrapPanelEx[LineCount=1]">
             <Setter Property="IsFillHorizontal" Value="False" />
         </Style>
+        <Style Selector="u|LoadingContainer">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
     </Application.Styles>
 </Application>

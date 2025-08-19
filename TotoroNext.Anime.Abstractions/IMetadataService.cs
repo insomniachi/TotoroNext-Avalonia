@@ -40,7 +40,7 @@ public class AdvancedSearchRequest
 {
     public string? Title { get; init; }
     public AnimeSeason? SeasonName { get; init; }
-    public AnimeSource? Source { get; set; }
+    public AnimeSource? Source { get; init; }
     public List<string>? IncludedGenres { get; init; }
     public List<string>? ExcludedGenres { get; init; }
     public float? MinimumScore { get; init; }
@@ -51,8 +51,7 @@ public class AdvancedSearchRequest
 
 public class ScheduledAnime(AnimeModel anime)
 {
-    public DateTime Start { get; set; }
-    public DateTime End { get; set; }
+    public DateTime Start { get; init; }
     public AnimeModel Anime { get; } = anime;
 }
 
@@ -129,9 +128,9 @@ public enum ListItemStatus
 
     [Description("Completed")] Completed,
 
-    [Description("On-Hold")] OnHold,
+    [Description("On Hold")] OnHold,
 
-    [Description("Plan to Watch")] PlanToWatch,
+    [Description("Planning")] PlanToWatch,
 
     [Description("Dropped")] Dropped,
 
@@ -157,7 +156,7 @@ public enum AnimeMediaFormat
     Movie,
     Special,
     Ona,
-    Music,
+    Music
 }
 
 public enum AnimeSource
