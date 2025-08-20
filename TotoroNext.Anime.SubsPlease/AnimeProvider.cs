@@ -41,7 +41,7 @@ public class AnimeProvider : IAnimeProvider
 
         foreach (var resolution in items)
         {
-            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Magnet));
+            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Torrent));
         }
     }
 

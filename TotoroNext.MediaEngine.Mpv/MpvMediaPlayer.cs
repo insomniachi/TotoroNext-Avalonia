@@ -30,15 +30,19 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
         var pipeName = $"mpv-pipe-{Guid.NewGuid()}";
         var pipePath = $@"\\.\pipe\{pipeName}";
 
+        var stream = media.Uri.IsFile
+            ? Uri.UnescapeDataString(media.Uri.LocalPath)
+            : media.Uri.ToString();
+
         var startInfo = new ProcessStartInfo
         {
             FileName = _settings.FileName,
             ArgumentList =
             {
-                media.Uri.ToString(),
+                stream,
                 $"--title={media.Metadata.Title}",
                 $"--force-media-title={media.Metadata.Title}",
-                $"--input-ipc-server={pipePath}"
+                $"--input-ipc-server={pipePath}",
             }
         };
 

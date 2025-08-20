@@ -13,6 +13,7 @@
     <ItemGroup>
         <PackageReference Include="HtmlAgilityPack"/>
         <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore"/>
+        <PackageReference Include="MonoTorrent" />
     </ItemGroup>
 
 </Project>

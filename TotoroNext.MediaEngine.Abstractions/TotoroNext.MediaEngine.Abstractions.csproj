@@ -15,10 +15,4 @@
         <PackageReference Include="LibVLCSharp"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <None Update="libvlc\win-x64\**\*.*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-
 </Project>

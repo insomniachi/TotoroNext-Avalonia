@@ -6,3 +6,5 @@ public interface IVideoExtractor
 {
     IAsyncEnumerable<VideoSource> Extract(Uri url);
 }
+
+public interface ITorrentExtractor : IVideoExtractor;
