@@ -58,8 +58,11 @@ public partial class AnimeDetailsView : UserControl
     {
         switch (item?.Content?.ToString())
         {
+            case "Info":
+                vm.Navigator?.NavigateToData(new InfoViewNavigationParameters(vm.Anime));
+                break;
             case "Episodes":
-                vm.Navigator?.NavigateToData(new EpisodesListViewModelNagivationParameters(vm.Anime));
+                vm.Navigator?.NavigateToData(new EpisodesListViewModelNavigationParameters(vm.Anime));
                 break;
             case "Related":
                 vm.Navigator?.NavigateToData(vm.Anime.Related.ToList());

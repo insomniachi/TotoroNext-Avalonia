@@ -16,8 +16,7 @@ internal class ModuleSettings<TData> : IModuleSettings<TData>
 
     internal ModuleSettings(Descriptor descriptor)
     {
-        _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules",
-                                 descriptor.EntryPoint, "settings.json");
+        _filePath = ModuleHelper.GetFilePath(descriptor, "settings.json");
 
         Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
         Value = new TData();
@@ -67,5 +66,17 @@ public static class ResourceHelper
         return new
             Bitmap(AssetLoader
                        .Open(new Uri($"avares://{Assembly.GetCallingAssembly().GetName().Name}/Assets/{name}")));
+    }
+}
+
+public static class ModuleHelper
+{
+    public static string GetFilePath(Descriptor descriptor, string fileName)
+    {
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                            "TotoroNext", 
+                            "Modules", 
+                            descriptor.EntryPoint,
+                            fileName);
     }
 }

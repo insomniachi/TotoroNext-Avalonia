@@ -32,23 +32,24 @@ public sealed partial class AnimeDetailsViewModel(
     [ObservableProperty]
     public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
-    [ObservableProperty] public partial AnimeDetailsTabItem? SelectedTab { get; set; }
+    // [ObservableProperty] public partial AnimeDetailsTabItem? SelectedTab { get; set; }
 
     public ListItemStatus[] Statuses { get; } = [.. Enum.GetValues<ListItemStatus>()];
 
-    public ObservableCollection<AnimeDetailsTabItem> Tabs { get; } =
-    [
-        new("Episodes", anime => new EpisodesListViewModelNagivationParameters(anime)),
-        new("Related", anime => anime.Related.ToList()),
-        new("Recommended", anime => anime.Recommended.ToList()),
-        new("Overrides", anime => new OverridesViewModelNavigationParameters(anime)),
-        new("Songs", anime => new SongsViewModelNavigationParameters(anime))
-    ];
+    // public ObservableCollection<AnimeDetailsTabItem> Tabs { get; } =
+    // [
+    //     new("Info", anime => new InfoViewNavigationParameters(anime)),
+    //     new("Episodes", anime => new EpisodesListViewModelNavigationParameters(anime)),
+    //     new("Related", anime => anime.Related.ToList()),
+    //     new("Recommended", anime => anime.Recommended.ToList()),
+    //     new("Overrides", anime => new OverridesViewModelNavigationParameters(anime)),
+    //     new("Songs", anime => new SongsViewModelNavigationParameters(anime))
+    // ];
 
     public async Task InitializeAsync()
     {
         Anime = await _metadataService.GetAnimeAsync(Anime.Id) ?? Anime;
-        SelectedTab = Tabs.First();
+        // SelectedTab = Tabs.First();
 
         this.WhenAnyValue(x => x.Status, x => x.Progress, x => x.Score, x => x.StartDate, x => x.FinishDate)
             .Skip(1)
@@ -63,16 +64,16 @@ public sealed partial class AnimeDetailsViewModel(
             .SelectMany(tracking => trackingUpdater.UpdateTracking(Anime, tracking).ToObservable())
             .Subscribe();
 
-        this.WhenAnyValue(x => x.SelectedTab)
-            .WhereNotNull()
-            .Subscribe(tab => Navigator?.NavigateToData(tab.GetData(Anime)));
+        // this.WhenAnyValue(x => x.SelectedTab)
+        //     .WhereNotNull()
+        //     .Subscribe(tab => Navigator?.NavigateToData(tab.GetData(Anime)));
     }
 
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
 }
 
-public class AnimeDetailsTabItem(string title, Func<AnimeModel, object> getData)
-{
-    public string Title { get; } = title;
-    public Func<AnimeModel, object> GetData { get; } = getData;
-}
+// public class AnimeDetailsTabItem(string title, Func<AnimeModel, object> getData)
+// {
+//     public string Title { get; } = title;
+//     public Func<AnimeModel, object> GetData { get; } = getData;
+// }

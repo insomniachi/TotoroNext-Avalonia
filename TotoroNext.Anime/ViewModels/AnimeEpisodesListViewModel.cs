@@ -15,7 +15,7 @@ namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
 public partial class AnimeEpisodesListViewModel(
-    EpisodesListViewModelNagivationParameters @params,
+    EpisodesListViewModelNavigationParameters @params,
     IFactory<IMetadataService, Guid> metadataFactory,
     IPlaybackProgressService playbackProgressService,
     IFactory<IAnimeProvider, Guid> providerFactory,

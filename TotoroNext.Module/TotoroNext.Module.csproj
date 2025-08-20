@@ -14,6 +14,8 @@
 
         <PackageReference Include="Flurl.Http"/>
 
+        <PackageReference Include="FuzzySharp" />
+
         <PackageReference Include="HtmlAgilityPack" />
         <PackageReference Include="Humanizer"/>
         <PackageReference Include="Microsoft.Playwright" />

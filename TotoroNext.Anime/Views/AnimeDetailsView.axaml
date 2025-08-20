@@ -65,7 +65,8 @@
                   SelectionChanged="SelectingItemsControl_OnSelectionChanged"
                   SelectedIndex="0"
                   x:Name="Selector">
-            <TabStripItem IsSelected="True" Content="Episodes" />
+            <TabStripItem IsSelected="True" Content="Info"/>
+            <TabStripItem Content="Episodes" />
             <TabStripItem Content="Related" />
             <TabStripItem Content="Recommended" />
             <TabStripItem Content="Songs" />

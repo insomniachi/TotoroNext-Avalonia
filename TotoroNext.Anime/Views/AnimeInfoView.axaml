@@ -1,0 +1,26 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:AnimeInfoViewModel"
+             x:Class="TotoroNext.Anime.Views.AnimeInfoView">
+    <Grid Margin="16">
+        <ItemsControl ItemsSource="{Binding Fields}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding Key}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Value}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel LineSpacing="36" ItemSpacing="12" Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </Grid>
+</UserControl>

@@ -25,11 +25,12 @@ public class Module : IModule
         // Pane navigation
         services.AddDataViewMap<UserListSortAndFilterView, UserListSortAndFilterViewModel, UserListSortAndFilter>()
                 .AddDataViewMap<AnimeDetailsView, AnimeDetailsViewModel, AnimeModel>()
-                .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNagivationParameters>()
+                .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNavigationParameters>()
                 .AddDataViewMap<WatchView, WatchViewModel, WatchViewModelNavigationParameter>()
                 .AddDataViewMap<AnimeGridView, AnimeGridViewModel, List<AnimeModel>>()
                 .AddDataViewMap<AnimeOverridesView, AnimeOverridesViewModel, OverridesViewModelNavigationParameters>()
-                .AddDataViewMap<AnimeSongsView, AnimeSongsViewModel, SongsViewModelNavigationParameters>();
+                .AddDataViewMap<AnimeSongsView, AnimeSongsViewModel, SongsViewModelNavigationParameters>()
+                .AddDataViewMap<AnimeInfoView, AnimeInfoViewModel, InfoViewNavigationParameters>();
 
         services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
                 .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>();

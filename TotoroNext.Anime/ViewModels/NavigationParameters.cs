@@ -3,7 +3,7 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.ViewModels;
 
-public record EpisodesListViewModelNagivationParameters(AnimeModel Anime);
+public record EpisodesListViewModelNavigationParameters(AnimeModel Anime);
 
 public record OverridesViewModelNavigationParameters(AnimeModel Anime);
 
@@ -15,3 +15,5 @@ public record WatchViewModelNavigationParameter(
     List<Episode>? Episodes = null,
     Episode? SelectedEpisode = null,
     bool ContinueWatching = true);
+
+public record InfoViewNavigationParameters(AnimeModel Anime);
