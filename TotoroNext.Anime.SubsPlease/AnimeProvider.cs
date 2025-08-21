@@ -72,7 +72,7 @@ public class AnimeProvider : IAnimeProvider
         }
     }
 
-    private async Task<JsonElement?> GetEpisodesNode(string animeId)
+    private static async Task<JsonElement?> GetEpisodesNode(string animeId)
     {
         var stream = await $"https://subsplease.org/shows/{animeId}".GetStreamAsync();
         var doc = new HtmlDocument();

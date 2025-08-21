@@ -1,23 +1,22 @@
-using System.Collections.Specialized;
 using System.Text.Json.Serialization;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Flurl.Http;
-using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Anilist.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using Ursa.Controls;
 
 namespace TotoroNext.Anime.Anilist.ViewModels;
 
 public class SettingsViewModel : ModuleSettingsViewModel<Settings>
 {
-    private readonly OAuthListener _listener;
-
     public SettingsViewModel(IModuleSettings<Settings> settings) : base(settings)
     {
-        _listener = new OAuthListener(3333, ProcessQuery);
         IncludeNsfw = settings.Value.IncludeNsfw;
         SearchLimit = settings.Value.SearchLimit;
         TitleLanguage = settings.Value.TitleLanguage;
+        Auth = settings.Value.Auth;
     }
 
     public bool IncludeNsfw
@@ -26,7 +25,7 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
         set => SetAndSaveProperty(ref field, value, x => x.IncludeNsfw = value);
     }
 
-    public AniListAuthToken? Token
+    public AniListAuthToken? Auth
     {
         get;
         set => SetAndSaveProperty(ref field, value, x => x.Auth = value);
@@ -46,21 +45,46 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
 
     public TitleLanguage[] TitleLanguages { get; } = [TitleLanguage.English, TitleLanguage.Romaji];
 
-    private async Task ProcessQuery(NameValueCollection arg)
+    public async Task Login(ILauncher launcher, IToastManager toastManager)
     {
-        var code = arg["code"]!;
+        // await launcher
+        //     .LaunchUriAsync(new
+        //                         Uri($"https://anilist.co/api/v2/oauth/authorize?client_id={Settings.ClientId}&redirect_uri={Settings.RedirectUrl}&response_type=code"));
+
+        var options = new DialogOptions
+        {
+            Title = "Copy & Paste the text from the browser",
+            Mode = DialogMode.Info,
+            Button = DialogButton.OKCancel,
+            CanDragMove = false,
+            IsCloseButtonVisible = false,
+            CanResize = false,
+            ShowInTaskBar = false,
+            StartupLocation = WindowStartupLocation.CenterOwner
+        };
+
+        var vm = new GetAnilistCodeDialogViewModel();
+        var result = await Dialog.ShowModal<GetAnilistCodeDialog, GetAnilistCodeDialogViewModel>(vm, options: options);
+
+        if (result == DialogResult.OK)
+        {
+            //Auth = await GetAuthToken(vm.Code);
+            
+            toastManager.Show(new Toast()
+            {
+                Content = "Anilist Authenticated",
+                Expiration = TimeSpan.FromSeconds(2),
+                Type = Avalonia.Controls.Notifications.NotificationType.Success
+            });
+        }
+    }
+
+    private static async Task<AniListAuthToken> GetAuthToken(string code)
+    {
         var token = await "https://anilist.co/api/v2/oauth/token"
                           .PostJsonAsync(new AuthTokenRequest(code)).ReceiveJson<AniListAuthToken>();
         token.CreatedAt = DateTime.Now;
-        Token = token;
-    }
-
-    public async Task Login(ILauncher launcher)
-    {
-        _listener.Start();
-        await
-            launcher.LaunchUriAsync(new
-                                        Uri($"https://anilist.co/api/v2/oauth/authorize?client_id={Settings.ClientId}&redirect_uri={Settings.RedirectUrl}&response_type=code"));
+        return token;
     }
 }
 

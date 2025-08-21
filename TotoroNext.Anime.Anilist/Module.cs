@@ -56,7 +56,7 @@ public sealed class Module : IModule<Settings>
 
 public sealed class Settings
 {
-    public const string RedirectUrl = "http://localhost:3333/callback";
+    public const string RedirectUrl = "https://anilist.co/api/v2/oauth/pin";
     public const int ClientId = 10588;
     public AniListAuthToken? Auth { get; set; }
     public bool IncludeNsfw { get; set; }

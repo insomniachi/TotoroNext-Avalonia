@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using TotoroNext.Anime.Anilist.ViewModels;
+using Ursa.Controls;
 
 namespace TotoroNext.Anime.Anilist.Views;
 
@@ -31,7 +32,7 @@ public partial class SettingsView : UserControl
                 return;
             }
 
-            await vm.Login(launcher);
+            await vm.Login(launcher, new WindowToastManager(TopLevel.GetTopLevel(this)) { MaxItems = 3 });
         }
         catch
         {
