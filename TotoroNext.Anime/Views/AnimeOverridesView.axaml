@@ -36,5 +36,11 @@
                             Value="{Binding EndingSkipMethod, Mode=TwoWay }"
                             HorizontalAlignment="Stretch"/>
         </u:FormItem>
+        
+        <Button Content="Delete Overrides"
+                u:FormItem.NoLabel="True"
+                Command="{Binding DeleteCommand}"
+                Theme="{DynamicResource SolidButton}"
+                HorizontalAlignment="Stretch"/>
     </u:Form>
 </UserControl>

@@ -29,6 +29,11 @@ public class AnimeOverridesRepository : IAnimeOverridesRepository
         @override.Revert();
     }
 
+    public bool Remove(long id)
+    {
+        return _overrides.Remove(id);
+    }
+
     public AnimeOverrides? GetOverrides(long id)
     {
         return _overrides.GetValueOrDefault(id);

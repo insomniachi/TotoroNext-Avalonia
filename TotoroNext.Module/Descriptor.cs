@@ -22,4 +22,6 @@ public class Descriptor
     public Type? SettingViewModel { get; init; }
 
     public bool IsInternal { get; set; } = false;
+
+    public static Descriptor Empty => new Descriptor() { Name = @"Select", Id = Guid.Empty };
 }

@@ -1,5 +1,6 @@
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DynamicData.Binding;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -29,7 +30,7 @@ public partial class AnimeOverridesViewModel(
     
     [ObservableProperty] public partial SkipMethod EndingSkipMethod { get; set; }
 
-    public List<Descriptor> Providers { get; } = [.. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
+    public List<Descriptor> Providers { get; } = [ Descriptor.Empty, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
     {
@@ -45,7 +46,7 @@ public partial class AnimeOverridesViewModel(
             .Select(_ => new AnimeOverrides
             {
                 IsNsfw = IsNsfw,
-                Provider = ProviderId,
+                Provider = ProviderId == Guid.Empty ? null: ProviderId,
                 SelectedResult = SelectedResult,
                 OpeningSkipMethod = OpeningSkipMethod,
                 EndingSkipMethod = EndingSkipMethod,
@@ -54,6 +55,7 @@ public partial class AnimeOverridesViewModel(
 
         this.WhenAnyValue(x => x.ProviderId)
             .WhereNotNull()
+            .Where(x => x != Guid.Empty)
             .SelectMany(id =>
             {
                 var provider = providerFactory.Create(id!.Value);
@@ -66,5 +68,16 @@ public partial class AnimeOverridesViewModel(
                 ProviderResults = results;
                 SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult)?.Title;
             });
+    }
+
+    [RelayCommand]
+    private void Delete()
+    {
+        animeOverridesRepository.Remove(parameters.Anime.Id);
+        IsNsfw = false;
+        ProviderId = null;
+        SelectedResult = null;
+        OpeningSkipMethod = default;
+        EndingSkipMethod = default;
     }
 }
