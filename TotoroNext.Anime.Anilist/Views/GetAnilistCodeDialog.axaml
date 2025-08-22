@@ -5,10 +5,10 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.Anilist.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="viewModels:GetAnilistCodeDialogViewModel"
-             x:Class="TotoroNext.Anime.Anilist.Views.GetAnilistCodeDialog">
+             x:DataType="viewModels:GetAnilistTokenDialogViewModel"
+             x:Class="TotoroNext.Anime.Anilist.Views.GetAnilistTokenDialog">
     <u:Form>
-        <TextBox Text="{Binding Code}" u:FormItem.Label="Code" 
+        <TextBox Text="{Binding Token}" u:FormItem.Label="Code" 
                  VerticalContentAlignment="Top"
                  Width="400" 
                  Height="300"

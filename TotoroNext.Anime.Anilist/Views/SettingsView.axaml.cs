@@ -23,16 +23,18 @@ public partial class SettingsView : UserControl
                 return;
             }
 
-            var launcher = TopLevel.GetTopLevel(Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            var topLevel = TopLevel.GetTopLevel(Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
                                                     ? desktop.MainWindow
-                                                    : null)?.Launcher;
+                                                    : null);
+
+            var launcher = topLevel?.Launcher;
 
             if (launcher is null)
             {
                 return;
             }
 
-            await vm.Login(launcher, new WindowToastManager(TopLevel.GetTopLevel(this)) { MaxItems = 3 });
+            await vm.Login(launcher, new WindowToastManager(topLevel) { MaxItems = 3 });
         }
         catch
         {

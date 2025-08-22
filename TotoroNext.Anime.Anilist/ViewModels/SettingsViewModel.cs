@@ -1,7 +1,5 @@
-using System.Text.Json.Serialization;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using Flurl.Http;
 using TotoroNext.Anime.Anilist.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -16,7 +14,7 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
         IncludeNsfw = settings.Value.IncludeNsfw;
         SearchLimit = settings.Value.SearchLimit;
         TitleLanguage = settings.Value.TitleLanguage;
-        Auth = settings.Value.Auth;
+        Token = settings.Value.Token;
     }
 
     public bool IncludeNsfw
@@ -25,10 +23,10 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
         set => SetAndSaveProperty(ref field, value, x => x.IncludeNsfw = value);
     }
 
-    public AniListAuthToken? Auth
+    public string? Token
     {
         get;
-        set => SetAndSaveProperty(ref field, value, x => x.Auth = value);
+        set => SetAndSaveProperty(ref field, value, x => x.Token = value);
     }
 
     public double SearchLimit
@@ -47,9 +45,7 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
 
     public async Task Login(ILauncher launcher, IToastManager toastManager)
     {
-        // await launcher
-        //     .LaunchUriAsync(new
-        //                         Uri($"https://anilist.co/api/v2/oauth/authorize?client_id={Settings.ClientId}&redirect_uri={Settings.RedirectUrl}&response_type=code"));
+        await launcher.LaunchUriAsync(new Uri($"https://anilist.co/api/v2/oauth/authorize?client_id={Settings.ClientId}&response_type=token"));
 
         var options = new DialogOptions
         {
@@ -63,14 +59,14 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
             StartupLocation = WindowStartupLocation.CenterOwner
         };
 
-        var vm = new GetAnilistCodeDialogViewModel();
-        var result = await Dialog.ShowModal<GetAnilistCodeDialog, GetAnilistCodeDialogViewModel>(vm, options: options);
+        var vm = new GetAnilistTokenDialogViewModel();
+        var result = await Dialog.ShowModal<GetAnilistTokenDialog, GetAnilistTokenDialogViewModel>(vm, options: options);
 
         if (result == DialogResult.OK)
         {
-            //Auth = await GetAuthToken(vm.Code);
-            
-            toastManager.Show(new Toast()
+            Token = vm.Token;
+
+            toastManager.Show(new Toast
             {
                 Content = "Anilist Authenticated",
                 Expiration = TimeSpan.FromSeconds(2),
@@ -78,26 +74,4 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
             });
         }
     }
-
-    private static async Task<AniListAuthToken> GetAuthToken(string code)
-    {
-        var token = await "https://anilist.co/api/v2/oauth/token"
-                          .PostJsonAsync(new AuthTokenRequest(code)).ReceiveJson<AniListAuthToken>();
-        token.CreatedAt = DateTime.Now;
-        return token;
-    }
-}
-
-internal class AuthTokenRequest(string code)
-{
-    [JsonPropertyName("grant_type")] public string GrantType { get; } = "authorization_code";
-
-    [JsonPropertyName("client_id")] public string ClientId { get; } = Settings.ClientId.ToString();
-
-    [JsonPropertyName("client_secret")]
-    public string ClientSecret { get; } = Cyrpto.Decrypt("QVpa7tfm4MlTDB7DZyWCvOlskzZNNanGzt1brOJdZrejKUTh5VFPLIOm5h34XWyE");
-
-    [JsonPropertyName("redirect_uri")] public string RedirectUrl { get; } = Settings.RedirectUrl;
-
-    [JsonPropertyName("code")] public string Code { get; } = code;
 }

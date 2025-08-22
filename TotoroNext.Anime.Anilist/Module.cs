@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using IconPacks.Avalonia.ForkAwesome;
@@ -41,9 +40,9 @@ public sealed class Module : IModule<Settings>
         services.AddHttpClient(nameof(AnilistMetadataService), (sp, client) =>
         {
             var settings = sp.GetRequiredService<IModuleSettings<Settings>>();
-            if (settings.Value.Auth is { } auth)
+            if (settings.Value.Token is { } token)
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
         });
         services.AddTransient(sp =>
@@ -56,24 +55,11 @@ public sealed class Module : IModule<Settings>
 
 public sealed class Settings
 {
-    public const string RedirectUrl = "https://anilist.co/api/v2/oauth/pin";
     public const int ClientId = 10588;
-    public AniListAuthToken? Auth { get; set; }
+    public string? Token { get; set; }
     public bool IncludeNsfw { get; set; }
     public double SearchLimit { get; set; } = 15;
     public TitleLanguage TitleLanguage { get; set; } = TitleLanguage.Romaji;
-}
-
-[Serializable]
-public sealed class AniListAuthToken
-{
-    [JsonPropertyName("access_token")] public string AccessToken { get; set; } = "";
-
-    [JsonPropertyName("expires_in")] public long ExpiresIn { get; set; }
-
-    [JsonPropertyName("refresh_token")] public string RefreshToken { get; set; } = "";
-
-    public DateTime? CreatedAt { get; set; }
 }
 
 public enum TitleLanguage

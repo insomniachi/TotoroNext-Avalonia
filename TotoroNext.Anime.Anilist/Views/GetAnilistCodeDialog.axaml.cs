@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace TotoroNext.Anime.Anilist.Views;
 
-public partial class GetAnilistCodeDialog : UserControl
+public partial class GetAnilistTokenDialog : UserControl
 {
-    public GetAnilistCodeDialog()
+    public GetAnilistTokenDialog()
     {
         InitializeComponent();
     }
