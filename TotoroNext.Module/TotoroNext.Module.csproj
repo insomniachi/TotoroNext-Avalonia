@@ -9,6 +9,7 @@
     <ItemGroup>
         <!-- Avalonia -->
         <PackageReference Include="Avalonia"/>
+        <PackageReference Include="Avalonia.Labs.Controls" />
         <PackageReference Include="Avalonia.Labs.Panels" />
         <PackageReference Include="Avalonia.Markup.Declarative"/>
         <PackageReference Include="Avalonia.ReactiveUI"/>

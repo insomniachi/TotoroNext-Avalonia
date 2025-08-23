@@ -3,10 +3,11 @@
              x:Class="TotoroNext.App"
              xmlns:local="using:TotoroNext"
              xmlns:semi="https://irihi.tech/semi"
-             xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
+             xmlns:u-Semi="https://irihi.tech/ursa/themes/semi"
              xmlns:modc="using:TotoroNext.Module.Controls"
              xmlns:u="https://irihi.tech/ursa"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Default"
+             xmlns:labs="using:Avalonia.Labs.Controls">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
     <Application.Resources>
         <ResourceDictionary>
@@ -23,7 +24,8 @@
     <Application.Styles>
         <semi:SemiPopupAnimations />
         <semi:SemiTheme Locale="en-US" />
-        <u-semi:SemiTheme Locale="en-US" />
+        <u-Semi:SemiTheme Locale="en-US" />
+        <labs:ControlThemes/>
         <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
         <Style Selector="u|DefaultDrawerControl">
             <Setter Property="Theme" Value="{StaticResource NoScrollDrawer}" />
