@@ -21,6 +21,7 @@ public sealed partial class WatchViewModel(
     IFactory<IMediaSegmentsProvider, Guid> segmentsFactory,
     IPlaybackProgressService progressService,
     IAnimeOverridesRepository animeOverridesRepository,
+    IAnimeRelations relations,
     IDialogService dialogService,
     IMessenger messenger,
     ILocalSettingsService localSettingsService) : ObservableObject, IAsyncInitializable, IDisposable
@@ -54,36 +55,54 @@ public sealed partial class WatchViewModel(
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
 
+        if (Anime is null)
+        {
+            return;
+        }
+
         this.WhenAnyValue(x => x.Anime)
             .WhereNotNull()
             .Select(x => x is { MediaFormat: AnimeMediaFormat.Movie })
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(isMovie => IsMovie = isMovie);
 
-        if (Anime is not null)
-        {
-            var infos = await Anime.GetEpisodes();
-
-            this.WhenAnyValue(x => x.Episodes)
-                .WhereNotNull()
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(eps =>
-                {
-                    foreach (var ep in eps)
-                    {
-                        // ReSharper disable once CompareOfFloatsByEqualityOperator
-                        ep.Info = infos.FirstOrDefault(x => x.EpisodeNumber == ep.Number);
-                    }
-                });
-        }
-
-
         this.WhenAnyValue(x => x.ProviderResult)
             .WhereNotNull()
             .Where(_ => Episodes is { Count: 0 } or null)
             .SelectMany(anime => anime.GetEpisodes().ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(e => Episodes = e);
+            .Subscribe(e =>
+            {
+                if (e.Count > (Anime.TotalEpisodes ?? 0) && relations.FindRelation(Anime!) is {}  relation)
+                {
+                    var eps = e.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();
+                    foreach (var ep in eps)
+                    {
+                        ep.Number -= relation.SourceEpisodesRage.Start - 1;
+                    }
+
+                    Episodes = eps;
+                }
+                else
+                {
+                    Episodes = e;
+                }
+            });
+        
+        
+        var infos = await Anime.GetEpisodes();
+
+        this.WhenAnyValue(x => x.Episodes)
+            .WhereNotNull()
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(eps =>
+            {
+                foreach (var ep in eps)
+                {
+                    // ReSharper disable once CompareOfFloatsByEqualityOperator
+                    ep.Info = infos.FirstOrDefault(x => x.EpisodeNumber == ep.Number);
+                }
+            });
 
         if (continueWatching)
         {

@@ -9,7 +9,7 @@ namespace TotoroNext.Anime.AnimeOnsen;
 
 public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
-    private readonly string _apiToken = settings.Value.ApiToken;
+    private readonly string _apiToken = settings.Value.ApiToken?.Token ?? "";
 
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {

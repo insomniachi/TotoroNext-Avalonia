@@ -16,7 +16,10 @@ public class Module : IModule
     {
         services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>()
                 .AddSingleton<ITrackingUpdater, TrackingUpdater>()
-                .AddTransient<IAnimeThemes, AnimeThemes>();
+                .AddTransient<IAnimeThemes, AnimeThemes>()
+                .AddSingleton<IAnimeRelations, AnimeRelations>()
+                .AddTransient<IInitializer, AnimeRelationsParser>()
+                .AddTransient<IBackgroundInitializer, AnimeRelationsParser>();
 
         // main navigation
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", PackIconMaterialDesignKind.List);

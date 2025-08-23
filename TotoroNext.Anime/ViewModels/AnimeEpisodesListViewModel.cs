@@ -19,6 +19,8 @@ public partial class AnimeEpisodesListViewModel(
     IFactory<IMetadataService, Guid> metadataFactory,
     IPlaybackProgressService playbackProgressService,
     IFactory<IAnimeProvider, Guid> providerFactory,
+    IAnimeOverridesRepository animeOverridesRepository,
+    IAnimeRelations relations,
     IMessenger messenger) : ObservableObject, IAsyncInitializable, ICloseable
 {
     [ObservableProperty] public partial AnimeModel Anime { get; set; } = @params.Anime;
@@ -41,8 +43,17 @@ public async Task InitializeAsync()
     [RelayCommand]
     private async Task WatchEpisode(EpisodeInfo episode)
     {
-        var provider = providerFactory.CreateDefault();
-        var searchResult = await provider.SearchAndSelectAsync(Anime);
+        var @override = animeOverridesRepository.GetOverrides(Anime.Id);
+        
+        var provider = @override?.Provider is { } providerId
+            ? providerFactory.Create(providerId)
+            : providerFactory.CreateDefault();
+
+        var term = string.IsNullOrEmpty(@override?.SelectedResult)
+            ? Anime.Title
+            : @override.SelectedResult;
+        
+        var searchResult = await provider.SearchAndSelectAsync(term);
 
         if (searchResult is null)
         {
@@ -50,6 +61,16 @@ public async Task InitializeAsync()
         }
 
         var episodes = await searchResult.GetEpisodes().ToListAsync();
+
+        if (episodes.Count > (Anime.TotalEpisodes ?? 0) && relations.FindRelation(Anime) is { } relation)
+        {
+            episodes = episodes.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();
+            foreach (var ep in episodes)
+            {
+                ep.Number -= relation.SourceEpisodesRage.Start - 1;
+            }
+        }
+        
         var selectedEpisode = episodes.FirstOrDefault(x => (int)x.Number == episode.EpisodeNumber);
 
         if (selectedEpisode is null)

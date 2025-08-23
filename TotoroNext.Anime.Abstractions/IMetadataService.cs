@@ -87,6 +87,7 @@ public class ExternalIds
 {
     public long? MyAnimeList { get; init; }
     public long? Anilist { get; set; }
+    public long? Kitsu { get; init; }
 
     public long? GetId(string serviceType)
     {

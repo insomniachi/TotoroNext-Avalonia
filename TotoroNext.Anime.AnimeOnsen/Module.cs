@@ -14,11 +14,12 @@ public class Module : IModule<Settings>
         Id = new Guid("c37d57cf-5090-4b48-977d-dbaa78545433"),
         Name = "Anime Onsen",
         HeroImage = ResourceHelper.GetResource("animeonsen.jpg"),
-        Description = "Watch anime, always up to date and in high quality, with multiple sub direct from Japan The God of High School, Attack on Titan and more!",
+        Description =
+            "Watch anime, always up to date and in high quality, with multiple sub direct from Japan The God of High School, Attack on Titan and more!",
         Components = [ComponentTypes.AnimeProvider],
         SettingViewModel = typeof(SettingsViewModel)
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor)
@@ -31,7 +32,14 @@ public class Module : IModule<Settings>
 
 public class Settings
 {
-    public string SubtitleLanguage { get; set; } = "en-US";
-    public string ApiToken { get; set; } = "";
     public static readonly TaskCompletionSource<string> SearchTokenTaskCompletionSource = new();
+    public string SubtitleLanguage { get; set; } = "en-US";
+    public AnimeOnsenApiToken? ApiToken { get; set; }
+}
+
+[Serializable]
+public class AnimeOnsenApiToken
+{
+    public string Token { get; set; } = "";
+    public DateTime RenewTime { get; set; }
 }

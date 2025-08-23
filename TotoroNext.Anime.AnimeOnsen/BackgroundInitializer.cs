@@ -5,7 +5,8 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.AnimeOnsen;
 
-public sealed partial class BackgroundInitializer(SettingsViewModel vm) : IBackgroundInitializer
+public sealed partial class BackgroundInitializer(SettingsViewModel vm,
+                                                  IModuleSettings<Settings> settings) : IBackgroundInitializer
 {
     public async Task BackgroundInitializeAsync()
     {

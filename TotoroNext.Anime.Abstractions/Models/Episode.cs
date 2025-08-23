@@ -7,7 +7,7 @@ public partial class Episode(IAnimeProvider provider, string showId, string id, 
 {
     public string ShowId { get; } = showId;
     public string Id { get; } = id;
-    public float Number { get; } = number;
+    public float Number { get; set; } = number;
     [ObservableProperty] public partial EpisodeInfo? Info { get; set; } = new();
     public TimeSpan StartPosition { get; set; } = TimeSpan.Zero;
     public bool IsCompleted { get; set; }

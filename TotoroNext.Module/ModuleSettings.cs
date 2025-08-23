@@ -13,6 +13,8 @@ internal class ModuleSettings<TData> : IModuleSettings<TData>
     where TData : class, new()
 {
     private readonly string _filePath;
+    // ReSharper disable once StaticMemberInGenericType
+    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
 
     internal ModuleSettings(Descriptor descriptor)
     {
@@ -37,7 +39,7 @@ internal class ModuleSettings<TData> : IModuleSettings<TData>
 
     public void Save()
     {
-        File.WriteAllText(_filePath, JsonSerializer.Serialize(Value));
+        File.WriteAllText(_filePath, JsonSerializer.Serialize(Value, Options));
     }
 }
 
@@ -71,8 +73,16 @@ public static class ResourceHelper
 
 public static class ModuleHelper
 {
-    public static string GetFilePath(Descriptor descriptor, string fileName)
+    public static string GetFilePath(Descriptor? descriptor, string fileName)
     {
+        if (descriptor is null)
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                "TotoroNext", 
+                                "Modules", 
+                                fileName);
+        }
+        
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                             "TotoroNext", 
                             "Modules", 

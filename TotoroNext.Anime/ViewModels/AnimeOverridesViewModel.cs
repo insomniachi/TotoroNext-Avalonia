@@ -18,6 +18,8 @@ public partial class AnimeOverridesViewModel(
     IFactory<IAnimeProvider, Guid> providerFactory,
     IEnumerable<Descriptor> descriptors) : ObservableObject, IInitializable
 {
+    private bool _isDeleting;
+    
     [ObservableProperty] public partial bool IsNsfw { get; set; }
 
     [ObservableProperty] public partial Guid? ProviderId { get; set; }
@@ -29,7 +31,6 @@ public partial class AnimeOverridesViewModel(
     [ObservableProperty] public partial SkipMethod OpeningSkipMethod { get; set; }
     
     [ObservableProperty] public partial SkipMethod EndingSkipMethod { get; set; }
-
     public List<Descriptor> Providers { get; } = [ Descriptor.Empty, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
@@ -43,6 +44,7 @@ public partial class AnimeOverridesViewModel(
         EndingSkipMethod = overrides?.EndingSkipMethod ?? SkipMethod.Ask;
 
         this.WhenAnyPropertyChanged()
+            .Where(_ => !_isDeleting)
             .Select(_ => new AnimeOverrides
             {
                 IsNsfw = IsNsfw,
@@ -74,10 +76,15 @@ public partial class AnimeOverridesViewModel(
     private void Delete()
     {
         animeOverridesRepository.Remove(parameters.Anime.Id);
+        
+        _isDeleting = true;
+        
         IsNsfw = false;
         ProviderId = null;
         SelectedResult = null;
         OpeningSkipMethod = default;
         EndingSkipMethod = default;
+
+        _isDeleting = false;
     }
 }

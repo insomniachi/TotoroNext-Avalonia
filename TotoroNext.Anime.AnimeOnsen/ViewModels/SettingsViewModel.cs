@@ -7,16 +7,19 @@ namespace TotoroNext.Anime.AnimeOnsen.ViewModels;
 
 public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
 {
+    private readonly DateTime? _renewTime;
+    
     public SettingsViewModel(IModuleSettings<Settings> settings) : base(settings)
     {
-        Token = settings.Value.ApiToken;
+        Token = settings.Value.ApiToken?.Token ?? "";
         SubtitleLanguage = settings.Value.SubtitleLanguage;
+        _renewTime = settings.Value.ApiToken?.RenewTime;
     }
     
     public string Token
     {
         get;
-        set => SetAndSaveProperty(ref field, value, x => x.ApiToken = value);
+        set => SetAndSaveProperty(ref field, value, x => x.ApiToken = new AnimeOnsenApiToken { Token = value, RenewTime = DateTime.Now.AddDays(5) });
     }
 
     public string SubtitleLanguage
@@ -38,6 +41,13 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
     [RelayCommand]
     public async Task UpdateApiToken()
     {
+        var now = DateTime.Now;
+
+        if (_renewTime is { } renewTime && now > renewTime)
+        {
+            return;
+        }
+        
         using var playwright = await Playwright.CreateAsync();
         var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
         {
