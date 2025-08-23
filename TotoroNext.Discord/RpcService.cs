@@ -11,7 +11,8 @@ internal class RpcService(
     IMessenger messenger) : IHostedService,
                             IRecipient<PlaybackState>,
                             IRecipient<PlaybackEnded>,
-                            IRecipient<AnimeOverrides>
+                            IRecipient<AnimeOverrides>,
+                            IRecipient<SongPlaybackState>
 {
     private readonly DiscordRpcClient _client = new("997177919052984622");
     private bool _isEnabled = settings.Value.IsEnabled;
@@ -22,6 +23,7 @@ internal class RpcService(
         messenger.Register<PlaybackState>(this);
         messenger.Register<PlaybackEnded>(this);
         messenger.Register<AnimeOverrides>(this);
+        messenger.Register<SongPlaybackState>(this);
         return Task.CompletedTask;
     }
 
@@ -34,6 +36,7 @@ internal class RpcService(
         messenger.Unregister<PlaybackState>(this);
         messenger.Unregister<PlaybackEnded>(this);
         messenger.Unregister<AnimeOverrides>(this);
+        messenger.Unregister<SongPlaybackState>(this);
         return Task.CompletedTask;
     }
 
@@ -79,6 +82,33 @@ internal class RpcService(
             ];
         });
     }
+    
+    public void Receive(SongPlaybackState message)
+    {
+        var now = DateTime.UtcNow;
+        
+        _client.Update(p =>
+        {
+            p.Type = ActivityType.Listening;
+            p.Details = message.Song.SongName;
+            p.State = $"{message.Anime.Title} - {message.Song.Slug}";
+            p.Assets ??= new Assets();
+            p.Assets.LargeImageKey = message.Anime.Image;
+            p.Timestamps = new Timestamps
+            {
+                Start = now - message.Position,
+                End = now + (message.Duration - message.Position)
+            };
+            p.Buttons = 
+            [
+                new Button()
+                {
+                    Label = message.Anime.ServiceName,
+                    Url = message.Anime.Url,
+                }
+            ];
+        });
+    }
 
     private void OnRevert(object? sender, EventArgs e)
     {
@@ -91,4 +121,5 @@ internal class RpcService(
 
         overrides.Reverted -= OnRevert;
     }
+    
 }

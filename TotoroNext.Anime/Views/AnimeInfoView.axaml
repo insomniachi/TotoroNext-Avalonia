@@ -3,22 +3,52 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             xmlns:panels="clr-namespace:Avalonia.Labs.Panels;assembly=Avalonia.Labs.Panels"
+             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:AnimeInfoViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeInfoView">
-    <Grid Margin="16">
-        <ItemsControl ItemsSource="{Binding Fields}">
+    <Grid Margin="16 8 16 8"
+          RowDefinitions="Auto, Auto, *"
+          RowSpacing="8">
+
+        <ItemsControl ItemsSource="{Binding Anime.Genres, FallbackValue={x:Null}}" VerticalAlignment="Top">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border CornerRadius="4"
+                            BorderThickness="1"
+                            Background="{DynamicResource SemiColorPrimary}"
+                            Padding="8 4">
+                        <TextBlock Text="{Binding}" />
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <panels:FlexPanel AlignContent="Center" 
+                                      AlignItems="Center"
+                                      JustifyContent="Center"
+                                      Wrap="Wrap"
+                                      ColumnSpacing="8" 
+                                      RowSpacing="8"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <u:Divider Grid.Row="1" Content="Details" HorizontalContentAlignment="Center"/>
+        
+        <ItemsControl Grid.Row="2" ItemsSource="{Binding Fields}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Spacing="4">
-                        <TextBlock Text="{Binding Key}" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding Value}"/>
+                        <TextBlock Text="{Binding Key}" FontWeight="Bold" />
+                        <TextBlock Text="{Binding Value}" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel LineSpacing="36" ItemSpacing="12" Orientation="Vertical"/>
+                    <WrapPanel LineSpacing="36" ItemSpacing="12" Orientation="Vertical" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

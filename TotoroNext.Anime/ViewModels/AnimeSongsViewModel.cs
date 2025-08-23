@@ -1,9 +1,11 @@
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -15,8 +17,12 @@ namespace TotoroNext.Anime.ViewModels;
 public sealed partial class AnimeSongsViewModel(
     SongsViewModelNavigationParameters @params,
     IAnimeThemes animeThemes,
-    IFactory<IMediaPlayer, Guid> mediaPlayerFactory) : ObservableObject, IAsyncInitializable
+    IFactory<IMediaPlayer, Guid> mediaPlayerFactory,
+    IMessenger messenger) : ObservableObject, IAsyncInitializable
 {
+    private TimeSpan _duration;
+    private Abstractions.AnimeTheme? _selectedThemeObject;
+
     [ObservableProperty] public partial List<Abstractions.AnimeTheme> Themes { get; set; } = [];
 
     [ObservableProperty] public partial Uri? SelectedTheme { get; set; }
@@ -33,6 +39,8 @@ public sealed partial class AnimeSongsViewModel(
                            .ObserveOn(RxApp.MainThreadScheduler)
                            .Subscribe(state => IsPlayingOrPaused = state is MediaPlayerState.Playing or MediaPlayerState.Paused);
 
+        SubscriptionsForRpc(InternalMediaPlayer);
+        
         IsLoading = true;
 
         Themes = await animeThemes.FindById(@params.Anime.Id, @params.Anime.ServiceName ?? nameof(ExternalIds.MyAnimeList));
@@ -43,18 +51,20 @@ public sealed partial class AnimeSongsViewModel(
     [RelayCommand]
     private void Play(Abstractions.AnimeTheme theme)
     {
+        _selectedThemeObject = theme;
         SelectedTheme = theme.Video;
     }
 
     [RelayCommand]
-    private void PlayAudio(Abstractions.AnimeTheme them)
+    private void PlayAudio(Abstractions.AnimeTheme theme)
     {
-        if (them.Audio is not { } uri)
+        if (theme.Audio is not { } uri)
         {
             return;
         }
 
-        var media = new Media(uri, new MediaMetadata(them.SongName));
+        _selectedThemeObject = theme;
+        var media = new Media(uri, new MediaMetadata(theme.SongName));
         InternalMediaPlayer.Play(media, TimeSpan.Zero);
     }
 
@@ -66,7 +76,31 @@ public sealed partial class AnimeSongsViewModel(
             return;
         }
 
+        _selectedThemeObject = theme;
         var player = mediaPlayerFactory.CreateDefault();
+        SubscriptionsForRpc(player);
         player.Play(new Media(uri, new MediaMetadata(theme.DisplayName)), TimeSpan.Zero);
+    }
+
+    private void SubscriptionsForRpc(IMediaPlayer player)
+    {
+        player.PlaybackStopped
+              .Subscribe(_ => messenger.Send<PlaybackEnded>());
+        player.DurationChanged.Subscribe(ts => _duration = ts);
+        player.PositionChanged.Subscribe(ts =>
+        {
+            if (_selectedThemeObject is null)
+            {
+                return;
+            }
+
+            messenger.Send(new SongPlaybackState
+            {
+                Anime = @params.Anime,
+                Duration = _duration,
+                Position = ts,
+                Song = _selectedThemeObject
+            });
+        });
     }
 }
