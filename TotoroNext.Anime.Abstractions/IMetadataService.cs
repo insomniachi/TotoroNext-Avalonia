@@ -62,8 +62,8 @@ public partial class AnimeModel : ObservableObject
     public ExternalIds ExternalIds { get; init; } = new();
     public string Image { get; set; } = "";
     public string Title { get; init; } = "";
-    public string EngTitle { get; set; } = "";
-    public string RomajiTitle { get; set; } = "";
+    public string EngTitle { get; init; } = "";
+    public string RomajiTitle { get; init; } = "";
     [ObservableProperty] public partial Tracking? Tracking { get; set; }
     public int? TotalEpisodes { get; set; }
     public AiringStatus AiringStatus { get; set; }
