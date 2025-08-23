@@ -35,6 +35,7 @@ public class Module : IModule<Settings>
         services.AddSingleton<IMalClient, MalClient>();
         services.AddKeyedTransient<IMetadataService, MyAnimeListMetadataService>(Descriptor.Id);
         services.AddKeyedTransient<ITrackingService, MyAnimeListTrackingService>(Descriptor.Id);
+        services.AddTransient<IBackgroundInitializer, Initializer>();
     }
 }
 

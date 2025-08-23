@@ -8,19 +8,23 @@ public class InitializerService(IServiceScopeFactory serviceScopeFactory) : IHos
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using var scope =  serviceScopeFactory.CreateScope();
-        foreach (var service in scope.ServiceProvider.GetServices<IBackgroundInitializer>())
+        using var scope = serviceScopeFactory.CreateScope();
+        var tasks = scope.ServiceProvider
+                        .GetServices<IBackgroundInitializer>()
+                        .Select(service => service.BackgroundInitializeAsync());
+
+        try
         {
-            try
-            {
-                await service.BackgroundInitializeAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
 }

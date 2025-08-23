@@ -62,10 +62,7 @@ public class App : Application
 
         if (AppHost.Services.GetService<IEnumerable<IInitializer>>() is { } initializers)
         {
-            foreach (var initializer in initializers)
-            {
-                initializer.Initialize();
-            }
+            initializers.AsParallel().ForAll(x => x.Initialize());
         }
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
