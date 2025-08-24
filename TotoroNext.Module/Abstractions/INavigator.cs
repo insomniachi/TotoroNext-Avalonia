@@ -1,3 +1,5 @@
+using Ursa.Controls;
+
 namespace TotoroNext.Module.Abstractions;
 
 public interface INavigator
@@ -16,6 +18,24 @@ public interface INavigatorHost
 public class NavigateToViewModelMessage(Type vm)
 {
     public Type ViewModel { get; } = vm;
+}
+
+public class NavigateToDialogMessage
+{
+    public required string Title { get; init; }
+    public object? Data { get; init; }
+    public DialogButton Button { get; init; } = DialogButton.None;
+    public bool CloseButtonVisible { get; init; }
+}
+
+public class NavigateToViewModelDialogMessage : NavigateToDialogMessage
+{
+    public required Type ViewModel { get; init; }
+}
+
+public class NavigateToKeyDialogMessage : NavigateToDialogMessage
+{
+    public required string Key { get; init; }
 }
 
 public class PaneNavigateToViewModelMessage(Type vm, string title = "", double? paneWidth = null, bool isInline = false)
@@ -44,13 +64,3 @@ public class NavigateToRouteMessage(string path)
 }
 
 public record NavigationResult(Type ViewType, Type ViewModelType);
-
-public class ClosePaneMessage;
-
-public class PaneClosingMessage;
-
-public class ToggleAppWindowPresenterMessage;
-
-public class FullScreenEntered;
-
-public class FullScreenExited;

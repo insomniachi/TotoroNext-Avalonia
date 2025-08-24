@@ -17,7 +17,9 @@ public partial class MainWindowViewModel : ObservableObject,
                                            IRecipient<NavigateToViewModelMessage>,
                                            IRecipient<NavigateToDataMessage>,
                                            IRecipient<PaneNavigateToViewModelMessage>,
-                                           IRecipient<PaneNavigateToDataMessage>
+                                           IRecipient<PaneNavigateToDataMessage>,
+                                           IRecipient<NavigateToViewModelDialogMessage>,
+                                           IRecipient<NavigateToKeyDialogMessage>
 {
     private readonly IViewRegistry _locator;
 
@@ -112,6 +114,31 @@ public partial class MainWindowViewModel : ObservableObject,
 
         Drawer.ShowModal(viewObj, vmObj, options: options);
     }
+    
+    
+    public void Receive(NavigateToViewModelDialogMessage message)
+    {
+        var map = _locator.FindByViewModel(message.ViewModel);
+        
+        if (map is null)
+        {
+            return;
+        }
+
+        NavigateToDialog(map, message);
+    }
+
+    public void Receive(NavigateToKeyDialogMessage message)
+    {
+        var map = _locator.FindByKey(message.Key);
+        
+        if (map is null)
+        {
+            return;
+        }
+
+        NavigateToDialog(map, message);
+    }
 
     private void UpdateSelection(NavigationResult result)
     {
@@ -164,6 +191,33 @@ public partial class MainWindowViewModel : ObservableObject,
                 parent.Items.Add(item);
             }
         }
+    }
 
+    private static void NavigateToDialog(ViewMap map, NavigateToDialogMessage message)
+    {
+        var viewObj = (Control)Activator.CreateInstance(map.View)!;
+        var vmObj = message.Data is null
+            ? ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel)
+            : ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel, message.Data);
+
+        var options = new DialogOptions()
+        {
+            CanResize = false,
+            IsCloseButtonVisible = message.CloseButtonVisible,
+            Title = message.Title,
+            Button = message.Button,
+            ShowInTaskBar = false
+        };
+
+        NavigationExtensions.ConfigureView(viewObj, vmObj);
+        
+        Dialog.ShowModal(viewObj, vmObj, options: options)
+              .ContinueWith(x =>
+              {
+                  if (vmObj is IDialogViewModel vm)
+                  {
+                      vm.Handle(x.Result);
+                  }
+              });
     }
 }

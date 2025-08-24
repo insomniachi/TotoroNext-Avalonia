@@ -4,12 +4,10 @@ using System.Reactive;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using DynamicData.Binding;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
-using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -18,10 +16,7 @@ namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
 public partial class AdvancedSearchViewModel(
-    IFactory<IMetadataService, Guid> metadataFactory,
-    IFactory<IAnimeProvider, Guid> providerFactory,
-    IMessenger messenger,
-    IAnimeOverridesRepository overridesRepository) : ObservableObject, IAsyncInitializable
+    IFactory<IMetadataService, Guid> metadataFactory) : ObservableObject, IAsyncInitializable
 {
     private readonly IMetadataService _metadataService = metadataFactory.CreateDefault();
     private bool _isChangeNotificationsEnabled = true;
@@ -44,12 +39,12 @@ public partial class AdvancedSearchViewModel(
         AllGenres = await _metadataService.GetGenresAsync();
 
         var propertiesChanged = this.WhenAnyPropertyChanged(nameof(Title),
-                                                                            nameof(MinimumYear),
-                                                                            nameof(Season), 
-                                                                            nameof(MinimumScore),
-                                                                            nameof(MaximumScore),
-                                                                            nameof(MaximumYear))
-                                                    .Select(_ => Unit.Default);
+                                                            nameof(MinimumYear),
+                                                            nameof(Season),
+                                                            nameof(MinimumScore),
+                                                            nameof(MaximumScore),
+                                                            nameof(MaximumYear))
+                                    .Select(_ => Unit.Default);
 
         var includedGenresChanged = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                                                    h => IncludedGenres.CollectionChanged += h,
@@ -82,40 +77,6 @@ public partial class AdvancedSearchViewModel(
     }
 
     [RelayCommand]
-    private async Task NavigateToWatch(AnimeModel anime)
-    {
-        var overrides = overridesRepository.GetOverrides(anime.Id);
-
-        var provider = overrides?.Provider is { } providerId
-            ? providerFactory.Create(providerId)
-            : providerFactory.CreateDefault();
-
-        var term = string.IsNullOrEmpty(overrides?.SelectedResult)
-            ? anime.Title
-            : overrides.SelectedResult;
-
-        var result = await provider.SearchAndSelectAsync(term);
-
-        if (overrides is not null)
-        {
-            messenger.Send(overrides);
-        }
-
-        if (result is null)
-        {
-            return;
-        }
-
-        messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(result, anime)));
-    }
-
-    [RelayCommand]
-    private void OpenAnimeDetails(AnimeModel anime)
-    {
-        messenger.Send(new PaneNavigateToDataMessage(anime, paneWidth: 750, title: anime.Title));
-    }
-
-    [RelayCommand]
     private void ClearSearchFilters()
     {
         _isChangeNotificationsEnabled = false;
@@ -129,7 +90,7 @@ public partial class AdvancedSearchViewModel(
         MinimumScore = null;
         MaximumScore = null;
         Anime = [];
-        
+
         _isChangeNotificationsEnabled = true;
     }
 }

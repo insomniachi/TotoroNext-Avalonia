@@ -228,13 +228,16 @@ public sealed partial class WatchViewModel(
         MediaPlayer
             .PositionChanged
             .Where(_ => Anime is not null && SelectedEpisode is not null)
-            .Subscribe(position => messenger.Send(new PlaybackState
+            .Subscribe(position =>
             {
-                Anime = Anime!,
-                Episode = SelectedEpisode!,
-                Position = position,
-                Duration = _duration
-            }));
+                messenger.Send(new PlaybackState
+                {
+                    Anime = Anime!,
+                    Episode = SelectedEpisode!,
+                    Position = position,
+                    Duration = _duration
+                });
+            });
 
         MediaPlayer
             .DurationChanged

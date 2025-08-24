@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
+             xmlns:am="using:TotoroNext.Anime"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              xmlns:modcv="using:TotoroNext.Module.Converters"
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
@@ -81,8 +82,10 @@
                         <DataTemplate>
                             <ac:AnimeCard Anime="{Binding}"
                                           Margin="8"
-                                          module:ControlExtensions.RightTappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}"
-                                          module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:UserListViewModel)DataContext).NavigateToWatchCommand, FallbackValue={x:Null}}">
+                                          HasDetailsPane="True"
+                                          DetailsCommand="{x:Static am:Commands.DetailsCommand}"
+                                          WatchCommand="{x:Static am:Commands.WatchCommand}"
+                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}">
                                 <Interaction.Behaviors>
                                     <behaviors:UnwatchedEpisodesBehavior/>
                                     <behaviors:AiringStatusBehavior/>

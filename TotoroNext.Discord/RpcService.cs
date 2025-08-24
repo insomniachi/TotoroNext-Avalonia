@@ -54,6 +54,11 @@ internal class RpcService(
 
     public void Receive(PlaybackState message)
     {
+        if (!_client.IsInitialized)
+        {
+            return;
+        }
+        
         if (!_isEnabled)
         {
             return;

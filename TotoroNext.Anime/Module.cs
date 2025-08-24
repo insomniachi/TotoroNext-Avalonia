@@ -17,8 +17,11 @@ public class Module : IModule
         services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>()
                 .AddSingleton<ITrackingUpdater, TrackingUpdater>()
                 .AddTransient<IAnimeThemes, AnimeThemes>()
-                .AddSingleton<IAnimeRelations, AnimeRelations>()
-                .AddTransient<IInitializer, AnimeRelationsParser>()
+                .AddSingleton<IAnimeRelations, AnimeRelations>();
+
+        // initializers
+        services.AddTransient<IInitializer, AnimeRelationsParser>()
+                .AddTransient<IInitializer, Commands>()
                 .AddTransient<IBackgroundInitializer, AnimeRelationsParser>();
 
         // main navigation

@@ -64,6 +64,8 @@ public class App : Application
         {
             initializers.AsParallel().ForAll(x => x.Initialize());
         }
+        
+        Task.Run(() => AppHost.StartAsync());
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -74,8 +76,6 @@ public class App : Application
             };
             desktop.ShutdownRequested += async (_, _) => await AppHost.StopAsync();
         }
-
-        AppHost.StartAsync();
 
         base.OnFrameworkInitializationCompleted();
     }

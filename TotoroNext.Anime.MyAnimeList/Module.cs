@@ -3,6 +3,8 @@ using MalApi;
 using MalApi.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.ViewModels;
+using TotoroNext.Anime.Abstractions.Views;
 using TotoroNext.Anime.MyAnimeList.ViewModels;
 using TotoroNext.Anime.MyAnimeList.Views;
 using TotoroNext.Module;
@@ -30,6 +32,7 @@ public class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
+        services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>($"tracking/{nameof(ExternalIds.MyAnimeList)}");
         services.AddChildNavigationViewItem<AnidleSolverView, AnidleSolverViewModel>("AniGuesser", "Anidle", PackIconMaterialKind.Puzzle);
 
         services.AddSingleton<IMalClient, MalClient>();

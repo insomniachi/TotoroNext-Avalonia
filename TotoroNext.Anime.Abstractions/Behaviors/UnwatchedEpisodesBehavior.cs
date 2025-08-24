@@ -15,6 +15,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
     private static readonly SolidColorBrush NotUploadedBrush = new(Colors.Orange);
     private static readonly IAnimeOverridesRepository Overrides = Container.Services.GetRequiredService<IAnimeOverridesRepository>();
     private static readonly IFactory<IAnimeProvider, Guid> ProviderFactory = Container.Services.GetRequiredService<IFactory<IAnimeProvider, Guid>>();
+    private static readonly IAnimeRelations Relations = Container.Services.GetRequiredService<IAnimeRelations>();
 
     protected override void OnAttachedToVisualTree()
     {
@@ -59,6 +60,15 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         }
 
         var episodes = await result.GetEpisodes().ToListAsync();
+        if (episodes.Count > (anime.TotalEpisodes ?? 0) && Relations.FindRelation(anime) is {}  relation)
+        {
+            episodes = episodes.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();
+            foreach (var ep in episodes)
+            {
+                ep.Number -= relation.SourceEpisodesRage.Start - 1;
+            }
+        }
+
         var actuallyAired = (int)episodes.Max(x => x.Number);
         var actualDiff = actuallyAired - watched;
 
