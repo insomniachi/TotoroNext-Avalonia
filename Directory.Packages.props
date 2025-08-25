@@ -30,6 +30,7 @@
     <PackageVersion Include="IconPacks.Avalonia" Version="1.1.0" />
     <PackageVersion Include="Irihi.Ursa" Version="1.12.0" />
     <PackageVersion Include="Irihi.Ursa.Themes.Semi" Version="1.12.0" />
+    <PackageVersion Include="Jellyfin.Sdk" Version="2024.10.28" />
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.0" />
     <PackageVersion Include="JikanDotNet" Version="2.9.1" />
     <PackageVersion Include="LibVLCSharp" Version="3.9.4" />

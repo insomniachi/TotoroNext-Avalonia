@@ -10,7 +10,7 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
     public string? Quality { get; set; }
     public Dictionary<string, string> Headers { get; init; } = [];
     public string? Subtitle { get; set; }
-    public SkipData? SkipData { get; init; }
+    public SkipData? SkipData { get; set; }
 
     public async IAsyncEnumerable<VideoSource> Extract()
     {

@@ -136,6 +136,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.AnimeOnsen.Module();
         yield return new Anime.Anizone.Module();
         yield return new Anime.SubsPlease.Module();
+        yield return new Anime.Jellyfin.Module();
 
         // Anime Tracking/Metadata
         yield return new Anime.Anilist.Module();

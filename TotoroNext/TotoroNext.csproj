@@ -50,6 +50,7 @@
         <ProjectReference Include="..\TotoroNext.Anime.AnimeOnsen\TotoroNext.Anime.AnimeOnsen.csproj" />
         <ProjectReference Include="..\TotoroNext.Anime.Anizone\TotoroNext.Anime.Anizone.csproj" />
         <ProjectReference Include="..\TotoroNext.Anime.SubsPlease\TotoroNext.Anime.SubsPlease.csproj" />
+        <ProjectReference Include="..\TotoroNext.Anime.Jellyfin\TotoroNext.Anime.Jellyfin.csproj" />
 
         <ProjectReference Include="..\TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.MyAnimeList\TotoroNext.Anime.MyAnimeList.csproj"/>

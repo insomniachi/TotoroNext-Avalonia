@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.SongRecognition"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.SubsPlease", "TotoroNext.Anime.SubsPlease\TotoroNext.Anime.SubsPlease.csproj", "{24CF68F1-83E4-492B-8BD0-9680793F4313}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.Jellyfin", "TotoroNext.Anime.Jellyfin\TotoroNext.Anime.Jellyfin.csproj", "{5E450D8F-2E89-4E24-87A8-BE8AE945AA04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -143,6 +145,10 @@ Global
 		{24CF68F1-83E4-492B-8BD0-9680793F4313}.Debug|x64.Build.0 = Debug|x64
 		{24CF68F1-83E4-492B-8BD0-9680793F4313}.Release|x64.ActiveCfg = Release|x64
 		{24CF68F1-83E4-492B-8BD0-9680793F4313}.Release|x64.Build.0 = Release|x64
+		{5E450D8F-2E89-4E24-87A8-BE8AE945AA04}.Debug|x64.ActiveCfg = Debug|x64
+		{5E450D8F-2E89-4E24-87A8-BE8AE945AA04}.Debug|x64.Build.0 = Debug|x64
+		{5E450D8F-2E89-4E24-87A8-BE8AE945AA04}.Release|x64.ActiveCfg = Release|x64
+		{5E450D8F-2E89-4E24-87A8-BE8AE945AA04}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,5 +176,6 @@ Global
 		{E4416499-C234-4E18-925C-C705900F65D9} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
 		{29717AF9-EC8C-4F14-9ACC-7968A0E12D43} = {5CAC8F68-6477-49F3-A75E-AE2D62688E6D}
 		{24CF68F1-83E4-492B-8BD0-9680793F4313} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
+		{5E450D8F-2E89-4E24-87A8-BE8AE945AA04} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
 	EndGlobalSection
 EndGlobal
