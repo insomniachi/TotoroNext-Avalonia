@@ -20,6 +20,9 @@
                       DisplayMemberBinding="{Binding Name}"
                       HorizontalAlignment="Stretch" />
         </u:FormItem>
+        <u:FormItem Label="Search Term">
+            <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch"/>
+        </u:FormItem>
         <u:FormItem Label="Provider Result">
             <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
                       SelectedValue="{Binding SelectedResult}"
@@ -42,6 +45,7 @@
                 u:FormItem.NoLabel="True"
                 Command="{Binding DeleteCommand}"
                 Theme="{DynamicResource SolidButton}"
+                Margin="0 24 0 0 "
                 HorizontalAlignment="Stretch"/>
     </u:Form>
 </UserControl>

@@ -7,6 +7,7 @@ public sealed class AnimeOverrides
     public string? SelectedResult { get; init; }
     public SkipMethod OpeningSkipMethod { get; init; }
     public SkipMethod EndingSkipMethod { get; init; }
+    public string? SearchTerm { get; init; }
     public event EventHandler? Reverted;
 
     public void Revert()

@@ -31,12 +31,15 @@ public partial class AnimeOverridesViewModel(
     [ObservableProperty] public partial SkipMethod OpeningSkipMethod { get; set; }
     
     [ObservableProperty] public partial SkipMethod EndingSkipMethod { get; set; }
+
+    [ObservableProperty] public partial string? SearchTerm { get; set; }
     public List<Descriptor> Providers { get; } = [ Descriptor.Empty, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
     {
         var overrides = animeOverridesRepository.GetOverrides(parameters.Anime.Id);
-
+        
+        SearchTerm = overrides?.SearchTerm ?? parameters.Anime.Title;
         IsNsfw = overrides?.IsNsfw ?? false;
         ProviderId = overrides?.Provider;
         SelectedResult = overrides?.SelectedResult;
@@ -52,6 +55,7 @@ public partial class AnimeOverridesViewModel(
                 SelectedResult = SelectedResult,
                 OpeningSkipMethod = OpeningSkipMethod,
                 EndingSkipMethod = EndingSkipMethod,
+                SearchTerm = SearchTerm
             })
             .Subscribe(@override => animeOverridesRepository.CreateOrUpdate(parameters.Anime.Id, @override));
 
@@ -61,7 +65,24 @@ public partial class AnimeOverridesViewModel(
             .SelectMany(id =>
             {
                 var provider = providerFactory.Create(id!.Value);
-                return provider.SearchAsync(parameters.Anime.Title).ToListAsync().AsTask();
+                return provider.SearchAsync(SearchTerm).ToListAsync().AsTask();
+            })
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(results =>
+            {
+                var currentResult = SelectedResult;
+                ProviderResults = results;
+                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult)?.Title;
+            });
+        
+        this.WhenAnyValue(x => x.SearchTerm)
+            .Skip(1)
+            .Where(x => x is {Length: > 2})
+            .Where(_ => ProviderId.HasValue)
+            .SelectMany(term =>
+            {
+                var provider = providerFactory.Create(ProviderId!.Value);
+                return provider.SearchAsync(term ?? "").ToListAsync().AsTask();
             })
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(results =>

@@ -15,7 +15,11 @@ public class Module : IModule
         Name = "SubsPlease",
         Components = [ComponentTypes.AnimeProvider],
         SettingViewModel = typeof(SettingsViewModel),
-        HeroImage = ResourceHelper.GetResource("subsplease.jpg")
+        HeroImage = ResourceHelper.GetResource("subsplease.jpg"),
+        Description = "SubsPlease’s goal is to provide fast and timely English subtitled anime immediately after they are simulcasted. Above all," +
+                      " we value consistency and we aim to fill in the void that was left by HorribleSubs. We want you to be able to come to our site " +
+                      "and download seasonal anime right after they’re simulcasted. For easy downloading, we will also batch our shows at the end of " +
+                      "the season for those who prefer to binge watch."
     };
 
     public void ConfigureServices(IServiceCollection services)

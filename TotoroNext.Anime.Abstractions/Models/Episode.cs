@@ -16,6 +16,8 @@ public partial class Episode(IAnimeProvider provider, string showId, string id, 
     {
         return provider.GetServersAsync(ShowId, Id);
     }
+
+    public bool IsFromProvider(Type providerType) => provider.GetType() == providerType;
 }
 
 public class EpisodeInfo

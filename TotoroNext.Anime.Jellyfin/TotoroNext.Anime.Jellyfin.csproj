@@ -14,4 +14,8 @@
       <PackageReference Include="Jellyfin.Sdk" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\jellyfin.jpg" />
+    </ItemGroup>
+
 </Project>

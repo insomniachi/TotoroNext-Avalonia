@@ -15,9 +15,13 @@ public class Module : IModule<Settings>
         Id = new Guid("13bd2ef6-5d5b-4bea-a3f5-d4b9c1391322"),
         Name = "Jellyfin",
         Components = [ComponentTypes.AnimeProvider],
-        SettingViewModel = typeof(SettingsViewModel)
+        SettingViewModel = typeof(SettingsViewModel),
+        HeroImage = ResourceHelper.GetResource("jellyfin.jpg"),
+        Description =
+            "Jellyfin is a volunteer-built media solution that lets you stream your own media to any device. It supports movies, shows, music, live TV," +
+            " books, photos, and more, with no fees, no tracking, and no strings attached"
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
@@ -31,17 +35,16 @@ public class Module : IModule<Settings>
         });
         services.AddTransient<IBackgroundInitializer, Initializer>();
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
+        services.AddHostedService<JellyfinTrackingUpdater>();
     }
-
 }
 
 public class Settings
 {
     public static Guid? UserId { get; set; }
     public static string? AccessToken { get; set; }
-    
+
     public string? ServerUrl { get; set; }
     public string? Username { get; set; }
     public string? Password { get; set; }
-    public Guid LibraryId { get; set; }
 }

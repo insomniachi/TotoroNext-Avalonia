@@ -11,6 +11,9 @@ public class AnimeProvider(
     JellyfinApiClient client,
     IModuleSettings<Settings> settings) : IAnimeProvider
 {
+    public static string? SessionId { get; private set; }
+    public static string? MediaSourceId { get; private set; }
+    
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
         var result = await client.Items.GetAsync(x =>
@@ -172,7 +175,7 @@ public class AnimeProvider(
             return null;
         }
 
-        var sessionId = playbackInfo.PlaySessionId;
+        SessionId = playbackInfo.PlaySessionId;
         var mediaSource = playbackInfo.MediaSources.FirstOrDefault(x => x.Id == id.ToString("N"));
 
         if (mediaSource is null)
@@ -180,6 +183,8 @@ public class AnimeProvider(
             return null;
         }
 
+        MediaSourceId = mediaSource.Id;
+        
         if (!string.IsNullOrEmpty(mediaSource.TranscodingUrl) && mediaSource.SupportsTranscoding == true)
         {
             return null;
@@ -190,7 +195,7 @@ public class AnimeProvider(
             return settings.Value.ServerUrl
                            .AppendPathSegment($"/Videos/{id}/stream")
                            .AppendQueryParam("container", mediaSource.Container)
-                           .AppendQueryParam("playSessionId", sessionId)
+                           .AppendQueryParam("playSessionId", SessionId)
                            .AppendQueryParam("startTimeTicks",startTime)
                            .AppendQueryParam("static", true)
                            .AppendQueryParam("tag", mediaSource.ETag)
