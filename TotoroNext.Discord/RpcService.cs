@@ -19,12 +19,20 @@ internal class RpcService(
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _client.Initialize();
         messenger.Register<PlaybackState>(this);
         messenger.Register<PlaybackEnded>(this);
         messenger.Register<AnimeOverrides>(this);
         messenger.Register<SongPlaybackState>(this);
-        return Task.CompletedTask;
+
+        return Task.Run(async () =>
+        {
+            bool isInitialized;
+            do
+            {
+                isInitialized = _client.Initialize();
+                await Task.Delay(1000, cancellationToken);
+            } while (!isInitialized);
+        }, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -33,6 +41,7 @@ internal class RpcService(
         {
             _client.Deinitialize();
         }
+
         messenger.Unregister<PlaybackState>(this);
         messenger.Unregister<PlaybackEnded>(this);
         messenger.Unregister<AnimeOverrides>(this);
@@ -58,7 +67,7 @@ internal class RpcService(
         {
             return;
         }
-        
+
         if (!_isEnabled)
         {
             return;
@@ -77,21 +86,21 @@ internal class RpcService(
                 Start = now - message.Position,
                 End = now + (message.Duration - message.Position)
             };
-            p.Buttons = 
+            p.Buttons =
             [
-                new Button()
+                new Button
                 {
                     Label = message.Anime.ServiceName,
-                    Url = message.Anime.Url,
+                    Url = message.Anime.Url
                 }
             ];
         });
     }
-    
+
     public void Receive(SongPlaybackState message)
     {
         var now = DateTime.UtcNow;
-        
+
         _client.Update(p =>
         {
             p.Type = ActivityType.Listening;
@@ -104,12 +113,12 @@ internal class RpcService(
                 Start = now - message.Position,
                 End = now + (message.Duration - message.Position)
             };
-            p.Buttons = 
+            p.Buttons =
             [
-                new Button()
+                new Button
                 {
                     Label = message.Anime.ServiceName,
-                    Url = message.Anime.Url,
+                    Url = message.Anime.Url
                 }
             ];
         });
@@ -126,5 +135,4 @@ internal class RpcService(
 
         overrides.Reverted -= OnRevert;
     }
-    
 }

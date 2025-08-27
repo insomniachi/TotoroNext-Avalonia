@@ -15,7 +15,7 @@ public class VideoStreamProxyService(ILogger<VideoStreamProxyService> logger) : 
     {
         _listener.Prefixes.Add($"http://localhost:{Port}/video/");
         _listener.Start();
-        logger.LogInformation($"Video proxy started on http://localhost:{Port}/video/");
+        logger.LogInformation("Video proxy started on http://localhost:{I}/video/", Port);
 
         _ = Task.Run(async () =>
         {
@@ -63,7 +63,7 @@ public class VideoStreamProxyService(ILogger<VideoStreamProxyService> logger) : 
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, videoUrl);
-            foreach (var key in query.AllKeys!)
+            foreach (var key in query.AllKeys)
             {
                 if (key is null or "url")
                 {
@@ -130,7 +130,7 @@ public class VideoStreamProxyService(ILogger<VideoStreamProxyService> logger) : 
             }
             catch
             {
-                // Defensive: client may already have disconnected
+                // Defensive: a client may already have disconnected
             }
         }
     }

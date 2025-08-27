@@ -6,21 +6,14 @@ namespace TotoroNext.Module;
 
 public class InitializerService(IServiceScopeFactory serviceScopeFactory) : IHostedService
 {
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         using var scope = serviceScopeFactory.CreateScope();
         var tasks = scope.ServiceProvider
-                        .GetServices<IBackgroundInitializer>()
-                        .Select(service => service.BackgroundInitializeAsync());
+                         .GetServices<IBackgroundInitializer>()
+                         .Select(service => service.BackgroundInitializeAsync());
 
-        try
-        {
-            await Task.WhenAll(tasks);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
+        return Task.WhenAll(tasks);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

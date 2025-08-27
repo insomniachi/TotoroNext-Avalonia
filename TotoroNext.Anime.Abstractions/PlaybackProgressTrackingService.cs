@@ -36,16 +36,21 @@ public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackPr
     }
 
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         if (File.Exists(_file))
         {
-            var text = await File.ReadAllTextAsync(_file, cancellationToken);
-            _progress = JsonSerializer.Deserialize<Dictionary<string, ProgressInfo>>(text) ?? [];
+            Task.Run(async () =>
+            {
+                var text = await File.ReadAllTextAsync(_file, cancellationToken);
+                _progress = JsonSerializer.Deserialize<Dictionary<string, ProgressInfo>>(text) ?? [];
+            }, cancellationToken);
         }
 
         messenger.Register<PlaybackState>(this);
         messenger.Register<TrackingUpdated>(this);
+        
+        return Task.CompletedTask;
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
