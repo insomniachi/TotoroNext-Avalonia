@@ -5,14 +5,28 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackProgressService,
-                                                                     IRecipient<PlaybackState>,
-                                                                     IRecipient<TrackingUpdated>
+public class PlaybackProgressTrackingService : IPlaybackProgressService,
+                                               IRecipient<PlaybackState>,
+                                               IRecipient<TrackingUpdated>
 {
     private readonly string _file = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext",
                                                  "progress.json");
 
-    private Dictionary<string, ProgressInfo> _progress = [];
+    private readonly IMessenger _messenger;
+    private readonly Dictionary<string, ProgressInfo> _progress = [];
+
+    public PlaybackProgressTrackingService(IMessenger messenger)
+    {
+        _messenger = messenger;
+
+        if (!File.Exists(_file))
+        {
+            return;
+        }
+
+        var text = File.ReadAllText(_file);
+        _progress = JsonSerializer.Deserialize<Dictionary<string, ProgressInfo>>(text) ?? [];
+    }
 
     public Dictionary<float, ProgressInfo> GetProgress(long id)
     {
@@ -38,18 +52,9 @@ public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackPr
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        if (File.Exists(_file))
-        {
-            Task.Run(async () =>
-            {
-                var text = await File.ReadAllTextAsync(_file, cancellationToken);
-                _progress = JsonSerializer.Deserialize<Dictionary<string, ProgressInfo>>(text) ?? [];
-            }, cancellationToken);
-        }
+        _messenger.Register<PlaybackState>(this);
+        _messenger.Register<TrackingUpdated>(this);
 
-        messenger.Register<PlaybackState>(this);
-        messenger.Register<TrackingUpdated>(this);
-        
         return Task.CompletedTask;
     }
 
@@ -63,8 +68,8 @@ public class PlaybackProgressTrackingService(IMessenger messenger) : IPlaybackPr
 
         await File.WriteAllTextAsync(_file, JsonSerializer.Serialize(_progress), cancellationToken);
 
-        messenger.Unregister<PlaybackState>(this);
-        messenger.Unregister<TrackingUpdated>(this);
+        _messenger.Unregister<PlaybackState>(this);
+        _messenger.Unregister<TrackingUpdated>(this);
     }
 
     public void Receive(PlaybackState message)

@@ -101,9 +101,9 @@
                                     Command="{Binding $parent[local:AnimeCard].WatchCommand}"
                                     CommandParameter="{Binding $parent[local:AnimeCard].Anime}">
                                 <StackPanel Spacing="8" Orientation="Horizontal">
-                                    <TextBlock Text="Continue watching" VerticalAlignment="Center" />
+                                    <TextBlock Text="Watch" VerticalAlignment="Center" />
                                     <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}" 
-                                                               Height="15" Width="15" 
+                                                               Height="15" Width="11" 
                                                                VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
