@@ -10,6 +10,11 @@ public sealed partial class BackgroundInitializer(SettingsViewModel vm,
 {
     public async Task BackgroundInitializeAsync()
     {
+        if (!settings.Value.AutoUpdateApiToken)
+        {
+            return;
+        }
+        
         await UpdateSearchToken();
         await vm.UpdateApiToken();
     }

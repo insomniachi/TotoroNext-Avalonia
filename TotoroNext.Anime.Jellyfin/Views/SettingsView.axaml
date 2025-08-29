@@ -9,7 +9,7 @@
              x:Class="TotoroNext.Anime.Jellyfin.Views.SettingsView">
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
         <Image Grid.Row="0"
-               Source="avares://TotoroNext.Anime.AnimeOnsen/Assets/animeonsen.jpg"
+               Source="avares://TotoroNext.Anime.Jellyfin/Assets/jellyfin.jpg"
                Stretch="UniformToFill"
                Width="600" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">

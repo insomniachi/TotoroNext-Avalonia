@@ -32,6 +32,9 @@ public sealed partial class AnimeDetailsViewModel(
     [ObservableProperty]
     public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
+    [ObservableProperty]
+    public partial bool IsMovie { get; set; } = anime.MediaFormat == AnimeMediaFormat.Movie;
+
     public async Task InitializeAsync()
     {
         Anime = await _metadataService.GetAnimeAsync(Anime.Id) ?? Anime;

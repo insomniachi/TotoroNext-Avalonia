@@ -17,4 +17,8 @@
       <PackageReference Include="NAudio.Wasapi" />
       <PackageReference Include="NLayer.NAudioSupport" />
     </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\shazam.jpg" />
+    </ItemGroup>
 </Project>

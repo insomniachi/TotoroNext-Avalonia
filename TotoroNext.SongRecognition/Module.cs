@@ -12,7 +12,9 @@ public class Module : IModule
     public static Descriptor Descriptor { get; } = new()
     {
         Id = new Guid("d98f3601-7c85-4c46-b01a-083133fb9364"),
-        Name = "Song Recognition"
+        Name = "Song Recognition",
+        Description = "Recognize songs played with shazam",
+        HeroImage = ResourceHelper.GetResource("shazam.jpg")
     };
 
 

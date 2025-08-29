@@ -13,6 +13,7 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
     {
         Token = settings.Value.ApiToken?.Token ?? "";
         SubtitleLanguage = settings.Value.SubtitleLanguage;
+        AutoUpdateApiToken = settings.Value.AutoUpdateApiToken;
         _renewTime = settings.Value.ApiToken?.RenewTime;
     }
     
@@ -26,6 +27,12 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
     {
         get;
         set => SetAndSaveProperty(ref field, value, x => x.SubtitleLanguage = value);
+    }
+
+    public bool AutoUpdateApiToken
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value, x => x.AutoUpdateApiToken = value);
     }
 
     public Dictionary<string, string> Languages { get; } = new()

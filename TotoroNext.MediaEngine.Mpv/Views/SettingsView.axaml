@@ -12,7 +12,7 @@
                Source="avares://TotoroNext.MediaEngine.Mpv/Assets/mpv.jpeg"
                Stretch="UniformToFill"
                Width="600" />
-        <u:Form Grid.Row="1">
+        <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
             <u:FormItem Label="Program">
                 <u:PathPicker
                     Title="Browse"

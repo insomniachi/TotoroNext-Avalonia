@@ -35,6 +35,7 @@ public class Settings
     public static readonly TaskCompletionSource<string> SearchTokenTaskCompletionSource = new();
     public string SubtitleLanguage { get; set; } = "en-US";
     public AnimeOnsenApiToken? ApiToken { get; set; }
+    public bool AutoUpdateApiToken { get; set; } = false;
 }
 
 [Serializable]

@@ -11,7 +11,8 @@ public class Module : IModule
     {
         Id = new Guid("5bdd85ad-523a-48b0-9af6-e84f46e565f6"),
         Name = "Anizone",
-        Components = [ComponentTypes.AnimeProvider]
+        Components = [ComponentTypes.AnimeProvider],
+        HeroImage = ResourceHelper.GetResource("anizone.jpg")
     };
     
     public void ConfigureServices(IServiceCollection services)
