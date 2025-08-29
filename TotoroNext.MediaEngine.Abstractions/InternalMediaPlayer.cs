@@ -73,7 +73,14 @@ internal class BackgroundInitializer(IServiceScopeFactory serviceScopeFactory) :
     public Task BackgroundInitializeAsync()
     {
         using var scope = serviceScopeFactory.CreateScope();
-        scope.ServiceProvider.GetService<IInternalMediaPlayer>(); // Force VLC initialization
+        try
+        {
+            scope.ServiceProvider.GetService<IInternalMediaPlayer>(); // Force VLC initialization
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
         return Task.CompletedTask;
     }
 }

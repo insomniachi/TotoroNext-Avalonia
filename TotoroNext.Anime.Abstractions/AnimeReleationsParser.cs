@@ -40,6 +40,11 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
 
     private void Parse()
     {
+        if (!File.Exists(_path))
+        {
+            return;
+        }
+        
         foreach (var line in File.ReadLines(_path))
         {
             var trimmed = line.Trim();
