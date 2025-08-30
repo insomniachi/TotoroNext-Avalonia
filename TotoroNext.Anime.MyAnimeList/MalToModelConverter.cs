@@ -53,7 +53,8 @@ public static class MalToModelConverter
             Description = malModel.Synopsis ?? string.Empty,
             Url = $"https://myanimelist.net/anime/{malModel.Id}/",
             MediaFormat = ConvertFormat(malModel.MediaType),
-            Genres = malModel.Genres is not { } genres ? [] : [..genres.Select(x => x.Name)]
+            Genres = malModel.Genres is not { } genres ? [] : [..genres.Select(x => x.Name)],
+            Studios = malModel.Studios is not { } studios ? [] : [..studios.Select(x => x.Name)],
         };
 
         try

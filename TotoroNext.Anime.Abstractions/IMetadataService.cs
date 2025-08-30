@@ -81,6 +81,7 @@ public partial class AnimeModel : ObservableObject
     public string Url { get; init; } = "";
     public AnimeMediaFormat MediaFormat { get; init; } = AnimeMediaFormat.Unknown;
     public IReadOnlyCollection<string> Genres { get; init; } = [];
+    public IReadOnlyCollection<string> Studios { get; init; } = [];
 }
 
 public class ExternalIds

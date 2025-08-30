@@ -14,10 +14,8 @@ namespace TotoroNext.Anime.ViewModels;
 public sealed partial class AnimeDetailsViewModel(
     AnimeModel anime,
     IFactory<IMetadataService, Guid> metaFactory,
-    ITrackingUpdater trackingUpdater) : ObservableObject, IAsyncInitializable, INavigatorHost
+    ITrackingUpdater trackingUpdater) : ObservableObject, IInitializable, INavigatorHost
 {
-    private readonly IMetadataService _metadataService = metaFactory.CreateDefault();
-
     [ObservableProperty] public partial AnimeModel Anime { get; set; } = anime;
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = anime.Tracking?.Status;
@@ -35,10 +33,8 @@ public sealed partial class AnimeDetailsViewModel(
     [ObservableProperty]
     public partial bool IsMovie { get; set; } = anime.MediaFormat == AnimeMediaFormat.Movie;
 
-    public async Task InitializeAsync()
+    public void Initialize()
     {
-        Anime = await _metadataService.GetAnimeAsync(Anime.Id) ?? Anime;
-
         this.WhenAnyValue(x => x.Status, x => x.Progress, x => x.Score, x => x.StartDate, x => x.FinishDate)
             .Skip(1)
             .Select(x => new Tracking

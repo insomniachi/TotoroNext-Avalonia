@@ -10,7 +10,7 @@
     <Grid RowDefinitions="Auto,*"
           RowSpacing="16"
           ColumnSpacing="16"
-          ColumnDefinitions="*,*,*,*">
+          ColumnDefinitions="*,*,*">
         <Grid ColumnSpacing="8" ColumnDefinitions="*,Auto,Auto" ColumnSpan="4">
             <TextBox Text="{Binding Query}" HorizontalAlignment="Stretch" />
             <ComboBox ItemsSource="{Binding AnimeProviders}"
@@ -33,7 +33,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
+
         <ListBox Grid.Column="1" Grid.Row="1"
                  ItemsSource="{Binding Episodes}"
                  SelectedItem="{Binding SelectedEpisode}">
@@ -48,7 +48,10 @@
                  SelectedItem="{Binding SelectedServer}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="models:VideoServer">
-                    <TextBlock Text="{Binding Name}" />
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Url}" TextWrapping="Wrap"/>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

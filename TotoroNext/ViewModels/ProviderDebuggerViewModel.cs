@@ -53,7 +53,13 @@ public partial class ProviderDebuggerViewModel(
 
         this.WhenAnyValue(x => x.ProviderId)
             .WhereNotNull()
-            .Subscribe(id => _provider = providerFactory.Create(id!.Value));
+            .Subscribe(id =>
+            {
+                Result = [];
+                Episodes = [];
+                Servers = [];
+                _provider = providerFactory.Create(id!.Value);
+            });
 
         this.WhenAnyValue(x => x.Query)
             .Where(_ => _provider != null)
@@ -61,13 +67,22 @@ public partial class ProviderDebuggerViewModel(
             .Throttle(TimeSpan.FromMilliseconds(500))
             .SelectMany(query => _provider!.SearchAsync(query).ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(response => Result = response);
+            .Subscribe(response =>
+            {
+                Episodes = [];
+                Servers = [];
+                Result = response;
+            });
 
         this.WhenAnyValue(x => x.SelectedResult)
             .WhereNotNull()
             .SelectMany(x => x.GetEpisodes().ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(ep => Episodes = ep);
+            .Subscribe(ep =>
+            {
+                Servers = [];
+                Episodes = ep;
+            });
 
         this.WhenAnyValue(x => x.SelectedEpisode)
             .WhereNotNull()
