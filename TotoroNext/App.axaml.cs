@@ -119,7 +119,11 @@ public class App : Application
                                                                       new NavMenuItemTag { IsFooterItem = true });
         services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
                                                                         PackIconMaterialDesignKind.Settings,
-                                                                        new NavMenuItemTag { IsFooterItem = true });
+                                                                        new NavMenuItemTag
+                                                                        {
+                                                                            IsFooterItem = true,
+                                                                            Order = int.MaxValue
+                                                                        });
     }
 }
 

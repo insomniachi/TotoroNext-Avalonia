@@ -23,3 +23,12 @@ public class TrackingUpdated
     public required AnimeModel Anime { get; init; }
     public required Episode Episode { get; init; }
 }
+
+public class DownloadRequest
+{
+    public required AnimeModel Anime { get; init; }
+    public required IAnimeProvider Provider { get; init; }
+    public required SearchResult SearchResult { get; init; }
+    public required int EpisodeStart { get; init; }
+    public required int EpisodeEnd { get; init; }
+}

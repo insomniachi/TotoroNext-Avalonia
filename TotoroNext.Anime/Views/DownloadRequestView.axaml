@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:DownloadRequestViewModel"
+             x:Class="TotoroNext.Anime.Views.DownloadRequestView"
+             Width="500">
+    <u:Form HorizontalAlignment="Stretch">
+        <u:FormItem Label="Provider">
+            <ComboBox ItemsSource="{Binding Providers}"
+                      SelectedValue="{Binding ProviderId}"
+                      SelectedValueBinding="{Binding Id}"
+                      DisplayMemberBinding="{Binding Name}"
+                      HorizontalAlignment="Stretch" />
+        </u:FormItem>
+        <u:FormItem Label="Search Term">
+            <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch"/>
+        </u:FormItem>
+        <u:FormItem Label="Provider Result">
+            <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
+                      SelectedIndex="0"
+                      SelectedItem="{Binding SelectedResult}"
+                      DisplayMemberBinding="{Binding Title}"
+                      HorizontalAlignment="Stretch" />
+        </u:FormItem>
+        <u:FormItem Label="Start">
+            <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}"/>
+        </u:FormItem>
+        <u:FormItem Label="End">
+            <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}"/>
+        </u:FormItem>
+    </u:Form>
+</UserControl>

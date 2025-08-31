@@ -210,7 +210,7 @@ public partial class MainWindowViewModel : ObservableObject,
         };
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
-        
+
         Dialog.ShowModal(viewObj, vmObj, options: options)
               .ContinueWith(x =>
               {

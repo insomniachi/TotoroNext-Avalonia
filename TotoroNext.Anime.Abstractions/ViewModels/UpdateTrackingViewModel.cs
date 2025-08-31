@@ -48,6 +48,8 @@ public partial class UpdateTrackingViewModel(
         await trackingUpdater.UpdateTracking(Anime, tracking);
     }
 
+    public Action? Close { get; set; }
+
     private static bool AreEqual(Tracking? left, Tracking? right)
     {
         if (left is null && right is null)

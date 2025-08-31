@@ -125,4 +125,15 @@ public partial class AnimeCard : UserControl
             Data = Anime
         });
     }
+
+    private void OnDownloadClicked(object? sender, RoutedEventArgs e)
+    {
+        WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage()
+        {
+            Title = Anime.Title,
+            Data = Anime,
+            Key = "Download",
+            Button = DialogButton.OKCancel
+        });
+    }
 }

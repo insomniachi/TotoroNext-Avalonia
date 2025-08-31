@@ -11,4 +11,8 @@
         <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Downloader" />
+    </ItemGroup>
+
 </Project>

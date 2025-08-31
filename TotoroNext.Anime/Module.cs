@@ -17,7 +17,8 @@ public class Module : IModule
         services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>()
                 .AddSingleton<ITrackingUpdater, TrackingUpdater>()
                 .AddTransient<IAnimeThemes, AnimeThemes>()
-                .AddSingleton<IAnimeRelations, AnimeRelations>();
+                .AddSingleton<IAnimeRelations, AnimeRelations>()
+                .AddSingleton<IDownloadService, DownloadService>();
 
         // initializers
         services.AddTransient<IInitializer, AnimeRelationsParser>()
@@ -27,6 +28,8 @@ public class Module : IModule
         // main navigation
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", PackIconMaterialDesignKind.List);
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", PackIconMaterialDesignKind.Search);
+        services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", PackIconMaterialDesignKind.Download,
+                                                                          new NavMenuItemTag() { IsFooterItem = true });
 
         // Pane navigation
         services.AddDataViewMap<UserListSortAndFilterView, UserListSortAndFilterViewModel, UserListSortAndFilter>()
@@ -36,12 +39,14 @@ public class Module : IModule
                 .AddDataViewMap<AnimeGridView, AnimeGridViewModel, List<AnimeModel>>()
                 .AddDataViewMap<AnimeOverridesView, AnimeOverridesViewModel, OverridesViewModelNavigationParameters>()
                 .AddDataViewMap<AnimeSongsView, AnimeSongsViewModel, SongsViewModelNavigationParameters>()
-                .AddDataViewMap<AnimeInfoView, AnimeInfoViewModel, InfoViewNavigationParameters>();
+                .AddDataViewMap<AnimeInfoView, AnimeInfoViewModel, InfoViewNavigationParameters>()
+                .AddKeyedViewMap<DownloadRequestView, DownloadRequestViewModel>("Download");
 
         services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()
                 .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>();
 
         services.AddHostedService(sp => sp.GetRequiredService<ITrackingUpdater>())
-                .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>());
+                .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>())
+                .AddHostedService(sp => sp.GetRequiredService<IDownloadService>());
     }
 }

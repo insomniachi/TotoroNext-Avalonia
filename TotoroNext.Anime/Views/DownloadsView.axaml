@@ -1,0 +1,51 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             xmlns:c="clr-namespace:TotoroNext.Module.Converters;assembly=TotoroNext.Module"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:DownloadsViewModel"
+             x:Class="TotoroNext.Anime.Views.DownloadsView">
+    <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Downloads}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Padding="16" Background="{DynamicResource SemiColorTertiaryLightActive}" CornerRadius="8">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="{Binding FileName}" FontWeight="Bold" FontSize="15" />
+                            <TextBlock Text="{Binding Link}" FontSize="12"/>
+                            <ProgressBar Value="{Binding Progress}" 
+                                         IsIndeterminate="{Binding !DownloadStarted}" 
+                                         IsVisible="{Binding !IsCompleted}">
+                                <ProgressBar.Transitions>
+                                    <Transitions>
+                                        <DoubleTransition Property="Value" Duration="0:0:0.3" />
+                                    </Transitions>
+                                </ProgressBar.Transitions>
+                            </ProgressBar>
+                            <Grid ColumnDefinitions="*, Auto" Margin="0 8 0 0" IsVisible="{Binding !IsCompleted}">
+                                <TextBlock>
+                                    <Run Text="{Binding Speed, Converter={x:Static c:Converters.DownloadSpeedConverter}}"/>
+                                    <Run Text="-"/>
+                                    <Run Text="{Binding DownloadedBytes, Converter={x:Static c:Converters.ByteToStringConverter}}"/>
+                                    <Run Text="of"/>
+                                    <Run Text="{Binding TotalBytes, Converter={x:Static c:Converters.ByteToStringConverter}}"/>
+                                </TextBlock>
+                                <StackPanel Orientation="Horizontal" Spacing="4" Grid.Column="1">
+                                    <Button Content="Pause"/>
+                                    <Button Content="Cancel"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="4" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>
