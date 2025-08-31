@@ -13,7 +13,6 @@ namespace TotoroNext.Anime.ViewModels;
 [UsedImplicitly]
 public sealed partial class AnimeDetailsViewModel(
     AnimeModel anime,
-    IFactory<IMetadataService, Guid> metaFactory,
     ITrackingUpdater trackingUpdater) : ObservableObject, IInitializable, INavigatorHost
 {
     [ObservableProperty] public partial AnimeModel Anime { get; set; } = anime;

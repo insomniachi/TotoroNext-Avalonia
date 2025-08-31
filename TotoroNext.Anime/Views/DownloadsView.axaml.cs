@@ -1,7 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Data.Converters;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
 namespace TotoroNext.Anime.Views;
 

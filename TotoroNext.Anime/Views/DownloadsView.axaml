@@ -7,6 +7,14 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:DownloadsViewModel"
              x:Class="TotoroNext.Anime.Views.DownloadsView">
+    <UserControl.Styles>
+        <Style Selector="Button.downloading">
+            <Setter Property="Content" Value="Pause" />
+        </Style>
+        <Style Selector="Button.paused">
+            <Setter Property="Content" Value="Resume" />
+        </Style>
+    </UserControl.Styles>
     <ScrollViewer>
         <ItemsControl ItemsSource="{Binding Downloads}">
             <ItemsControl.ItemTemplate>
@@ -14,9 +22,9 @@
                     <Border Padding="16" Background="{DynamicResource SemiColorTertiaryLightActive}" CornerRadius="8">
                         <StackPanel Spacing="8">
                             <TextBlock Text="{Binding FileName}" FontWeight="Bold" FontSize="15" />
-                            <TextBlock Text="{Binding Link}" FontSize="12"/>
-                            <ProgressBar Value="{Binding Progress}" 
-                                         IsIndeterminate="{Binding !DownloadStarted}" 
+                            <TextBlock Text="{Binding Link}" FontSize="12" />
+                            <ProgressBar Value="{Binding Progress}"
+                                         IsIndeterminate="{Binding !DownloadStarted}"
                                          IsVisible="{Binding !IsCompleted}">
                                 <ProgressBar.Transitions>
                                     <Transitions>
@@ -26,15 +34,20 @@
                             </ProgressBar>
                             <Grid ColumnDefinitions="*, Auto" Margin="0 8 0 0" IsVisible="{Binding !IsCompleted}">
                                 <TextBlock>
-                                    <Run Text="{Binding Speed, Converter={x:Static c:Converters.DownloadSpeedConverter}}"/>
-                                    <Run Text="-"/>
-                                    <Run Text="{Binding DownloadedBytes, Converter={x:Static c:Converters.ByteToStringConverter}}"/>
-                                    <Run Text="of"/>
-                                    <Run Text="{Binding TotalBytes, Converter={x:Static c:Converters.ByteToStringConverter}}"/>
+                                    <Run
+                                        Text="{Binding Speed, Converter={x:Static c:Converters.DownloadSpeedConverter}}" />
+                                    <Run Text="-" />
+                                    <Run
+                                        Text="{Binding DownloadedBytes, Converter={x:Static c:Converters.ByteToStringConverter}}" />
+                                    <Run Text="of" />
+                                    <Run
+                                        Text="{Binding TotalBytes, Converter={x:Static c:Converters.ByteToStringConverter}}" />
                                 </TextBlock>
                                 <StackPanel Orientation="Horizontal" Spacing="4" Grid.Column="1">
-                                    <Button Content="Pause"/>
-                                    <Button Content="Cancel"/>
+                                    <Button Command="{Binding TogglePauseResumeCommand}"
+                                            Classes.paused="{Binding IsPaused}"
+                                            Classes.downloading="{Binding !IsPaused}" />
+                                    <Button Content="Cancel" Command="{Binding CancelCommand}" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
