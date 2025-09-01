@@ -80,7 +80,7 @@ public partial class DownloadOperation(AnimeModel anime, Episode episode, VideoS
     [ObservableProperty] public partial bool IsPaused { get; set; }
 
     public Uri Link { get; set; } = server.Url;
-    public string FileName { get; set; } = $"{anime.Title} - Episode {episode.Number}";
+    public string FileName { get; set; } = $"{anime.Title} - Episode {episode.Number}.{server.ContentType}";
 
     public async Task StartAsync()
     {

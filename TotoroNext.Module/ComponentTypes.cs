@@ -7,6 +7,7 @@ public class ComponentTypes
     public const string Metadata = "Metadata";
     public const string Tracking = "Tracking";
     public const string MediaSegments = "Segments";
+    public const string AnimeDownloader = "Anime Downloader";
 }
 
 public interface IComponentRegistry

@@ -33,7 +33,8 @@ public partial class DownloadRequestViewModel(
     [ObservableProperty] public partial int Start { get; set; } = 1;
     [ObservableProperty] public partial int End { get; set; }
 
-    public List<Descriptor> Providers { get; } = [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
+    public List<Descriptor> Providers { get; } =
+        [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider) && x.Components.Contains(ComponentTypes.AnimeDownloader))];
 
 
     public Task Handle(DialogResult result)

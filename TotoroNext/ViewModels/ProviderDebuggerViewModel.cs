@@ -86,6 +86,7 @@ public partial class ProviderDebuggerViewModel(
 
         this.WhenAnyValue(x => x.SelectedEpisode)
             .WhereNotNull()
+            .Do(_ => Servers = [])
             .SelectMany(x => x.GetServersAsync().ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);

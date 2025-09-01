@@ -70,7 +70,8 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
                     continue;
                 case "Yt-mp4":
-                    yield return VideoServers.WithReferer(item.SourceName, item.SourceUrl, "https://allanime.day/");
+                    yield return VideoServers.WithReferer(item.SourceName, item.SourceUrl, "https://allanime.day/")
+                                             .WithContentType("mp4");
                     continue;
                 case "Vg":
                 case "Fm-Hls":

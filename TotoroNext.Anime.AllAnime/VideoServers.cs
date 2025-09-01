@@ -19,7 +19,8 @@ internal static partial class VideoServers
                 Headers =
                 {
                     [HeaderNames.Referer] = "https://www.mp4upload.com/"
-                }
+                },
+                ContentType = "mp4"
             };
         }
         catch
@@ -37,6 +38,12 @@ internal static partial class VideoServers
                 [HeaderNames.Referer] = referer
             }
         };
+    }
+
+    internal static VideoServer WithContentType(this VideoServer server, string type)
+    {
+        server.ContentType = type;
+        return server;
     }
 
     [GeneratedRegex("video/mp4\\\",src:\\\"(https?://.*/video\\.mp4)\\\"")]
