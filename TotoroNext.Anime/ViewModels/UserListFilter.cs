@@ -48,7 +48,9 @@ public partial class UserListFilter : ObservableObject
             : model.Tracking.Status == Status;
 
         var searchTextStatus = string.IsNullOrEmpty(Term) ||
-                               model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase);
+                               model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
+                               model.RomajiTitle.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
+                               model.EngTitle.Contains(Term, StringComparison.InvariantCultureIgnoreCase);
         var formatCheck = Format == AnimeMediaFormat.Unknown || model.MediaFormat == Format;
         var genresCheck = Genres.All(x => model.Genres.Contains(x));
         var userScoreCheck = ScoreFilter switch

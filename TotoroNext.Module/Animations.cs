@@ -14,10 +14,17 @@ public class Animations
                                                                               "ItemsReorderAnimationDuration",
                                                                               TimeSpan.Zero);
 
+    public static readonly AttachedProperty<TimeSpan> ItemsRepeaterReorderAnimationDurationProperty =
+        AvaloniaProperty.RegisterAttached<Animations, ItemsRepeater, TimeSpan>(
+                                                                               "ItemsRepeaterReorderAnimationDuration",
+                                                                               TimeSpan.Zero);
+
     static Animations()
     {
         ItemsReorderAnimationDurationProperty.Changed.AddClassHandler<ItemsControl>(
                                                                                     OnItemsReorderAnimationDurationChanged);
+        ItemsRepeaterReorderAnimationDurationProperty.Changed.AddClassHandler<ItemsRepeater>(
+                                                                                             OnItemsReorderAnimationDurationChanged);
     }
 
     private static void OnItemsReorderAnimationDurationChanged(ItemsControl sender,
@@ -45,6 +52,26 @@ public class Animations
         };
     }
 
+    private static void OnItemsReorderAnimationDurationChanged(ItemsRepeater repeater,
+                                                               AvaloniaPropertyChangedEventArgs args)
+    {
+        if (args.NewValue is not TimeSpan duration || duration == TimeSpan.Zero)
+        {
+            return;
+        }
+
+        repeater.ElementPrepared += (_, ea) =>
+        {
+            if (ElementComposition.GetElementVisual(ea.Element) is not { } compositionVisual)
+            {
+                return;
+            }
+
+            var compositor = compositionVisual.Compositor;
+            compositionVisual.ImplicitAnimations = GetOrCreateAnimation(compositor, duration);
+        };
+    }
+
     public static TimeSpan GetItemsReorderAnimationDuration(ItemsControl control)
     {
         return control.GetValue(ItemsReorderAnimationDurationProperty);
@@ -53,6 +80,16 @@ public class Animations
     public static void SetItemsReorderAnimationDuration(ItemsControl control, TimeSpan value)
     {
         control.SetValue(ItemsReorderAnimationDurationProperty, value);
+    }
+
+    public static TimeSpan GetItemsRepeaterReorderAnimationDuration(ItemsRepeater control)
+    {
+        return control.GetValue(ItemsRepeaterReorderAnimationDurationProperty);
+    }
+
+    public static void SetItemsRepeaterReorderAnimationDuration(ItemsRepeater control, TimeSpan value)
+    {
+        control.SetValue(ItemsRepeaterReorderAnimationDurationProperty, value);
     }
 
     private static ImplicitAnimationCollection GetOrCreateAnimation(Compositor compositor, TimeSpan duration)

@@ -9,6 +9,17 @@
              x:Class="TotoroNext.Anime.Views.DownloadRequestView"
              Width="500">
     <u:Form HorizontalAlignment="Stretch">
+        <u:FormItem Label="Folder">
+            <u:PathPicker
+                Title="Browse"
+                AllowMultiple="False"
+                SelectedPathsText="{Binding SaveFolder}"
+                UsePickerType="OpenFolder"
+                HorizontalAlignment="Stretch" />
+        </u:FormItem>
+        <u:FormItem Label="Filename format">
+            <TextBox HorizontalAlignment="Stretch" Text="{Binding FilenameFormat}"/>
+        </u:FormItem>
         <u:FormItem Label="Provider">
             <ComboBox ItemsSource="{Binding Providers}"
                       SelectedValue="{Binding ProviderId}"
@@ -17,7 +28,7 @@
                       HorizontalAlignment="Stretch" />
         </u:FormItem>
         <u:FormItem Label="Search Term">
-            <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch"/>
+            <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch" />
         </u:FormItem>
         <u:FormItem Label="Provider Result">
             <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
@@ -27,10 +38,10 @@
                       HorizontalAlignment="Stretch" />
         </u:FormItem>
         <u:FormItem Label="Start">
-            <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}"/>
+            <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}" />
         </u:FormItem>
         <u:FormItem Label="End">
-            <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}"/>
+            <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}" />
         </u:FormItem>
     </u:Form>
 </UserControl>

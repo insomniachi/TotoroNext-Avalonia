@@ -21,17 +21,14 @@ public partial class DownloadRequestViewModel(
     private IAnimeProvider? _provider;
 
     [ObservableProperty] public partial Guid? ProviderId { get; set; }
-
     [ObservableProperty] public partial SearchResult? SelectedResult { get; set; }
-
     [ObservableProperty] public partial List<SearchResult> ProviderResults { get; set; } = [];
-
     [ObservableProperty] public partial string? SearchTerm { get; set; }
-
     [ObservableProperty] public partial bool CanDownload { get; set; }
-
     [ObservableProperty] public partial int Start { get; set; } = 1;
     [ObservableProperty] public partial int End { get; set; }
+    [ObservableProperty] public partial string? SaveFolder { get; set; }
+    [ObservableProperty] public partial string? FilenameFormat { get; set; }
 
     public List<Descriptor> Providers { get; } =
         [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider) && x.Components.Contains(ComponentTypes.AnimeDownloader))];
@@ -50,7 +47,9 @@ public partial class DownloadRequestViewModel(
             Provider = _provider,
             SearchResult = SelectedResult,
             EpisodeStart = Start,
-            EpisodeEnd = End
+            EpisodeEnd = End,
+            SaveFolder = SaveFolder,
+            FilenameFormat = FilenameFormat
         });
 
         return Task.CompletedTask;
@@ -75,7 +74,8 @@ public partial class DownloadRequestViewModel(
             {
                 var currentResult = SelectedResult;
                 ProviderResults = results;
-                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult?.Title) ?? ProviderResults.FirstOrDefault();
+                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult?.Title) ??
+                                 ProviderResults.FirstOrDefault(x => x.Title == SearchTerm);
             });
 
         this.WhenAnyValue(x => x.SearchTerm)
@@ -92,7 +92,8 @@ public partial class DownloadRequestViewModel(
             {
                 var currentResult = SelectedResult;
                 ProviderResults = results;
-                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult?.Title) ?? ProviderResults.FirstOrDefault();
+                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult?.Title) ??
+                                 ProviderResults.FirstOrDefault(x => x.Title == SearchTerm);
             });
 
         this.WhenAnyValue(x => x.SelectedResult, x => x.Start, x => x.End)

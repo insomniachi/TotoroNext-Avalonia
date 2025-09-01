@@ -1,28 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using System.Reactive.Linq;
-using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using System.Globalization;
 using CommunityToolkit.Mvvm.Messaging;
-using Downloader;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Hosting;
-using ReactiveUI;
-using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime;
 
-public interface IDownloadService : IHostedService
-{
-    ObservableCollection<DownloadOperation> Downloads { get; }
-}
-
 [UsedImplicitly]
-public class DownloadService(IMessenger messenger) : IDownloadService, IRecipient<DownloadRequest>
+public class DownloadService(
+    IMessenger messenger,
+    IDownloadManager downloadManager) : IHostedService, IRecipient<DownloadRequest>
 {
-    public ObservableCollection<DownloadOperation> Downloads { get; } = [];
+    private readonly SemaphoreSlim _semaphore = new(3, 3);
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -38,10 +28,10 @@ public class DownloadService(IMessenger messenger) : IDownloadService, IRecipien
 
     public void Receive(DownloadRequest message)
     {
-        Task.Run(() => StartDownload(message));
+        _ = Task.Run(() => ProcessDownloadRequest(message));
     }
 
-    public async Task StartDownload(DownloadRequest message)
+    private async Task StartDownload(DownloadRequest message)
     {
         var allEpisodes = await message.Provider.GetEpisodes(message.SearchResult.Id).ToListAsync();
         var targetEpisodes = allEpisodes.Where(x => x.Number >= message.EpisodeStart && x.Number <= message.EpisodeEnd).ToList();
@@ -57,96 +47,35 @@ public class DownloadService(IMessenger messenger) : IDownloadService, IRecipien
                     continue;
                 }
 
-                var operation = new DownloadOperation(message.Anime, episode, server);
-                _ = operation.StartAsync();
-                Downloads.Add(operation);
+                var operation = new DownloadOperation(message.Anime, episode, server, CreateFilename(message, episode, server));
+                downloadManager.AddDownload(operation);
+                await operation.StartAsync();
                 break;
             }
         }
     }
-}
 
-public partial class DownloadOperation(AnimeModel anime, Episode episode, VideoServer server) : ObservableObject
-{
-    private IDownload? _operation;
-    private DownloadProgressChangedEventArgs? _progress;
-
-    [ObservableProperty] public partial double Progress { get; set; }
-    [ObservableProperty] public partial bool DownloadStarted { get; set; }
-    [ObservableProperty] public partial double Speed { get; set; }
-    [ObservableProperty] public partial long DownloadedBytes { get; set; }
-    [ObservableProperty] public partial long TotalBytes { get; set; }
-    [ObservableProperty] public partial bool IsCompleted { get; set; }
-    [ObservableProperty] public partial bool IsPaused { get; set; }
-
-    public Uri Link { get; set; } = server.Url;
-    public string FileName { get; set; } = $"{anime.Title} - Episode {episode.Number}.{server.ContentType}";
-
-    public async Task StartAsync()
+    private async Task ProcessDownloadRequest(DownloadRequest request)
     {
-        var configuration = new DownloadConfiguration { RequestConfiguration = new RequestConfiguration() };
-        var builder = DownloadBuilder.New()
-                                     .WithUrl(server.Url)
-                                     .WithDirectory(ModuleHelper.GetFilePath(null, "Downloads"))
-                                     .WithFileName(FileName)
-                                     .WithConfiguration(configuration);
-
-        foreach (var header in server.Headers)
+        await _semaphore.WaitAsync();
+        try
         {
-            configuration.RequestConfiguration.Headers.Add(header.Key, header.Value);
+            await StartDownload(request);
         }
-
-        _operation = builder.Build();
-
-        _operation.DownloadStarted += (_, _) => Dispatcher.UIThread.Invoke(() => DownloadStarted = true);
-        _operation.DownloadFileCompleted += (_, _) => Dispatcher.UIThread.Invoke(() =>
+        finally
         {
-            Progress = 100;
-            IsCompleted = true;
-        });
-        _operation.DownloadProgressChanged += (_, e) => { _progress = e; };
-
-        var subscription = Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(1))
-                                     .Select(_ => _progress)
-                                     .WhereNotNull()
-                                     .ObserveOn(RxApp.MainThreadScheduler)
-                                     .Subscribe(e =>
-                                     {
-                                         Progress = e.ProgressPercentage;
-                                         Speed = e.AverageBytesPerSecondSpeed;
-                                         TotalBytes = e.TotalBytesToReceive;
-                                         DownloadedBytes = e.ReceivedBytesSize;
-                                     });
-
-        await _operation.StartAsync();
-        subscription.Dispose();
-    }
-
-    [RelayCommand]
-    private void TogglePauseResume()
-    {
-        if (_operation is null)
-        {
-            return;
-        }
-
-        switch (_operation.Status)
-        {
-            case DownloadStatus.Paused:
-                _operation.Resume();
-                IsPaused = false;
-                break;
-            case DownloadStatus.Running:
-                _operation.Pause();
-                IsPaused = true;
-                break;
+            _semaphore.Release();
         }
     }
 
-
-    [RelayCommand]
-    private void Cancel()
+    private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)
     {
-        _operation?.Stop();
+        var directory = message.SaveFolder ?? ModuleHelper.GetFilePath(null, "Downloads");
+
+        var fileName = string.IsNullOrEmpty(message.FilenameFormat)
+            ? $"{message.Anime.Title} - Episode - {episode.Number}.{server.ContentType}"
+            : $"{message.FilenameFormat.Replace("{ep}", episode.Number.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0'))}.{server.ContentType}";
+
+        return Path.Combine(directory, fileName);
     }
 }

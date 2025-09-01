@@ -18,7 +18,7 @@ public class Module : IModule
                 .AddSingleton<ITrackingUpdater, TrackingUpdater>()
                 .AddTransient<IAnimeThemes, AnimeThemes>()
                 .AddSingleton<IAnimeRelations, AnimeRelations>()
-                .AddSingleton<IDownloadService, DownloadService>();
+                .AddSingleton<IDownloadManager, DownloadManager>();
 
         // initializers
         services.AddTransient<IInitializer, AnimeRelationsParser>()
@@ -47,6 +47,6 @@ public class Module : IModule
 
         services.AddHostedService(sp => sp.GetRequiredService<ITrackingUpdater>())
                 .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>())
-                .AddHostedService(sp => sp.GetRequiredService<IDownloadService>());
+                .AddHostedService<DownloadService>();
     }
 }

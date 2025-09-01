@@ -31,4 +31,6 @@ public class DownloadRequest
     public required SearchResult SearchResult { get; init; }
     public required int EpisodeStart { get; init; }
     public required int EpisodeEnd { get; init; }
+    public string? SaveFolder { get; init; }
+    public string? FilenameFormat { get; init; }
 }

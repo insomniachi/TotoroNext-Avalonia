@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public class DownloadsViewModel(IDownloadService downloadsService) : ObservableObject
+public class DownloadsViewModel(IDownloadManager downloadsManager) : ObservableObject
 {
-    public ObservableCollection<DownloadOperation> Downloads { get; } = downloadsService.Downloads;
+    public ReadOnlyObservableCollection<DownloadOperation> Downloads { get; } = downloadsManager.Downloads;
 }

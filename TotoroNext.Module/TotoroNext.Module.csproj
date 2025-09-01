@@ -13,6 +13,7 @@
         <PackageReference Include="Avalonia.Labs.Panels" />
         <PackageReference Include="Avalonia.Markup.Declarative"/>
         <PackageReference Include="Avalonia.ReactiveUI"/>
+        <PackageReference Include="Avalonia.Controls.ItemsRepeater" />
 
         <PackageReference Include="Flurl.Http"/>
 
