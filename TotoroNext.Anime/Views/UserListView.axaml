@@ -70,7 +70,7 @@
                             HorizontalContentAlignment="Stretch">
             <ScrollViewer>
                 <ItemsRepeater ItemsSource="{Binding Anime}"
-                               module:Animations.ItemsRepeaterReorderAnimationDuration="0:0:0.5"
+                               ElementPrepared="ItemsGrid_OnElementPrepared"
                                Margin="16 0">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate>

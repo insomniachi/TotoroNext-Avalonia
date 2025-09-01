@@ -1,10 +1,11 @@
-﻿using Avalonia.Media;
+﻿using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using TotoroNext.Anime.Abstractions.Controls;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
-public class AiringStatusBehavior : Behavior<AnimeCard>
+public class AiringStatusBehavior : Behavior<AnimeCard>, IVirtualizingBehavior<AnimeCard>
 {
     private static readonly SolidColorBrush AiringBrush = new(Colors.LimeGreen);
     private static readonly SolidColorBrush FinishedBrush = new(Colors.MediumSlateBlue);
@@ -17,8 +18,13 @@ public class AiringStatusBehavior : Behavior<AnimeCard>
         {
             return;
         }
+        
+        Update(AssociatedObject);
+    }
 
-        AssociatedObject.StatusBorder.BorderBrush = ToBrush(AssociatedObject.Anime);
+    public void Update(AnimeCard card)
+    {
+        card.StatusBorder.BorderBrush = ToBrush(card.Anime);
     }
 
 

@@ -10,7 +10,7 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
-public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
+public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehavior<AnimeCard>
 {
     private static readonly SolidColorBrush NotUploadedBrush = new(Colors.Orange);
     private static readonly IAnimeOverridesRepository Overrides = Container.Services.GetRequiredService<IAnimeOverridesRepository>();
@@ -23,15 +23,19 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         {
             return;
         }
-
-        UpdateAiringTime(AssociatedObject, AssociatedObject.Anime);
-        _ = UpdateBadge(AssociatedObject.Anime);
+        
+        Update(AssociatedObject);
     }
 
-    private async Task<Unit> UpdateBadge(AnimeModel anime)
+    public void Update(AnimeCard card)
     {
-        if (AssociatedObject is null ||
-            anime.AiringStatus is not AiringStatus.CurrentlyAiring ||
+        UpdateAiringTime(card, card.Anime);
+        _ = UpdateBadge(card, card.Anime);
+    }
+
+    private static async Task<Unit> UpdateBadge(AnimeCard card, AnimeModel anime)
+    {
+        if (anime.AiringStatus is not AiringStatus.CurrentlyAiring ||
             anime.Tracking?.Status is not (ListItemStatus.Watching or ListItemStatus.PlanToWatch))
         {
             return Unit.Default;
@@ -75,13 +79,13 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         // Episode aired on TV, but not uploaded on the provider
         if (actualDiff <= 0)
         {
-            AssociatedObject.Badge.Background = NotUploadedBrush;
-            AssociatedObject.BadgeText.Text = diff.ToString();
+            card.Badge.Background = NotUploadedBrush;
+            card.BadgeText.Text = diff.ToString();
 
             return Unit.Default;
         }
 
-        AssociatedObject.BadgeText.Text = actualDiff.ToString();
+        card.BadgeText.Text = actualDiff.ToString();
 
         return Unit.Default;
     }
@@ -91,6 +95,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         var time = ToNextEpisodeAiringTime(anime);
         if (string.IsNullOrEmpty(time))
         {
+            card.NextEpText.IsVisible = false;
             return;
         }
 
