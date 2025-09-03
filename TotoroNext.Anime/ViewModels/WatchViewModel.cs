@@ -140,6 +140,7 @@ public sealed partial class WatchViewModel(
         }
 
         this.WhenAnyValue(x => x.SelectedEpisode)
+            .Do(_ => Servers = [])
             .WhereNotNull()
             .SelectMany(ep => ep.GetServersAsync().ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -297,8 +298,7 @@ public sealed partial class WatchViewModel(
             return null;
         }
 
-        var question = $"Completed watching {Anime?.Title} - Episode {SelectedEpisode.Number}, play the next episode ?";
-        var answer = await dialogService.Question("Tracking Updated", question);
+        var answer = await dialogService.Question("Tracking Updated", "Play the next episode?");
         return answer is MessageBoxResult.Yes
             ? nextEp
             : null;

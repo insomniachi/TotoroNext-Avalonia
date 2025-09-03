@@ -72,7 +72,7 @@ internal class AnilistTrackingService(GraphQLHttpClient client) : ITrackingServi
             Query = query
         });
 
-        return mutationResponse.Data?.DeleteMediaListEntry?.Deleted ?? false;
+        return mutationResponse.Data.DeleteMediaListEntry?.Deleted ?? false;
     }
 
     public async Task<Tracking> Update(long id, Tracking tracking)
@@ -132,7 +132,7 @@ internal class AnilistTrackingService(GraphQLHttpClient client) : ITrackingServi
             Query = new QueryQueryBuilder().WithViewer(new UserQueryBuilder().WithName()).Build()
         });
 
-        return response?.Data?.Viewer?.Name;
+        return response.Data.Viewer?.Name;
     }
 
     private static MediaListCollectionQueryBuilder MediaListCollectionBuilder()

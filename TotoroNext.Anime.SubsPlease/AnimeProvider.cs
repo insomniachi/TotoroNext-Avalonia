@@ -10,7 +10,7 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.SubsPlease;
 
-public class AnimeProvider : IAnimeProvider
+public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
 {
     public IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
@@ -41,7 +41,7 @@ public class AnimeProvider : IAnimeProvider
 
         foreach (var resolution in items)
         {
-            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Magnet));
+            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Magnet), extractor);
         }
     }
 

@@ -17,20 +17,13 @@ public class Factory<TService, TId>(
         }
 
         using var scope = serviceScopeFactory.CreateScope();
-        return scope.ServiceProvider.GetRequiredKeyedService<TService>(id);
+        return scope.ServiceProvider.GetKeyedService<TService>(id) ?? scope.ServiceProvider.GetRequiredKeyedService<TService>(Guid.Empty);
     }
 
     public TService CreateDefault()
     {
         using var scope = serviceScopeFactory.CreateScope();
-
         var key = localSettingsService.ReadSetting<TId>(defaultKey);
-
-        if (EqualityComparer<TId>.Default.Equals(key, default))
-        {
-            return scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).First();
-        }
-
         return scope.ServiceProvider.GetKeyedService<TService>(key) ?? scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).First();
     }
 

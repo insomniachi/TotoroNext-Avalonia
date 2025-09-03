@@ -33,7 +33,7 @@ public partial class AnimeOverridesViewModel(
     [ObservableProperty] public partial SkipMethod EndingSkipMethod { get; set; }
 
     [ObservableProperty] public partial string? SearchTerm { get; set; }
-    public List<Descriptor> Providers { get; } = [ Descriptor.Empty, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
+    public List<Descriptor> Providers { get; } = [ Descriptor.None, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
     {

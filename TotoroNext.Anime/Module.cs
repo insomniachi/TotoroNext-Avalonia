@@ -1,6 +1,7 @@
 using IconPacks.Avalonia.MaterialDesign;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Interaction;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Anime.ViewModels;
@@ -18,7 +19,8 @@ public class Module : IModule
                 .AddSingleton<ITrackingUpdater, TrackingUpdater>()
                 .AddTransient<IAnimeThemes, AnimeThemes>()
                 .AddSingleton<IAnimeRelations, AnimeRelations>()
-                .AddSingleton<IDownloadManager, DownloadManager>();
+                .AddSingleton<IDownloadManager, DownloadManager>()
+                .AddDebrid();
 
         // initializers
         services.AddTransient<IInitializer, AnimeRelationsParser>()
@@ -29,7 +31,7 @@ public class Module : IModule
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", PackIconMaterialDesignKind.List);
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", PackIconMaterialDesignKind.Search);
         services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", PackIconMaterialDesignKind.Download,
-                                                                          new NavMenuItemTag() { IsFooterItem = true });
+                                                                          new NavMenuItemTag { IsFooterItem = true });
 
         // Pane navigation
         services.AddDataViewMap<UserListSortAndFilterView, UserListSortAndFilterViewModel, UserListSortAndFilter>()

@@ -23,5 +23,5 @@ public class Descriptor
 
     public bool IsInternal { get; set; } = false;
 
-    public static Descriptor Empty => new Descriptor() { Name = @"Select", Id = Guid.Empty };
+    public static Descriptor None => new Descriptor() { Name = @"None", Id = Guid.Empty };
 }

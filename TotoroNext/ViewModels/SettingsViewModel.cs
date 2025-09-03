@@ -41,6 +41,12 @@ public class SettingsModel : ObservableObject
         get;
         set => SetAndSaveProperty(ref field, value);
     }
+    
+    public Guid SelectedDebridService
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    }
 
     public SkipMethod OpeningSkipMethod
     {
@@ -102,12 +108,14 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
         AnimeProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
         TrackingServices = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.Tracking))];
         SegmentProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaSegments))];
+        DebridServices = [Descriptor.None, .. allModules.Where(x => x.Components.Contains(ComponentTypes.Debrid))];
     }
 
     public List<Descriptor> MediaEngines { get; }
     public List<Descriptor> AnimeProviders { get; }
     public List<Descriptor> TrackingServices { get; }
     public List<Descriptor> SegmentProviders { get; }
+    public List<Descriptor> DebridServices { get; }
 
 
     [ObservableProperty] public partial SettingsModel? Settings { get; private set; }

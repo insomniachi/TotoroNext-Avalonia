@@ -10,6 +10,7 @@ using TotoroNext.Anime.Abstractions;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Torrents.Abstractions;
 using TotoroNext.ViewModels;
 using TotoroNext.Views;
 
@@ -40,7 +41,8 @@ public class App : Application
                                   .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
-                                  .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider));
+                                  .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider))
+                                  .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService));
                           
                           RegisterNavigationViewItems(services);
 
@@ -153,6 +155,9 @@ public class DebugModuleStore : IModuleStore
         // Media Players
         yield return new MediaEngine.Mpv.Module();
         yield return new MediaEngine.Vlc.Module();
+        
+        // Debrid
+        yield return new Torrents.TorBox.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)
