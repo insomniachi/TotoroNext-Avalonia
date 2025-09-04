@@ -16,7 +16,8 @@ public class Module : IModule<Settings>
         Description = "TorBox debrid service integration",
         Components = [ComponentTypes.Debrid],
         Id = new Guid("2789535c-e32f-4e3c-ad2e-d45c84ec0f37"),
-        SettingViewModel = typeof(SettingsViewModel)
+        SettingViewModel = typeof(SettingsViewModel),
+        HeroImage = ResourceHelper.GetResource("torbox.jpg")
     };
     
     public void ConfigureServices(IServiceCollection services)

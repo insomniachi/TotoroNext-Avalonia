@@ -45,6 +45,8 @@
                           DisplayMemberBinding="{Binding Name}"
                           Width="300" />
             </u:FormItem>
+        </u:FormGroup>
+        <u:FormGroup Header="Auto Skip Settings">
             <u:FormItem Label="Opening Skip Method">
                 <u:EnumSelector EnumType="models:SkipMethod"
                                 Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
