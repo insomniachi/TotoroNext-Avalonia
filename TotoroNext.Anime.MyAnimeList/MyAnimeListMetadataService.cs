@@ -61,6 +61,16 @@ internal class MyAnimeListMetadataService : IMetadataService
         return await anime.GetEpisodes();
     }
 
+    public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
+    {
+        var jikanResponse = await _jikanClient.GetAnimeCharactersAsync(animeId);
+        return jikanResponse.Data.Select(x => new CharacterModel()
+        {
+            Name = x.Character.Name,
+            Image = TryConvertUri(x.Character.Images?.JPG?.ImageUrl)
+        }).ToList();
+    }
+
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
         var uri = new Url("https://api.jikan.moe/v4/anime");
@@ -147,38 +157,9 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         return [.. result.Data.Select(MalToModelConverter.ConvertModel)];
     }
-
-    public async Task<List<AnimeModel>> GetAiringAnimeAsync()
+    
+    private static Uri? TryConvertUri(string? url)
     {
-        var request = _client
-                      .Anime()
-                      .Top(AnimeRankingType.Airing)
-                      .WithLimit(15)
-                      .WithFields(_commonFields);
-
-        if (_settings.IncludeNsfw)
-        {
-            request.IncludeNsfw();
-        }
-
-        var result = await request.Find();
-
-        return [.. result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime))];
-    }
-
-    public async Task<List<AnimeModel>> GetAnimeAsync(Season season)
-    {
-        var request = _client.Anime()
-                             .OfSeason((AnimeSeason)(int)season.SeasonName, season.Year)
-                             .WithFields(_commonFields);
-
-        if (_settings.IncludeNsfw)
-        {
-            request.IncludeNsfw();
-        }
-
-        var pagedAnime = await request.Find();
-
-        return [.. pagedAnime.Data.Select(MalToModelConverter.ConvertModel)];
+        return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
     }
 }

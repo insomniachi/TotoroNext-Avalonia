@@ -13,6 +13,7 @@ public interface IMetadataService
     Task<List<AnimeModel>> SearchAnimeAsync(string term);
     Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request);
     Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime);
+    Task<List<CharacterModel>> GetCharactersAsync(long animeId);
     Task<List<string>> GetGenresAsync();
 }
 

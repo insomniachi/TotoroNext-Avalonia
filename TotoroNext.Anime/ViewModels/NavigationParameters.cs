@@ -17,3 +17,5 @@ public record WatchViewModelNavigationParameter(
     bool ContinueWatching = true);
 
 public record InfoViewNavigationParameters(AnimeModel Anime);
+
+public record CharactersViewNavigationParameters(AnimeModel Anime);

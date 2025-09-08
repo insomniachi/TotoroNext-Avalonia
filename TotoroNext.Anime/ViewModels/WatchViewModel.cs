@@ -306,8 +306,14 @@ public sealed partial class WatchViewModel(
 
     private async ValueTask<List<MediaSegment>> GetMediaSegments(VideoSource source, Episode episode)
     {
-        List<MediaSegment> segments = [ ..await MediaHelper.GetChapters(source.Url, source.Headers)];
-        _duration = MediaHelper.GetDuration(source.Url, source.Headers);
+        List<MediaSegment> segments = [];
+        
+        if(!IsMagnetLink(source.Url))
+        {
+            segments.AddRange(await MediaHelper.GetChapters(source.Url, source.Headers));
+            _duration = MediaHelper.GetDuration(source.Url, source.Headers);
+        }
+        
         
         if (segments.Count >= 2)
         {
@@ -339,5 +345,10 @@ public sealed partial class WatchViewModel(
         segments.AddRange(extras);
 
         return [.. segments.MakeContiguousSegments(_duration)];
+    }
+    
+    public static bool IsMagnetLink(Uri uri)
+    {
+        return uri.Scheme.Equals("magnet", StringComparison.OrdinalIgnoreCase);
     }
 }

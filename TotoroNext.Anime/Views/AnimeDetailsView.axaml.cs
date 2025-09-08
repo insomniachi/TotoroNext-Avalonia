@@ -76,6 +76,9 @@ public partial class AnimeDetailsView : UserControl
             case "Songs":
                 vm.Navigator?.NavigateToData(new SongsViewModelNavigationParameters(vm.Anime));
                 break;
+            case "Characters":
+                vm.Navigator?.NavigateToData(new CharactersViewNavigationParameters(vm.Anime));
+                break;
         }
     }
 }

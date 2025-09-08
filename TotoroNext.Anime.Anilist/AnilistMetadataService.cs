@@ -21,6 +21,34 @@ internal class AnilistMetadataService(
         return await anime.GetEpisodes();
     }
 
+    public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
+    {
+        var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
+                                                          .WithCharacters(new CharacterConnectionQueryBuilder()
+                                                                              .WithNodes(new CharacterQueryBuilder()
+                                                                                             .WithName(new CharacterNameQueryBuilder()
+                                                                                                 .WithFull())
+                                                                                             .WithImage(new CharacterImageQueryBuilder()
+                                                                                                 .WithLarge()))), (int)animeId,
+                                                      type: MediaType.Anime).Build();
+
+        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+        {
+            Query = query
+        });
+
+        if (response.Data.Media.Characters is null)
+        {
+            return [];
+        }
+
+        return response.Data.Media.Characters.Nodes.Select(x => new CharacterModel()
+        {
+            Name = x.Name.Full,
+            Image = TryConvertUri(x.Image.Large)
+        }).ToList();
+    }
+
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
         try
@@ -291,5 +319,10 @@ internal class AnilistMetadataService(
                                    .WithCompletedAt(new FuzzyDateQueryBuilder().WithAllFields())
                                    .WithProgress())
                .WithStatus();
+    }
+    
+    private static Uri? TryConvertUri(string? url)
+    {
+        return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
     }
 }

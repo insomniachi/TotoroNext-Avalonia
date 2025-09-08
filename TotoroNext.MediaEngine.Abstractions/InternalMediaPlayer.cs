@@ -81,6 +81,7 @@ internal class BackgroundInitializer(IServiceScopeFactory serviceScopeFactory) :
         {
             Console.WriteLine(e);
         }
-        return Task.CompletedTask;
+
+        return FfBinaries.EnsureExists();
     }
 }

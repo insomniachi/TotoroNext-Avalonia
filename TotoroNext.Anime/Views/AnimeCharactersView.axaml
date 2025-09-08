@@ -1,0 +1,38 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:AnimeCharactersViewModel"
+             x:Class="TotoroNext.Anime.Views.AnimeCharactersView">
+    <ScrollViewer>
+        <ItemsControl ItemsSource="{Binding Characters}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="models:CharacterModel">
+                    <Grid RowDefinitions="*, Auto" Margin="8">
+                        <Image ail:ImageLoader.Source="{Binding Image}" Stretch="UniformToFill" />
+                        <Border Grid.Row="1">
+                            <TextBlock Text="{Binding Name}"
+                                       FontWeight="SemiBold"
+                                       FontSize="14"
+                                       Margin="4"
+                                       TextAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <controls:ElasticWrapPanelEx IsFillHorizontal="True"
+                                                 ItemWidth="187.5"
+                                                 ItemHeight="300" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </ScrollViewer>
+</UserControl>

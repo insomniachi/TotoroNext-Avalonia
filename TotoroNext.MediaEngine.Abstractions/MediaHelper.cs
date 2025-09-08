@@ -11,6 +11,11 @@ public static class MediaHelper
     {
         var executable = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
                                   .FirstOrDefault(x => x.Contains("ffprobe"))!;
+
+        if (string.IsNullOrEmpty(executable))
+        {
+            return [];
+        }
         
         var psi = new ProcessStartInfo
         {
@@ -69,6 +74,11 @@ public static class MediaHelper
     {
         var executable = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
                                    .FirstOrDefault(x => x.Contains("ffprobe"))!;
+
+        if (string.IsNullOrEmpty(executable))
+        {
+            return TimeSpan.Zero;
+        }
 
         var startInfo = new ProcessStartInfo
         {

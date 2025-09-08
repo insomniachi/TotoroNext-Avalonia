@@ -66,6 +66,7 @@
                   SelectedIndex="0"
                   x:Name="Selector">
             <TabStripItem IsSelected="True" Content="Info"/>
+            <TabStripItem Content="Characters"/>
             <TabStripItem Content="Episodes" IsVisible="{Binding !IsMovie}"/>
             <TabStripItem Content="Related" />
             <TabStripItem Content="Recommended" />

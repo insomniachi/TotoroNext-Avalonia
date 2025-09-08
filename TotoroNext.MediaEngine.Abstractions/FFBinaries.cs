@@ -7,7 +7,7 @@ namespace TotoroNext.MediaEngine.Abstractions;
 
 public static class FfBinaries
 {
-    public static async Task DownloadLatest()
+    public static async Task EnsureExists()
     {
         var files = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
 
