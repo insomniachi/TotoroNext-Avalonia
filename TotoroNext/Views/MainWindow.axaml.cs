@@ -12,7 +12,7 @@ namespace TotoroNext.Views;
 
 public partial class MainWindow : UrsaWindow
 {
-    private readonly IKeyBindingScope _keyBindingScope = Container.Services.GetRequiredService<IKeyBindingScope>();
+    private readonly IKeyBindingsManager _keyBindingsManager = Container.Services.GetRequiredService<IKeyBindingsManager>();
     
     public MainWindow()
     {
@@ -47,7 +47,7 @@ public partial class MainWindow : UrsaWindow
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {
         var gesture = new KeyGesture(e.Key, e.KeyModifiers);
-        var keyBinding = _keyBindingScope.KeyBindings.FirstOrDefault(x => gesture.Equals(x.Gesture));
+        var keyBinding = _keyBindingsManager.KeyBindings.FirstOrDefault(x => gesture.Equals(x.Gesture));
         keyBinding?.Command.Execute(keyBinding.CommandParameter);
     }
 }

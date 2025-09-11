@@ -102,14 +102,14 @@ public class NavigationExtensions
             return;
         }
         
-        var scope = Container.Services.GetRequiredService<IKeyBindingScope>();
+        var scope = Container.Services.GetRequiredService<IKeyBindingsManager>();
         if (isDetaching)
         {
-            scope.ClearScope();
+            scope.ResetBindings();
         }
         else
         {
-            scope.SetScope(kbp);
+            scope.SetActiveBindings(kbp);
         }
     }
 

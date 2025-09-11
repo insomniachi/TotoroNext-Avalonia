@@ -3,16 +3,16 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Module;
 
-public class KeyBindingScope : IKeyBindingScope
+public class KeyBindingsManager : IKeyBindingsManager
 {
     public List<KeyBinding> KeyBindings { get; } = [];
     
-    public void SetScope(IKeyBindingsProvider provider)
+    public void SetActiveBindings(IKeyBindingsProvider provider)
     {
         KeyBindings.AddRange(provider.GetKeyBindings());
     }
     
-    public void ClearScope()
+    public void ResetBindings()
     {
         KeyBindings.Clear();
     }

@@ -203,12 +203,12 @@ public sealed partial class WatchViewModel(
     {
         yield return new KeyBinding()
         {
-            Gesture = KeyGesture.Parse("F11"),
+            Gesture = new KeyGesture(Key.F11),
             Command = ReactiveCommand.Create(messenger.Send<EnterFullScreen>)
         };
         yield return new KeyBinding()
         {
-            Gesture = KeyGesture.Parse("Escape"),
+            Gesture = new KeyGesture(Key.Escape),
             Command = ReactiveCommand.Create(messenger.Send<ExitFullScreen>)
         };
     }
