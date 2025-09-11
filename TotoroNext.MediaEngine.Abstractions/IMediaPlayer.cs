@@ -1,4 +1,5 @@
 using System.Reactive;
+using LibVLCSharp.Shared;
 
 namespace TotoroNext.MediaEngine.Abstractions;
 
@@ -15,8 +16,9 @@ public interface ISeekable
     Task SeekTo(TimeSpan position);
 }
 
-public interface IInternalMediaPlayer : IMediaPlayer, ISeekable
+public interface IEmbeddedVlcMediaPlayer : IMediaPlayer, ISeekable
 {
+    MediaPlayer MediaPlayer { get; }
     MediaPlayerState CurrentState { get; }
     IObservable<MediaPlayerState> StateChanged { get; }
     void Pause();

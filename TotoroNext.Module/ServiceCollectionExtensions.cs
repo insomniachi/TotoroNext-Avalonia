@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
         services.AddTransient<IDialogService, DialogService>();
         services.AddHostedService<InitializerService>();
+        services.AddSingleton<IKeyBindingScope, KeyBindingScope>();
         
         return services;
     }

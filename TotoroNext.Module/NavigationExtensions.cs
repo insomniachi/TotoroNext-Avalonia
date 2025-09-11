@@ -83,14 +83,34 @@ public class NavigationExtensions
         {
             HandleClosable(view, vm);
             HandleInitializable(vm);
+            HandleKeyBindings(vm, false);
             await HandleIAsyncInitializable(vm);
         };
                     
         view.DetachedFromLogicalTree += async (_, _) =>
         {
             HandleDisposable(vm);
+            HandleKeyBindings(vm, true);
             await HandleAsyncDisposable(vm);
         };
+    }
+
+    private static void HandleKeyBindings(object vm, bool isDetaching)
+    {
+        if (vm is not IKeyBindingsProvider kbp)
+        {
+            return;
+        }
+        
+        var scope = Container.Services.GetRequiredService<IKeyBindingScope>();
+        if (isDetaching)
+        {
+            scope.ClearScope();
+        }
+        else
+        {
+            scope.SetScope(kbp);
+        }
     }
 
     private static void HandleClosable(StyledElement view, object vm)

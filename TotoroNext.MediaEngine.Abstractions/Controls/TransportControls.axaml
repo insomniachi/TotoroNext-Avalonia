@@ -1,0 +1,90 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:controls="clr-namespace:TotoroNext.MediaEngine.Abstractions.Controls"
+             xmlns:conv="using:TotoroNext.Module.Converters"
+             xmlns:mconv="using:TotoroNext.MediaEngine.Abstractions"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="controls:TransportControlsViewModel"
+             x:Class="TotoroNext.MediaEngine.Abstractions.Controls.TransportControls"
+             Background="Transparent">
+    <Grid RowDefinitions="*,Auto">
+        <Grid Grid.Row="1"
+              x:Name="MediaControlsGrid"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              RowDefinitions="*,*"
+              RowSpacing="12">
+            <Grid.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+                </Transitions>
+            </Grid.Transitions>
+
+            <Grid Margin="8 0 8 0"
+                  ColumnDefinitions="Auto,*,Auto"
+                  ColumnSpacing="8">
+
+                <TextBlock Grid.Column="0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Text="{Binding ActualPosition, Converter={x:Static conv:Converters.TimeSpanConverter}}" />
+
+                <Slider Grid.Column="1"
+                        x:Name="PositionSlider"
+                        Maximum="{Binding Duration.Ticks, Mode=OneWay}"
+                        Value="{Binding CurrentPositionTicks}"
+                        PointerPressed="OnSliderPressed"
+                        PointerReleased="OnSliderReleased" />
+
+                <TextBlock Grid.Column="2"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Text="{Binding TimeRemaining, Converter={x:Static conv:Converters.TimeSpanConverter}}" />
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0 0 0 4"
+                  ColumnDefinitions="Auto,*,Auto">
+                <u:ToolBar Grid.Column="1" HorizontalAlignment="Center">
+                    <Button x:Name="SeekBackwardButton" Command="{Binding SeekBackwardCommand}">
+                        <Viewbox Height="20" Width="20">
+                            <iconPacks:PackIconControl
+                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.SkipPrevious}" />
+                        </Viewbox>
+                    </Button>
+                    <Button x:Name="PlayPauseButton" Command="{Binding TogglePlayPauseCommand}"
+                            Height="50"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Width="50"
+                            CornerRadius="25">
+                        <Viewbox Height="30" Width="30"
+                                 Margin="{Binding PlayPauseButtonMargin, Mode=OneWay}">
+                            <iconPacks:PackIconControl
+                                Kind="{Binding CurrentState, Converter={x:Static mconv:Converters.MediaPlayerStateToIconConverter}}" />
+                        </Viewbox>
+                    </Button>
+                    <Button x:Name="SeekForwardButton" Command="{Binding SeekForwardCommand}">
+                        <Viewbox Height="20" Width="20">
+                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialDesignKind.SkipNext}" />
+                        </Viewbox>
+                    </Button>
+                </u:ToolBar>
+                
+                <u:ToolBar Grid.Column="2" VerticalAlignment="Center">
+                    <Button Command="{Binding ToggleFullscreenCommand}">
+                        <Viewbox Height="20" Width="20">
+                            <iconPacks:PackIconControl
+                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Fullscreen}"
+                                x:Name="FullScreenIcon"/>
+                        </Viewbox>
+                    </Button>
+                </u:ToolBar>
+                
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

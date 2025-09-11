@@ -36,6 +36,7 @@
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageVersion Include="JikanDotNet" Version="2.9.1" />
     <PackageVersion Include="LibVLCSharp" Version="3.9.4" />
+    <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.9.4" />
     <PackageVersion Include="MalApi.V2" Version="2.0.8" />
     <PackageVersion Include="MathNet.Numerics" Version="5.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.8" />

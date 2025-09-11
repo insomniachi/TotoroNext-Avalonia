@@ -10,8 +10,8 @@ namespace TotoroNext.MediaEngine.Abstractions.Controls;
 
 public partial class AudioPlayer : UserControl
 {
-    public static readonly StyledProperty<IInternalMediaPlayer?> MediaPlayerProperty =
-        AvaloniaProperty.Register<AudioPlayer, IInternalMediaPlayer?>("MediaPlayer");
+    public static readonly StyledProperty<IEmbeddedVlcMediaPlayer?> MediaPlayerProperty =
+        AvaloniaProperty.Register<AudioPlayer, IEmbeddedVlcMediaPlayer?>("MediaPlayer");
 
     public AudioPlayer()
     {
@@ -20,7 +20,7 @@ public partial class AudioPlayer : UserControl
         MediaPlayerProperty.Changed.AddClassHandler<AudioPlayer>(OnMediaPlayerChanged);
     }
 
-    public IInternalMediaPlayer? MediaPlayer
+    public IEmbeddedVlcMediaPlayer? MediaPlayer
     {
         get => GetValue(MediaPlayerProperty);
         set => SetValue(MediaPlayerProperty, value);
@@ -28,7 +28,7 @@ public partial class AudioPlayer : UserControl
 
     private static void OnMediaPlayerChanged(AudioPlayer player, AvaloniaPropertyChangedEventArgs arg)
     {
-        if (arg.NewValue is not IInternalMediaPlayer { } mediaPlayer)
+        if (arg.NewValue is not IEmbeddedVlcMediaPlayer { } mediaPlayer)
         {
             return;
         }

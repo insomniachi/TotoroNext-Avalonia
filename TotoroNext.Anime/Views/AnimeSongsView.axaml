@@ -17,7 +17,7 @@
         <ScrollViewer>
             <Grid RowDefinitions="Auto,*" RowSpacing="16">
 
-                <mac:AudioPlayer MediaPlayer="{Binding InternalMediaPlayer}"
+                <mac:AudioPlayer MediaPlayer="{Binding EmbeddedVlcMediaPlayer}"
                                  IsVisible="{Binding IsPlayingOrPaused, Mode=OneWay}" />
 
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Themes}">

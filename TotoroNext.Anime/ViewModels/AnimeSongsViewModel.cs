@@ -31,15 +31,15 @@ public sealed partial class AnimeSongsViewModel(
 
     [ObservableProperty] public partial bool IsPlayingOrPaused { get; set; }
 
-    public IInternalMediaPlayer InternalMediaPlayer { get; } = (IInternalMediaPlayer)mediaPlayerFactory.Create(Guid.Empty);
+    public IEmbeddedVlcMediaPlayer EmbeddedVlcMediaPlayer { get; } = (IEmbeddedVlcMediaPlayer)mediaPlayerFactory.Create(Guid.Empty);
 
     public async Task InitializeAsync()
     {
-        InternalMediaPlayer.StateChanged
+        EmbeddedVlcMediaPlayer.StateChanged
                            .ObserveOn(RxApp.MainThreadScheduler)
                            .Subscribe(state => IsPlayingOrPaused = state is MediaPlayerState.Playing or MediaPlayerState.Paused);
 
-        SubscriptionsForRpc(InternalMediaPlayer);
+        SubscriptionsForRpc(EmbeddedVlcMediaPlayer);
         
         IsLoading = true;
 
@@ -65,7 +65,7 @@ public sealed partial class AnimeSongsViewModel(
 
         _selectedThemeObject = theme;
         var media = new Media(uri, new MediaMetadata(theme.SongName));
-        InternalMediaPlayer.Play(media, TimeSpan.Zero);
+        EmbeddedVlcMediaPlayer.Play(media, TimeSpan.Zero);
     }
 
     [RelayCommand]

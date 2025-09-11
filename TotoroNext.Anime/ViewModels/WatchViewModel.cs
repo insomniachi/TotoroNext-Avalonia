@@ -1,5 +1,6 @@
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
@@ -24,7 +25,10 @@ public sealed partial class WatchViewModel(
     IAnimeRelations relations,
     IDialogService dialogService,
     IMessenger messenger,
-    ILocalSettingsService localSettingsService) : ObservableObject, IAsyncInitializable, IDisposable
+    ILocalSettingsService localSettingsService) : ObservableObject,
+                                                  IAsyncInitializable,
+                                                  IDisposable,
+                                                  IKeyBindingsProvider
 {
     private TimeSpan _duration;
     private Media? _media;
@@ -51,6 +55,10 @@ public sealed partial class WatchViewModel(
 
     [ObservableProperty] public partial bool IsMovie { get; set; }
 
+    [ObservableProperty] public partial bool IsFullscreen { get; set; }
+
+    [ObservableProperty] public partial bool IsEpisodesVisible { get; set; } = true;
+
     public async Task InitializeAsync()
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
@@ -73,7 +81,7 @@ public sealed partial class WatchViewModel(
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(e =>
             {
-                if (e.Count > (Anime.TotalEpisodes ?? 0) && relations.FindRelation(Anime!) is {}  relation)
+                if (e.Count > (Anime.TotalEpisodes ?? 0) && relations.FindRelation(Anime!) is { } relation)
                 {
                     var eps = e.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();
                     foreach (var ep in eps)
@@ -88,8 +96,8 @@ public sealed partial class WatchViewModel(
                     Episodes = e;
                 }
             });
-        
-        
+
+
         var infos = await Anime.GetEpisodes();
 
         this.WhenAnyValue(x => x.Episodes)
@@ -188,6 +196,21 @@ public sealed partial class WatchViewModel(
             .Subscribe();
 
         InitializePublishers();
+        InitializeListeners();
+    }
+    
+    public IEnumerable<KeyBinding> GetKeyBindings()
+    {
+        yield return new KeyBinding()
+        {
+            Gesture = KeyGesture.Parse("F11"),
+            Command = ReactiveCommand.Create(messenger.Send<EnterFullScreen>)
+        };
+        yield return new KeyBinding()
+        {
+            Gesture = KeyGesture.Parse("Escape"),
+            Command = ReactiveCommand.Create(messenger.Send<ExitFullScreen>)
+        };
     }
 
     public void Dispose()
@@ -205,7 +228,7 @@ public sealed partial class WatchViewModel(
         {
             return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()));
         }
-        
+
         var @override = animeOverridesRepository.GetOverrides(Anime.Id);
         var method = segment.Type switch
         {
@@ -220,7 +243,7 @@ public sealed partial class WatchViewModel(
         {
             SkipMethod.Always => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.Yes),
             SkipMethod.Never => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.No),
-            _ => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString())),
+            _ => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()))
         };
     }
 
@@ -266,6 +289,16 @@ public sealed partial class WatchViewModel(
         }
     }
 
+    private void InitializeListeners()
+    {
+        messenger.Register<EnterFullScreen>(this, (_, _) => IsFullscreen = true);
+        messenger.Register<ExitFullScreen>(this, (_, _) => IsFullscreen = false);
+
+        this.WhenAnyValue(x => x.IsMovie, x => x.IsFullscreen)
+            .Select(x => x is { Item1: false, Item2: false })
+            .Subscribe(isVisible => IsEpisodesVisible = isVisible);
+    }
+
     private async Task Play(VideoSource source)
     {
         if (SelectedEpisode is null)
@@ -280,7 +313,6 @@ public sealed partial class WatchViewModel(
         var title = string.Join(" - ", parts.Where(x => !string.IsNullOrEmpty(x)));
         var segments = await GetMediaSegments(source, SelectedEpisode);
         var metadata = new MediaMetadata(title, source.Headers, segments, source.Subtitle);
-        
         _media = new Media(source.Url, metadata);
 
         MediaPlayer.Play(_media, SelectedEpisode.StartPosition);
@@ -307,14 +339,14 @@ public sealed partial class WatchViewModel(
     private async ValueTask<List<MediaSegment>> GetMediaSegments(VideoSource source, Episode episode)
     {
         List<MediaSegment> segments = [];
-        
-        if(!IsMagnetLink(source.Url))
+
+        if (!IsMagnetLink(source.Url))
         {
             segments.AddRange(await MediaHelper.GetChapters(source.Url, source.Headers));
             _duration = MediaHelper.GetDuration(source.Url, source.Headers);
         }
-        
-        
+
+
         if (segments.Count >= 2)
         {
             return [.. segments.MakeContiguousSegments(_duration)];
@@ -333,20 +365,20 @@ public sealed partial class WatchViewModel(
             }
         }
 
-        if (segments.Count >= 2 || 
-            Anime is not { ExternalIds.MyAnimeList: not null } || 
+        if (segments.Count >= 2 ||
+            Anime is not { ExternalIds.MyAnimeList: not null } ||
             segmentsFactory.CreateDefault() is not { } segmentsProvider)
         {
             return [.. segments.MakeContiguousSegments(_duration)];
         }
 
-        var providerSegments =  await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, episode.Number, _duration.TotalSeconds);
+        var providerSegments = await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, episode.Number, _duration.TotalSeconds);
         var extras = providerSegments.Where(x => segments.All(s => s.Type != x.Type));
         segments.AddRange(extras);
 
         return [.. segments.MakeContiguousSegments(_duration)];
     }
-    
+
     public static bool IsMagnetLink(Uri uri)
     {
         return uri.Scheme.Equals("magnet", StringComparison.OrdinalIgnoreCase);

@@ -7,16 +7,22 @@
              xmlns:aam="using:TotoroNext.Anime.Abstractions.Models"
              xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
+             xmlns:views="clr-namespace:TotoroNext.Anime.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:WatchViewModel"
              x:Class="TotoroNext.Anime.Views.WatchView">
+
     <Grid RowDefinitions="*,Auto"
-          ColumnDefinitions="*,Auto">
-        <Grid Grid.Row="1"
+          ColumnDefinitions="*,Auto"
+          x:Name="MainGrid"> 
+         
+        <Grid Grid.Column="0" Grid.Row="1"
               MaxHeight="100"
               VerticalAlignment="Stretch"
               ColumnSpacing="16"
-              ColumnDefinitions="Auto,*">
+              ColumnDefinitions="Auto,*"
+              IsVisible="{Binding !IsFullscreen}">
             <TextBlock Text="Servers" VerticalAlignment="Center" />
             <u:SelectionList Grid.Column="1"
                              ItemsSource="{Binding Servers}"
@@ -36,7 +42,7 @@
               RowDefinitions="Auto,*" 
               RowSpacing="16" 
               Background="{DynamicResource SemiColorTertiaryLightActive}"
-              IsVisible="{Binding IsMovie, Converter={x:Static BoolConverters.Not}}">
+              IsVisible="{Binding IsEpisodesVisible}">
             <TextBlock Text="Episodes" 
                        Classes.H1="true"
                        Margin="8 8 0 0"

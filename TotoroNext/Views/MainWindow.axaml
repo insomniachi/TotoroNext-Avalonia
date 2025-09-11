@@ -10,12 +10,13 @@
               xmlns:mod="using:TotoroNext.Module"
               Icon="/Assets/WindowIcon.ico"
               WindowStartupLocation="CenterScreen"
-              IsFullScreenButtonVisible="{OnPlatform {x:True}, macOS={x:False}}"
+              IsFullScreenButtonVisible="False"
               IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
               Title="TotoroNext">
     <u:UrsaWindow.RightContent>
         <u:ThemeToggleButton
             IsThreeState="True"
+            x:Name="ThemeToggleButton"
             Mode="Controller" />
     </u:UrsaWindow.RightContent>
 
@@ -30,11 +31,13 @@
             <Border
                 Padding="8,4"
                 VerticalAlignment="Stretch"
-                Theme="{DynamicResource CardBorder}">
+                Theme="{DynamicResource CardBorder}"
+                x:Name="MenuContainer">
                 <u:NavMenu
                     Name="Menu"
                     ExpandWidth="300"
                     ItemsSource="{Binding MenuItems}">
+                    
                     <u:NavMenu.HeaderTemplate>
                         <DataTemplate x:DataType="x:String">
                             <TextBlock HorizontalAlignment="Left" Text="{Binding}" VerticalAlignment="Center" />
@@ -70,6 +73,7 @@
             <TransitioningContentControl
                 Grid.Column="1"
                 Margin="12,36,12,12"
+                x:Name="ContentArea"
                 mod:NavigationExtensions.IsAttached="True">
                 <TransitioningContentControl.PageTransition>
                     <CrossFade Duration="0:00:00.200" />

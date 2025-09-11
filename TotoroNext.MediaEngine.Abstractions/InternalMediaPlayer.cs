@@ -7,51 +7,62 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.MediaEngine.Abstractions;
 
-public class InternalMediaPlayer : IInternalMediaPlayer
+public class EmbeddedVlcMediaPlayer : IEmbeddedVlcMediaPlayer
 {
     private static readonly LibVLC LibVlc = new();
-    private readonly MediaPlayer _mediaPlayer = new(LibVlc);
 
-    public InternalMediaPlayer()
+    public EmbeddedVlcMediaPlayer()
     {
-        StateChanged = Observable.Merge(_mediaPlayer.Events().Playing,
-                                        _mediaPlayer.Events().Paused,
-                                        _mediaPlayer.Events().EndReached,
-                                        _mediaPlayer.Events().Stopped).Select(_ => ConvertState(_mediaPlayer.State));
+        StateChanged = Observable.Merge(MediaPlayer.Events().Playing,
+                                        MediaPlayer.Events().Paused,
+                                        MediaPlayer.Events().EndReached,
+                                        MediaPlayer.Events().Stopped).Select(_ => ConvertState(MediaPlayer.State));
     }
 
+    public MediaPlayer MediaPlayer { get; } = new(LibVlc);
     public IObservable<MediaPlayerState> StateChanged { get; }
-    public IObservable<TimeSpan> DurationChanged => _mediaPlayer.Events().LengthChanged.Select(e => TimeSpan.FromMilliseconds(e.Length));
-    public IObservable<TimeSpan> PositionChanged => _mediaPlayer.Events().TimeChanged.Select(e => TimeSpan.FromMilliseconds(e.Time));
-    public IObservable<Unit> PlaybackStopped => _mediaPlayer.Events().Stopped.Select(_ => Unit.Default);
+    public IObservable<TimeSpan> DurationChanged => MediaPlayer.Events().LengthChanged.Select(e => TimeSpan.FromMilliseconds(e.Length));
+    public IObservable<TimeSpan> PositionChanged => MediaPlayer.Events().TimeChanged.Select(e => TimeSpan.FromMilliseconds(e.Time));
+    public IObservable<Unit> PlaybackStopped => MediaPlayer.Events().Stopped.Select(_ => Unit.Default);
 
-    public MediaPlayerState CurrentState => ConvertState(_mediaPlayer.State);
+    public MediaPlayerState CurrentState => ConvertState(MediaPlayer.State);
 
     public void Play(Media media, TimeSpan startPosition)
     {
         var vlcMedia = new LibVLCSharp.Shared.Media(LibVlc, media.Uri);
-        _mediaPlayer.Play(vlcMedia);
+        
+        if (media.Metadata.Headers?.TryGetValue("user-agent", out var userAgent) == true)
+        {
+            vlcMedia.AddOption($":http-user-agent={userAgent}");
+        }
+
+        if (media.Metadata.Headers?.TryGetValue("referer", out var referer) == true)
+        {
+            vlcMedia.AddOption($":http-referrer={referer}");
+        }
+        
+        MediaPlayer.Play(vlcMedia);
     }
 
     public Task SeekTo(TimeSpan position)
     {
-        _mediaPlayer.SeekTo(position);
+        MediaPlayer.SeekTo(position);
         return Task.CompletedTask;
     }
 
     public void Pause()
     {
-        _mediaPlayer.Pause();
+        MediaPlayer.Pause();
     }
 
     public void Play()
     {
-        _mediaPlayer.Play();
+        MediaPlayer.Play();
     }
 
     public void Stop()
     {
-        _mediaPlayer.Stop();
+        MediaPlayer.Stop();
     }
 
     private static MediaPlayerState ConvertState(VLCState state)
@@ -75,7 +86,7 @@ internal class BackgroundInitializer(IServiceScopeFactory serviceScopeFactory) :
         using var scope = serviceScopeFactory.CreateScope();
         try
         {
-            scope.ServiceProvider.GetService<IInternalMediaPlayer>(); // Force VLC initialization
+            scope.ServiceProvider.GetService<IEmbeddedVlcMediaPlayer>(); // Force VLC initialization
         }
         catch (Exception e)
         {
