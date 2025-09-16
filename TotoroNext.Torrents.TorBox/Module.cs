@@ -19,7 +19,7 @@ public class Module : IModule<Settings>
         SettingViewModel = typeof(SettingsViewModel),
         HeroImage = ResourceHelper.GetResource("torbox.jpg")
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
@@ -32,8 +32,8 @@ public class Module : IModule<Settings>
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         });
         services.AddKeyedTransient<IDebrid, TorBoxService>(Descriptor.Id);
+        services.AddTransient<TorBoxService>();
     }
-
 }
 
 public class Settings

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
+using IconPacks.Avalonia.MaterialDesign;
 using ReactiveUI;
 
 namespace TotoroNext.MediaEngine.Abstractions.Controls;
@@ -13,8 +14,8 @@ public partial class TransportControls : UserControl
     {
         InitializeComponent();
 
-        WeakReferenceMessenger.Default.Register<EnterFullScreen>(this, (_,_) => FullScreenIcon.Kind = IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.FullscreenExit);
-        WeakReferenceMessenger.Default.Register<ExitFullScreen>(this, (_,_) => FullScreenIcon.Kind = IconPacks.Avalonia.MaterialDesign.PackIconMaterialDesignKind.Fullscreen);
+        WeakReferenceMessenger.Default.Register<EnterFullScreen>(this, (_, _) => FullScreenIcon.Kind = PackIconMaterialDesignKind.FullscreenExit);
+        WeakReferenceMessenger.Default.Register<ExitFullScreen>(this, (_, _) => FullScreenIcon.Kind = PackIconMaterialDesignKind.Fullscreen);
 
         PositionSlider.AddHandler(PointerPressedEvent,
                                   OnSliderPressed, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
@@ -31,6 +32,7 @@ public partial class TransportControls : UserControl
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ =>
             {
+                Cursor = new Cursor(StandardCursorType.None);
                 MediaControlsGrid.Opacity = 0;
             });
 
@@ -38,8 +40,16 @@ public partial class TransportControls : UserControl
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(_ =>
             {
+                Cursor = Cursor.Default;
                 MediaControlsGrid.Opacity = 1;
             });
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
+        var gesture = new KeyGesture(e.Key, e.KeyModifiers);
+        WeakReferenceMessenger.Default.Send(gesture);
+        base.OnKeyDown(e);
     }
 
     private void OnSliderPressed(object? sender, PointerPressedEventArgs e)

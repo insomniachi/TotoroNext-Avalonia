@@ -1,10 +1,9 @@
-﻿using Avalonia.Input;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace TotoroNext.Module.Abstractions;
 
-public interface IKeyBindingsManager
+public interface IKeyBindingsManager : IHostedService
 {
-    List<KeyBinding> KeyBindings { get; }
     void SetActiveBindings(IKeyBindingsProvider provider);
     void ResetBindings();
 }

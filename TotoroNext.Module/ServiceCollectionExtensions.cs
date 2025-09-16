@@ -17,7 +17,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IDialogService, DialogService>();
         services.AddHostedService<InitializerService>();
         services.AddSingleton<IKeyBindingsManager, KeyBindingsManager>();
-        
+        services.AddHostedService(sp => sp.GetRequiredService<IKeyBindingsManager>());
+
         return services;
     }
 
@@ -73,7 +74,8 @@ public static class ServiceCollectionExtensions
         return services.AddMainNavigationItem<TView, TViewModel>(header, icon, tag);
     }
 
-    public static IServiceCollection AddParentNavigationViewItem(this IServiceCollection services, string header, Enum icon, NavMenuItemTag? tag = null)
+    public static IServiceCollection AddParentNavigationViewItem(this IServiceCollection services, string header, Enum icon,
+                                                                 NavMenuItemTag? tag = null)
     {
         tag ??= new NavMenuItemTag();
         return services.AddTransient(_ =>

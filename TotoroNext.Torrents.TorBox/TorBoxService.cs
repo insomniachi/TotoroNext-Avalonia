@@ -9,6 +9,16 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
 {
     private readonly FlurlClient _client = new(httpClientFactory.CreateClient("TorBox"));
 
+    public async Task DeleteAllTorrents()
+    {
+        await _client.Request("torrents", "controltorrent")
+                     .PostUrlEncodedAsync(new
+                     {
+                         all = true,
+                         operation = "delete"
+                     });
+    }
+
     public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet)
     {
         try

@@ -23,7 +23,6 @@ public interface IEmbeddedVlcMediaPlayer : IMediaPlayer, ISeekable
     IObservable<MediaPlayerState> StateChanged { get; }
     void Pause();
     void Play();
-    void Stop();
 }
 
 public record Media(Uri Uri, MediaMetadata Metadata);

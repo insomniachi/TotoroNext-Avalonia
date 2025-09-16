@@ -1,12 +1,17 @@
-﻿using TotoroNext.Module;
+﻿using CommunityToolkit.Mvvm.Input;
+using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Torrents.TorBox.ViewModel;
 
-public class SettingsViewModel : ModuleSettingsViewModel<Settings>
+internal partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
 {
-    public SettingsViewModel(IModuleSettings<Settings> settings) : base(settings)
+    private readonly TorBoxService _torboxService;
+
+    public SettingsViewModel(IModuleSettings<Settings> settings,
+                             TorBoxService torboxService) : base(settings)
     {
+        _torboxService = torboxService;
         Token = settings.Value.Token;
     }
 
@@ -14,5 +19,11 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>
     {
         get;
         set => SetAndSaveProperty(ref field, value, x => x.Token = value);
+    }
+
+    [RelayCommand]
+    private async Task DeleteAll()
+    {
+        await _torboxService.DeleteAllTorrents();
     }
 }

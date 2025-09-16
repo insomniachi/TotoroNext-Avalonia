@@ -13,7 +13,12 @@
                Stretch="UniformToFill"
                Width="600" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
-            <TextBox Text="{Binding Token}" u:FormItem.Label="Api token"/>
+            <TextBox Text="{Binding Token}" u:FormItem.Label="Api token" />
+            <Button Content="Delete All Downloads"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding DeleteAllCommand}" />
         </u:Form>
     </Grid>
 </UserControl>

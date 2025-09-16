@@ -2,6 +2,7 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -32,6 +33,7 @@ public sealed partial class WatchViewModel(
 {
     private TimeSpan _duration;
     private Media? _media;
+    private TimeSpan _currentPosition;
 
     public IMediaPlayer MediaPlayer { get; } = mediaPlayerFactory.CreateDefault();
 
@@ -201,15 +203,46 @@ public sealed partial class WatchViewModel(
     
     public IEnumerable<KeyBinding> GetKeyBindings()
     {
+        if (MediaPlayer is not IEmbeddedVlcMediaPlayer embeddedPlayer)
+        {
+            yield break;
+        }
+        
         yield return new KeyBinding()
         {
             Gesture = new KeyGesture(Key.F11),
-            Command = ReactiveCommand.Create(messenger.Send<EnterFullScreen>)
+            Command = new RelayCommand(() => messenger.Send<EnterFullScreen>())
         };
         yield return new KeyBinding()
         {
             Gesture = new KeyGesture(Key.Escape),
-            Command = ReactiveCommand.Create(messenger.Send<ExitFullScreen>)
+            Command = new RelayCommand(() => messenger.Send<ExitFullScreen>())
+        };
+        yield return new KeyBinding()
+        {
+            Gesture = new KeyGesture(Key.Space),
+            Command = new RelayCommand(() =>
+            {
+                switch (embeddedPlayer.CurrentState)
+                {
+                    case MediaPlayerState.Playing:
+                        embeddedPlayer.Pause();
+                        break;
+                    case MediaPlayerState.Paused:
+                        embeddedPlayer.Play();
+                        break;
+                }
+            })
+        };
+        yield return new KeyBinding()
+        {
+            Gesture = new KeyGesture(Key.Right),
+            Command = new RelayCommand(() => embeddedPlayer.SeekTo(_currentPosition + TimeSpan.FromSeconds(10)))
+        };
+        yield return new KeyBinding()
+        {
+            Gesture = new KeyGesture(Key.Left),
+            Command = new RelayCommand(() => embeddedPlayer.SeekTo(_currentPosition - TimeSpan.FromSeconds(10)))
         };
     }
 
@@ -254,6 +287,7 @@ public sealed partial class WatchViewModel(
             .Where(_ => Anime is not null && SelectedEpisode is not null)
             .Subscribe(position =>
             {
+                _currentPosition = position;
                 messenger.Send(new PlaybackState
                 {
                     Anime = Anime!,
