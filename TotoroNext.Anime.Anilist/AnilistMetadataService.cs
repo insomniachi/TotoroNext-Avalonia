@@ -59,11 +59,11 @@ internal class AnilistMetadataService(
                                                              .WithMedia(MediaQueryBuilder(),
                                                                         search: request.Title,
                                                                         season: AniListModelToAnimeModelConverter.ConvertSeason(request.SeasonName),
-                                                                        startDate: request.MinYear is { } minYear
-                                                                            ? new DateTime(minYear, 1, 1)
+                                                                        startDateGreater: request.MinYear is { } minYear and > 1950
+                                                                            ? int.Parse($"{minYear}0000")
                                                                             : null,
-                                                                        endDate: request.MaxYear is { } maxYear
-                                                                            ? new DateTime(maxYear, 12, 31)
+                                                                        endDateLesser: request.MaxYear is { } maxYear and > 1950
+                                                                            ? int.Parse($"{maxYear + 1}0000")
                                                                             : null,
                                                                         source: AniListModelToAnimeModelConverter.ConvertSource(request.Source),
                                                                         genreIn: request.IncludedGenres,

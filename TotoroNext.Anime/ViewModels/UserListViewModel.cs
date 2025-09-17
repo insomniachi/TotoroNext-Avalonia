@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -11,7 +12,7 @@ using TotoroNext.Module.Abstractions;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public partial class UserListViewModel : ObservableObject, IAsyncInitializable
+public partial class UserListViewModel : ObservableObject, IAsyncInitializable, IKeyBindingsProvider 
 {
     private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
     private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
@@ -75,6 +76,45 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable
     private void ClearFilters()
     {
         Filter.Clear();
+    }
+
+    public IEnumerable<KeyBinding> GetKeyBindings()
+    {
+        yield return new KeyBinding()
+        {
+            Gesture = new KeyGesture(Key.F, KeyModifiers.Control),
+            Command = OpenFilterPaneCommand
+        };
+        yield return new KeyBinding()
+        {
+            Gesture = new KeyGesture(Key.Right),
+            Command = new RelayCommand(() =>
+            {
+                if (Filter.Status is not { } status)
+                {
+                    return;
+                }
+
+                var index = AllStatus.IndexOf(status);
+                var newIndex = (index + 1) % AllStatus.Count;
+                Filter.Status = AllStatus[newIndex];
+            })
+        };
+        yield return new KeyBinding()
+        {
+            Gesture = new KeyGesture(Key.Left),
+            Command = new RelayCommand(() =>
+            {
+                if (Filter.Status is not { } status)
+                {
+                    return;
+                }
+
+                var index = AllStatus.IndexOf(status);
+                var newIndex = (index - 1 + AllStatus.Count) % AllStatus.Count;
+                Filter.Status = AllStatus[newIndex];
+            })
+        };
     }
 }
 

@@ -12,7 +12,7 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
     public async Task DeleteAllTorrents()
     {
         await _client.Request("torrents", "controltorrent")
-                     .PostUrlEncodedAsync(new
+                     .PostJsonAsync(new
                      {
                          all = true,
                          operation = "delete"

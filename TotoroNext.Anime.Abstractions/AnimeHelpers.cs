@@ -2,7 +2,7 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public class AnimeHelpers
+public static class AnimeHelpers
 {
     public static Season PrevSeason()
     {
@@ -52,9 +52,7 @@ public class AnimeHelpers
 
     public static Season CurrentSeason()
     {
-        var date = DateTime.Now;
-        var year = date.Year;
-        var month = date.Month;
+        var (year, month, _) = DateTime.Now;
 
         var current = month switch
         {
@@ -84,11 +82,6 @@ public class AnimeHelpers
 
     public static string UserScore(Tracking tracking)
     {
-        if (tracking is null or { Score: null or 0 })
-        {
-            return "-";
-        }
-
-        return tracking.Score.Value.ToString();
+        return tracking is null or { Score: null or 0 } ? "-" : tracking.Score.Value.ToString();
     }
 }

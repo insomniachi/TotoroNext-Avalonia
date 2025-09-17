@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,9 +12,9 @@ namespace TotoroNext.Anime.ViewModels;
 [UsedImplicitly]
 public sealed partial class AnimeDetailsViewModel(
     AnimeModel anime,
-    ITrackingUpdater trackingUpdater) : ObservableObject, IInitializable, INavigatorHost
+    ITrackingUpdater trackingUpdater) : DialogViewModel, IInitializable, INavigatorHost
 {
-    [ObservableProperty] public partial AnimeModel Anime { get; set; } = anime;
+    public AnimeModel Anime { get; init; } = anime;
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = anime.Tracking?.Status;
 
@@ -29,8 +28,7 @@ public sealed partial class AnimeDetailsViewModel(
     [ObservableProperty]
     public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
-    [ObservableProperty]
-    public partial bool IsMovie { get; set; } = anime.MediaFormat == AnimeMediaFormat.Movie;
+    public bool IsMovie { get; init; } = anime.MediaFormat == AnimeMediaFormat.Movie;
 
     public void Initialize()
     {

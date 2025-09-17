@@ -4,6 +4,6 @@ namespace TotoroNext.Module.Abstractions;
 
 public interface IKeyBindingsManager : IHostedService
 {
-    void SetActiveBindings(IKeyBindingsProvider provider);
-    void ResetBindings();
+    void AddProvider(IKeyBindingsProvider provider);
+    void RemoveProvider(IKeyBindingsProvider provider);
 }

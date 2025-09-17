@@ -6,27 +6,27 @@ namespace TotoroNext.Module;
 
 public class KeyBindingsManager(IMessenger messenger) : IKeyBindingsManager
 {
-    private readonly List<KeyBinding> _keyBindings = [];
+    private readonly List<IKeyBindingsProvider> _providers = [];
 
-    public void SetActiveBindings(IKeyBindingsProvider provider)
+    public void AddProvider(IKeyBindingsProvider provider)
     {
-        _keyBindings.AddRange(provider.GetKeyBindings());
+        _providers.Add(provider);
     }
 
-    public void ResetBindings()
+    public void RemoveProvider(IKeyBindingsProvider provider)
     {
-        _keyBindings.Clear();
+        _providers.Remove(provider);
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         messenger.Register<KeyGesture>(this, (_, e) =>
         {
-            if (_keyBindings.FirstOrDefault(x => x.Gesture.Equals(e)) is not { } binding)
+            if(_providers.SelectMany(x => x.GetKeyBindings()).LastOrDefault(x => x.Gesture.Equals(e)) is not { } binding)
             {
                 return;
             }
-
+            
             binding.Command.Execute(binding.CommandParameter);
         });
 

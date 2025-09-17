@@ -35,8 +35,9 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
 
     private static async Task<Unit> UpdateBadge(AnimeCard card, AnimeModel anime)
     {
-        if (anime.AiringStatus is not AiringStatus.CurrentlyAiring ||
-            anime.Tracking?.Status is not (ListItemStatus.Watching or ListItemStatus.PlanToWatch))
+        if (anime.AiringStatus is AiringStatus.NotYetAired ||
+            anime.Tracking?.Status is not (ListItemStatus.Watching or ListItemStatus.PlanToWatch) || 
+            anime.Season != AnimeHelpers.CurrentSeason())
         {
             return Unit.Default;
         }

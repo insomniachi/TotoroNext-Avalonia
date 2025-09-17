@@ -105,11 +105,11 @@ public class NavigationExtensions
         var scope = Container.Services.GetRequiredService<IKeyBindingsManager>();
         if (isDetaching)
         {
-            scope.ResetBindings();
+            scope.RemoveProvider(kbp);
         }
         else
         {
-            scope.SetActiveBindings(kbp);
+            scope.AddProvider(kbp);
         }
     }
 
