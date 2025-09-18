@@ -25,7 +25,7 @@
         <semi:SemiPopupAnimations />
         <semi:SemiTheme Locale="en-US" />
         <u-Semi:SemiTheme Locale="en-US" />
-        <labs:ControlThemes/>
+        <labs:ControlThemes />
         <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
         <Style Selector="u|DefaultDrawerControl">
             <Setter Property="Theme" Value="{StaticResource NoScrollDrawer}" />
@@ -34,9 +34,9 @@
             <Setter Property="IsFillHorizontal" Value="False" />
         </Style>
         <Style Selector="u|LoadingContainer">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
         </Style>
     </Application.Styles>
 </Application>

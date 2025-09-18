@@ -3,60 +3,147 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="using:TotoroNext.ViewModels"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:u="https://irihi.tech/ursa"
-             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:sty="using:FluentAvalonia.Styling"
+             xmlns:fac="using:FluentAvalonia.UI.Controls"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:semi="https://irihi.tech/semi"
+             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
              x:DataType="vm:SettingsViewModel"
              x:Class="TotoroNext.Views.SettingsView">
-    <u:Form LabelPosition="Left" LabelWidth="*">
-        <u:FormGroup Header="Default Services">
-            <u:FormItem Label="Anime Provider">
-                <ComboBox ItemsSource="{Binding AnimeProviders}"
-                          SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
-                          SelectedValueBinding="{Binding Id}"
-                          DisplayMemberBinding="{Binding Name}"
-                          Width="300" />
-            </u:FormItem>
-            <u:FormItem Label="Media Player">
-                <ComboBox ItemsSource="{Binding MediaEngines}"
-                          SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
-                          SelectedValueBinding="{Binding Id}"
-                          DisplayMemberBinding="{Binding Name}"
-                          Width="300" />
-            </u:FormItem>
-            <u:FormItem Label="Anime Tracking">
-                <ComboBox ItemsSource="{Binding TrackingServices}"
-                          SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
-                          SelectedValueBinding="{Binding Id}"
-                          DisplayMemberBinding="{Binding Name}"
-                          Width="300" />
-            </u:FormItem>
-            <u:FormItem Label="Media Segments">
-                <ComboBox ItemsSource="{Binding SegmentProviders}"
-                          SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
-                          SelectedValueBinding="{Binding Id}"
-                          DisplayMemberBinding="{Binding Name}"
-                          Width="300" />
-            </u:FormItem>
-            <u:FormItem Label="Debrid Services">
-                <ComboBox ItemsSource="{Binding DebridServices}"
-                          SelectedValue="{Binding Settings.SelectedDebridService, FallbackValue={x:Null}}"
-                          SelectedValueBinding="{Binding Id}"
-                          DisplayMemberBinding="{Binding Name}"
-                          Width="300" />
-            </u:FormItem>
-        </u:FormGroup>
-        <u:FormGroup Header="Auto Skip Settings">
-            <u:FormItem Label="Opening Skip Method">
-                <u:EnumSelector EnumType="models:SkipMethod"
-                                Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
-                                Width="300"/>
-            </u:FormItem>
-            <u:FormItem Label="Ending Skip Method">
-                <u:EnumSelector EnumType="models:SkipMethod"
-                                Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
-                                Width="300"/>
-            </u:FormItem>
-        </u:FormGroup>
-    </u:Form>
+    <UserControl.Styles>
+        <sty:FluentAvaloniaTheme />
+    </UserControl.Styles>
+    <UserControl.Resources>
+        <StreamGeometry x:Key="VideoLibrary">M 4,6 H 2 v 14 c 0,1.1 0.9,2 2,2 H 18 V 20 H 4 Z M 20,2 H 8 C 6.9,2 6,2.9 6,4 v 12 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-2 V 4 C 22,2.9 21.1,2 20,2 Z m -8,12.5 v -9 l 6,4.5 z</StreamGeometry>
+        <StreamGeometry x:Key="VideoPlayer">M14.5,10.37C15.54,10.37 16.38,9.53 16.38,8.5C16.38,7.46 15.54,6.63 14.5,6.63C13.46,6.63 12.63,7.46 12.63,8.5A1.87,1.87 0 0,0 14.5,10.37M14.5,1A7.5,7.5 0 0,1 22,8.5C22,10.67 21.08,12.63 19.6,14H9.4C7.93,12.63 7,10.67 7,8.5C7,4.35 10.36,1 14.5,1M6,21V22H4V21H2V15H22V21H20V22H18V21H6M4,18V19H13V18H4M15,17V19H17V17H15M19,17A1,1 0 0,0 18,18A1,1 0 0,0 19,19A1,1 0 0,0 20,18A1,1 0 0,0 19,17Z</StreamGeometry>
+        <StreamGeometry x:Key="Tracking">M1024 128h640v128h-640v-128zM640 640h1024v128h-1024v-128zM1280 1152h384v128h-384v-128zM1792 320v-256c0 -35 -29 -64 -64 -64h-1664c-35 0 -64 29 -64 64v256c0 35 29 64 64 64h1664c35 0 64 -29 64 -64zM1792 832v-256c0 -35 -29 -64 -64 -64h-1664 c-35 0 -64 29 -64 64v256c0 35 29 64 64 64h1664c35 0 64 -29 64 -64zM1792 1344v-256c0 -35 -29 -64 -64 -64h-1664c-35 0 -64 29 -64 64v256c0 35 29 64 64 64h1664c35 0 64 -29 64 -64z</StreamGeometry>
+        <StreamGeometry x:Key="SkipSegments">M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm68.8-94.4-48-36A8,8,0,0,0,136,92v72a8,8,0,0,0,12.8,6.4l48-36a8,8,0,0,0,0-12.8ZM152,148V108l26.67,20Zm-19.2-26.4-48-36A8,8,0,0,0,72,92v72a8,8,0,0,0,12.8,6.4l48-36a8,8,0,0,0,0-12.8ZM88,148V108l26.67,20Z</StreamGeometry>
+        <StreamGeometry x:Key="Torrent">M12.0002.0014C5.3735.0004.001 5.3718 0 11.9984a11.9986 11.9986 0 0 0 1.7006 6.1593.132.132 0 0 0 .1128.0384c.0288 0 .048-.0696.048-.1104a.739.739 0 0 0-.0336-.1296 22.14 22.14 0 0 1-.4224-2.2941 9.8389 9.8389 0 0 1 .4272-3.866c1.1014-3.3956 3.3332-5.6993 6.664-6.9376a10.302 10.302 0 0 1 3.398-.5951.7823.7823 0 0 1 .8567.763c0 .4488-.3431.7368-.8495.7656a12.853 12.853 0 0 0-1.6078.1656 8.6918 8.6918 0 0 0-4.8642 2.6397C3.3468 10.8169 2.55 13.4566 3.03 16.4539a8.6846 8.6846 0 0 0 2.4454 4.785 8.9414 8.9414 0 0 0 6.3688 2.7597h.156a11.9507 11.9507 0 0 0 5.613-1.3918h-5.5938a8.3988 8.3988 0 0 1-1.4086-.1296c-4.1387-.7467-6.915-4.673-6.2393-8.8238.5627-3.5271 3.4722-6.2073 7.0336-6.4793a7.6407 7.6407 0 0 1 2.1597.1368.7487.7487 0 0 1 .6168.876.7847.7847 0 0 1-.96.6023 6.0836 6.0836 0 0 0-.8014-.1152 6.328 6.328 0 0 0-2.899.504c-2.5052 1.0803-4.0095 3.6719-3.705 6.3832.3566 3.1366 3.0056 5.5091 6.1624 5.5194h6.9904c.6791 0 .84.0144 1.1375-.24.382-.3525.742-.7284 1.0775-1.1255h-9.3302a4.3483 4.3483 0 0 1-2.0733-.516c-2.4037-1.1787-3.3968-4.0828-2.218-6.4865s4.0828-3.3968 6.4866-2.218c.1195.0586.2365.122.3508.1903a.7511.7511 0 0 1 .3168 1.044.7655.7655 0 0 1-1.0655.2711c-1.5988-.9125-3.6346-.356-4.547 1.2428a3.3332 3.3332 0 0 0-.3964 2.1792c.2433 1.6186 1.6388 2.8127 3.2756 2.8029 3.3596.0336 6.7193 0 10.0789 0a.4224.4224 0 0 0 .2807-.144c3.3584-5.7126 1.45-13.0661-4.2626-16.4245a11.9986 11.9986 0 0 0-6.0802-1.655z</StreamGeometry>
+        <StreamGeometry x:Key="Opening">M28.125 281.25A9.375 9.375 0 0 0 37.5 271.875V28.125A9.375 9.375 0 0 0 18.75 28.125V271.875A9.375 9.375 0 0 0 28.125 281.25M56.25 168.75A18.75 18.75 0 0 0 75 187.5H262.5A18.75 18.75 0 0 0 281.25 168.75V131.25A18.75 18.75 0 0 0 262.5 112.5H75A18.75 18.75 0 0 0 56.25 131.25z</StreamGeometry>
+        <StreamGeometry x:Key="Ending">M271.875 281.25A9.375 9.375 0 0 1 262.5 271.875V28.125A9.375 9.375 0 0 1 281.25 28.125V271.875A9.375 9.375 0 0 1 271.875 281.25M243.75 168.75A18.75 18.75 0 0 1 225 187.5H37.5A18.75 18.75 0 0 1 18.75 168.75V131.25A18.75 18.75 0 0 1 37.5 112.5H225A18.75 18.75 0 0 1 243.75 131.25z</StreamGeometry>
+    </UserControl.Resources>
+    <StackPanel Spacing="24">
+        <StackPanel>
+            <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
+            <fac:SettingsExpander Header="Anime Provider"
+                                  Description="Default anime provider">
+                <fac:SettingsExpander.IconSource>
+                    <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
+                </fac:SettingsExpander.IconSource>
+                <fac:SettingsExpander.Footer>
+                    <ComboBox ItemsSource="{Binding AnimeProviders}"
+                              SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
+                              SelectedValueBinding="{Binding Id}"
+                              DisplayMemberBinding="{Binding Name}"
+                              Width="300">
+                        <ComboBox.Styles>
+                            <semi:SemiTheme />
+                        </ComboBox.Styles>
+                    </ComboBox>
+                </fac:SettingsExpander.Footer>
+            </fac:SettingsExpander>
+            <fac:SettingsExpander Header="Media Player"
+                                  Description="Default media player">
+                <fac:SettingsExpander.IconSource>
+                    <fac:PathIconSource Data="{StaticResource VideoPlayer}" />
+                </fac:SettingsExpander.IconSource>
+                <fac:SettingsExpander.Footer>
+                    <ComboBox ItemsSource="{Binding MediaEngines}"
+                              SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
+                              SelectedValueBinding="{Binding Id}"
+                              DisplayMemberBinding="{Binding Name}"
+                              Width="300">
+                        <ComboBox.Styles>
+                            <semi:SemiTheme />
+                        </ComboBox.Styles>
+                    </ComboBox>
+                </fac:SettingsExpander.Footer>
+            </fac:SettingsExpander>
+            <fac:SettingsExpander Header="Tracking"
+                                  Description="Default tracking service">
+                <fac:SettingsExpander.IconSource>
+                    <fac:PathIconSource Data="{StaticResource Tracking}" />
+                </fac:SettingsExpander.IconSource>
+                <fac:SettingsExpander.Footer>
+                    <ComboBox ItemsSource="{Binding TrackingServices}"
+                              SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
+                              SelectedValueBinding="{Binding Id}"
+                              DisplayMemberBinding="{Binding Name}"
+                              Width="300">
+                        <ComboBox.Styles>
+                            <semi:SemiTheme />
+                        </ComboBox.Styles>
+                    </ComboBox>
+                </fac:SettingsExpander.Footer>
+            </fac:SettingsExpander>
+            <fac:SettingsExpander Header="Media Segments"
+                                  Description="Default media segments provider">
+                <fac:SettingsExpander.IconSource>
+                    <fac:PathIconSource Data="{StaticResource SkipSegments}" />
+                </fac:SettingsExpander.IconSource>
+                <fac:SettingsExpander.Footer>
+                    <ComboBox ItemsSource="{Binding SegmentProviders}"
+                              SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
+                              SelectedValueBinding="{Binding Id}"
+                              DisplayMemberBinding="{Binding Name}"
+                              Width="300">
+                        <ComboBox.Styles>
+                            <semi:SemiTheme />
+                        </ComboBox.Styles>
+                    </ComboBox>
+                </fac:SettingsExpander.Footer>
+            </fac:SettingsExpander>
+            <fac:SettingsExpander Header="Debrid"
+                                  Description="Default debrid service">
+                <fac:SettingsExpander.IconSource>
+                    <fac:PathIconSource Data="{StaticResource Torrent}" />
+                </fac:SettingsExpander.IconSource>
+                <fac:SettingsExpander.Footer>
+                    <ComboBox ItemsSource="{Binding DebridServices}"
+                              SelectedValue="{Binding Settings.SelectedDebridService, FallbackValue={x:Null}}"
+                              SelectedValueBinding="{Binding Id}"
+                              DisplayMemberBinding="{Binding Name}"
+                              Width="300">
+                        <ComboBox.Styles>
+                            <semi:SemiTheme />
+                        </ComboBox.Styles>
+                    </ComboBox>
+                </fac:SettingsExpander.Footer>
+            </fac:SettingsExpander>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
+            <fac:SettingsExpander Header="Openings"
+                                  Description="How to handle openings">
+                <fac:SettingsExpander.IconSource>
+                    <fac:PathIconSource Data="{StaticResource Opening}" />
+                </fac:SettingsExpander.IconSource>
+                <fac:SettingsExpander.Footer>
+                    <u:EnumSelector EnumType="models:SkipMethod"
+                                    Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
+                                    Width="300">
+                        <u:EnumSelector.Styles>
+                            <semi:SemiTheme />
+                        </u:EnumSelector.Styles>
+                    </u:EnumSelector>
+                </fac:SettingsExpander.Footer>
+            </fac:SettingsExpander>
+            <fac:SettingsExpander Header="Endings"
+                                  Description="How to handle endings">
+                <fac:SettingsExpander.IconSource>
+                    <fac:PathIconSource Data="{StaticResource Ending}" />
+                </fac:SettingsExpander.IconSource>
+                <fac:SettingsExpander.Footer>
+                    <u:EnumSelector EnumType="models:SkipMethod"
+                                    Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
+                                    Width="300">
+                        <u:EnumSelector.Styles>
+                            <semi:SemiTheme />
+                        </u:EnumSelector.Styles>
+                    </u:EnumSelector>
+                </fac:SettingsExpander.Footer>
+            </fac:SettingsExpander>
+        </StackPanel>
+    </StackPanel>
 </UserControl>

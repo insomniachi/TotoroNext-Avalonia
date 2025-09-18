@@ -9,7 +9,6 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:UserListViewModel"
              x:Class="TotoroNext.Anime.Views.UserListView">
