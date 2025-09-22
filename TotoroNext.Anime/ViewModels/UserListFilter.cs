@@ -71,6 +71,7 @@ public partial class UserListFilter : ObservableObject
         Term = "";
         Year = "";
         Format = AnimeMediaFormat.Unknown;
+        ScoreFilter = UserScoreFilter.All;
         Genres.Clear();
     }
 
