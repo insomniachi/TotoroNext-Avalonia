@@ -5,7 +5,6 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:vm="clr-namespace:TotoroNext.Anime.MyAnimeList.ViewModels"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
-             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
              xmlns:controls1="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:views="clr-namespace:TotoroNext.Anime.MyAnimeList.Views"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
@@ -44,7 +43,7 @@
                               module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <controls:ElasticWrapPanelEx
+                            <u:ElasticWrapPanel
                                 ItemHeight="400"
                                 ItemWidth="250"
                                 IsFillHorizontal="True" />
@@ -128,16 +127,16 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
             </ScrollViewer>
-            
+
             <UniformGrid Grid.Row="1" Columns="3" ColumnSpacing="8" Margin="8">
                 <UniformGrid.Styles>
                     <Style Selector="Button">
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
                     </Style>
                 </UniformGrid.Styles>
-                <Button Content="Previous Day" Command="{Binding PreviousDayCommand}"/>
-                <Button Content="Reset" Command="{Binding ResetCommand}"/>
-                <Button Content="Next Day" Command="{Binding NextDayCommand}"/>
+                <Button Content="Previous Day" Command="{Binding PreviousDayCommand}" />
+                <Button Content="Reset" Command="{Binding ResetCommand}" />
+                <Button Content="Next Day" Command="{Binding NextDayCommand}" />
             </UniformGrid>
         </Grid>
     </Grid>

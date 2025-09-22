@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.ViewModels"
              xmlns:mod="using:TotoroNext.Module"
-             xmlns:modc="using:TotoroNext.Module.Controls"
+             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:ModulesViewModel"
              x:Class="TotoroNext.Views.ModulesView">
@@ -27,7 +27,7 @@
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <modc:ElasticWrapPanelEx IsFillHorizontal="True" ItemWidth="300" />
+                    <u:ElasticWrapPanel IsFillHorizontal="True" ItemWidth="300" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

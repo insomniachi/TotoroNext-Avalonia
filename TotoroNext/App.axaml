@@ -4,7 +4,6 @@
              xmlns:local="using:TotoroNext"
              xmlns:semi="https://irihi.tech/semi"
              xmlns:u-Semi="https://irihi.tech/ursa/themes/semi"
-             xmlns:modc="using:TotoroNext.Module.Controls"
              xmlns:u="https://irihi.tech/ursa"
              RequestedThemeVariant="Default"
              xmlns:labs="using:Avalonia.Labs.Controls">
@@ -30,7 +29,7 @@
         <Style Selector="u|DefaultDrawerControl">
             <Setter Property="Theme" Value="{StaticResource NoScrollDrawer}" />
         </Style>
-        <Style Selector="modc|ElasticWrapPanelEx[LineCount=1]">
+        <Style Selector="u|ElasticWrapPanel[LineCount=1]">
             <Setter Property="IsFillHorizontal" Value="False" />
         </Style>
         <Style Selector="u|LoadingContainer">

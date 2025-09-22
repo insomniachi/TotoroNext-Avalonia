@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
              xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:AnimeCharactersViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeCharactersView">
@@ -28,9 +28,9 @@
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <controls:ElasticWrapPanelEx IsFillHorizontal="True"
-                                                 ItemWidth="187.5"
-                                                 ItemHeight="300" />
+                    <u:ElasticWrapPanel IsFillHorizontal="True"
+                                        ItemWidth="187.5"
+                                        ItemHeight="300" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

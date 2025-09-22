@@ -5,9 +5,9 @@
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeGridViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeGridView">
@@ -15,20 +15,20 @@
         <ItemsControl ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="aa:AnimeModel">
-                    <ac:AnimeCard Margin="8" 
+                    <ac:AnimeCard Margin="8"
                                   Anime="{Binding}"
                                   module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AnimeGridViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}">
                         <Interaction.Behaviors>
-                            <behaviors:AiringStatusBehavior/>
+                            <behaviors:AiringStatusBehavior />
                         </Interaction.Behaviors>
                     </ac:AnimeCard>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <controls:ElasticWrapPanelEx IsFillHorizontal="True"
-                                                 ItemWidth="187.5"
-                                                 ItemHeight="300" />
+                    <u:ElasticWrapPanel IsFillHorizontal="True"
+                                        ItemWidth="187.5"
+                                        ItemHeight="300" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

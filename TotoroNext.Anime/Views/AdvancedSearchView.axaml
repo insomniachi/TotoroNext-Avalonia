@@ -7,32 +7,31 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:aa="using:TotoroNext.Anime.Abstractions.Models"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
-             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AdvancedSearchViewModel"
              x:Class="TotoroNext.Anime.Views.AdvancedSearchView">
     <Grid ColumnDefinitions="*,300"
           ColumnSpacing="16">
-        <u:Form Grid.Column="1" 
+        <u:Form Grid.Column="1"
                 HorizontalAlignment="Stretch">
             <u:Form.Styles>
                 <Style Selector="u|FormItem">
-                    <Setter Property="Margin" Value="16 16 16 0 "/>
+                    <Setter Property="Margin" Value="16 16 16 0 " />
                 </Style>
                 <Style Selector="u|Form > u|FormItem:nth-child(1)">
-                    <Setter Property="Margin" Value="16 16 16 0"/>
+                    <Setter Property="Margin" Value="16 16 16 0" />
                 </Style>
                 <Style Selector="u|Form > u|FormItem:nth-last-child(1)">
-                    <Setter Property="Margin" Value="16 32 16 0"/>
+                    <Setter Property="Margin" Value="16 32 16 0" />
                 </Style>
             </u:Form.Styles>
             <u:FormItem Label="Name" Margin="16 16 16  0">
-                <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
             </u:FormItem>
             <u:Form.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Background="{DynamicResource SemiColorTertiaryLightActive}"/>
+                    <StackPanel Background="{DynamicResource SemiColorTertiaryLightActive}" />
                 </ItemsPanelTemplate>
             </u:Form.ItemsPanel>
             <u:FormItem Label="Season Name">
@@ -44,24 +43,22 @@
             <u:FormItem Label="Released On Or After Year">
                 <u:NumericIntUpDown Value="{Binding MinimumYear, Mode=TwoWay}"
                                     Maximum="{Binding CurrentYear, Mode=OneTime}"
-                                    HorizontalAlignment="Stretch"/>
+                                    HorizontalAlignment="Stretch" />
             </u:FormItem>
             <u:FormItem Label="Released On Or Before Year">
                 <u:NumericIntUpDown Value="{Binding MaximumYear, Mode=TwoWay}"
                                     Maximum="{Binding CurrentYear, Mode=OneTime}"
-                                    HorizontalAlignment="Stretch"/>
+                                    HorizontalAlignment="Stretch" />
             </u:FormItem>
             <u:FormItem Label="Include">
-                <u:MultiComboBox WrapSelection="True"
-                                 HorizontalAlignment="Stretch"
-                                 ItemsSource="{Binding AllGenres}"
-                                 SelectedItems="{Binding IncludedGenres}"/>
+                <u:MultiAutoCompleteBox HorizontalAlignment="Stretch"
+                                        ItemsSource="{Binding AllGenres}"
+                                        SelectedItems="{Binding IncludedGenres}" />
             </u:FormItem>
             <u:FormItem Label="Exclude">
-                <u:MultiComboBox WrapSelection="True"
-                                 HorizontalAlignment="Stretch"
-                                 ItemsSource="{Binding AllGenres}"
-                                 SelectedItems="{Binding ExcludedGenres}"/>
+                <u:MultiAutoCompleteBox HorizontalAlignment="Stretch"
+                                        ItemsSource="{Binding AllGenres}"
+                                        SelectedItems="{Binding ExcludedGenres}" />
             </u:FormItem>
 
             <u:FormItem Label="Minimum Score">
@@ -74,11 +71,11 @@
                                       Maximum="10"
                                       Minimum="0" />
             </u:FormItem>
-            
+
             <Button Content="Clear"
                     Command="{Binding ClearSearchFiltersCommand}"
-                    Theme="{DynamicResource SolidButton}" 
-                    u:FormItem.NoLabel="True" HorizontalAlignment="Stretch"/>
+                    Theme="{DynamicResource SolidButton}"
+                    u:FormItem.NoLabel="True" HorizontalAlignment="Stretch" />
         </u:Form>
 
         <u:LoadingContainer Grid.Column="0"
@@ -90,7 +87,7 @@
                               module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <controls:ElasticWrapPanelEx
+                            <u:ElasticWrapPanel
                                 ItemHeight="400"
                                 ItemWidth="250"
                                 IsFillHorizontal="True" />
@@ -103,7 +100,7 @@
                                           HasDetailsPane="True"
                                           DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                           WatchCommand="{x:Static am:Commands.WatchCommand}"
-                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}"/>
+                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
