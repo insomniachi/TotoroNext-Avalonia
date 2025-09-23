@@ -9,10 +9,10 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             MinWidth="500"
-             MaxWidth="750"
-             x:DataType="vm:AnimeOverridesViewModel"
-             x:Class="TotoroNext.Anime.Views.AnimeOverridesView">
+             MinWidth="700"
+             MaxWidth="700"
+             x:DataType="vm:AnimeExtensionsViewModel"
+             x:Class="TotoroNext.Anime.Views.AnimeExtensionsView">
     <UserControl.Styles>
         <sty:FluentAvaloniaTheme />
     </UserControl.Styles>
@@ -39,7 +39,9 @@
                         </ToggleSwitch>
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Provider" Description="The provider to use for this anime">
+                <fac:SettingsExpander Header="Provider" 
+                                      Description="The provider to use for this anime"
+                                      IsExpanded="{Binding HasProvider}">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
                     </fac:SettingsExpander.IconSource>
@@ -54,36 +56,37 @@
                             </ComboBox.Styles>
                         </ComboBox>
                     </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Search Term"
-                                      Description="The search term to use when searching for this anime, use it when the default search term doesn't return the correct anime">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Search}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
-                        <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch">
-                            <TextBox.Styles>
-                                <semi:SemiTheme />
-                            </TextBox.Styles>
-                        </TextBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Provider Result"
-                                      Description="The specific result to use when searching for this anime, use it when the default search term returns multiple results">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource SearchResult}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
-                        <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
-                                  SelectedValue="{Binding SelectedResult}"
-                                  SelectedValueBinding="{Binding Title}"
-                                  DisplayMemberBinding="{Binding Title}"
-                                  HorizontalAlignment="Stretch">
-                            <ComboBox.Styles>
-                                <semi:SemiTheme />
-                            </ComboBox.Styles>
-                        </ComboBox>
-                    </fac:SettingsExpander.Footer>
+                    <fac:SettingsExpanderItem Content="Search Term"
+                                              Description="The search term to use when searching for this anime, use it when the default search term doesn't return the correct anime">
+                        <fac:SettingsExpanderItem.IconSource>
+                            <fac:PathIconSource Data="{StaticResource Search}" />
+                        </fac:SettingsExpanderItem.IconSource>
+                        <fac:SettingsExpanderItem.Footer>
+                            <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch">
+                                <TextBox.Styles>
+                                    <semi:SemiTheme />
+                                </TextBox.Styles>
+                            </TextBox>
+                        </fac:SettingsExpanderItem.Footer>
+                    </fac:SettingsExpanderItem>
+                    <fac:SettingsExpanderItem Content="Provider Result"
+                                              Description="The specific result to use when searching for this anime, use it when the default search term returns multiple results">
+                        <fac:SettingsExpanderItem.IconSource>
+                            <fac:PathIconSource Data="{StaticResource SearchResult}" />
+                        </fac:SettingsExpanderItem.IconSource>
+                        <fac:SettingsExpanderItem.Footer>
+                            <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
+                                      SelectedValue="{Binding SelectedResult}"
+                                      SelectedValueBinding="{Binding Title}"
+                                      DisplayMemberBinding="{Binding Title}"
+                                      HorizontalAlignment="Stretch">
+                                <ComboBox.Styles>
+                                    <semi:SemiTheme />
+                                </ComboBox.Styles>
+                            </ComboBox>
+                        </fac:SettingsExpanderItem.Footer>
+                    </fac:SettingsExpanderItem>
+
                 </fac:SettingsExpander>
                 <fac:SettingsExpander Header="Opening Skip Method" Description="How to skip the opening of this anime">
                     <fac:SettingsExpander.IconSource>
@@ -115,7 +118,7 @@
                 </fac:SettingsExpander>
             </StackPanel>
         </ScrollViewer>
-        
+
         <Button Grid.Row="1" Content="Delete Overrides"
                 u:FormItem.NoLabel="True"
                 Command="{Binding DeleteCommand}"

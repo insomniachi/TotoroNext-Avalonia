@@ -32,7 +32,7 @@ public class App : Application
                       {
                           services.AddCoreServices();
                           services.AddTransient<MainWindowViewModel>();
-                          services.AddSingleton<IAnimeOverridesRepository, AnimeOverridesRepository>();
+                          services.AddSingleton<IAnimeExtensionService, AnimeExtensionService>();
                           services.AddSingleton<SettingsModel>();
 
                           services.AddInternalMediaPlayer();

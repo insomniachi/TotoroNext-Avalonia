@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using DiscordRPC;
 using Microsoft.Extensions.Hosting;
+using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 
@@ -8,20 +9,19 @@ namespace TotoroNext.Discord;
 
 internal class RpcService(
     IModuleSettings<Settings> settings,
+    IAnimeExtensionService extensionService,
     IMessenger messenger) : IHostedService,
                             IRecipient<PlaybackState>,
                             IRecipient<PlaybackEnded>,
-                            IRecipient<AnimeOverrides>,
                             IRecipient<SongPlaybackState>
 {
     private readonly DiscordRpcClient _client = new("997177919052984622");
-    private bool _isEnabled = settings.Value.IsEnabled;
+    private readonly bool _isEnabled = settings.Value.IsEnabled;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         messenger.Register<PlaybackState>(this);
         messenger.Register<PlaybackEnded>(this);
-        messenger.Register<AnimeOverrides>(this);
         messenger.Register<SongPlaybackState>(this);
 
         return Task.Run(async () =>
@@ -44,18 +44,10 @@ internal class RpcService(
 
         messenger.Unregister<PlaybackState>(this);
         messenger.Unregister<PlaybackEnded>(this);
-        messenger.Unregister<AnimeOverrides>(this);
         messenger.Unregister<SongPlaybackState>(this);
         return Task.CompletedTask;
     }
-
-    public void Receive(AnimeOverrides message)
-    {
-        _isEnabled = !message.IsNsfw;
-
-        message.Reverted += OnRevert;
-    }
-
+    
     public void Receive(PlaybackEnded message)
     {
         _client.ClearPresence();
@@ -69,6 +61,11 @@ internal class RpcService(
         }
 
         if (!_isEnabled)
+        {
+            return;
+        }
+
+        if (!extensionService.IsInIncognitoMode(message.Anime.Id))
         {
             return;
         }
@@ -122,17 +119,5 @@ internal class RpcService(
                 }
             ];
         });
-    }
-
-    private void OnRevert(object? sender, EventArgs e)
-    {
-        if (sender is not AnimeOverrides overrides)
-        {
-            return;
-        }
-
-        _isEnabled = settings.Value.IsEnabled;
-
-        overrides.Reverted -= OnRevert;
     }
 }

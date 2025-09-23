@@ -10,8 +10,7 @@ namespace TotoroNext.Anime;
 
 public class Commands(
     IMessenger messenger,
-    IAnimeOverridesRepository overridesRepository,
-    IFactory<IAnimeProvider, Guid> providerFactory) : IInitializer
+    IAnimeExtensionService extensionService) : IInitializer
 {
     public static ICommand? WatchCommand { get; private set; }
     public static ICommand? SettingsCommand { get; private set; }
@@ -32,23 +31,8 @@ public class Commands(
             {
                 return;
             }
-
-            var overrides = overridesRepository.GetOverrides(anime.Id);
-
-            var provider = overrides?.Provider is { } providerId
-                ? providerFactory.Create(providerId)
-                : providerFactory.CreateDefault();
-
-            var term = string.IsNullOrEmpty(overrides?.SelectedResult)
-                ? anime.Title
-                : overrides.SelectedResult;
-
-            var result = await provider.SearchAndSelectAsync(term);
-
-            if (overrides is not null)
-            {
-                messenger.Send(overrides);
-            }
+            
+            var result = await extensionService.SearchAndSelectAsync(anime);
 
             if (result is null)
             {
@@ -70,7 +54,7 @@ public class Commands(
 
             messenger.Send(new NavigateToViewModelDialogMessage
             {
-                ViewModel = typeof(AnimeOverridesViewModel),
+                ViewModel = typeof(AnimeExtensionsViewModel),
                 Title = anime.Title,
                 Data = new OverridesViewModelNavigationParameters(anime),
                 CloseButtonVisible = true,

@@ -19,7 +19,7 @@ public partial class AnimeEpisodesListViewModel(
     IFactory<IMetadataService, Guid> metadataFactory,
     IPlaybackProgressService playbackProgressService,
     IFactory<IAnimeProvider, Guid> providerFactory,
-    IAnimeOverridesRepository animeOverridesRepository,
+    IAnimeExtensionService animeExtensionService,
     IAnimeRelations relations,
     IMessenger messenger) : ObservableObject, IAsyncInitializable, ICloseable
 {
@@ -43,17 +43,7 @@ public async Task InitializeAsync()
     [RelayCommand]
     private async Task WatchEpisode(EpisodeInfo episode)
     {
-        var @override = animeOverridesRepository.GetOverrides(Anime.Id);
-        
-        var provider = @override?.Provider is { } providerId
-            ? providerFactory.Create(providerId)
-            : providerFactory.CreateDefault();
-
-        var term = string.IsNullOrEmpty(@override?.SelectedResult)
-            ? Anime.Title
-            : @override.SelectedResult;
-        
-        var searchResult = await provider.SearchAndSelectAsync(term);
+        var searchResult = await animeExtensionService.SearchAndSelectAsync(Anime);
 
         if (searchResult is null)
         {

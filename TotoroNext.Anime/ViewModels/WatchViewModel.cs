@@ -22,7 +22,7 @@ public sealed partial class WatchViewModel(
     IFactory<IMediaPlayer, Guid> mediaPlayerFactory,
     IFactory<IMediaSegmentsProvider, Guid> segmentsFactory,
     IPlaybackProgressService progressService,
-    IAnimeOverridesRepository animeOverridesRepository,
+    IAnimeExtensionService animeExtensionService,
     IAnimeRelations relations,
     IDialogService dialogService,
     IMessenger messenger,
@@ -249,10 +249,6 @@ public sealed partial class WatchViewModel(
     public void Dispose()
     {
         messenger.Send(new PlaybackEnded());
-        if (Anime?.Id is { } id)
-        {
-            animeOverridesRepository.Revert(id);
-        }
     }
 
     private async Task<(MediaSegment Segment, MessageBoxResult Result)> OnPlayingOpeningOrEnding(MediaSegment segment)
@@ -262,7 +258,7 @@ public sealed partial class WatchViewModel(
             return new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()));
         }
 
-        var @override = animeOverridesRepository.GetOverrides(Anime.Id);
+        var @override = animeExtensionService.GetExtension(Anime.Id);
         var method = segment.Type switch
         {
             MediaSectionType.Opening => @override?.OpeningSkipMethod ??

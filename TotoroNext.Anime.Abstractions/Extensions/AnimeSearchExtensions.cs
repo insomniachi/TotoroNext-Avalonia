@@ -11,31 +11,6 @@ namespace TotoroNext.Anime.Abstractions.Extensions;
 
 public static class AnimeSearchExtensions
 {
-    public static Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, AnimeModel model)
-    {
-        return SearchAndSelectAsync(provider, model.Title);
-    }
-
-    public static async Task<SearchResult?> SearchAndSelectAsync(this IAnimeProvider provider, string term)
-    {
-        var results = await provider.SearchAsync(term).ToListAsync();
-
-        switch (results.Count)
-        {
-            case 0:
-                return null;
-            case 1:
-                return results[0];
-        }
-
-        if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
-        {
-            return result;
-        }
-
-        return await Container.Services.GetRequiredService<ISelectionUserInteraction<SearchResult>>().GetValue(results);
-    }
-
     public static async Task<AnimeModel?> SearchAndSelectAsync(this IMetadataService provider, SearchResult model)
     {
         var results = await provider.SearchAnimeAsync(model.Title);

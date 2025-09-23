@@ -39,7 +39,7 @@ public class Module : IModule
                 .AddDataViewMap<AnimeEpisodesListView, AnimeEpisodesListViewModel, EpisodesListViewModelNavigationParameters>()
                 .AddDataViewMap<WatchView, WatchViewModel, WatchViewModelNavigationParameter>()
                 .AddDataViewMap<AnimeGridView, AnimeGridViewModel, List<AnimeModel>>()
-                .AddDataViewMap<AnimeOverridesView, AnimeOverridesViewModel, OverridesViewModelNavigationParameters>()
+                .AddDataViewMap<AnimeExtensionsView, AnimeExtensionsViewModel, OverridesViewModelNavigationParameters>()
                 .AddDataViewMap<AnimeSongsView, AnimeSongsViewModel, SongsViewModelNavigationParameters>()
                 .AddDataViewMap<AnimeInfoView, AnimeInfoViewModel, InfoViewNavigationParameters>()
                 .AddDataViewMap<AnimeCharactersView, AnimeCharactersViewModel, CharactersViewNavigationParameters>()

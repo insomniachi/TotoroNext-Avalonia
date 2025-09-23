@@ -4,28 +4,15 @@ using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions.Controls;
-using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Module;
-using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
 public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehavior<AnimeCard>
 {
     private static readonly SolidColorBrush NotUploadedBrush = new(Colors.Orange);
-    private static readonly IAnimeOverridesRepository Overrides = Container.Services.GetRequiredService<IAnimeOverridesRepository>();
-    private static readonly IFactory<IAnimeProvider, Guid> ProviderFactory = Container.Services.GetRequiredService<IFactory<IAnimeProvider, Guid>>();
+    private static readonly IAnimeExtensionService ExtensionService = Container.Services.GetRequiredService<IAnimeExtensionService>();
     private static readonly IAnimeRelations Relations = Container.Services.GetRequiredService<IAnimeRelations>();
-
-    protected override void OnAttachedToVisualTree()
-    {
-        if (AssociatedObject is null)
-        {
-            return;
-        }
-        
-        Update(AssociatedObject);
-    }
 
     public void Update(AnimeCard card)
     {
@@ -33,10 +20,20 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
         _ = UpdateBadge(card, card.Anime);
     }
 
+    protected override void OnAttachedToVisualTree()
+    {
+        if (AssociatedObject is null)
+        {
+            return;
+        }
+
+        Update(AssociatedObject);
+    }
+
     private static async Task<Unit> UpdateBadge(AnimeCard card, AnimeModel anime)
     {
         if (anime.AiringStatus is AiringStatus.NotYetAired ||
-            anime.Tracking?.Status is not (ListItemStatus.Watching or ListItemStatus.PlanToWatch) || 
+            anime.Tracking?.Status is not (ListItemStatus.Watching or ListItemStatus.PlanToWatch) ||
             anime.Season != AnimeHelpers.CurrentSeason())
         {
             return Unit.Default;
@@ -50,14 +47,8 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
         {
             return Unit.Default;
         }
-        
-        var overrides = Overrides.GetOverrides(anime.Id);
-        var provider = overrides?.Provider is not { } id
-            ? ProviderFactory.CreateDefault()
-            : ProviderFactory.Create(id);
 
-        var title = overrides?.SelectedResult ?? anime.Title;
-        var result = await provider.SearchAndSelectAsync(title);
+        var result = await ExtensionService.SearchAndSelectAsync(anime);
 
         if (result is null)
         {
@@ -65,7 +56,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
         }
 
         var episodes = await result.GetEpisodes().ToListAsync();
-        if (episodes.Count > (anime.TotalEpisodes ?? 0) && Relations.FindRelation(anime) is {}  relation)
+        if (episodes.Count > (anime.TotalEpisodes ?? 0) && Relations.FindRelation(anime) is { } relation)
         {
             episodes = episodes.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();
             foreach (var ep in episodes)
@@ -114,9 +105,9 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
         }
 
         var remaining = airingAt.Value - DateTime.Now;
-        
-        return remaining < TimeSpan.Zero 
-            ? "Aired" 
+
+        return remaining < TimeSpan.Zero
+            ? "Aired"
             : $"EP{current + 1}: {HumanizeTimeSpan(remaining)}";
     }
 

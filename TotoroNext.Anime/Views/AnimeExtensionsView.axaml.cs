@@ -2,9 +2,9 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class AnimeOverridesView : UserControl
+public partial class AnimeExtensionsView : UserControl
 {
-    public AnimeOverridesView()
+    public AnimeExtensionsView()
     {
         InitializeComponent();
     }
