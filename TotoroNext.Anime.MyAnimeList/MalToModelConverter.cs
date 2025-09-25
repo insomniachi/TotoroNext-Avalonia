@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 using MalApi;
 using TotoroNext.Anime.Abstractions;
@@ -117,7 +118,7 @@ public static class MalToModelConverter
 
             if (malModel.StartSeason is { } season)
             {
-                model.Season = new Season((AnimeSeason)(int)season.SeasonName, season.Year);
+                model.Season = new Season(ConvertSeason(season.SeasonName), season.Year);
             }
 
             if (malModel.RelatedAnime is { Length: > 0 } ra)
@@ -150,6 +151,18 @@ public static class MalToModelConverter
             AnimeMediaType.ONA => AnimeMediaFormat.Ona,
             AnimeMediaType.Music => AnimeMediaFormat.Music,
             _ => AnimeMediaFormat.Unknown
+        };
+    }
+    
+    private static AnimeSeason ConvertSeason(MalApi.AnimeSeason malSeason)
+    {
+        return malSeason switch
+        {
+            MalApi.AnimeSeason.Winter => AnimeSeason.Winter,
+            MalApi.AnimeSeason.Spring => AnimeSeason.Spring,
+            MalApi.AnimeSeason.Summer => AnimeSeason.Summer,
+            MalApi.AnimeSeason.Fall => AnimeSeason.Fall,
+            _ => throw new UnreachableException()
         };
     }
 
