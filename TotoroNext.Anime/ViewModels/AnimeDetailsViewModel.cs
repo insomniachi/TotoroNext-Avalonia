@@ -12,9 +12,10 @@ namespace TotoroNext.Anime.ViewModels;
 [UsedImplicitly]
 public sealed partial class AnimeDetailsViewModel(
     AnimeModel anime,
-    ITrackingUpdater trackingUpdater) : DialogViewModel, IInitializable, INavigatorHost
+    ITrackingUpdater trackingUpdater,
+    IFactory<IMetadataService, Guid> metadataServiceFactory) : DialogViewModel, IAsyncInitializable, INavigatorHost
 {
-    public AnimeModel Anime { get; init; } = anime;
+    public AnimeModel Anime { get; set; } = anime;
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = anime.Tracking?.Status;
 
@@ -28,10 +29,23 @@ public sealed partial class AnimeDetailsViewModel(
     [ObservableProperty]
     public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
-    public bool IsMovie { get; init; } = anime.MediaFormat == AnimeMediaFormat.Movie;
+    public bool IsEpisodesTabVisible { get; } = anime.MediaFormat != AnimeMediaFormat.Movie && anime.AiringStatus != AiringStatus.NotYetAired;
+    
+    public bool HasAnimeAired { get; } = anime.AiringStatus is not AiringStatus.NotYetAired;
+    
+    public bool HasRelated => Anime.Related.Any();
+    public bool HasRecommended => Anime.Recommended.Any();
 
-    public void Initialize()
+    public async Task InitializeAsync()
     {
+        var service = metadataServiceFactory.CreateDefault();
+        if (await service.GetAnimeAsync(Anime.Id) is { } model)
+        {
+            Anime = model;
+            OnPropertyChanged(nameof(HasRelated));
+            OnPropertyChanged(nameof(HasRecommended));
+        }
+        
         this.WhenAnyValue(x => x.Status, x => x.Progress, x => x.Score, x => x.StartDate, x => x.FinishDate)
             .Skip(1)
             .Select(x => new Tracking

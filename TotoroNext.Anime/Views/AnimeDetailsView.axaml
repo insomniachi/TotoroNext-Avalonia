@@ -67,11 +67,11 @@
                   x:Name="Selector">
             <TabStripItem IsSelected="True" Content="Info"/>
             <TabStripItem Content="Characters"/>
-            <TabStripItem Content="Episodes" IsVisible="{Binding !IsMovie}"/>
-            <TabStripItem Content="Related" />
-            <TabStripItem Content="Recommended" />
-            <TabStripItem Content="Songs" />
-            <TabStripItem Content="Options" />
+            <TabStripItem Content="Episodes" IsVisible="{Binding IsEpisodesTabVisible}"/>
+            <TabStripItem Content="Related" IsVisible="{Binding HasRelated}" />
+            <TabStripItem Content="Recommended" IsVisible="{Binding HasRecommended}" />
+            <TabStripItem Content="Songs" IsVisible="{Binding HasAnimeAired}" />
+            <TabStripItem Content="Options" IsVisible="{Binding HasAnimeAired}"/>
         </TabStrip>
 
         <TransitioningContentControl

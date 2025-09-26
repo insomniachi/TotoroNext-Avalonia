@@ -8,6 +8,7 @@
     xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:local="using:TotoroNext.Anime.Abstractions.Controls"
     xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+    xmlns:converters="clr-namespace:TotoroNext.Anime.Abstractions"
     PointerEntered="InputElement_OnPointerEntered"
     PointerExited="InputElement_OnPointerExited">
 
@@ -99,12 +100,14 @@
 
                             <Button HorizontalAlignment="Stretch"
                                     Command="{Binding $parent[local:AnimeCard].WatchCommand}"
-                                    CommandParameter="{Binding $parent[local:AnimeCard].Anime}">
+                                    CommandParameter="{Binding $parent[local:AnimeCard].Anime}"
+                                    IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}">
                                 <StackPanel Spacing="8" Orientation="Horizontal">
                                     <TextBlock Text="Watch" VerticalAlignment="Center" />
-                                    <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}" 
-                                                               Height="15" Width="11" 
-                                                               VerticalAlignment="Center"/>
+                                    <iconPacks:PackIconControl
+                                        Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
+                                        Height="15" Width="11"
+                                        VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
                             <Button Content="Details"
