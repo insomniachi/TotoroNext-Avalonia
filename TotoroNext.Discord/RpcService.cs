@@ -65,7 +65,7 @@ internal class RpcService(
             return;
         }
 
-        if (!extensionService.IsInIncognitoMode(message.Anime.Id))
+        if (extensionService.IsInIncognitoMode(message.Anime.Id))
         {
             return;
         }

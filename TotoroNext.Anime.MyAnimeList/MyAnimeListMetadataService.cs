@@ -117,7 +117,7 @@ internal class MyAnimeListMetadataService : IMetadataService
         return [..items];
     }
 
-    public Guid Id { get; } = Module.Id;
+    public Guid Id => Module.Id;
 
     public string Name { get; } = nameof(ExternalIds.MyAnimeList);
 

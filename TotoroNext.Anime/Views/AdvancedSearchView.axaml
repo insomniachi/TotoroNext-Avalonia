@@ -26,7 +26,13 @@
                     <Setter Property="Margin" Value="16 32 16 0" />
                 </Style>
             </u:Form.Styles>
-            <u:FormItem Label="Name" Margin="16 16 16  0">
+            <u:FormItem Label="Metadata Source" Margin="16 16 16  0">
+                <ComboBox ItemsSource="{Binding MetadataServices}"
+                          SelectedItem="{Binding SelectedService}"
+                          DisplayMemberBinding="{Binding Name}"
+                          HorizontalAlignment="Stretch"/>
+            </u:FormItem>
+            <u:FormItem Label="Name">
                 <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
             </u:FormItem>
             <u:Form.ItemsPanel>

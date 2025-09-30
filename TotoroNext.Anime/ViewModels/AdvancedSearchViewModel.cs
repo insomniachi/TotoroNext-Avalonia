@@ -16,10 +16,12 @@ namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
 public partial class AdvancedSearchViewModel(
-    IFactory<IMetadataService, Guid> metadataFactory) : ObservableObject, IAsyncInitializable
+    IFactory<IMetadataService, Guid> metadataFactory,
+    IEnumerable<Descriptor> descriptors,
+    ILocalSettingsService localSettingsService) : ObservableObject, IInitializable
 {
-    private readonly IMetadataService _metadataService = metadataFactory.CreateDefault();
     private bool _isChangeNotificationsEnabled = true;
+    private IMetadataService? _metadataService;
 
     [ObservableProperty] public partial AnimeSeason? Season { get; set; }
     [ObservableProperty] public partial int? MinimumYear { get; set; }
@@ -31,12 +33,23 @@ public partial class AdvancedSearchViewModel(
     [ObservableProperty] public partial ObservableCollection<string> IncludedGenres { get; set; } = [];
     [ObservableProperty] public partial ObservableCollection<string> ExcludedGenres { get; set; } = [];
     [ObservableProperty] public partial List<string> AllGenres { get; set; } = [];
+    [ObservableProperty] public partial Descriptor? SelectedService { get; set; }
+
+    public List<Descriptor> MetadataServices { get; } = [..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
 
     public int CurrentYear { get; } = DateTime.Now.Year;
 
-    public async Task InitializeAsync()
+    public void Initialize()
     {
-        AllGenres = await _metadataService.GetGenresAsync();
+        var defaultServiceId = localSettingsService.ReadSetting<Guid?>("SelectedTrackingService");
+        SelectedService = MetadataServices.FirstOrDefault(x => x.Id == defaultServiceId);
+
+        this.WhenAnyValue(x => x.SelectedService)
+            .WhereNotNull()
+            .Do(service => _metadataService = metadataFactory.Create(service.Id))
+            .SelectMany(_ => _metadataService!.GetGenresAsync())
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(genres => AllGenres = genres);
 
         var propertiesChanged = this.WhenAnyPropertyChanged(nameof(Title),
                                                             nameof(MinimumYear),
@@ -60,6 +73,7 @@ public partial class AdvancedSearchViewModel(
 
         trigger
             .Where(_ => _isChangeNotificationsEnabled)
+            .Where(_ => _metadataService is not null)
             .Select(_ => new AdvancedSearchRequest
             {
                 Title = Title,
@@ -71,7 +85,7 @@ public partial class AdvancedSearchViewModel(
                 MinimumScore = MinimumScore,
                 MaximumScore = MaximumScore
             })
-            .SelectMany(_metadataService.SearchAnimeAsync)
+            .SelectMany(_metadataService!.SearchAnimeAsync)
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(list => Anime = list);
     }

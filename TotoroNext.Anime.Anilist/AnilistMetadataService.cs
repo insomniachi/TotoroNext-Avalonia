@@ -70,7 +70,7 @@ internal class AnilistMetadataService(
                                                                         genreNotIn: request.ExcludedGenres,
                                                                         averageScoreGreater: (int?)(request.MinimumScore * 100),
                                                                         averageScoreLesser: (int?)(request.MaximumScore * 100),
-                                                                        sort: new List<MediaSort?> { MediaSort.ScoreDesc },
+                                                                        sort: new List<MediaSort?> { MediaSort.PopularityDesc, MediaSort.ScoreDesc },
                                                                         type: MediaType.Anime), 1,
                                                          50).Build()
             });
