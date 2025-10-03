@@ -34,12 +34,12 @@
                     <fac:SettingsExpander.Footer>
                         <ToggleSwitch IsChecked="{Binding IsNsfw}">
                             <ToggleSwitch.Styles>
-                                <semi:SemiTheme />
+                                <semi:SemiTheme Locale="en-US" />
                             </ToggleSwitch.Styles>
                         </ToggleSwitch>
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Provider" 
+                <fac:SettingsExpander Header="Provider"
                                       Description="The provider to use for this anime"
                                       IsExpanded="{Binding HasProvider}">
                     <fac:SettingsExpander.IconSource>
@@ -52,7 +52,7 @@
                                   DisplayMemberBinding="{Binding Name}"
                                   HorizontalAlignment="Stretch">
                             <ComboBox.Styles>
-                                <semi:SemiTheme />
+                                <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
                     </fac:SettingsExpander.Footer>
@@ -64,7 +64,7 @@
                         <fac:SettingsExpanderItem.Footer>
                             <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch">
                                 <TextBox.Styles>
-                                    <semi:SemiTheme />
+                                    <semi:SemiTheme Locale="en-US" />
                                 </TextBox.Styles>
                             </TextBox>
                         </fac:SettingsExpanderItem.Footer>
@@ -81,7 +81,7 @@
                                       DisplayMemberBinding="{Binding Title}"
                                       HorizontalAlignment="Stretch">
                                 <ComboBox.Styles>
-                                    <semi:SemiTheme />
+                                    <semi:SemiTheme Locale="en-US" />
                                 </ComboBox.Styles>
                             </ComboBox>
                         </fac:SettingsExpanderItem.Footer>
@@ -97,7 +97,7 @@
                                         Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch">
                             <u:EnumSelector.Styles>
-                                <semi:SemiTheme />
+                                <semi:SemiTheme Locale="en-US" />
                             </u:EnumSelector.Styles>
                         </u:EnumSelector>
                     </fac:SettingsExpander.Footer>
@@ -111,7 +111,7 @@
                                         Value="{Binding EndingSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch">
                             <u:EnumSelector.Styles>
-                                <semi:SemiTheme />
+                                <semi:SemiTheme Locale="en-US" />
                             </u:EnumSelector.Styles>
                         </u:EnumSelector>
                     </fac:SettingsExpander.Footer>
