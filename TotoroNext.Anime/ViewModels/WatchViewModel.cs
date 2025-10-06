@@ -61,6 +61,8 @@ public sealed partial class WatchViewModel(
 
     [ObservableProperty] public partial bool IsEpisodesVisible { get; set; } = true;
 
+    [ObservableProperty] public partial bool IsEpisodesLoading { get; set; } = false;
+
     public async Task InitializeAsync()
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
@@ -100,6 +102,7 @@ public sealed partial class WatchViewModel(
             });
 
 
+        IsEpisodesLoading = true;
         var infos = await Anime.GetEpisodes();
 
         this.WhenAnyValue(x => x.Episodes)
@@ -112,6 +115,7 @@ public sealed partial class WatchViewModel(
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
                     ep.Info = infos.FirstOrDefault(x => x.EpisodeNumber == ep.Number);
                 }
+                IsEpisodesLoading = false;
             });
 
         if (continueWatching)

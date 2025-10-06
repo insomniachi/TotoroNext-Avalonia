@@ -11,10 +11,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeEpisodesListViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeEpisodesListView">
-    <u:LoadingContainer IsLoading="{Binding IsLoading}"
-                        HorizontalContentAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        Background="Transparent">
+    <u:LoadingContainer IsLoading="{Binding IsLoading}">
         <ListBox ItemsSource="{Binding Episodes}"
                  SelectedItem="{Binding SelectedEpisode}"
                  SelectionChanged="SelectingItemsControl_OnSelectionChanged"
