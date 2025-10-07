@@ -24,7 +24,7 @@
             </ListBox.Styles>
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="aam:EpisodeInfo">
-                    <Grid ColumnDefinitions="Auto,*" Height="160"
+                    <Grid ColumnDefinitions="*,1.8*" Height="160"
                           module:ControlExtensions.DoubleTappedCommand="{Binding $parent[ListBox].((vm:AnimeEpisodesListViewModel)DataContext).WatchEpisodeCommand, FallbackValue={x:Null}}">
                         <Grid>
                             <Border>

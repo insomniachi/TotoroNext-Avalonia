@@ -6,14 +6,25 @@ var plugins = new List<PluginProject>
     {
         Dependencies =
         [
-            "GraphQL",
-            "Newtonsoft.Json",
-            "System.Json"
+            "GraphQL.Client",
+            "GraphQL.Client.Serializer.Newtonsoft",
+            "GraphQL.Client.Abstractions",
+            "GraphQL.Client.Abstractions.Websocket",
+            "GraphQL.Primitives",
+            "Newtonsoft.Json"
         ]
     },
     new("TotoroNext.Anime.MyAnimeList")
     {
-        Dependencies = ["MalApi"]
+        Dependencies =
+        [
+            "MalApi",
+            "JikanDotNet",
+            "Microsoft.AspNetCore.WebUtilities",
+            "Microsoft.Net.Http.Headers",
+            "System.Buffers",
+            "System.Text.Encodings.Web"
+        ]
     },
     new("TotoroNext.Anime.AllAnime")
     {
@@ -21,6 +32,25 @@ var plugins = new List<PluginProject>
         [
             "FlurlGraphQL",
             "Macross.Json.Extensions"
+        ]
+    },
+    new("TotoroNext.Anime.AnimePahe"),
+    new("TotoroNext.Anime.AnimeOnsen"),
+    new("TotoroNext.Anime.AnimeParadise"),
+    new("TotoroNext.Anime.Anizone"),
+    new("TotoroNext.Anime.SubsPlease"),
+    new("TotoroNext.Anime.Jellyfin")
+    {
+        Dependencies =
+        [
+            "Jellyfin.Sdk",
+            "Microsoft.Kiota.Abstractions",
+            "Microsoft.Kiota.Http.HttpClientLibrary",
+            "Microsoft.Kiota.Serialization.Form",
+            "Microsoft.Kiota.Serialization.Json",
+            "Microsoft.Kiota.Serialization.Text",
+            "Microsoft.Kiota.Serialization.Multipart",
+            "Std.UriTemplate"
         ]
     },
     new("TotoroNext.Discord")
@@ -31,10 +61,10 @@ var plugins = new List<PluginProject>
             "Newtonsoft.Json"
         ]
     },
-    new("TotoroNext.Anime.AnimePahe"),
     new("TotoroNext.MediaEngine.Mpv"),
     new("TotoroNext.MediaEngine.Vlc"),
-    new("TotoroNext.Anime.Aniskip")
+    new("TotoroNext.Anime.Aniskip"),
+    new("TotoroNext.Torrents.TorBox")
 };
 
 var moduleDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
@@ -50,7 +80,8 @@ return;
 
 void CleanBin(string projectBin, PluginProject project)
 {
-    foreach (var file in Directory.GetFiles(projectBin, "*"))
+    var files = Directory.GetFiles(projectBin, "*");
+    foreach (var file in files)
     {
         var fileName = Path.GetFileName(file);
 

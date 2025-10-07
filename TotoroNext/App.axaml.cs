@@ -76,7 +76,7 @@ public class App : Application
             {
                 DataContext = AppHost.Services.GetService<MainWindowViewModel>()
             };
-            desktop.ShutdownRequested += async (_, _) => await AppHost.StopAsync();
+            desktop.ShutdownRequested += (_, _) => AppHost.StopAsync().GetAwaiter().GetResult();
         }
 
         base.OnFrameworkInitializationCompleted();

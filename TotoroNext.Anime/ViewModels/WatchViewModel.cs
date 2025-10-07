@@ -31,9 +31,9 @@ public sealed partial class WatchViewModel(
                                                   IDisposable,
                                                   IKeyBindingsProvider
 {
+    private TimeSpan _currentPosition;
     private TimeSpan _duration;
     private Media? _media;
-    private TimeSpan _currentPosition;
 
     public IMediaPlayer MediaPlayer { get; } = mediaPlayerFactory.CreateDefault();
 
@@ -115,6 +115,7 @@ public sealed partial class WatchViewModel(
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
                     ep.Info = infos.FirstOrDefault(x => x.EpisodeNumber == ep.Number);
                 }
+
                 IsEpisodesLoading = false;
             });
 
@@ -204,25 +205,30 @@ public sealed partial class WatchViewModel(
         InitializePublishers();
         InitializeListeners();
     }
-    
+
+    public void Dispose()
+    {
+        messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
+    }
+
     public IEnumerable<KeyBinding> GetKeyBindings()
     {
         if (MediaPlayer is not IEmbeddedVlcMediaPlayer embeddedPlayer)
         {
             yield break;
         }
-        
-        yield return new KeyBinding()
+
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.F11),
             Command = new RelayCommand(() => messenger.Send<EnterFullScreen>())
         };
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Escape),
             Command = new RelayCommand(() => messenger.Send<ExitFullScreen>())
         };
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Space),
             Command = new RelayCommand(() =>
@@ -238,21 +244,16 @@ public sealed partial class WatchViewModel(
                 }
             })
         };
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Right),
             Command = new RelayCommand(() => embeddedPlayer.SeekTo(_currentPosition + TimeSpan.FromSeconds(10)))
         };
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Left),
             Command = new RelayCommand(() => embeddedPlayer.SeekTo(_currentPosition - TimeSpan.FromSeconds(10)))
         };
-    }
-
-    public void Dispose()
-    {
-        messenger.Send(new PlaybackEnded());
     }
 
     private async Task<(MediaSegment Segment, MessageBoxResult Result)> OnPlayingOpeningOrEnding(MediaSegment segment)
@@ -303,7 +304,7 @@ public sealed partial class WatchViewModel(
 
         MediaPlayer
             .PlaybackStopped
-            .Do(_ => messenger.Send<PlaybackEnded>())
+            .Do(_ => messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" }))
             .Where(_ => SelectedEpisode is { IsCompleted: true } && Episodes is not null)
             .ObserveOn(RxApp.MainThreadScheduler)
             .SelectMany(_ => AskIfContinueWatching())

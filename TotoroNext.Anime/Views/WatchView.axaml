@@ -54,7 +54,7 @@
                     SelectionChanged="SelectingItemsControl_OnSelectionChanged">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="aam:Episode">
-                            <Grid ColumnDefinitions="Auto,*" Height="160">
+                            <Grid ColumnDefinitions="*,1.8*" Height="160">
                                 <Border>
                                     <Image
                                         asyncImageLoader:ImageLoader.Source="{Binding Info.Image, FallbackValue={x:Null}}"

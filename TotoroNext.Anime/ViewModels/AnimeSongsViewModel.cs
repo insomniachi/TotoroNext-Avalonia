@@ -85,7 +85,7 @@ public sealed partial class AnimeSongsViewModel(
     private void SubscriptionsForRpc(IMediaPlayer player)
     {
         player.PlaybackStopped
-              .Subscribe(_ => messenger.Send<PlaybackEnded>());
+              .Subscribe(_ => messenger.Send(new PlaybackEnded { Id = SelectedTheme?.AbsolutePath ?? "" }));
         player.DurationChanged.Subscribe(ts => _duration = ts);
         player.PositionChanged.Subscribe(ts =>
         {

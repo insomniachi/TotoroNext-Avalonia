@@ -17,6 +17,7 @@ internal class RpcService(
 {
     private readonly DiscordRpcClient _client = new("997177919052984622");
     private readonly bool _isEnabled = settings.Value.IsEnabled;
+    private string? _lastCompletedItem;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -50,6 +51,7 @@ internal class RpcService(
     
     public void Receive(PlaybackEnded message)
     {
+        _lastCompletedItem = message.Id;
         _client.ClearPresence();
     }
 
@@ -64,12 +66,17 @@ internal class RpcService(
         {
             return;
         }
+        
+        if(message.Episode.Id == _lastCompletedItem)
+        {
+            return;
+        }
 
         if (extensionService.IsInIncognitoMode(message.Anime.Id))
         {
             return;
         }
-
+        
         var now = DateTime.UtcNow;
         _client.Update(p =>
         {
@@ -96,8 +103,23 @@ internal class RpcService(
 
     public void Receive(SongPlaybackState message)
     {
-        var now = DateTime.UtcNow;
+        if (!_client.IsInitialized)
+        {
+            return;
+        }
 
+        if (!_isEnabled)
+        {
+            return;
+        }
+
+        if (_lastCompletedItem?.Equals(message.Song.Audio?.AbsolutePath) == true ||
+            _lastCompletedItem?.Equals(message.Song.Video?.AbsolutePath) == true)
+        {
+            return;
+        }
+        
+        var now = DateTime.UtcNow;
         _client.Update(p =>
         {
             p.Type = ActivityType.Listening;

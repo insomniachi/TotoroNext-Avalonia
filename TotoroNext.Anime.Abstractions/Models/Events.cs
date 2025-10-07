@@ -16,7 +16,10 @@ public class SongPlaybackState
     public required AnimeTheme Song { get; init; }
 }
 
-public class PlaybackEnded;
+public class PlaybackEnded
+{
+    public required string Id { get; init; }
+}
 
 public class TrackingUpdated
 {
