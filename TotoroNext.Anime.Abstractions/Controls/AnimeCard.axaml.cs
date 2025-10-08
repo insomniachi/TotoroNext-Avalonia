@@ -75,10 +75,12 @@ public partial class AnimeCard : UserControl
         StatusBorder.Height = 300;
         BadgeContainer.Opacity = 0;
         ScoreContainer.Opacity = 0;
+        TitleBorder.Height = double.NaN;
+        TitleBorder.MaxHeight = 120;
         TitleTextBlock.FontWeight = FontWeight.Bold;
         TitleTextBlock.FontSize = 18;
         TitleTextBlock.TextWrapping = TextWrapping.WrapWithOverflow;
-        TitleTextBlock.TextTrimming = TextTrimming.None;
+        TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
     }
 
     // ReSharper disable once AsyncVoidMethod
@@ -104,6 +106,7 @@ public partial class AnimeCard : UserControl
             StatusBorder.Height = 60;
             BadgeContainer.Opacity = 1;
             ScoreContainer.Opacity = 1;
+            TitleBorder.Height = 54;
             TitleTextBlock.FontWeight = FontWeight.Normal;
             TitleTextBlock.FontSize = 15;
             TitleTextBlock.TextWrapping = TextWrapping.NoWrap;

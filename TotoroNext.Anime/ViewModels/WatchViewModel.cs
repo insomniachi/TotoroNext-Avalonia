@@ -61,7 +61,7 @@ public sealed partial class WatchViewModel(
 
     [ObservableProperty] public partial bool IsEpisodesVisible { get; set; } = true;
 
-    [ObservableProperty] public partial bool IsEpisodesLoading { get; set; } = false;
+    [ObservableProperty] public partial bool IsEpisodesLoading { get; set; } = true;
 
     public async Task InitializeAsync()
     {
