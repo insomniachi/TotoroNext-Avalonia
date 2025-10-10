@@ -8,6 +8,7 @@
              xmlns:aa="using:TotoroNext.Anime.Abstractions.Models"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AdvancedSearchViewModel"
              x:Class="TotoroNext.Anime.Views.AdvancedSearchView">
@@ -106,7 +107,11 @@
                                           HasDetailsPane="True"
                                           DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                           WatchCommand="{x:Static am:Commands.WatchCommand}"
-                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}" />
+                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}">
+                                <Interaction.Behaviors>
+                                    <behaviors:AiringStatusBehavior />
+                                </Interaction.Behaviors>
+                            </ac:AnimeCard>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
