@@ -89,11 +89,31 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
         doc.Load(streamData);
 
         var nodes = doc.QuerySelectorAll("#pickDownload .dropdown-item") ?? [];
+        var servers = nodes
+                           .Select(x => new
+                           {
+                               Title = x.InnerText,
+                               Resolution = ExtractResolution(x.InnerText),
+                               IsDub = x.InnerText.EndsWith("eng"),
+                               Url = x.Attributes["href"].Value,
+                           })
+                           .OrderByDescending(x => x.Resolution)
+                           .ThenBy(x => x.IsDub)
+                           .ToList();
 
-        foreach (var node in nodes)
+        foreach (var server in servers)
         {
-            yield return new VideoServer(node.InnerText.Replace("&middot;", "•"), new Uri(node.Attributes["href"].Value), _extractor);
+            yield return new VideoServer(server.Title.Replace("&middot;", "•"), new Uri(server.Url), _extractor);
         }
+    }
+    
+    private static int ExtractResolution(string item)
+    {
+        var parts = item.Split("&middot;");
+        if (parts.Length < 2) return 0;
+
+        var resPart = parts[1].Trim().Split(' ')[0]; // e.g., "360p"
+        return int.TryParse(resPart.Replace("p", ""), out var res) ? res : 0;
     }
 
     [GeneratedRegex("let id = \"(.+?)\"", RegexOptions.Compiled)]
