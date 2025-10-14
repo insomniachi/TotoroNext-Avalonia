@@ -15,6 +15,7 @@
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.7" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.7" />
     <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.7" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.1.0" />
     <PackageVersion Include="Crc32.NET" Version="1.2.0" />
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageVersion Include="Downloader" Version="4.0.3" />

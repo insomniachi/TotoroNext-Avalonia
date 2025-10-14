@@ -39,14 +39,14 @@
               Grid.Row="0"
               RowDefinitions="Auto,*"
               RowSpacing="16"
-              Background="{DynamicResource SemiColorTertiaryLightActive}"
+              Background="{DynamicResource SemiColorTertiary}"
               IsVisible="{Binding IsEpisodesVisible}">
             <TextBlock Text="Episodes"
                        Classes.H1="true"
                        Margin="8 8 0 0"
                        Theme="{DynamicResource TitleTextBlock}" />
             <u:LoadingContainer Grid.Row="1" IsLoading="{Binding IsEpisodesLoading}"
-                                Background="{DynamicResource SemiColorTertiaryLightActive}">
+                                Background="{DynamicResource SemiColorTertiary}">
                 <ListBox
                     Width="800"
                     MinHeight="200"

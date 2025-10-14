@@ -1,17 +1,20 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:TotoroNext.Anime.ViewModels"
-             xmlns:am="using:TotoroNext.Anime"
-             xmlns:modcv="using:TotoroNext.Module.Converters"
-             xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:u="https://irihi.tech/ursa"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="vm:UserListViewModel"
-             x:Class="TotoroNext.Anime.Views.UserListView">
+﻿<UserControl
+    x:Class="TotoroNext.Anime.Views.UserListView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+    xmlns:am="using:TotoroNext.Anime"
+    xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modcv="using:TotoroNext.Module.Converters"
+    xmlns:u="https://irihi.tech/ursa"
+    xmlns:vm="using:TotoroNext.Anime.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:UserListViewModel"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <modcv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
@@ -19,10 +22,11 @@
 
 
     <Grid RowDefinitions="Auto, *" RowSpacing="16">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="18">
-            <u:SelectionList
-                ItemsSource="{Binding AllStatus}"
-                SelectedItem="{Binding Filter.Status}">
+        <StackPanel
+            HorizontalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="18">
+            <u:SelectionList ItemsSource="{Binding AllStatus}" SelectedItem="{Binding Filter.Status}">
                 <u:SelectionList.ItemTemplate>
                     <DataTemplate>
                         <Label Content="{Binding ., Converter={StaticResource EnumDescriptionConverter}}" />
@@ -43,41 +47,50 @@
             </u:SelectionList>
             <SplitButton Height="40" Command="{Binding OpenFilterPaneCommand}">
                 <SplitButton.Content>
-                    <StackPanel Spacing="8" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="4">
-                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconLucideKind.ArrowUpDown}"
-                                                       Height="20" Width="20" />
-                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Filter}"
-                                                       Height="20" Width="20" />
+                            <iconPacks:PackIconControl
+                                Width="20"
+                                Height="20"
+                                Kind="{x:Static iconPacks:PackIconLucideKind.ArrowUpDown}" />
+                            <iconPacks:PackIconControl
+                                Width="20"
+                                Height="20"
+                                Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Filter}" />
                         </StackPanel>
-                        <TextBlock Text="Sort &amp; Filter" VerticalAlignment="Center" />
+                        <TextBlock VerticalAlignment="Center" Text="Sort &amp; Filter" />
                     </StackPanel>
                 </SplitButton.Content>
                 <SplitButton.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="Clear" Icon="{iconPacks:MaterialDesign Kind=ClearAll}"
-                                  Command="{Binding ClearFiltersCommand}" />
+                        <MenuItem
+                            Command="{Binding ClearFiltersCommand}"
+                            Header="Clear"
+                            Icon="{iconPacks:MaterialDesign Kind=ClearAll}" />
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
         </StackPanel>
 
-        <u:LoadingContainer Grid.Row="1"
-                            Background="Transparent"
-                            IsLoading="{Binding IsLoading}"
-                            VerticalContentAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch">
+        <u:LoadingContainer
+            Grid.Row="1"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Background="Transparent"
+            IsLoading="{Binding IsLoading}">
             <ScrollViewer>
-                <ItemsRepeater ItemsSource="{Binding Anime}"
-                               ElementPrepared="ItemsGrid_OnElementPrepared"
-                               Margin="16 0">
+                <ItemsRepeater
+                    Margin="16,0"
+                    ElementPrepared="ItemsGrid_OnElementPrepared"
+                    ItemsSource="{Binding Anime}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate>
-                            <ac:AnimeCard Anime="{Binding}"
-                                          HasDetailsPane="True"
-                                          DetailsCommand="{x:Static am:Commands.DetailsCommand}"
-                                          WatchCommand="{x:Static am:Commands.WatchCommand}"
-                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}">
+                            <ac:AnimeCard
+                                Anime="{Binding}"
+                                DetailsCommand="{x:Static am:Commands.DetailsCommand}"
+                                HasDetailsPane="True"
+                                SettingsCommand="{x:Static am:Commands.SettingsCommand}"
+                                WatchCommand="{x:Static am:Commands.WatchCommand}">
                                 <Interaction.Behaviors>
                                     <behaviors:UnwatchedEpisodesBehavior />
                                     <behaviors:AiringStatusBehavior />
@@ -86,33 +99,34 @@
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                     <ItemsRepeater.Layout>
-                        <UniformGridLayout ItemsJustification="Start"
-                                           ItemsStretch="Fill"
-                                           MinItemHeight="400"
-                                           MinItemWidth="250"
-                                           MinRowSpacing="16"
-                                           MinColumnSpacing="16" />
+                        <UniformGridLayout
+                            ItemsJustification="Start"
+                            ItemsStretch="Fill"
+                            MinColumnSpacing="16"
+                            MinItemHeight="400"
+                            MinItemWidth="250"
+                            MinRowSpacing="16" />
                     </ItemsRepeater.Layout>
 
                 </ItemsRepeater>
-                <!-- <ItemsControl ItemsSource="{Binding Anime}" -->
-                <!--               module:Animations.ItemsReorderAnimationDuration="0:0:0.400"> -->
+                <!--  <ItemsControl ItemsSource="{Binding Anime}"  -->
+                <!--  module:Animations.ItemsReorderAnimationDuration="0:0:0.400">  -->
                 <!--     <ItemsControl.ItemsPanel> -->
                 <!--         <ItemsPanelTemplate> -->
-                <!--             <modc:ElasticWrapPanelEx -->
-                <!--                 ItemHeight="400" -->
-                <!--                 ItemWidth="250" -->
-                <!--                 IsFillHorizontal="True" /> -->
+                <!--  <modc:ElasticWrapPanelEx  -->
+                <!--  ItemHeight="400"  -->
+                <!--  ItemWidth="250"  -->
+                <!--  IsFillHorizontal="True" />  -->
                 <!--         </ItemsPanelTemplate> -->
                 <!--     </ItemsControl.ItemsPanel> -->
                 <!--     <ItemsControl.ItemTemplate> -->
                 <!--         <DataTemplate> -->
-                <!--             <ac:AnimeCard Anime="{Binding}" -->
-                <!--                           Margin="8" -->
-                <!--                           HasDetailsPane="True" -->
-                <!--                           DetailsCommand="{x:Static am:Commands.DetailsCommand}" -->
-                <!--                           WatchCommand="{x:Static am:Commands.WatchCommand}" -->
-                <!--                           SettingsCommand="{x:Static am:Commands.SettingsCommand}"> -->
+                <!--  <ac:AnimeCard Anime="{Binding}"  -->
+                <!--  Margin="8"  -->
+                <!--  HasDetailsPane="True"  -->
+                <!--  DetailsCommand="{x:Static am:Commands.DetailsCommand}"  -->
+                <!--  WatchCommand="{x:Static am:Commands.WatchCommand}"  -->
+                <!--  SettingsCommand="{x:Static am:Commands.SettingsCommand}">  -->
                 <!--                 <Interaction.Behaviors> -->
                 <!--                     <behaviors:UnwatchedEpisodesBehavior/> -->
                 <!--                     <behaviors:AiringStatusBehavior/> -->

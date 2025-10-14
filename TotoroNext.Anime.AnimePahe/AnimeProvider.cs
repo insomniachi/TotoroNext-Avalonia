@@ -1,4 +1,4 @@
-using System.Text.Json.Nodes;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Flurl.Http;
 using HtmlAgilityPack;
@@ -31,29 +31,24 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
             yield break;
         }
 
-        var jObject = JsonNode.Parse(json);
-
-        if (jObject?["data"]?.AsArray() is not { } results)
+        using var doc = JsonDocument.Parse(json);
+        if (!doc.RootElement.TryGetProperty("data", out var dataArray) || dataArray.ValueKind != JsonValueKind.Array)
         {
             yield break;
         }
 
-        foreach (var item in results)
+        foreach (var item in dataArray.EnumerateArray())
         {
-            var title = $"{item?["title"]}";
-            Uri? image;
-            try
-            {
-                image = new Uri($"{item?["poster"]}");
-            }
-            catch
+            var title = item.GetProperty("title").GetString() ?? "";
+            var poster = item.GetProperty("poster").GetString() ?? "";
+            var session = item.GetProperty("session").GetString() ?? "";
+
+            if (!Uri.TryCreate(poster, UriKind.Absolute, out var image))
             {
                 continue;
             }
 
-            var id = $"{item?["session"]}";
-
-            yield return new SearchResult(this, id, title, image);
+            yield return new SearchResult(this, session, title, image);
         }
     }
 
@@ -90,27 +85,30 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
         var nodes = doc.QuerySelectorAll("#pickDownload .dropdown-item") ?? [];
         var servers = nodes
-                           .Select(x => new
-                           {
-                               Title = x.InnerText,
-                               Resolution = ExtractResolution(x.InnerText),
-                               IsDub = x.InnerText.EndsWith("eng"),
-                               Url = x.Attributes["href"].Value,
-                           })
-                           .OrderByDescending(x => x.Resolution)
-                           .ThenBy(x => x.IsDub)
-                           .ToList();
+                      .Select(x => new
+                      {
+                          Title = x.InnerText,
+                          Resolution = ExtractResolution(x.InnerText),
+                          IsDub = x.InnerText.EndsWith("eng"),
+                          Url = x.Attributes["href"].Value
+                      })
+                      .OrderByDescending(x => x.Resolution)
+                      .ThenBy(x => x.IsDub)
+                      .ToList();
 
         foreach (var server in servers)
         {
             yield return new VideoServer(server.Title.Replace("&middot;", "•"), new Uri(server.Url), _extractor);
         }
     }
-    
+
     private static int ExtractResolution(string item)
     {
         var parts = item.Split("&middot;");
-        if (parts.Length < 2) return 0;
+        if (parts.Length < 2)
+        {
+            return 0;
+        }
 
         var resPart = parts[1].Trim().Split(' ')[0]; // e.g., "360p"
         return int.TryParse(resPart.Replace("p", ""), out var res) ? res : 0;
