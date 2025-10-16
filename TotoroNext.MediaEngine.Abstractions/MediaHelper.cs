@@ -47,24 +47,29 @@ public static class MediaHelper
         await process.WaitForExitAsync();
 
         var result = JsonSerializer.Deserialize<ChapterList>(output);
-        if (result is null)
+        if (result is null or {Chapters: not {Count: > 1}})
         {
             return [];
         }
         
         var segments = new List<MediaSegment>();
+        var lastChapter = TimeSpan.FromSeconds(double.Parse(result.Chapters.Last().EndTime));
         foreach (var chapter in result.Chapters)
         {
             var start = TimeSpan.FromSeconds(double.Parse(chapter.StartTime));
             var end = TimeSpan.FromSeconds(double.Parse(chapter.EndTime));
             var type = GetType(chapter.Tags.Title);
 
-            if (type is not { } segmentType)
+            if (type is MediaSectionType.Content)
             {
-                continue;
+                var duration = end - start;
+                if (Math.Abs(90 - duration.TotalSeconds) < 5)
+                {
+                    type = start.TotalSeconds < (lastChapter.TotalSeconds / 2) ? MediaSectionType.Opening : MediaSectionType.Ending;
+                }
             }
-            
-            segments.Add(new MediaSegment(segmentType, start, end));
+
+            segments.Add(new MediaSegment(type, start, end));
         }
 
         return segments;
@@ -143,14 +148,14 @@ public static class MediaHelper
         return segments.OrderBy(x => x.Start);
     }
 
-    private static MediaSectionType? GetType(string sectionName)
+    private static MediaSectionType GetType(string sectionName)
     {
         return sectionName switch
         {
             _ when sectionName.Equals("Intro", StringComparison.InvariantCultureIgnoreCase) => MediaSectionType.Opening,
             _ when sectionName.Equals("Credits", StringComparison.InvariantCultureIgnoreCase) => MediaSectionType.Ending,
             _ when sectionName.Equals("Outro", StringComparison.InvariantCultureIgnoreCase) => MediaSectionType.Ending,
-            _ => null
+            _ => MediaSectionType.Content
         };
     }
 }

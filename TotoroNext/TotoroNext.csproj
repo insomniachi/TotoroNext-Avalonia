@@ -7,7 +7,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <Platforms>x64</Platforms>
-        <DefineConstants>REFER_PLUGINS</DefineConstants>
+        <DefineConstants>REFER_PLUGINS_NOT</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -20,6 +20,7 @@
     </ItemGroup>
     
     <ItemGroup>
+        <PackageReference Include="Velopack" />
         <PackageReference Include="VideoLAN.LibVLC.Mac" Condition="$([MSBuild]::IsOsPlatform('OSX'))"/>
         <PackageReference Include="VideoLAN.LibVLC.Windows" Condition="$([MSBuild]::IsOsPlatform('Windows'))"/>
     </ItemGroup>

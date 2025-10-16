@@ -2,6 +2,7 @@
 using Avalonia.Markup.Declarative;
 using Avalonia.ReactiveUI;
 using JetBrains.Annotations;
+using Velopack;
 
 namespace TotoroNext;
 
@@ -14,8 +15,24 @@ internal sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        try
+        {
+            VelopackApp.Build()
+                       .OnFirstRun(_ =>
+                       {
+                           /* Your first run code here */
+                       })
+                       .Run();
+
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception e)
+        {
+            var message = "Unhandled exception: " + e;
+            Console.WriteLine(message);
+            throw;
+        }
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
