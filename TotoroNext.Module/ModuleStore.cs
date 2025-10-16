@@ -71,7 +71,7 @@ public class ModuleStore : IModuleStore
         try
         {
             var destination = Path.Combine(_modulesPath, manifest.EntryPoint.Replace(".dll", ""));
-            var downloadUrl = Flurl.Url.Combine(manifest.Versions[0].SourceUrl, ".zip");
+            var downloadUrl = manifest.Versions[0].SourceUrl;
             var stream = await _client.GetStreamAsync(downloadUrl);
             ZipFile.ExtractToDirectory(stream, destination, true);
             return true;

@@ -17,6 +17,11 @@ public class DialogService : IDialogService
     {
         await MessageBox.ShowOverlayAsync(warning, "Warning", icon: MessageBoxIcon.Warning, button: MessageBoxButton.OK);
     }
+
+    public async Task Information(string info)
+    {
+        await MessageBox.ShowOverlayAsync(info, "Info", icon: MessageBoxIcon.Information, button: MessageBoxButton.OK);
+    }
     
     public async Task<MessageBoxResult> AskSkip(string type)
     {

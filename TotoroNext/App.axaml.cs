@@ -2,8 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using IconPacks.Avalonia.Lucide;
 using IconPacks.Avalonia.MaterialDesign;
-using IconPacks.Avalonia.Octicons;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TotoroNext.Anime.Abstractions;
@@ -23,7 +23,7 @@ public class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        
+
 #if DEBUG
         this.AttachDeveloperTools();
 #endif
@@ -39,15 +39,21 @@ public class App : Application
                           services.AddSingleton<IAnimeExtensionService, AnimeExtensionService>();
                           services.AddSingleton<SettingsModel>();
 
+#if REFER_PLUGINS
+                          services.AddSingleton<IModuleStore, DebugModuleStore>();
+#else
+                          services.AddSingleton<IModuleStore, ModuleStore>();
+#endif
+
                           services.AddInternalMediaPlayer();
-                          
+
                           services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider))
                                   .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService));
-                          
+
                           RegisterNavigationViewItems(services);
 
                           List<IModule> modules =
@@ -63,14 +69,14 @@ public class App : Application
                           }
                       })
                       .Build();
- 
+
         Container.SetServiceProvider(AppHost.Services);
 
         if (AppHost.Services.GetService<IEnumerable<IInitializer>>() is { } initializers)
         {
             initializers.AsParallel().ForAll(x => x.Initialize());
         }
-        
+
         Task.Run(() => AppHost.StartAsync());
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -109,7 +115,6 @@ public class App : Application
 
     private static void RegisterNavigationViewItems(IServiceCollection services)
     {
-        
 #if DEBUG
         services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
                                                                                         PackIconOcticonsKind.Beaker16,
@@ -119,9 +124,19 @@ public class App : Application
                                              new NavMenuItemTag { Order = 3 });
 #endif
 
-        services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
+        services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
+                                                                  PackIconLucideKind.Store,
+                                                                  new NavMenuItemTag
+                                                                  {
+                                                                      IsFooterItem = true
+                                                                  });
+
+        services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed", 
                                                                       PackIconMaterialDesignKind.ShoppingCart,
-                                                                      new NavMenuItemTag { IsFooterItem = true });
+                                                                      new NavMenuItemTag
+                                                                      {
+                                                                          IsFooterItem = true
+                                                                      });
         services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
                                                                         PackIconMaterialDesignKind.Settings,
                                                                         new NavMenuItemTag

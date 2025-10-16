@@ -14,7 +14,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AllAnime"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AllAnime.zip"
       }
     ]
   },
@@ -33,7 +33,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimePahe"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimePahe.zip"
       }
     ]
   },
@@ -52,7 +52,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.MediaEngine.Mpv"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.MediaEngine.Mpv.zip"
       }
     ]
   },
@@ -71,7 +71,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.MediaEngine.Vlc"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.MediaEngine.Vlc.zip"
       }
     ]
   },
@@ -90,7 +90,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Anilist"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Anilist.zip"
       }
     ]
   },
@@ -109,7 +109,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.MyAnimeList"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.MyAnimeList.zip"
       }
     ]
   },
@@ -128,7 +128,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Aniskip"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Aniskip.zip"
       }
     ]
   },
@@ -147,7 +147,7 @@
         "Version": "1.0.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Discord"
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Discord.zip"
       }
     ]
   }
