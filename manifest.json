@@ -40,6 +40,42 @@
     ]
   },
   {
+    "Id": "5bdd85ad-523a-48b0-9af6-e84f46e565f6",
+    "Name": "Anizone",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Anizone/Assets/anizone.jpg",
+    "EntryPoint": "TotoroNext.Anime.Anizone.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Anizone.zip"
+      }
+    ]
+  },
+  {
+    "Id": "3b61e01b-dd7c-4492-a564-4ee031959097",
+    "Name": "Anime Paradise",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimeParadise/Assets/animeparadise.jpg",
+    "EntryPoint": "TotoroNext.Anime.AnimeParadise.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeParadise.zip"
+      }
+    ]
+  },
+  {
     "Id": "b8c3f0d2-1c5e-4f6a-9b7d-3f8e1c5f0d2a",
     "Name": "MPV",
     "Description": "MPV Media Player is a free, open-source, and cross-platform media player known for its versatility and powerful performance. It supports a wide variety of media file formats, audio and video codecs, and subtitle types, making it suitable for both casual and advanced users. MPV is particularly noted for its scripting capabilities, allowing users to customize their experience extensively.",
@@ -154,7 +190,7 @@
     ]
   },
   {
-    "Id": "b3329249-3e29-4625-8211-2934dade3c37",
+    "Id": "2789535c-e32f-4e3c-ad2e-d45c84ec0f37",
     "Name": "TorBox",
     "Description": "TorBox debrid service integration",
     "Owner": "Totoro",

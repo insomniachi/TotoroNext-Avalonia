@@ -30,7 +30,7 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
     {
         var response = await $"https://www.animeparadise.moe/watch/{episodeId}"
                              .AppendQueryParam("origin", animeId)
-                             .WithHeader("next-action", "60553ef556eeb58ac6b7604ec273a67f0202e7dda1")
+                             .WithHeader("next-action", "60c9f65b91846ebfe54b8b0e10169ad4b80073404a")
                              .PostStringAsync($"""["{episodeId}","{animeId}"]""")
                              .ReceiveString();
 

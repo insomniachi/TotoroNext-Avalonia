@@ -4,6 +4,7 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using IconPacks.Avalonia.Lucide;
 using IconPacks.Avalonia.MaterialDesign;
+using IconPacks.Avalonia.Octicons;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TotoroNext.Anime.Abstractions;
