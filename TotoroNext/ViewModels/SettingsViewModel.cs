@@ -1,9 +1,13 @@
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using Ursa.Controls;
+using Velopack;
+using Velopack.Sources;
 
 namespace TotoroNext.ViewModels;
 
@@ -96,11 +100,14 @@ public class SettingsModel : ObservableObject
 [UsedImplicitly]
 public partial class SettingsViewModel : ObservableObject, IInitializable
 {
+    private readonly IDialogService _dialogService;
     private readonly SettingsModel _settings;
 
     public SettingsViewModel(IEnumerable<Descriptor> modules,
+                             IDialogService dialogService,
                              SettingsModel settings)
     {
+        _dialogService = dialogService;
         _settings = settings;
         var allModules = modules.ToList();
 
@@ -123,5 +130,33 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
     public void Initialize()
     {
         Settings = _settings;
+    }
+
+    [RelayCommand]
+    private async Task CheckForUpdates()
+    {
+        try
+        {
+            var source = new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null, false);
+            var manager = new UpdateManager(source);
+            
+            var updateInfo = await manager.CheckForUpdatesAsync();
+            if (updateInfo is null)
+            {
+                return;
+            }
+        
+            var answer = await _dialogService.Question("Update found", "Download and install the update?");
+
+            if (answer == MessageBoxResult.Yes)
+            {
+                await manager.DownloadUpdatesAsync(updateInfo);
+                manager.ApplyUpdatesAndRestart(updateInfo);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

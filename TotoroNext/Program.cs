@@ -31,7 +31,6 @@ internal sealed class Program
         {
             var message = "Unhandled exception: " + e;
             Console.WriteLine(message);
-            throw;
         }
     }
 
