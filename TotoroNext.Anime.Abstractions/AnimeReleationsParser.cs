@@ -34,6 +34,13 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
         var text =
             await "https://raw.githubusercontent.com/erengy/anime-relations/refs/heads/master/anime-relations.txt"
                 .GetStringAsync();
+
+        var directory = Path.GetDirectoryName(_path);
+        if (directory is not null)
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         await File.WriteAllTextAsync(_path, text);
         Initialize();
     }

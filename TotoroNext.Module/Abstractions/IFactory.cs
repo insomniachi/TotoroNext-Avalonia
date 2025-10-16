@@ -1,11 +1,11 @@
 namespace TotoroNext.Module.Abstractions;
 
-public interface IFactory<TService, TId>
+public interface IFactory<out TService, in TId>
     where TService : notnull
 {
     TService Create(TId id);
 
-    TService CreateDefault();
+    TService? CreateDefault();
 
     IEnumerable<TService> CreateAll();
 

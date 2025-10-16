@@ -17,13 +17,16 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
     private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
     private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
     private readonly IMessenger _messenger;
+    private readonly IDialogService _dialogService;
     private readonly ITrackingService? _trackingService;
     private IEnumerable<AnimeModel> _allItems = [];
 
     public UserListViewModel(IFactory<ITrackingService, Guid> factory,
-                             IMessenger messenger)
+                             IMessenger messenger,
+                             IDialogService dialogService)
     {
         _messenger = messenger;
+        _dialogService = dialogService;
         _trackingService = factory.CreateDefault();
 
         _animeCache
@@ -54,6 +57,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
     {
         if (_trackingService is null)
         {
+            await _dialogService.Warning("No tracking services found. Please install at least one tracking service module.");
             return;
         }
 

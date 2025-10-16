@@ -20,11 +20,11 @@ public class Factory<TService, TId>(
         return scope.ServiceProvider.GetKeyedService<TService>(id) ?? scope.ServiceProvider.GetRequiredKeyedService<TService>(Guid.Empty);
     }
 
-    public TService CreateDefault()
+    public TService? CreateDefault()
     {
         using var scope = serviceScopeFactory.CreateScope();
         var key = localSettingsService.ReadSetting<TId>(defaultKey);
-        return scope.ServiceProvider.GetKeyedService<TService>(key) ?? scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).First();
+        return scope.ServiceProvider.GetKeyedService<TService>(key) ?? scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).FirstOrDefault();
     }
 
     public IEnumerable<TService> CreateAll()

@@ -18,7 +18,8 @@ namespace TotoroNext.Anime.ViewModels;
 public partial class AdvancedSearchViewModel(
     IFactory<IMetadataService, Guid> metadataFactory,
     IEnumerable<Descriptor> descriptors,
-    ILocalSettingsService localSettingsService) : ObservableObject, IInitializable
+    ILocalSettingsService localSettingsService,
+    IDialogService dialogService) : ObservableObject, IAsyncInitializable
 {
     private bool _isChangeNotificationsEnabled = true;
     private IMetadataService? _metadataService;
@@ -39,8 +40,14 @@ public partial class AdvancedSearchViewModel(
 
     public int CurrentYear { get; } = DateTime.Now.Year;
 
-    public void Initialize()
+    public async Task InitializeAsync()
     {
+        if (MetadataServices is { Count: 0 })
+        {
+            await dialogService.Warning("No metadata services found. Please install at least one metadata service module.");
+            return;
+        }
+        
         var defaultServiceId = localSettingsService.ReadSetting<Guid?>("SelectedTrackingService");
         SelectedService = MetadataServices.FirstOrDefault(x => x.Id == defaultServiceId);
 

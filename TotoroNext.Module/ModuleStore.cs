@@ -21,6 +21,11 @@ public class ModuleStore : IModuleStore
 
     public IEnumerable<IModule> LoadModules()
     {
+        if (!Directory.Exists(_modulesPath))
+        {
+            yield break;
+        }
+        
         var directories = Directory.GetDirectories(_modulesPath, "*", SearchOption.AllDirectories);
 
         foreach (var item in directories.SelectMany(x => Directory.GetFiles(x, "*.dll", SearchOption.AllDirectories)))
