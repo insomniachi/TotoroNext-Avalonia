@@ -51,8 +51,6 @@ jobs:
             with:
               tag_name: ${{ steps.version.outputs.version-without-v }}
               name: ${{ steps.version.outputs.version-without-v }}
-              files: |
-                ${{ env.VPACK_PATH }}/*.nupkg
-                ${{ env.VPACK_PATH }}/releases.${{ matrix.rid }}.json
+              files: ${{ env.VPACK_PATH }}/**
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
