@@ -15,8 +15,11 @@ jobs:
         name: 'Build and deploy'
         strategy:
           matrix:
-            os: [windows-latest, ubuntu-latest]
-            rid: [win-x64, linux-x64]
+            include:
+            - os: windows-latest
+              rid: win-x64
+            - os: ubuntu-latest
+              rid: linux-x64
         runs-on: ${{ matrix.os }}
         steps:
         -   name: 'Checkout'
@@ -29,9 +32,6 @@ jobs:
         
         -   name: Install Velopack CLI
             run: dotnet tool install --global vpk
-        
-        -   name: 'Add msbuild to PATH'
-            uses: microsoft/setup-msbuild@v1.1
         
         -   name: 'Get version'
             id: version
