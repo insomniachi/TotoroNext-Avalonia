@@ -9,6 +9,7 @@ public static class ComponentTypes
     public const string MediaSegments = "Segments";
     public const string AnimeDownloader = "Anime Downloader";
     public const string Debrid = "Debrid";
+    public const string Miscellaneous = "Miscellaneous";
 }
 
 public interface IComponentRegistry

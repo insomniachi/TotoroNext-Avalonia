@@ -14,7 +14,7 @@ public class Module : IModule
         Description =
             "AnimePahe is an encode \"group\" (me and my lovely bot), was founded in July 2014 by I, me and myself.\r\nWe encode on going anime, completed anime and anime movie.",
         HeroImage = ResourceHelper.GetResource("pahe.jpg"),
-        Components = [ComponentTypes.AnimeProvider]
+        Components = [ComponentTypes.AnimeProvider, ComponentTypes.AnimeDownloader]
     };
 
     public void ConfigureServices(IServiceCollection services)

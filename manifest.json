@@ -5,7 +5,8 @@
     "Description": "All Manga's goal is to provide you with the highest possible amount of daily anime episodes/manga chapters for free and without any kind of limitation. As a very dedicated website, we try to improve each month bringing new updates to improve the user experience as much as possible.",
     "Owner": "Totoro",
     "Categories": [
-      "Anime Provider"
+      "Anime Provider",
+      "Anime Downloader"
     ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AllAnime/Assets/hero.png",
     "EntryPoint": "TotoroNext.Anime.AllAnime.dll",
@@ -24,7 +25,8 @@
     "Description": "AnimePahe is an encode \"group\" (me and my lovely bot), was founded in July 2014 by I, me and myself.\r\nWe encode on going anime, completed anime and anime movie.",
     "Owner": "Totoro",
     "Categories": [
-      "Anime Provider"
+      "Anime Provider",
+      "Anime Downloader"
     ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimePahe/Assets/pahe.jpg",
     "EntryPoint": "TotoroNext.Anime.AnimePahe.dll",
@@ -148,6 +150,25 @@
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Discord.zip"
+      }
+    ]
+  },
+  {
+    "Id": "b3329249-3e29-4625-8211-2934dade3c37",
+    "Name": "TorBox",
+    "Description": "TorBox debrid service integration",
+    "Owner": "Totoro",
+    "Categories": [
+      "Misc"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Torrents.TorBox/Assets/torbox.jpg",
+    "EntryPoint": "TotoroNext.Torrents.TorBox.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Torrents.TorBox.zip"
       }
     ]
   }

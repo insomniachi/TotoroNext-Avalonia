@@ -8,28 +8,32 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:ModulesViewModel"
              x:Class="TotoroNext.Views.ModulesView">
-    <ScrollViewer>
-        <ItemsControl ItemsSource="{Binding Descriptors}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="mod:Descriptor">
-                    <Grid RowDefinitions="Auto,Auto" Margin="16"
-                          mod:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:ModulesViewModel)DataContext).NavigateToSettingsCommand, FallbackValue={x:Null}}">
-                        <Image Height="200" Source="{Binding HeroImage}" />
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="{Binding Name}" />
-                            <TextBlock Text="{Binding Description}"
-                                       Height="50"
-                                       TextTrimming="{x:Static TextTrimming.WordEllipsis}"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <u:ElasticWrapPanel IsFillHorizontal="True" ItemWidth="300" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-    </ScrollViewer>
+    <Grid ColumnDefinitions="200,*" ColumnSpacing="10">
+        <u:SelectionList ItemsSource="{Binding FilterTags}"
+                         SelectedItem="{Binding SelectedFilterTag}" />
+        <ScrollViewer Grid.Column="1">
+            <ItemsControl ItemsSource="{Binding Descriptors}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="mod:Descriptor">
+                        <Grid RowDefinitions="Auto,Auto" Margin="16"
+                              mod:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:ModulesViewModel)DataContext).NavigateToSettingsCommand, FallbackValue={x:Null}}">
+                            <Image Height="200" Source="{Binding HeroImage}" />
+                            <StackPanel Grid.Row="1">
+                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding Description}"
+                                           Height="50"
+                                           TextTrimming="{x:Static TextTrimming.WordEllipsis}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <u:ElasticWrapPanel IsFillHorizontal="True" ItemWidth="300" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
