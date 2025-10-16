@@ -80,7 +80,6 @@ public class App : Application
             {
                 DataContext = AppHost.Services.GetService<MainWindowViewModel>()
             };
-            desktop.ShutdownRequested += (_, _) => AppHost.StopAsync().GetAwaiter().GetResult();
         }
 
         base.OnFrameworkInitializationCompleted();

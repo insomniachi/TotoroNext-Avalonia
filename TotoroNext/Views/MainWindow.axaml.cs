@@ -27,6 +27,16 @@ public partial class MainWindow : UrsaWindow
         GetTopLevel(this)!.KeyDown += OnKeyDown;
     }
 
+    protected override async Task<bool> CanClose()
+    {
+        var canClose = await base.CanClose();
+        if (canClose)
+        {
+            await App.AppHost.StopAsync();
+        }
+        return canClose;
+    }
+
     private void UpdateControls(bool isFullscreen)
     {
         MenuContainer.IsVisible = !isFullscreen;

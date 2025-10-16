@@ -71,7 +71,7 @@ var moduleDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder
 
 foreach (var project in plugins)
 {
-    var basePath = $"../../../../../{project.Name}/bin/x64/Debug/net9.0";
+    var basePath = $"../../../../../{project.Name}/bin/x64/Release/net9.0";
     CleanBin(basePath, project);
     MovePlugin(moduleDir, basePath, project);
 }
