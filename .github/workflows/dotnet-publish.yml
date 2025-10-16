@@ -10,6 +10,9 @@ env:
   MAIN_PROJECT_PATH: 'TotoroNext/TotoroNext.csproj'
   PUBLISH_FOLDER: 'TotoroNext/bin/publish'
 
+permissions:
+  contents: write
+
 jobs:
     build:
         name: 'Build and deploy'
@@ -47,7 +50,7 @@ jobs:
             uses: softprops/action-gh-release@v1
             with:
               tag_name: ${{ steps.version.outputs.version-without-v }}
-              release_name: ${{ steps.version.outputs.version-without-v }}
+              name: ${{ steps.version.outputs.version-without-v }}
               files: |
                 ${{ env.VPACK_PATH }}/*.nupkg
                 ${{ env.VPACK_PATH }}/releases.${{ matrix.rid }}.json
