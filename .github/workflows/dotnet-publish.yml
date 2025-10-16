@@ -6,9 +6,9 @@ on:
     - 'v*'
 
 env:
-  VPACK_PATH: 'TotoroNext\bin\Releases'
-  MAIN_PROJECT_PATH: 'TotoroNext\TotoroNext.csproj'
-  PUBLISH_FOLDER: 'TotoroNext\bin\publish'
+  VPACK_PATH: 'TotoroNext/bin/Releases'
+  MAIN_PROJECT_PATH: 'TotoroNext/TotoroNext.csproj'
+  PUBLISH_FOLDER: 'TotoroNext/bin/publish'
 
 jobs:
     build:
@@ -38,7 +38,7 @@ jobs:
             uses: battila7/get-version-action@v2
 
         -   name: 'Build Project'
-            run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -r ${{ matrix.rid }} -o ${{ env.PUBLISH_FOLDER }}\ /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
+            run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -r ${{ matrix.rid }} -o ${{ env.PUBLISH_FOLDER }} /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
 
         -   name: Pack with Velopack
             run: vpk pack --input ${{ env.PUBLISH_FOLDER}} --output ${{ env.VPACK_PATH }} --channel ${{ matrix.rid }}
