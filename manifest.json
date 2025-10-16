@@ -119,7 +119,8 @@
     "Description": "AniList.co is an English-language website where you can follow and share manga books, anime series, movies, ONA and OVA releases. AniList.co runs alongside AniChart.net. The site is owned by the people behind the usernames Nazo and TehNut. ",
     "Owner": "Totoro",
     "Categories": [
-      "Metadata"
+      "Metadata",
+      "Tracking"
     ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Anilist/Assets/anilist.jpg",
     "EntryPoint": "TotoroNext.Anime.Anilist.dll",
@@ -138,7 +139,8 @@
     "Description": "MyAnimeList, often abbreviated as MAL, is an anime and manga social networking and social cataloging application website run by volunteers. The site provides its users with a list-like system to organize and score anime and manga. It facilitates finding users who share similar tastes and provides a large database on anime and manga",
     "Owner": "Totoro",
     "Categories": [
-      "Metadata"
+      "Metadata",
+      "Tracking"
     ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.MyAnimeList/Assets/mal.jpg",
     "EntryPoint": "TotoroNext.Anime.Anilist.dll",
@@ -176,7 +178,7 @@
     "Description": "Custom discord rich presence while watching",
     "Owner": "Totoro",
     "Categories": [
-      "Misc"
+      "Miscellaneous"
     ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Discord/Assets/discord-logo.jpg",
     "EntryPoint": "TotoroNext.Discord.dll",
@@ -195,7 +197,7 @@
     "Description": "TorBox debrid service integration",
     "Owner": "Totoro",
     "Categories": [
-      "Misc"
+      "Debrid"
     ],
     "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Torrents.TorBox/Assets/torbox.jpg",
     "EntryPoint": "TotoroNext.Torrents.TorBox.dll",
