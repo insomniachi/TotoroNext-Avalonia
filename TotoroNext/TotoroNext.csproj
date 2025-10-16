@@ -9,7 +9,7 @@
         <Platforms>x64</Platforms>
         <Version Condition=" '$(BuildVersion)' == '' ">1.0.0</Version>
         <Version Condition=" '$(BuildVersion)' != '' ">$(BuildVersion)</Version>
-        <DefineConstants>REFER_PLUGINS</DefineConstants>
+        <DefineConstants>REFER_PLUGINS_NOT</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
