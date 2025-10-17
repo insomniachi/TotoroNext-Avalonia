@@ -7,11 +7,8 @@ using IconPacks.Avalonia.MaterialDesign;
 using IconPacks.Avalonia.Octicons;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TotoroNext.Anime.Abstractions;
-using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
-using TotoroNext.Torrents.Abstractions;
 using TotoroNext.ViewModels;
 using TotoroNext.Views;
 
@@ -19,7 +16,7 @@ namespace TotoroNext;
 
 public class App : Application
 {
-    public static IHost AppHost { get; private set; } = null!;
+    public static IHost AppHost { get; set; } = null!;
 
     public override void Initialize()
     {
@@ -32,60 +29,12 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        AppHost = Host.CreateDefaultBuilder()
-                      .ConfigureServices((_, services) =>
-                      {
-                          services.AddCoreServices();
-                          services.AddTransient<MainWindowViewModel>();
-                          services.AddSingleton<IAnimeExtensionService, AnimeExtensionService>();
-                          services.AddSingleton<SettingsModel>();
-
-#if REFER_PLUGINS
-                          services.AddSingleton<IModuleStore, DebugModuleStore>();
-#else
-                          services.AddSingleton<IModuleStore, ModuleStore>();
-#endif
-
-                          services.AddInternalMediaPlayer();
-
-                          services.RegisterFactory<ITrackingService>(nameof(SettingsModel.SelectedTrackingService))
-                                  .RegisterFactory<IMediaPlayer>(nameof(SettingsModel.SelectedMediaEngine))
-                                  .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
-                                  .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
-                                  .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider))
-                                  .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService));
-
-                          RegisterNavigationViewItems(services);
-
-                          List<IModule> modules =
-                          [
-                              new Anime.Module(),
-                              new SongRecognition.Module(),
-                              ..LoadInstalledModules()
-                          ];
-
-                          foreach (var module in modules)
-                          {
-                              module.ConfigureServices(services);
-                          }
-                      })
-                      .Build();
-
-        Container.SetServiceProvider(AppHost.Services);
-
-        if (AppHost.Services.GetService<IEnumerable<IInitializer>>() is { } initializers)
-        {
-            initializers.AsParallel().ForAll(x => x.Initialize());
-        }
-
-        Task.Run(() => AppHost.StartAsync());
-
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
+            desktop.MainWindow = new MainSplashWindow
             {
-                DataContext = AppHost.Services.GetService<MainWindowViewModel>()
+                DataContext = new SplashViewModel(Host.CreateDefaultBuilder())
             };
         }
 
@@ -104,89 +53,4 @@ public class App : Application
             BindingPlugins.DataValidators.Remove(plugin);
         }
     }
-
-    private static IEnumerable<IModule> LoadInstalledModules()
-    {
-#if REFER_PLUGINS
-        return new DebugModuleStore().LoadModules();
-#else
-        return new ModuleStore().LoadModules();
-#endif
-    }
-
-    private static void RegisterNavigationViewItems(IServiceCollection services)
-    {
-#if DEBUG
-        services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
-                                                                                        PackIconOcticonsKind.Beaker16,
-                                                                                        new NavMenuItemTag { IsFooterItem = true });
-        
-        services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
-                                             new NavMenuItemTag { Order = 3 });
-#endif
-
-        services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
-                                                                  PackIconLucideKind.Store,
-                                                                  new NavMenuItemTag
-                                                                  {
-                                                                      IsFooterItem = true
-                                                                  });
-
-        services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed", 
-                                                                      PackIconMaterialDesignKind.ShoppingCart,
-                                                                      new NavMenuItemTag
-                                                                      {
-                                                                          IsFooterItem = true
-                                                                      });
-        services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
-                                                                        PackIconMaterialDesignKind.Settings,
-                                                                        new NavMenuItemTag
-                                                                        {
-                                                                            IsFooterItem = true,
-                                                                            Order = int.MaxValue
-                                                                        });
-    }
 }
-
-
-#if REFER_PLUGINS
-public class DebugModuleStore : IModuleStore
-{
-    public IEnumerable<IModule> LoadModules()
-    {
-        // Anime Providers
-        yield return new Anime.AllAnime.Module();
-        yield return new Anime.AnimePahe.Module();
-        yield return new Anime.AnimeParadise.Module();
-        yield return new Anime.AnimeOnsen.Module();
-        yield return new Anime.Anizone.Module();
-        yield return new Anime.SubsPlease.Module();
-        yield return new Anime.Jellyfin.Module();
-
-        // Anime Tracking/Metadata
-        yield return new Anime.Anilist.Module();
-        yield return new Anime.MyAnimeList.Module();
-
-        // Misc
-        yield return new Anime.Aniskip.Module();
-        yield return new Discord.Module();
-
-        // Media Players
-        yield return new MediaEngine.Mpv.Module();
-        yield return new MediaEngine.Vlc.Module();
-        
-        // Debrid
-        yield return new Torrents.TorBox.Module();
-    }
-
-    public Task<bool> DownloadModule(ModuleManifest manifest)
-    {
-        return Task.FromResult(false);
-    }
-
-    public IAsyncEnumerable<ModuleManifest> GetAllModules()
-    {
-        return AsyncEnumerable.Empty<ModuleManifest>();
-    }
-}
-#endif

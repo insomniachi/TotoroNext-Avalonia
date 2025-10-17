@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using CommunityToolkit.Mvvm.Messaging;
 using TotoroNext.Module.Abstractions;
 using Path = System.IO.Path;
 
@@ -38,6 +39,8 @@ public class ModuleStore : IModuleStore
                 continue;
             }
 
+            SendMessage(null, fileName);
+            
             var context = new ModuleLoadContext(item);
             Assembly assembly;
             try
@@ -68,11 +71,25 @@ public class ModuleStore : IModuleStore
 
     public async Task<bool> DownloadModule(ModuleManifest manifest)
     {
+        var targetDir = Path.Combine(_modulesPath, manifest.EntryPoint.Replace(".dll", ""));
         try
         {
             var downloadUrl = manifest.Versions[0].SourceUrl;
             var stream = await _client.GetStreamAsync(downloadUrl);
-            ZipFile.ExtractToDirectory(stream, _modulesPath, true);
+            using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+            foreach (var entry in archive.Entries)
+            {
+                // Skip empty entries
+                if (string.IsNullOrEmpty(entry.Name)) continue;
+
+                // Remove root folder from path
+                var parts = entry.FullName.Split('/', '\\');
+                var trimmedPath = Path.Combine(parts.Length > 1 ? string.Join(Path.DirectorySeparatorChar.ToString(), parts[1..]) : entry.Name);
+
+                var destinationPath = Path.Combine(targetDir, trimmedPath);
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
+                entry.ExtractToFile(destinationPath, overwrite: true);
+            }
             return true;
         }
         catch
@@ -92,5 +109,10 @@ public class ModuleStore : IModuleStore
         {
             yield return item;
         }
+    }
+
+    private static void SendMessage(string? primary, string? secondary)
+    {
+        WeakReferenceMessenger.Default.Send(new Tuple<string?,string?>(primary, secondary));
     }
 }
