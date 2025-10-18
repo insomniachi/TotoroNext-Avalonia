@@ -45,7 +45,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
         UpdateStatus("Updating modules...", "");
         await UpdateModules(store);
-        
+
         UpdateStatus("Building service provider...", "");
 
         App.AppHost = hostBuilder
@@ -105,20 +105,24 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                 var latestVersion = new Version(int.Parse(latestVersionInfo[0]),
                                                 int.Parse(latestVersionInfo[1]),
                                                 int.Parse(latestVersionInfo[2]));
-                var versionInfo = FileVersionInfo.GetVersionInfo(Path.Combine(folder, manifest.EntryPoint));
-                var currentVersion = new Version(versionInfo.FileMajorPart,
-                                             versionInfo.FileMinorPart,
-                                             versionInfo.FileBuildPart,
-                                             versionInfo.FilePrivatePart);
-                
-                needDownload = currentVersion < latestVersion;
+                var entryPoint = Path.Combine(folder, manifest.EntryPoint);
+                if (File.Exists(entryPoint))
+                {
+                    var versionInfo = FileVersionInfo.GetVersionInfo(entryPoint);
+                    var currentVersion = new Version(versionInfo.FileMajorPart,
+                                                     versionInfo.FileMinorPart,
+                                                     versionInfo.FileBuildPart,
+                                                     versionInfo.FilePrivatePart);
+
+                    needDownload = currentVersion < latestVersion;
+                }
             }
 
             if (!needDownload)
             {
                 continue;
             }
-            
+
             await store.DownloadModule(manifest);
         }
     }

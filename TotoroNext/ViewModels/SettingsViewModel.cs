@@ -143,10 +143,11 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
             var updateInfo = await manager.CheckForUpdatesAsync();
             if (updateInfo is null)
             {
+                await _dialogService.Information("You are running the latest version.");
                 return;
             }
         
-            var answer = await _dialogService.Question("Update found", "Download and install the update?");
+            var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.BaseRelease?.Version}?");
 
             if (answer == MessageBoxResult.Yes)
             {
