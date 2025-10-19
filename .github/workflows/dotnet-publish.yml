@@ -45,7 +45,7 @@ jobs:
 
         -   name: Pack and Publish with Velopack
             run: |
-              vpk download github --repoUrl https://github.com/${{ github.repository }}
+              vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
               vpk pack --packId TotoroNext --packVersion ${{ steps.version.outputs.version-without-v }} --packDir ${{ env.PUBLISH_FOLDER }} --channel ${{ matrix.rid }}
-              vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --releaseName "Totoro ${{ steps.version.outputs.version-without-v }}" --tag v${{ steps.version.outputs.version-without-v }} --channel ${{ matrix.rid }}
+              vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --releaseName "Totoro ${{ steps.version.outputs.version-without-v }}" --tag v${{ steps.version.outputs.version-without-v }} --channel ${{ matrix.rid }} --token ${{ secrets.GITHUB_TOKEN }}
               
