@@ -3,7 +3,7 @@ name: "Build and publish"
 on:
   push:
     tags:
-    - 'v*'
+      - 'v*'
 
 env:
   VPACK_PATH: 'TotoroNext/bin/Releases'
@@ -14,38 +14,45 @@ permissions:
   contents: write
 
 jobs:
-    build:
-        name: 'Build and deploy'
-        strategy:
-          matrix:
-            include:
-            - os: windows-latest
-              rid: win-x64
-            - os: ubuntu-latest
-              rid: linux-x64
-        runs-on: ${{ matrix.os }}
-        steps:
-        -   name: 'Checkout'
-            uses: actions/checkout@v2
-  
-        -   name: 'Install dotnet'
-            uses: actions/setup-dotnet@v1
-            with:
-                dotnet-version: '9.0'
-        
-        -   name: Install Velopack CLI
-            run: dotnet tool install --global vpk
-        
-        -   name: 'Get version'
-            id: version
-            uses: battila7/get-version-action@v2
+  build:
+    name: 'Build and deploy'
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      -   name: 'Checkout'
+          uses: actions/checkout@v2
 
-        -   name: 'Build Project'
-            run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -r ${{ matrix.rid }} -o ${{ env.PUBLISH_FOLDER }} /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
+      -   name: 'Install dotnet'
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: '9.0'
 
-        -   name: Pack and Publish with Velopack
-            run: |
-              vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
-              vpk pack --packId TotoroNext --packVersion ${{ steps.version.outputs.version-without-v }} --packDir ${{ env.PUBLISH_FOLDER }} --channel ${{ matrix.rid }}
-              vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --releaseName "Totoro ${{ steps.version.outputs.version-without-v }}" --tag v${{ steps.version.outputs.version-without-v }} --channel ${{ matrix.rid }} --token ${{ secrets.GITHUB_TOKEN }}
-              
+      -   name: Install Velopack CLI
+          run: dotnet tool install --global vpk
+
+      -   name: 'Get version'
+          id: version
+          uses: battila7/get-version-action@v2
+
+      -   name: 'Build Project'
+          run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -r ${{ matrix.rid }} -o ${{ env.PUBLISH_FOLDER }} /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
+
+      -   name: Pack with Velopack
+          run: |
+            vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
+            vpk pack --packId TotoroNext --packVersion ${{ steps.version.outputs.version-without-v }} --packDir ${{ env.PUBLISH_FOLDER }} --outputDir ${{ env.VPACK_PATH }} --channel ${{ matrix.rid }}
+
+      -   name: Upload Assets
+          uses: softprops/action-gh-release@v1
+          with:
+            tag_name: ${{ steps.version.outputs.version-without-v }}
+            name: ${{ steps.version.outputs.version-without-v }}
+            files: ${{ env.VPACK_PATH }}/**
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
