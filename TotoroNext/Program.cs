@@ -17,13 +17,7 @@ internal sealed class Program
     {
         try
         {
-            VelopackApp.Build()
-                       .OnFirstRun(_ =>
-                       {
-                           /* Your first run code here */
-                       })
-                       .Run();
-
+            VelopackApp.Build().Run();
             BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args);
         }

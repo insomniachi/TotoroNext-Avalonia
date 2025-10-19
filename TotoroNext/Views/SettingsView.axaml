@@ -23,147 +23,166 @@
         <StreamGeometry x:Key="Opening">M28.125 281.25A9.375 9.375 0 0 0 37.5 271.875V28.125A9.375 9.375 0 0 0 18.75 28.125V271.875A9.375 9.375 0 0 0 28.125 281.25M56.25 168.75A18.75 18.75 0 0 0 75 187.5H262.5A18.75 18.75 0 0 0 281.25 168.75V131.25A18.75 18.75 0 0 0 262.5 112.5H75A18.75 18.75 0 0 0 56.25 131.25z</StreamGeometry>
         <StreamGeometry x:Key="Ending">M271.875 281.25A9.375 9.375 0 0 1 262.5 271.875V28.125A9.375 9.375 0 0 1 281.25 28.125V271.875A9.375 9.375 0 0 1 271.875 281.25M243.75 168.75A18.75 18.75 0 0 1 225 187.5H37.5A18.75 18.75 0 0 1 18.75 168.75V131.25A18.75 18.75 0 0 1 37.5 112.5H225A18.75 18.75 0 0 1 243.75 131.25z</StreamGeometry>
         <StreamGeometry x:Key="Update">M21,10.12H14.22L16.96,7.3C14.23,4.6 9.81,4.5 7.08,7.2C4.35,9.91 4.35,14.28 7.08,17C9.81,19.7 14.23,19.7 16.96,17C18.32,15.65 19,14.08 19,12.1H21C21,14.08 20.12,16.65 18.36,18.39C14.85,21.87 9.15,21.87 5.64,18.39C2.14,14.92 2.11,9.28 5.62,5.81C9.13,2.34 14.76,2.34 18.27,5.81L21,3V10.12M12.5,8V12.25L16,14.33L15.28,15.54L11,13V8H12.5Z</StreamGeometry>
+        <StreamGeometry x:Key="Theme">M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5M14.6,20.08L17.37,18.93L17.13,22.28L14.6,20.08M18.93,17.38L20.08,14.61L22.28,17.15L18.93,17.38M20.08,12.42L18.94,9.64L22.28,9.88L20.08,12.42M9.63,18.93L12.4,20.08L9.87,22.27L9.63,18.93Z</StreamGeometry>
     </UserControl.Resources>
-    <StackPanel Spacing="24">
-        <StackPanel>
-            <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
-            <fac:SettingsExpander Header="Anime Provider"
-                                  Description="Default anime provider">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <ComboBox ItemsSource="{Binding AnimeProviders}"
-                              SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
-                              SelectedValueBinding="{Binding Id}"
-                              DisplayMemberBinding="{Binding Name}"
-                              Width="300">
-                        <ComboBox.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </ComboBox.Styles>
-                    </ComboBox>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
-            <fac:SettingsExpander Header="Media Player"
-                                  Description="Default media player">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource VideoPlayer}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <ComboBox ItemsSource="{Binding MediaEngines}"
-                              SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
-                              SelectedValueBinding="{Binding Id}"
-                              DisplayMemberBinding="{Binding Name}"
-                              Width="300">
-                        <ComboBox.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </ComboBox.Styles>
-                    </ComboBox>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
-            <fac:SettingsExpander Header="Tracking"
-                                  Description="Default tracking service">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource Tracking}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <ComboBox ItemsSource="{Binding TrackingServices}"
-                              SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
-                              SelectedValueBinding="{Binding Id}"
-                              DisplayMemberBinding="{Binding Name}"
-                              Width="300">
-                        <ComboBox.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </ComboBox.Styles>
-                    </ComboBox>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
-            <fac:SettingsExpander Header="Media Segments"
-                                  Description="Default media segments provider">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource SkipSegments}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <ComboBox ItemsSource="{Binding SegmentProviders}"
-                              SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
-                              SelectedValueBinding="{Binding Id}"
-                              DisplayMemberBinding="{Binding Name}"
-                              Width="300">
-                        <ComboBox.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </ComboBox.Styles>
-                    </ComboBox>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
-            <fac:SettingsExpander Header="Debrid"
-                                  Description="Default debrid service">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource Torrent}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <ComboBox ItemsSource="{Binding DebridServices}"
-                              SelectedValue="{Binding Settings.SelectedDebridService, FallbackValue={x:Null}}"
-                              SelectedValueBinding="{Binding Id}"
-                              DisplayMemberBinding="{Binding Name}"
-                              Width="300">
-                        <ComboBox.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </ComboBox.Styles>
-                    </ComboBox>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
+    <ScrollViewer>
+        <StackPanel Spacing="24">
+            <StackPanel>
+                <TextBlock Text="Appearance" FontSize="20" Margin="0 0 0 8" />
+                <fac:SettingsExpander Header="Theme">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Theme}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding Themes}"
+                                  SelectedItem="{Binding Settings.SelectedTheme, FallbackValue={x:Null}}">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
+                <fac:SettingsExpander Header="Anime Provider"
+                                      Description="Default anime provider">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding AnimeProviders}"
+                                  SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
+                                  SelectedValueBinding="{Binding Id}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Media Player"
+                                      Description="Default media player">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource VideoPlayer}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding MediaEngines}"
+                                  SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
+                                  SelectedValueBinding="{Binding Id}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Tracking"
+                                      Description="Default tracking service">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Tracking}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding TrackingServices}"
+                                  SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
+                                  SelectedValueBinding="{Binding Id}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Media Segments"
+                                      Description="Default media segments provider">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource SkipSegments}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding SegmentProviders}"
+                                  SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
+                                  SelectedValueBinding="{Binding Id}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Debrid"
+                                      Description="Default debrid service">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Torrent}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding DebridServices}"
+                                  SelectedValue="{Binding Settings.SelectedDebridService, FallbackValue={x:Null}}"
+                                  SelectedValueBinding="{Binding Id}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
+                <fac:SettingsExpander Header="Openings"
+                                      Description="How to handle openings">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Opening}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <u:EnumSelector EnumType="models:SkipMethod"
+                                        Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
+                                        Width="300">
+                            <u:EnumSelector.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </u:EnumSelector.Styles>
+                        </u:EnumSelector>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Endings"
+                                      Description="How to handle endings">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Ending}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <u:EnumSelector EnumType="models:SkipMethod"
+                                        Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
+                                        Width="300">
+                            <u:EnumSelector.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </u:EnumSelector.Styles>
+                        </u:EnumSelector>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
+                <fac:SettingsExpander Header="Updates"
+                                      Description="Check for updates">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Update}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <Button Content="Check" Command="{Binding CheckForUpdatesCommand}">
+                            <Button.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </Button.Styles>
+                        </Button>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+            </StackPanel>
+
         </StackPanel>
-        
-        <StackPanel>
-            <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
-            <fac:SettingsExpander Header="Openings"
-                                  Description="How to handle openings">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource Opening}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <u:EnumSelector EnumType="models:SkipMethod"
-                                    Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
-                                    Width="300">
-                        <u:EnumSelector.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </u:EnumSelector.Styles>
-                    </u:EnumSelector>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
-            <fac:SettingsExpander Header="Endings"
-                                  Description="How to handle endings">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource Ending}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <u:EnumSelector EnumType="models:SkipMethod"
-                                    Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
-                                    Width="300">
-                        <u:EnumSelector.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </u:EnumSelector.Styles>
-                    </u:EnumSelector>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
-        </StackPanel>
-        
-        <StackPanel>
-            <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
-            <fac:SettingsExpander Header="Updates"
-                                  Description="Check for updates">
-                <fac:SettingsExpander.IconSource>
-                    <fac:PathIconSource Data="{StaticResource Update}" />
-                </fac:SettingsExpander.IconSource>
-                <fac:SettingsExpander.Footer>
-                    <Button Content="Check" Command="{Binding CheckForUpdatesCommand}">
-                        <Button.Styles>
-                            <semi:SemiTheme Locale="en-US" />
-                        </Button.Styles>
-                    </Button>
-                </fac:SettingsExpander.Footer>
-            </fac:SettingsExpander>
-        </StackPanel>
-        
-    </StackPanel>
+    </ScrollViewer>
 </UserControl>

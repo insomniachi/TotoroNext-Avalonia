@@ -1,4 +1,6 @@
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JetBrains.Annotations;
@@ -45,7 +47,7 @@ public class SettingsModel : ObservableObject
         get;
         set => SetAndSaveProperty(ref field, value);
     }
-    
+
     public Guid SelectedDebridService
     {
         get;
@@ -63,6 +65,12 @@ public class SettingsModel : ObservableObject
         get;
         set => SetAndSaveProperty(ref field, value);
     } = SkipMethod.Ask;
+
+    public string SelectedTheme
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    } = "Dark";
 
     protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, [CallerMemberName] string propertyName = "")
     {
@@ -124,6 +132,16 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
     public List<Descriptor> SegmentProviders { get; }
     public List<Descriptor> DebridServices { get; }
 
+    public ObservableCollection<string> Themes { get; } =
+    [
+        "Default",
+        "Light",
+        "Dark",
+        "Aquatic",
+        "Desert",
+        "Dusk",
+        "NightSky"
+    ];
 
     [ObservableProperty] public partial SettingsModel? Settings { get; private set; }
 
@@ -139,14 +157,14 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
         {
             var source = new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null, false);
             var manager = new UpdateManager(source);
-            
+
             var updateInfo = await manager.CheckForUpdatesAsync();
             if (updateInfo is null)
             {
                 await _dialogService.Information("You are running the latest version.");
                 return;
             }
-        
+
             var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.BaseRelease?.Version}?");
 
             if (answer == MessageBoxResult.Yes)
@@ -160,4 +178,10 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
             Console.WriteLine(e);
         }
     }
+}
+
+public class ThemeItem(string name, ThemeVariant theme)
+{
+    public string Name { get; set; } = name;
+    public ThemeVariant Theme { get; set; } = theme;
 }

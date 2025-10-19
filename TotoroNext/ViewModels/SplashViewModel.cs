@@ -51,6 +51,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
         App.AppHost = hostBuilder
                       .ConfigureServices((_, services) =>
                       {
+                          services.AddHostedService<ThemeService>();
                           services.AddCoreServices();
                           services.AddTransient<MainWindowViewModel>();
                           services.AddSingleton<IAnimeExtensionService, AnimeExtensionService>();
@@ -88,6 +89,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                           }
                       })
                       .Build();
+
         Container.SetServiceProvider(App.AppHost.Services);
     }
 

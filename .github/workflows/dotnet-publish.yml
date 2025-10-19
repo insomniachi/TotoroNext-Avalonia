@@ -43,14 +43,9 @@ jobs:
         -   name: 'Build Project'
             run: dotnet publish ${{ env.MAIN_PROJECT_PATH }} --self-contained -r ${{ matrix.rid }} -o ${{ env.PUBLISH_FOLDER }} /property:BuildVersion=${{ steps.version.outputs.version-without-v }}
 
-        -   name: Pack with Velopack
-            run: vpk pack --packId TotoroNext --packVersion ${{ steps.version.outputs.version-without-v }} --packDir ${{ env.PUBLISH_FOLDER }} --outputDir ${{ env.VPACK_PATH }} --channel ${{ matrix.rid }}  
-
-        -   name: Upload Assets
-            uses: softprops/action-gh-release@v1
-            with:
-              tag_name: ${{ steps.version.outputs.version-without-v }}
-              name: ${{ steps.version.outputs.version-without-v }}
-              files: ${{ env.VPACK_PATH }}/**
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        -   name: Pack and Publish with Velopack
+            run: |
+              vpk download github --repoUrl https://github.com/${{ github.repository }}
+              vpk pack --packId TotoroNext --packVersion ${{ steps.version.outputs.version-without-v }} --packDir ${{ env.PUBLISH_FOLDER }} --channel ${{ matrix.rid }}
+              vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --releaseName "Totoro ${{ steps.version.outputs.version-without-v }}" --tag v${{ steps.version.outputs.version-without-v }} --channel ${{ matrix.rid }}
+              

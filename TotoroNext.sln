@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 		.gitignore = .gitignore
 		manifest.json = manifest.json
+		.github\workflows\dotnet-publish.yml = .github\workflows\dotnet-publish.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime", "TotoroNext.Anime\TotoroNext.Anime.csproj", "{2C065B11-3DD4-4D30-B5BB-5B1AFC02D9BF}"

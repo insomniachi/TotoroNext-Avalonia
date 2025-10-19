@@ -59,7 +59,7 @@ public class AnimeExtensionService : IAnimeExtensionService
     {
         return _extensions.GetValueOrDefault(id)?.Provider is { } providerId
             ? _providerFactory.Create(providerId)
-            : _providerFactory.CreateDefault();
+            : _providerFactory.CreateDefault()!;
     }
     
     public async Task<SearchResult?> SearchAndSelectAsync(AnimeModel anime)
