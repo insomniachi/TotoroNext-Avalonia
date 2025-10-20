@@ -2,13 +2,13 @@ using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 using Velopack;
-using Velopack.Sources;
 
 namespace TotoroNext.ViewModels;
 
@@ -114,13 +114,19 @@ public class SettingsModel : ObservableObject
 public partial class SettingsViewModel : ObservableObject, IInitializable
 {
     private readonly IDialogService _dialogService;
+    private readonly IMessenger _messenger;
     private readonly SettingsModel _settings;
+    private readonly UpdateManager _updateManager;
 
     public SettingsViewModel(IEnumerable<Descriptor> modules,
                              IDialogService dialogService,
+                             IMessenger messenger,
+                             UpdateManager updateManager,
                              SettingsModel settings)
     {
         _dialogService = dialogService;
+        _messenger = messenger;
+        _updateManager = updateManager;
         _settings = settings;
         var allModules = modules.ToList();
 
@@ -160,22 +166,25 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
     {
         try
         {
-            var source = new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null, false);
-            var manager = new UpdateManager(source);
-
-            var updateInfo = await manager.CheckForUpdatesAsync();
+            var updateInfo = await _updateManager.CheckForUpdatesAsync();
             if (updateInfo is null)
             {
                 await _dialogService.Information("You are running the latest version.");
                 return;
             }
 
-            var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.BaseRelease?.Version}?");
+            var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.TargetFullRelease.Version}?");
 
             if (answer == MessageBoxResult.Yes)
             {
-                await manager.DownloadUpdatesAsync(updateInfo);
-                manager.ApplyUpdatesAndRestart(updateInfo);
+                _messenger.Send(new NavigateToViewModelDialogMessage
+                {
+                    Button = DialogButton.None,
+                    CloseButtonVisible = false,
+                    Title = "Downloading Update",
+                    ViewModel = typeof(DownloadUpdateViewModel),
+                    Data = updateInfo
+                });
             }
         }
         catch (Exception e)

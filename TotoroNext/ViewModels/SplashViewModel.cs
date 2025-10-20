@@ -15,10 +15,8 @@ using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
 using TotoroNext.Views;
 using Ursa.Controls;
-#if !DEBUG
 using Velopack;
 using Velopack.Sources;
-#endif
 
 namespace TotoroNext.ViewModels;
 
@@ -63,10 +61,9 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                 return false;
             }
 
-            var source = new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null, false);
-            var manager = new UpdateManager(source);
-
+            var manager = App.AppHost.Services.GetRequiredService<UpdateManager>()
             var updateInfo = await manager.CheckForUpdatesAsync();
+
             if (updateInfo is null)
             {
                 return false;
@@ -96,6 +93,10 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
         App.AppHost = hostBuilder
                       .ConfigureServices((_, services) =>
                       {
+                          services.AddSingleton(new UpdateManager(new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null,
+                                                                                   false)));
+                          services.AddDataViewMap<DownloadUpdateView, DownloadUpdateViewModel, UpdateInfo>();
+                          
                           services.AddHostedService<ThemeService>();
                           services.AddCoreServices();
                           services.AddTransient<MainWindowViewModel>();

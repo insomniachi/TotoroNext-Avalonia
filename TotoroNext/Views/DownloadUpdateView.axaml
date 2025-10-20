@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="340" d:DesignHeight="100"
+             x:DataType="viewModels:DownloadUpdateViewModel"
+             x:Class="TotoroNext.Views.DownloadUpdateView">
+    <Grid>
+        <StackPanel Spacing="10" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+             <ProgressBar Value="{Binding Progress, Mode=OneWay}">
+                 <ProgressBar.Transitions>
+                     <Transitions>
+                         <DoubleTransition Property="Value" Duration="0:0:0.3" />
+                     </Transitions>
+                 </ProgressBar.Transitions>
+             </ProgressBar>
+             <Button Content="Cancel" HorizontalAlignment="Right" Command="{Binding CancelUpdateCommand}"
+                     Margin="0 10 0 0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
