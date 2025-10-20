@@ -78,6 +78,11 @@ public sealed partial class AnimeSongsViewModel(
 
         _selectedThemeObject = theme;
         var player = mediaPlayerFactory.CreateDefault();
+        if (player is null)
+        {
+            return;
+        }
+        
         SubscriptionsForRpc(player);
         player.Play(new Media(uri, new MediaMetadata(theme.DisplayName)), TimeSpan.Zero);
     }

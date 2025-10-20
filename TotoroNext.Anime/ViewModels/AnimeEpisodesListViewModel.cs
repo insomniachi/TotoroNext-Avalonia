@@ -18,12 +18,11 @@ public partial class AnimeEpisodesListViewModel(
     EpisodesListViewModelNavigationParameters @params,
     IFactory<IMetadataService, Guid> metadataFactory,
     IPlaybackProgressService playbackProgressService,
-    IFactory<IAnimeProvider, Guid> providerFactory,
     IAnimeExtensionService animeExtensionService,
     IAnimeRelations relations,
     IMessenger messenger) : ObservableObject, IAsyncInitializable, ICloseable
 {
-    [ObservableProperty] public partial AnimeModel Anime { get; set; } = @params.Anime;
+    public AnimeModel Anime { get; } = @params.Anime;
 
     [ObservableProperty] public partial List<EpisodeInfo> Episodes { get; set; } = [];
 
@@ -86,9 +85,13 @@ public async Task InitializeAsync()
 
     private async Task UpdateEpisodes()
     {
-        IsLoading = true;
-
         var metadataService = metadataFactory.CreateDefault();
+        if (metadataService is null)
+        {
+            return;
+        }
+        
+        IsLoading = true;
         var eps = await metadataService.GetEpisodesAsync(Anime);
         var progress = playbackProgressService.GetProgress(Anime.Id);
 

@@ -39,6 +39,11 @@ public sealed partial class AnimeDetailsViewModel(
     public async Task InitializeAsync()
     {
         var service = metadataServiceFactory.CreateDefault();
+        if (service is null)
+        {
+            return;
+        }
+        
         if (await service.GetAnimeAsync(Anime.Id) is { } model)
         {
             Anime = model;

@@ -18,6 +18,11 @@ public partial class AnimeInfoViewModel(InfoViewNavigationParameters parameters,
     public async Task InitializeAsync()
     {
         var service = metadataServiceFactory.CreateDefault();
+        if (service is null)
+        {
+            return;
+        }
+        
         Anime = await service.GetAnimeAsync(parameters.Anime.Id);
         
         Fields =

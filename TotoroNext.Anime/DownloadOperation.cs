@@ -7,6 +7,7 @@ using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
+#pragma warning disable CS9113 // Parameter is unread.
 
 namespace TotoroNext.Anime;
 

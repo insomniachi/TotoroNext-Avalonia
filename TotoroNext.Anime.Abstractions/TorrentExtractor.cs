@@ -9,6 +9,16 @@ public class TorrentExtractor(IFactory<IDebrid, Guid> debridFactory) : ITorrentE
     public async IAsyncEnumerable<VideoSource> Extract(Uri url)
     {
         var debrid = debridFactory.CreateDefault();
+        
+        if (debrid is null)
+        {
+            yield return new VideoSource
+            {
+                Url = url
+            };
+            yield break;
+        }
+        
         var directLink = await debrid.TryGetDirectDownloadLink(url);
         yield return new VideoSource
         {

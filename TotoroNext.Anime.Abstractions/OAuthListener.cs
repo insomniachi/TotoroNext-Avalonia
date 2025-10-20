@@ -132,7 +132,7 @@ public class OAuthListener
                 context.Response.Close();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             try
             {

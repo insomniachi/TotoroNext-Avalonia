@@ -18,6 +18,11 @@ public sealed partial class UserListSortAndFilterViewModel(
     public async Task InitializeAsync()
     {
         var service = metadataServiceFactory.CreateDefault();
+        if (service is null)
+        {
+            return;
+        }
+        
         Genres = await service.GetGenresAsync();
     }
 }

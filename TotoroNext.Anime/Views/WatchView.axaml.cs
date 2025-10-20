@@ -26,7 +26,7 @@ public partial class WatchView : UserControl
             .Subscribe(view => MainGrid.Children.Add(view));
     }
 
-    private static VideoView? CreateEmbeddedVideoView(IMediaPlayer mediaPlayer)
+    private static VideoView? CreateEmbeddedVideoView(IMediaPlayer? mediaPlayer)
     {
         if (mediaPlayer is not IEmbeddedVlcMediaPlayer embeddedVlcPlayer)
         {

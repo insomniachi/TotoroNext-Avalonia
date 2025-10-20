@@ -35,7 +35,7 @@ public sealed partial class WatchViewModel(
     private TimeSpan _duration;
     private Media? _media;
 
-    public IMediaPlayer MediaPlayer { get; } = mediaPlayerFactory.CreateDefault();
+    public IMediaPlayer? MediaPlayer { get; } = mediaPlayerFactory.CreateDefault();
 
     [ObservableProperty] public partial SearchResult? ProviderResult { get; set; }
 
@@ -283,6 +283,11 @@ public sealed partial class WatchViewModel(
 
     private void InitializePublishers()
     {
+        if (MediaPlayer is null)
+        {
+            return;
+        }
+        
         MediaPlayer
             .PositionChanged
             .Where(_ => Anime is not null && SelectedEpisode is not null)
@@ -336,7 +341,7 @@ public sealed partial class WatchViewModel(
 
     private async Task Play(VideoSource source)
     {
-        if (SelectedEpisode is null)
+        if (SelectedEpisode is null || MediaPlayer is null)
         {
             return;
         }
