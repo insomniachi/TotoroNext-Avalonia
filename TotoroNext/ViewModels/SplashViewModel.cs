@@ -211,14 +211,14 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
         services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
                                              new NavMenuItemTag { Order = 3 });
-#endif
-
+        
         services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
                                                                   PackIconLucideKind.Store,
                                                                   new NavMenuItemTag
                                                                   {
                                                                       IsFooterItem = true
                                                                   });
+#endif
 
         services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                                                                       PackIconMaterialDesignKind.ShoppingCart,
