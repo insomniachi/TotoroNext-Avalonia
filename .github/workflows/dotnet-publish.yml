@@ -45,9 +45,6 @@ jobs:
 
       -   name: Pack with Velopack
           run: |
-            mkdir -p ${{ env.VPACK_PATH }}
-            cd ${{ env.VPACK_PATH }}
-            vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
             vpk pack --packId TotoroNext --packVersion ${{ steps.version.outputs.version-without-v }} --packDir ${{ env.PUBLISH_FOLDER }} --outputDir ${{ env.VPACK_PATH }} --channel ${{ matrix.rid }}
 
       -   name: Upload Assets
