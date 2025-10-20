@@ -30,12 +30,23 @@ public class ThemeService(SettingsModel settings) : IHostedService
                 ApplyTheme(settings.SelectedTheme);
             }
         };
+
+        if (string.IsNullOrEmpty(settings.SelectedTheme))
+        {
+            settings.SelectedTheme = "Dark";
+        }
+        
         return Task.CompletedTask;
     }
 
     private static void ApplyTheme(string settingsSelectedTheme)
     {
         if (Application.Current is not { } application)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(settingsSelectedTheme))
         {
             return;
         }
