@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
-using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JetBrains.Annotations;
@@ -71,6 +70,12 @@ public class SettingsModel : ObservableObject
         get;
         set => SetAndSaveProperty(ref field, value);
     } = "Dark";
+
+    public bool AutoUpdate
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    } = true;
 
     protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, [CallerMemberName] string propertyName = "")
     {
@@ -178,10 +183,4 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
             Console.WriteLine(e);
         }
     }
-}
-
-public class ThemeItem(string name, ThemeVariant theme)
-{
-    public string Name { get; set; } = name;
-    public ThemeVariant Theme { get; set; } = theme;
 }

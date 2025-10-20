@@ -41,7 +41,6 @@ public partial class MainWindow : UrsaWindow
     {
         MenuContainer.IsVisible = !isFullscreen;
         IsTitleBarVisible = !isFullscreen;
-        ThemeToggleButton.IsVisible = !isFullscreen;
         IsFullScreenButtonVisible = !isFullscreen;
         IsCloseButtonVisible = !isFullscreen;
         IsMinimizeButtonVisible = !isFullscreen;

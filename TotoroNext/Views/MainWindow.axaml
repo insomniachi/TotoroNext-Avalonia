@@ -10,15 +10,10 @@
               xmlns:mod="using:TotoroNext.Module"
               Icon="/Assets/WindowIcon.ico"
               WindowStartupLocation="CenterScreen"
+              Width="1450"
               IsFullScreenButtonVisible="False"
               IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
               Title="TotoroNext">
-    <u:UrsaWindow.RightContent>
-        <u:ThemeToggleButton
-            IsThreeState="True"
-            x:Name="ThemeToggleButton"
-            Mode="Controller" />
-    </u:UrsaWindow.RightContent>
 
     <Panel>
         <Panel.Styles>
