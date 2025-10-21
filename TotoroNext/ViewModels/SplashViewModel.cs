@@ -240,7 +240,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                 return false;
             }
 
-            var manager = App.AppHost.Services.GetRequiredService<UpdateManager>()
+            var manager = App.AppHost.Services.GetRequiredService<UpdateManager>();
             var updateInfo = await manager.CheckForUpdatesAsync();
 
             if (updateInfo is null)
