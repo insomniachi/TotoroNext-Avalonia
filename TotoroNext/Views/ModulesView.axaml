@@ -15,22 +15,19 @@
             <ItemsControl ItemsSource="{Binding Descriptors}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="mod:Descriptor">
-                        <Grid RowDefinitions="Auto,Auto" Margin="16"
+                        <Grid RowDefinitions="*,Auto" Margin="16"
                               mod:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:ModulesViewModel)DataContext).NavigateToSettingsCommand, FallbackValue={x:Null}}">
-                            <Image Height="200" Source="{Binding HeroImage}" />
-                            <StackPanel Grid.Row="1">
-                                <TextBlock Text="{Binding Name}" />
-                                <TextBlock Text="{Binding Description}"
-                                           Height="50"
-                                           TextTrimming="{x:Static TextTrimming.WordEllipsis}"
-                                           TextWrapping="Wrap" />
-                            </StackPanel>
+                            <Image Source="{Binding HeroImage}" Stretch="UniformToFill" />
+                            <Border Grid.Row="1" Padding="4"
+                                    Background="{DynamicResource SemiColorTertiaryLightActive}">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" HorizontalAlignment="Center" />
+                            </Border>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <u:ElasticWrapPanel IsFillHorizontal="True" ItemWidth="300" />
+                        <u:ElasticWrapPanel IsFillHorizontal="True" ItemWidth="300" ItemHeight="250" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
