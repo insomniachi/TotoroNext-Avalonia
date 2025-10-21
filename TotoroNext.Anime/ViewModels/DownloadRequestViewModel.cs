@@ -29,6 +29,7 @@ public partial class DownloadRequestViewModel(
     [ObservableProperty] public partial int End { get; set; }
     [ObservableProperty] public partial string? SaveFolder { get; set; }
     [ObservableProperty] public partial string? FilenameFormat { get; set; }
+    [ObservableProperty] public partial int EpisodeOffset { get; set; }
 
     public List<Descriptor> Providers { get; } =
         [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider) && x.Components.Contains(ComponentTypes.AnimeDownloader))];
@@ -49,7 +50,8 @@ public partial class DownloadRequestViewModel(
             EpisodeStart = Start,
             EpisodeEnd = End,
             SaveFolder = SaveFolder,
-            FilenameFormat = FilenameFormat
+            FilenameFormat = FilenameFormat,
+            EpisodeOffset = EpisodeOffset
         });
 
         return Task.CompletedTask;

@@ -37,7 +37,14 @@ public sealed class TrackingUpdater(
                 continue;
             }
 
-            await trackingService.Update(id.Value, tracking);
+            try
+            {
+                await trackingService.Update(id.Value, tracking);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 

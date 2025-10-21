@@ -70,6 +70,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                           services.AddTransient<MainWindowViewModel>();
                           services.AddSingleton<IAnimeExtensionService, AnimeExtensionService>();
                           services.AddSingleton<SettingsModel>();
+                          services.AddTransient<IInitializer, SettingsViewModel>();
 
 #if REFER_PLUGINS
                           services.AddSingleton<IModuleStore, DebugModuleStore>();

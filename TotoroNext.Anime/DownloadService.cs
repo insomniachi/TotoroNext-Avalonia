@@ -71,10 +71,11 @@ public class DownloadService(
     private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)
     {
         var directory = message.SaveFolder ?? ModuleHelper.GetFilePath(null, "Downloads");
-
+        var absoluteEpNumber = episode.Number + message.EpisodeOffset;
+        
         var fileName = string.IsNullOrEmpty(message.FilenameFormat)
-            ? $"{message.Anime.Title} - Episode - {episode.Number}.{server.ContentType}"
-            : $"{message.FilenameFormat.Replace("{ep}", episode.Number.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0'))}.{server.ContentType}";
+            ? $"{message.Anime.Title} - Episode - {absoluteEpNumber}.{server.ContentType}"
+            : $"{message.FilenameFormat.Replace("{ep}", absoluteEpNumber.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0'))}.{server.ContentType}";
 
         return Path.Combine(directory, fileName);
     }

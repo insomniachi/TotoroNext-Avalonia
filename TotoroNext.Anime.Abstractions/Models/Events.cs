@@ -36,4 +36,5 @@ public class DownloadRequest
     public required int EpisodeEnd { get; init; }
     public string? SaveFolder { get; init; }
     public string? FilenameFormat { get; init; }
+    public int EpisodeOffset { get; init; }
 }

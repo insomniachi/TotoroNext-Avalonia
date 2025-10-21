@@ -111,7 +111,7 @@ public class SettingsModel : ObservableObject
 }
 
 [UsedImplicitly]
-public partial class SettingsViewModel : ObservableObject, IInitializable
+public partial class SettingsViewModel : ObservableObject, IInitializable, IInitializer
 {
     private readonly IDialogService _dialogService;
     private readonly IMessenger _messenger;
@@ -159,6 +159,20 @@ public partial class SettingsViewModel : ObservableObject, IInitializable
     public void Initialize()
     {
         Settings = _settings;
+        if (Settings.SelectedAnimeProvider == Guid.Empty)
+        {
+            Settings.SelectedAnimeProvider = AnimeProviders.FirstOrDefault()?.Id ?? Guid.Empty;
+        }
+
+        if (Settings.SelectedTrackingService == Guid.Empty)
+        {
+            _settings.SelectedTrackingService = TrackingServices.FirstOrDefault()?.Id ?? Guid.Empty;
+        }
+
+        if (Settings.SelectedSegmentsProvider == Guid.Empty)
+        {
+            Settings.SelectedSegmentsProvider = SegmentProviders.FirstOrDefault()?.Id ?? Guid.Empty;
+        }
     }
 
     [RelayCommand]
