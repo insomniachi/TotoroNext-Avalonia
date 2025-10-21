@@ -169,19 +169,19 @@
 
             <StackPanel>
                 <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
-                <fac:SettingsExpander Header="Auto Update"
-                                      Description="Auto update app at startup">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource AutoUpdate}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
-                        <ToggleSwitch IsChecked="{Binding Settings.AutoUpdate, FallbackValue=False}">
-                            <ToggleSwitch.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </ToggleSwitch.Styles>
-                        </ToggleSwitch>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                <!-- <fac:SettingsExpander Header="Auto Update" -->
+                <!--                       Description="Auto update app at startup"> -->
+                <!--     <fac:SettingsExpander.IconSource> -->
+                <!--         <fac:PathIconSource Data="{StaticResource AutoUpdate}" /> -->
+                <!--     </fac:SettingsExpander.IconSource> -->
+                <!--     <fac:SettingsExpander.Footer> -->
+                <!--         <ToggleSwitch IsChecked="{Binding Settings.AutoUpdate, FallbackValue=False}"> -->
+                <!--             <ToggleSwitch.Styles> -->
+                <!--                 <semi:SemiTheme Locale="en-US" /> -->
+                <!--             </ToggleSwitch.Styles> -->
+                <!--         </ToggleSwitch> -->
+                <!--     </fac:SettingsExpander.Footer> -->
+                <!-- </fac:SettingsExpander> -->
                 <fac:SettingsExpander Header="Updates"
                                       Description="Check for updates">
                     <fac:SettingsExpander.IconSource>

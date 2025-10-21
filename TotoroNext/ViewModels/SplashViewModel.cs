@@ -36,15 +36,6 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
     {
         WeakReferenceMessenger.Default.Register<Tuple<string, string>>(this, (_, message) => { UpdateStatus(message.Item1, message.Item2); });
         await BuildServiceProvider();
-
-#if !DEBUG
-        if (await TryAutoUpdate())
-        {
-            UpdateStatus("Restarting to apply updates...", "");
-            return;
-        }
-#endif
-
         await StartBackgroundServicesAsync();
         RequestClose?.Invoke(this, DialogResult.OK);
     }
@@ -227,38 +218,6 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                             "Modules",
                             name);
     }
-    
-#if !DEBUG
-    private static async Task<bool> TryAutoUpdate()
-    {
-        try
-        {
-            var settings = App.AppHost.Services.GetRequiredService<SettingsModel>();
-
-            if (!settings.AutoUpdate)
-            {
-                return false;
-            }
-
-            var manager = App.AppHost.Services.GetRequiredService<UpdateManager>();
-            var updateInfo = await manager.CheckForUpdatesAsync();
-
-            if (updateInfo is null)
-            {
-                return false;
-            }
-
-            await manager.DownloadUpdatesAsync(updateInfo);
-            manager.ApplyUpdatesAndRestart(updateInfo);
-            return true;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return false;
-        }
-    }
-#endif
 }
 
 
