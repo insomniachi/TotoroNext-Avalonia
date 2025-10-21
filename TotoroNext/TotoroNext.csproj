@@ -24,6 +24,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Serilog.Extensions.Logging" />
+        <PackageReference Include="Serilog.Sinks.File" />
         <PackageReference Include="Velopack" />
         <PackageReference Include="VideoLAN.LibVLC.Mac" Condition="$([MSBuild]::IsOsPlatform('OSX'))"/>
         <PackageReference Include="VideoLAN.LibVLC.Windows" Condition="$([MSBuild]::IsOsPlatform('Windows'))"/>

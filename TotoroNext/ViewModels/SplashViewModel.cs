@@ -8,6 +8,7 @@ using IconPacks.Avalonia.Octicons;
 using Irihi.Avalonia.Shared.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
@@ -34,14 +35,30 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
     public async Task InitializeAsync()
     {
-        WeakReferenceMessenger.Default.Register<Tuple<string, string>>(this, (_, message) => { UpdateStatus(message.Item1, message.Item2); });
-        await BuildServiceProvider();
-        await StartBackgroundServicesAsync();
-        RequestClose?.Invoke(this, DialogResult.OK);
+        try
+        {
+            WeakReferenceMessenger.Default.Register<Tuple<string, string>>(this, (_, message) => { UpdateStatus(message.Item1, message.Item2); });
+            await BuildServiceProvider();
+            await StartBackgroundServicesAsync();
+            RequestClose?.Invoke(this, DialogResult.OK);
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Fatal(e, "Unhandled exception");
+            RequestClose?.Invoke(this, DialogResult.None);
+            throw;
+        }
     }
-    
+
     private async Task BuildServiceProvider()
     {
+        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Logs", "log.txt");
+        var log = new LoggerConfiguration()
+                  .WriteTo.File(path, rollingInterval: RollingInterval.Day)
+                  .MinimumLevel.Debug()
+                  .CreateLogger();
+        Log.Logger = log;
+
         var store = CreateStore();
 
         UpdateStatus("Updating modules...", "");
@@ -55,13 +72,14 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                           services.AddSingleton(new UpdateManager(new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null,
                                                                                    false)));
                           services.AddDataViewMap<DownloadUpdateView, DownloadUpdateViewModel, UpdateInfo>();
-                          
+
                           services.AddHostedService<ThemeService>();
                           services.AddCoreServices();
                           services.AddTransient<MainWindowViewModel>();
                           services.AddSingleton<IAnimeExtensionService, AnimeExtensionService>();
                           services.AddSingleton<SettingsModel>();
                           services.AddTransient<IInitializer, SettingsViewModel>();
+                          services.AddLogging(builder => builder.AddSerilog(dispose: true));
 
 #if REFER_PLUGINS
                           services.AddSingleton<IModuleStore, DebugModuleStore>();
@@ -171,7 +189,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
         services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
                                              new NavMenuItemTag { Order = 3 });
-        
+
         services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
                                                                   PackIconLucideKind.Store,
                                                                   new NavMenuItemTag
@@ -197,6 +215,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
     private void UpdateStatus(string? primary, string? secondary)
     {
+        Log.Logger.Debug("{primary} : {secondary}", primary, secondary);
         Dispatcher.UIThread.Invoke(() =>
         {
             if (primary is not null)

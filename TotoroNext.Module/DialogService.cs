@@ -1,25 +1,48 @@
 ﻿using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Microsoft.Extensions.Logging;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 
 namespace TotoroNext.Module;
 
-public class DialogService : IDialogService
+public class DialogService(ILogger<DialogService> logger) : IDialogService
 {
     public async Task<MessageBoxResult> Question(string title, string question)
     {
-        return await MessageBox.ShowOverlayAsync(question, title, icon: MessageBoxIcon.Question, button: MessageBoxButton.YesNo);
+        if (logger.IsEnabled(LogLevel.Debug))
+        {
+            logger.LogDebug("Question asked {question}", question);
+        }
+
+        var result = await MessageBox.ShowOverlayAsync(question, title, icon: MessageBoxIcon.Question, button: MessageBoxButton.YesNo);
+
+        if (logger.IsEnabled(LogLevel.Debug))
+        {
+            logger.LogDebug("Answer is : {answer}", result);
+        }
+        
+        return result;
     }
     
     public async Task Warning(string warning)
     {
+        if (logger.IsEnabled(LogLevel.Debug))
+        {
+            logger.LogDebug("Warning : {warning}", warning);
+        }
+        
         await MessageBox.ShowOverlayAsync(warning, "Warning", icon: MessageBoxIcon.Warning, button: MessageBoxButton.OK);
     }
 
     public async Task Information(string info)
     {
+        if (logger.IsEnabled(LogLevel.Debug))
+        {
+            logger.LogDebug("Information : {info}", info);
+        }
+        
         await MessageBox.ShowOverlayAsync(info, "Info", icon: MessageBoxIcon.Information, button: MessageBoxButton.OK);
     }
     

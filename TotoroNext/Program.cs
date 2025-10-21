@@ -2,6 +2,7 @@
 using Avalonia.Markup.Declarative;
 using Avalonia.ReactiveUI;
 using JetBrains.Annotations;
+using Serilog;
 using Velopack;
 
 namespace TotoroNext;
@@ -23,8 +24,7 @@ internal sealed class Program
         }
         catch (Exception e)
         {
-            var message = "Unhandled exception: " + e;
-            Console.WriteLine(message);
+            Log.Logger.Fatal(e, "Unhandled exception");
         }
     }
 

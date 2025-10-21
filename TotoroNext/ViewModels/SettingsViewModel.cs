@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Logging;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -116,18 +118,21 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
     private readonly IDialogService _dialogService;
     private readonly IMessenger _messenger;
     private readonly SettingsModel _settings;
+    private readonly ILogger<SettingsViewModel> _logger;
     private readonly UpdateManager _updateManager;
 
     public SettingsViewModel(IEnumerable<Descriptor> modules,
                              IDialogService dialogService,
                              IMessenger messenger,
                              UpdateManager updateManager,
-                             SettingsModel settings)
+                             SettingsModel settings,
+                             ILogger<SettingsViewModel> logger)
     {
         _dialogService = dialogService;
         _messenger = messenger;
         _updateManager = updateManager;
         _settings = settings;
+        _logger = logger;
         var allModules = modules.ToList();
 
         MediaEngines = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaEngine))];
@@ -187,6 +192,11 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
                 return;
             }
 
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("Update found: {info}", JsonSerializer.Serialize(updateInfo));
+            }
+            
             var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.TargetFullRelease.Version}?");
 
             if (answer == MessageBoxResult.Yes)
