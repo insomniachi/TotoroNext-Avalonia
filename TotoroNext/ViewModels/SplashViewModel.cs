@@ -69,8 +69,9 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
         App.AppHost = hostBuilder
                       .ConfigureServices((_, services) =>
                       {
-                          services.AddSingleton(new UpdateManager(new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null,
-                                                                                   false)));
+                          var updateManager = new UpdateManager(new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null,
+                                                                                 false));
+                          services.AddSingleton<UpdateManager>(_ => updateManager);
                           services.AddDataViewMap<DownloadUpdateView, DownloadUpdateViewModel, UpdateInfo>();
 
                           services.AddHostedService<ThemeService>();
@@ -253,6 +254,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.Anizone.Module();
         yield return new Anime.SubsPlease.Module();
         yield return new Anime.Jellyfin.Module();
+        yield return new Anime.AnimeGG.Module();
 
         // Anime Tracking/Metadata
         yield return new Anime.Anilist.Module();
