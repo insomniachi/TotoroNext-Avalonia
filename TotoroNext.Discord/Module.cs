@@ -11,10 +11,11 @@ public class Module : IModule<Settings>
     public Descriptor Descriptor { get; } = new()
     {
         Id = new Guid("b3329249-3e29-4625-8211-2934dade3c37"),
-        Name = "Discord Rich Presense",
+        Name = "Discord Rich Presence",
         HeroImage = ResourceHelper.GetResource("discord-logo.jpg"),
-        Description = "Custom discord rich presense while watching",
-        SettingViewModel = typeof(SettingsViewModel)
+        Description = "Custom discord rich presence while watching",
+        SettingViewModel = typeof(SettingsViewModel),
+        Components = [ComponentTypes.Miscellaneous]
     };
 
     public void ConfigureServices(IServiceCollection services)

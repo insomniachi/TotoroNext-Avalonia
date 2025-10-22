@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -147,6 +148,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
     public List<Descriptor> TrackingServices { get; }
     public List<Descriptor> SegmentProviders { get; }
     public List<Descriptor> DebridServices { get; }
+    public Version? CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version;
 
     public ObservableCollection<string> Themes { get; } =
     [

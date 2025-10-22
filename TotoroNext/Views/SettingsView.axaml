@@ -182,8 +182,8 @@
                 <!--         </ToggleSwitch> -->
                 <!--     </fac:SettingsExpander.Footer> -->
                 <!-- </fac:SettingsExpander> -->
-                <fac:SettingsExpander Header="Updates"
-                                      Description="Check for updates">
+                <fac:SettingsExpander Header="Check of updates"
+                                      Description="{Binding CurrentVersion}">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource Update}" />
                     </fac:SettingsExpander.IconSource>
