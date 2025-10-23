@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Flurl;
@@ -14,18 +13,16 @@ namespace TotoroNext.Anime.AnimeGG;
 
 public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
-    private readonly FlurlClient _client = new(httpClientFactory.CreateClient("animegg"));
-    
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
-        var stream = await _client
+        using var client = GetClient();
+        var stream = await client
                            .Request("/search/auto/")
                            .AppendQueryParam("q", query)
                            .GetStreamAsync();
 
-        var node = await JsonNode.ParseAsync(stream);
-        var results = node!.Deserialize<List<AnimeGgItem>>() ?? [];
-        foreach (var result in results)
+        var results = await JsonSerializer.DeserializeAsync<List<AnimeGgItem>>(stream);
+        foreach (var result in results ?? [])
         {
             yield return new SearchResult(this, result.Url, result.Name);
         }
@@ -33,8 +30,8 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
-        var stream = await episodeId
-            .GetStreamAsync();
+        using var client = GetClient();
+        var stream = await client.Request(episodeId).GetStreamAsync();
 
         var doc = new HtmlDocument();
         doc.Load(stream);
@@ -44,7 +41,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
         {
             var id = server.GetAttributeValue("data-id", "");
             var version = server.GetAttributeValue("data-version", "");
-            var embed = Url.Combine(_client.BaseUrl, $"/embed/{id}");
+            var embed = Url.Combine(client.BaseUrl, $"/embed/{id}");
             try
             {
                 stream = await embed
@@ -55,7 +52,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
             {
                 continue;
             }
-            
+
             doc.Load(stream);
             var scripts = doc
                           .QuerySelectorAll("script")
@@ -70,12 +67,12 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
             foreach (var source in sources)
             {
-                var uri = Url.Combine(_client.BaseUrl, source.File);
+                var uri = Url.Combine(client.BaseUrl, source.File);
                 yield return new VideoServer($"{version} - {source.Label}", new Uri(uri))
                 {
                     Headers =
                     {
-                        { HeaderNames.Referer, embed}
+                        { HeaderNames.Referer, embed }
                     }
                 };
             }
@@ -84,7 +81,8 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
-        var stream = await _client.Request(animeId).GetStreamAsync();
+        using var client = GetClient();
+        var stream = await client.Request(animeId).GetStreamAsync();
 
         var doc = new HtmlDocument();
         doc.Load(stream);
@@ -95,12 +93,12 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
         {
             var title = episode.QuerySelector(".anititle")?.InnerText ?? "";
             var link = episode.QuerySelector(".anm_det_pop");
-            var url = Url.Combine(_client.BaseUrl, link?.GetAttributeValue("href", ""));
+            var id = link?.GetAttributeValue("href", "") ?? "";
             var content = link?.InnerText ?? "";
             var number = content.Split(" ").LastOrDefault();
             _ = float.TryParse(number, out var episodeNumber);
 
-            yield return new Episode(this, animeId, url, episodeNumber)
+            yield return new Episode(this, animeId, id, episodeNumber)
             {
                 Info = new EpisodeInfo
                 {
@@ -115,8 +113,14 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
     [GeneratedRegex(@"videoSources\s*=\s*(\[.*?\]);", RegexOptions.Singleline)]
     private static partial Regex VideoSourcesRegex();
+
     [GeneratedRegex(@"(\w+):")]
     private static partial Regex QuotesRegex();
+
+    private FlurlClient GetClient()
+    {
+        return new FlurlClient(httpClientFactory.CreateClient("animegg"));
+    }
 }
 
 [Serializable]
