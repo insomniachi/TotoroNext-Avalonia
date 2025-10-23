@@ -12,11 +12,14 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.AnimeGG;
 
-public partial class AnimeProvider : IAnimeProvider
+public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
+    private readonly FlurlClient _client = new(httpClientFactory.CreateClient("animegg"));
+    
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
-        var stream = await "https://www.animegg.org/search/auto/"
+        var stream = await _client
+                           .Request("/search/auto/")
                            .AppendQueryParam("q", query)
                            .GetStreamAsync();
 
@@ -41,8 +44,7 @@ public partial class AnimeProvider : IAnimeProvider
         {
             var id = server.GetAttributeValue("data-id", "");
             var version = server.GetAttributeValue("data-version", "");
-            var embed = $"https://www.animegg.org/embed/{id}/";
-
+            var embed = Url.Combine(_client.BaseUrl, $"/embed/{id}");
             try
             {
                 stream = await embed
@@ -68,7 +70,7 @@ public partial class AnimeProvider : IAnimeProvider
 
             foreach (var source in sources)
             {
-                var uri = Url.Combine("https://www.animegg.org/", source.File);
+                var uri = Url.Combine(_client.BaseUrl, source.File);
                 yield return new VideoServer($"{version} - {source.Label}", new Uri(uri))
                 {
                     Headers =
@@ -82,9 +84,7 @@ public partial class AnimeProvider : IAnimeProvider
 
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
-        var stream = await "https://www.animegg.org/"
-                           .AppendPathSegment(animeId)
-                           .GetStreamAsync();
+        var stream = await _client.Request(animeId).GetStreamAsync();
 
         var doc = new HtmlDocument();
         doc.Load(stream);
@@ -95,7 +95,7 @@ public partial class AnimeProvider : IAnimeProvider
         {
             var title = episode.QuerySelector(".anititle")?.InnerText ?? "";
             var link = episode.QuerySelector(".anm_det_pop");
-            var url = Url.Combine("https://www.animegg.org/", link?.GetAttributeValue("href", ""));
+            var url = Url.Combine(_client.BaseUrl, link?.GetAttributeValue("href", ""));
             var content = link?.InnerText ?? "";
             var number = content.Split(" ").LastOrDefault();
             _ = float.TryParse(number, out var episodeNumber);

@@ -53,6 +53,7 @@ var plugins = new List<PluginProject>
             "Std.UriTemplate"
         ]
     },
+    new("TotoroNext.Anime.AnimeGG"),
     new("TotoroNext.Discord")
     {
         Dependencies =
