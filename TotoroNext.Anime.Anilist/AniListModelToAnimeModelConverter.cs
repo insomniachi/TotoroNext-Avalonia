@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Flurl;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -57,8 +58,32 @@ public static partial class AniListModelToAnimeModelConverter
             Url = $"https://anilist.co/anime/{media.Id}/",
             MediaFormat = ConvertMediaFormat(media.Format),
             Genres = [ ..media.Genres],
-            Studios = [ .. media.Studios?.Nodes.Where(x => x.IsAnimationStudio == true).Select(x => x.Name).Distinct() ?? []]
+            Studios = [ .. media.Studios?.Nodes.Where(x => x.IsAnimationStudio == true).Select(x => x.Name).Distinct() ?? []],
+            Trailers = ConvertTrailers(media.Trailer)
         };
+    }
+
+    private static IReadOnlyCollection<TrailerVideo> ConvertTrailers(MediaTrailer? mediaTrailer)
+    {
+        if (mediaTrailer is null)
+        {
+            return [];
+        }
+
+        if (mediaTrailer.Site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
+        {
+            return
+            [
+                new TrailerVideo()
+                {
+                    Url = "https://www.youtube.com/watch".AppendQueryParam("v", mediaTrailer.Id),
+                    Title = "Trailer",
+                    Thumbnail = mediaTrailer.Thumbnail
+                }
+            ];
+        }
+        
+        return [];
     }
 
     private static AnimeMediaFormat ConvertMediaFormat(MediaFormat? mediaFormat)

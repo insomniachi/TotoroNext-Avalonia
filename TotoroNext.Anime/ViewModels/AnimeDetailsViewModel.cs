@@ -30,9 +30,8 @@ public sealed partial class AnimeDetailsViewModel(
     public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
     public bool IsEpisodesTabVisible { get; } = anime.MediaFormat != AnimeMediaFormat.Movie && anime.AiringStatus != AiringStatus.NotYetAired;
-    
     public bool HasAnimeAired { get; } = anime.AiringStatus is not AiringStatus.NotYetAired;
-    
+    public bool HasTrailers => Anime.Trailers is { Count: > 0 };
     public bool HasRelated => Anime.Related.Any();
     public bool HasRecommended => Anime.Recommended.Any();
 
@@ -49,6 +48,7 @@ public sealed partial class AnimeDetailsViewModel(
             Anime = model;
             OnPropertyChanged(nameof(HasRelated));
             OnPropertyChanged(nameof(HasRecommended));
+            OnPropertyChanged(nameof(HasTrailers));
         }
         
         this.WhenAnyValue(x => x.Status, x => x.Progress, x => x.Score, x => x.StartDate, x => x.FinishDate)

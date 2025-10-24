@@ -83,6 +83,7 @@ public partial class AnimeModel : ObservableObject
     public AnimeMediaFormat MediaFormat { get; init; } = AnimeMediaFormat.Unknown;
     public IReadOnlyCollection<string> Genres { get; init; } = [];
     public IReadOnlyCollection<string> Studios { get; init; } = [];
+    public IReadOnlyCollection<TrailerVideo> Trailers { get; init; } = [];
 }
 
 public class ExternalIds
@@ -179,4 +180,11 @@ public enum AnimeSource
     Comic,
     MultimediaProject,
     PictureBook
+}
+
+public class TrailerVideo
+{
+    public string Url { get; set; } = "";
+    public string Title { get; set; } = "";
+    public string Thumbnail { get; set; } = "";
 }

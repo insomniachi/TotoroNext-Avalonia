@@ -56,6 +56,7 @@ public static class MalToModelConverter
             MediaFormat = ConvertFormat(malModel.MediaType),
             Genres = malModel.Genres is not { } genres ? [] : [..genres.Select(x => x.Name)],
             Studios = malModel.Studios is not { } studios ? [] : [..studios.Select(x => x.Name)],
+            Trailers = MapTrailers(malModel.Videos)
         };
 
         try
@@ -105,17 +106,6 @@ public static class MalToModelConverter
             //    model.AlternativeTitles = titles.Distinct();
             //}
 
-            //if (malModel.Videos is { Length: > 0 } videos)
-            //{
-            //    model.Videos = malModel.Videos.Select(x => new Video
-            //    {
-            //        Id = x.Id,
-            //        Thumbnail = x.Thumbnail,
-            //        Title = x.Title,
-            //        Url = x.Url,
-            //    }).ToList();
-            //}
-
             if (malModel.StartSeason is { } season)
             {
                 model.Season = new Season(ConvertSeason(season.SeasonName), season.Year);
@@ -137,6 +127,21 @@ public static class MalToModelConverter
         }
 
         return model;
+    }
+
+    private static List<TrailerVideo> MapTrailers(Video[]? malModelVideos)
+    {
+        if (malModelVideos is null)
+        {
+            return [];
+        }
+        
+        return malModelVideos.Select(x => new TrailerVideo
+        {
+            Thumbnail = x.Thumbnail,
+            Title = x.Title,
+            Url = x.Url,
+        }).ToList();
     }
 
     private static AnimeMediaFormat ConvertFormat(AnimeMediaType? malModelMediaType)

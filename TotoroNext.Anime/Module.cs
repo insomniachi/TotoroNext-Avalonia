@@ -43,6 +43,7 @@ public class Module : IModule
                 .AddDataViewMap<AnimeSongsView, AnimeSongsViewModel, SongsViewModelNavigationParameters>()
                 .AddDataViewMap<AnimeInfoView, AnimeInfoViewModel, InfoViewNavigationParameters>()
                 .AddDataViewMap<AnimeCharactersView, AnimeCharactersViewModel, CharactersViewNavigationParameters>()
+                .AddDataViewMap<TrailersView, TrailersViewModel, List<TrailerVideo>>()
                 .AddKeyedViewMap<DownloadRequestView, DownloadRequestViewModel>("Download");
 
         services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()

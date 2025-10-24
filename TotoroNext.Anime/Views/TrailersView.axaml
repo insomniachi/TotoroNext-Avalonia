@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             xmlns:ail="using:AsyncImageLoader"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:TrailersViewModel"
+             x:Class="TotoroNext.Anime.Views.TrailersView">
+    <ListBox ItemsSource="{Binding Trailers}"
+             SelectedItem="{Binding SelectedTrailer}">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Border>
+                    <Grid RowDefinitions="*,Auto">
+                        <Image ail:ImageLoader.Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                        <TextBlock Grid.Row="1" Text="{Binding Title}" />
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+        <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+                <u:ElasticWrapPanel IsFillHorizontal="True"
+                                    ItemSpacing="4"
+                                    LineSpacing="4"
+                                    ItemWidth="180" />
+            </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+    </ListBox>
+</UserControl>
