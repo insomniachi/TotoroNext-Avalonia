@@ -52,7 +52,8 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
         {
             Content = $"Skip {type}",
             Title = "",
-            MessageIcon = MessageBoxIcon.None
+            MessageIcon = MessageBoxIcon.None,
+            ShowInTaskbar = false
         };
 
         messageWindow.Show();
