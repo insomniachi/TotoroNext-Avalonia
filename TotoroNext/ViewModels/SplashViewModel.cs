@@ -54,6 +54,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
     {
         var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Logs", "log.txt");
         var log = new LoggerConfiguration()
+                  .Filter.ByExcluding(logEvent => logEvent.MessageTemplate.Text.Contains("HttpMessageHandler cleanup cycle"))
                   .WriteTo.File(path, rollingInterval: RollingInterval.Day)
                   .MinimumLevel.Debug()
                   .CreateLogger();
@@ -267,7 +268,7 @@ public class DebugModuleStore : IModuleStore
         // Media Players
         yield return new MediaEngine.Mpv.Module();
         yield return new MediaEngine.Vlc.Module();
-        
+
         // Debrid
         yield return new Torrents.TorBox.Module();
     }
