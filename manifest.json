@@ -94,6 +94,24 @@
     ]
   },
   {
+    "Id": "d3b5f4e2-4c6e-4f3a-9f7e-2b8e5c6d7a1b",
+    "Name": "Anime Kai",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimeKai/Assets/animekai.jpg",
+    "EntryPoint": "TotoroNext.Anime.AnimeKai.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeKai.zip"
+      }
+    ]
+  },
+  {
     "Id": "b8c3f0d2-1c5e-4f6a-9b7d-3f8e1c5f0d2a",
     "Name": "MPV",
     "Description": "MPV Media Player is a free, open-source, and cross-platform media player known for its versatility and powerful performance. It supports a wide variety of media file formats, audio and video codecs, and subtitle types, making it suitable for both casual and advanced users. MPV is particularly noted for its scripting capabilities, allowing users to customize their experience extensively.",

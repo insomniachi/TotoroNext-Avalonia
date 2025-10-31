@@ -14,7 +14,7 @@ internal class Analysis
     private readonly Complex32[] _fftBuf = new Complex32[WindowSize];
     private readonly List<float[]> _stripes = new(3 * ChunksPerSecond);
     private readonly float[] _windowRing = new float[WindowSize];
-    private Action _stripeAddedCallback;
+    private Action? _stripeAddedCallback;
 
     public int ProcessedSamples { get; private set; }
     public int ProcessedMs => ProcessedSamples * 1000 / SampleRate;

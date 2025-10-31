@@ -54,6 +54,7 @@ var plugins = new List<PluginProject>
         ]
     },
     new("TotoroNext.Anime.AnimeGG"),
+    new("TotoroNext.Anime.AnimeKai"),
     new("TotoroNext.Discord")
     {
         Dependencies =
