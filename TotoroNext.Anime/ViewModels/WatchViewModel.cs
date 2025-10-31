@@ -360,8 +360,20 @@ public sealed partial class WatchViewModel(
 
     private async Task<Episode?> AskIfContinueWatching()
     {
-        if (SelectedEpisode is null || Episodes is null)
+        if (SelectedEpisode is null || Episodes is null || Anime is null)
         {
+            return null;
+        }
+
+        if ((int)SelectedEpisode.Number == Anime.TotalEpisodes)
+        {
+            messenger.Send(new NavigateToKeyDialogMessage()
+            {
+                Title = Anime.Title,
+                Key = $"tracking/{Anime.ServiceName}",
+                Button = DialogButton.OKCancel,
+                Data = Anime
+            });
             return null;
         }
 

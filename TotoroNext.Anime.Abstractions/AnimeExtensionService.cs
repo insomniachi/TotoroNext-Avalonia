@@ -84,6 +84,29 @@ public class AnimeExtensionService : IAnimeExtensionService
 
         return await _selectAnimeDialog.GetValue(results);
     }
+    
+    public async Task<SearchResult?> SearchAsync(AnimeModel anime)
+    {
+        var provider = GetProvider(anime.Id);
+        var term = GetSelectedResult(anime);
+        
+        var results = await provider.SearchAsync(term).ToListAsync();
+
+        switch (results.Count)
+        {
+            case 0:
+                return null;
+            case 1:
+                return results[0];
+        }
+
+        if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
+        {
+            return result;
+        }
+
+        return null;
+    }
 
     public void CreateOrUpdateExtension(long id, AnimeOverrides overrides)
     {

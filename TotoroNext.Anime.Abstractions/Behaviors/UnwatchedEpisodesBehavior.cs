@@ -48,7 +48,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
             return Unit.Default;
         }
 
-        var result = await ExtensionService.SearchAndSelectAsync(anime);
+        var result = await ExtensionService.SearchAsync(anime);
 
         if (result is null)
         {

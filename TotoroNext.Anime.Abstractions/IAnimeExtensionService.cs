@@ -11,4 +11,5 @@ public interface IAnimeExtensionService
     string GetSelectedResult(AnimeModel anime);
     IAnimeProvider GetProvider(long id);
     Task<SearchResult?> SearchAndSelectAsync(AnimeModel anime);
+    Task<SearchResult?> SearchAsync(AnimeModel anime);
 }
