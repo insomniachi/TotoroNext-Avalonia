@@ -72,6 +72,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Torrents.Abstrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AnimeGG", "TotoroNext.Anime.AnimeGG\TotoroNext.Anime.AnimeGG.csproj", "{24AB6A62-8CFE-4ACE-A9C2-6E464AA44B8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TotoroNext.Anime.AnimeKai", "TotoroNext.Anime.AnimeKai\TotoroNext.Anime.AnimeKai.csproj", "{1F4E8FF2-BDFB-4764-9CE0-9E2F8A75FC34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -170,6 +172,10 @@ Global
 		{24AB6A62-8CFE-4ACE-A9C2-6E464AA44B8A}.Debug|x64.Build.0 = Debug|x64
 		{24AB6A62-8CFE-4ACE-A9C2-6E464AA44B8A}.Release|x64.ActiveCfg = Release|x64
 		{24AB6A62-8CFE-4ACE-A9C2-6E464AA44B8A}.Release|x64.Build.0 = Release|x64
+		{1F4E8FF2-BDFB-4764-9CE0-9E2F8A75FC34}.Debug|x64.ActiveCfg = Debug|x64
+		{1F4E8FF2-BDFB-4764-9CE0-9E2F8A75FC34}.Debug|x64.Build.0 = Debug|x64
+		{1F4E8FF2-BDFB-4764-9CE0-9E2F8A75FC34}.Release|x64.ActiveCfg = Release|x64
+		{1F4E8FF2-BDFB-4764-9CE0-9E2F8A75FC34}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -201,5 +207,6 @@ Global
 		{9C3C980B-5A49-4D1D-A68F-2F350D3D95A1} = {B764C07D-4BE8-468A-A771-7D2B29B646D1}
 		{35C15764-7BF7-4F8B-9733-1CD2E8A08BB8} = {B764C07D-4BE8-468A-A771-7D2B29B646D1}
 		{24AB6A62-8CFE-4ACE-A9C2-6E464AA44B8A} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
+		{1F4E8FF2-BDFB-4764-9CE0-9E2F8A75FC34} = {145BCEAF-5FCE-47EF-9603-59CC6848E85E}
 	EndGlobalSection
 EndGlobal
