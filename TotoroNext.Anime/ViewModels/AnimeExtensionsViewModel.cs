@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Reactive;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -24,22 +23,21 @@ public partial class AnimeExtensionsViewModel(
     [
         nameof(IsNsfw),
         nameof(ProviderId),
-        nameof(SelectedResult),
         nameof(OpeningSkipMethod),
         nameof(EndingSkipMethod),
         nameof(SearchTerm),
         nameof(ProviderOptions)
     ];
 
+    private IAnimeProvider? _animeProvider;
+    private bool _suppressProviderChange = true;
     private bool _isDeleting;
 
     [ObservableProperty] public partial bool IsNsfw { get; set; }
 
     [ObservableProperty] public partial Guid? ProviderId { get; set; }
 
-    [ObservableProperty] public partial string? SelectedResult { get; set; }
-
-    [ObservableProperty] public partial List<SearchResult> ProviderResults { get; set; } = [];
+    [ObservableProperty] public partial List<string> ProviderResults { get; set; } = [];
 
     [ObservableProperty] public partial SkipMethod OpeningSkipMethod { get; set; }
 
@@ -55,18 +53,23 @@ public partial class AnimeExtensionsViewModel(
     public void Initialize()
     {
         var overrides = animeExtensionService.GetExtension(parameters.Anime.Id);
-
-        SearchTerm = overrides?.SearchTerm ?? parameters.Anime.Title;
+        SearchTerm = overrides?.SearchTerm;
         IsNsfw = overrides?.IsNsfw ?? false;
+        _suppressProviderChange = true;
         ProviderId = overrides?.Provider;
-        SelectedResult = overrides?.SelectedResult;
+        _suppressProviderChange = false;
         OpeningSkipMethod = overrides?.OpeningSkipMethod ?? SkipMethod.Ask;
         EndingSkipMethod = overrides?.EndingSkipMethod ?? SkipMethod.Ask;
         ProviderOptions = overrides?.AnimeProviderOptions ?? [];
 
-        if (ProviderOptions is { Count: > 0})
+        if (ProviderId is not null && ProviderId != Guid.Empty)
         {
-            Subscribe(ProviderOptions); 
+            _animeProvider = providerFactory.Create(ProviderId.Value);
+        }
+
+        if (ProviderOptions is { Count: > 0 })
+        {
+            Subscribe(ProviderOptions);
         }
 
         this.WhenAnyPropertyChanged(ObservedProperties)
@@ -75,7 +78,6 @@ public partial class AnimeExtensionsViewModel(
             {
                 IsNsfw = IsNsfw,
                 Provider = ProviderId == Guid.Empty ? null : ProviderId,
-                SelectedResult = SelectedResult,
                 OpeningSkipMethod = OpeningSkipMethod,
                 EndingSkipMethod = EndingSkipMethod,
                 SearchTerm = SearchTerm,
@@ -83,48 +85,43 @@ public partial class AnimeExtensionsViewModel(
             })
             .Subscribe(@override => animeExtensionService.CreateOrUpdateExtension(parameters.Anime.Id, @override));
 
-        this.WhenAnyValue(x => x.ProviderId)
-            .Select(x => x.HasValue || x != Guid.Empty)
-            .Subscribe(value => HasProvider = value);
+        var providerIdStream = this.WhenAnyValue(x => x.ProviderId)
+                                   .DistinctUntilChanged()
+                                   .Publish()
+                                   .RefCount();
+        
+        providerIdStream
+            .Subscribe(x => HasProvider = x.HasValue && x.Value != Guid.Empty);
+
+        providerIdStream
+            .Where(x => x != Guid.Empty && x.HasValue)
+            .Where(_ => !_suppressProviderChange)
+            .Skip(1)
+            .Subscribe(id =>
+            {
+                Unsubscribe(ProviderOptions);
+                _animeProvider = providerFactory.Create(id!.Value);
+                ProviderOptions = _animeProvider.GetOptions();
+                Subscribe(ProviderOptions);
+            });
 
         this.WhenAnyValue(x => x.ProviderId)
             .WhereNotNull()
             .DistinctUntilChanged()
             .Skip(1)
-            .Subscribe(id =>
-            {
-                Unsubscribe(ProviderOptions);
-                var provider = providerFactory.Create(id!.Value);
-                ProviderOptions = provider.GetOptions();
-                Subscribe(ProviderOptions);
-            });
+            .Where(x => x != Guid.Empty)
+            .Subscribe(_ => SearchTerm = "");
 
-        var providerIdChanged = this.WhenAnyValue(x => x.ProviderId)
-                                    .Skip(1)
-                                    .WhereNotNull()
-                                    .Where(x => x != Guid.Empty)
-                                    .Select(_ => Unit.Default);
-
-        var searchTermChanged = this.WhenAnyValue(x => x.SearchTerm)
-                                    .Skip(1)
-                                    .Where(x => x is { Length: > 2 })
-                                    .Where(_ => ProviderId.HasValue)
-                                    .Select(_ => Unit.Default);
-
-        providerIdChanged.Merge(searchTermChanged)
-                         .SelectMany(_ =>
-                         {
-                             var provider = providerFactory.Create(ProviderId!.Value);
-                             return provider.SearchAsync(SearchTerm).ToListAsync().AsTask();
-                         })
-                         .ObserveOn(RxApp.MainThreadScheduler)
-                         .Subscribe(results =>
-                         {
-                             ProviderResults = results;
-                             SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == overrides?.SelectedResult)?.Title;
-                         });
+        this.WhenAnyValue(x => x.SearchTerm)
+            .Where(x => x is { Length: > 2 })
+            .Where(_ => _animeProvider is not null)
+            .SelectMany(term => _animeProvider!.SearchAsync(term!).ToListAsync().AsTask())
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(results => ProviderResults = results.Select(x => x.Title).ToList());
+        
+        _suppressProviderChange = false;
     }
-    
+
     private void Unsubscribe(List<ModuleOptionItem> providerOptions)
     {
         foreach (var item in providerOptions)
@@ -132,7 +129,7 @@ public partial class AnimeExtensionsViewModel(
             item.PropertyChanged -= RaiseProviderOptionChange;
         }
     }
-    
+
     private void Subscribe(List<ModuleOptionItem> providerOptions)
     {
         foreach (var item in providerOptions)
@@ -155,10 +152,11 @@ public partial class AnimeExtensionsViewModel(
 
         IsNsfw = false;
         ProviderId = null;
-        SelectedResult = null;
+        SearchTerm = "";
         OpeningSkipMethod = default;
         EndingSkipMethod = default;
-
+        Unsubscribe(ProviderOptions);
+        ProviderOptions = [];
         _isDeleting = false;
     }
 }

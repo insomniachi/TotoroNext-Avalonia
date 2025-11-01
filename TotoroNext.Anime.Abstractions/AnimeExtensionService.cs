@@ -50,9 +50,13 @@ public class AnimeExtensionService : IAnimeExtensionService
         return _extensions.GetValueOrDefault(id)?.IsNsfw ?? false;
     }
     
-    public string GetSelectedResult(AnimeModel anime)
+    public string GetSearchTerm(AnimeModel anime)
     {
-        return _extensions.GetValueOrDefault(anime.Id)?.SelectedResult ?? anime.Title;
+        var extension = _extensions.GetValueOrDefault(anime.Id);
+        
+        return string.IsNullOrEmpty(extension?.SearchTerm)
+            ? anime.Title
+            : extension.SearchTerm;
     }
 
     public IAnimeProvider GetProvider(long id)
@@ -72,7 +76,7 @@ public class AnimeExtensionService : IAnimeExtensionService
     public async Task<SearchResult?> SearchAndSelectAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
-        var term = GetSelectedResult(anime);
+        var term = GetSearchTerm(anime);
         
         var results = await provider.SearchAsync(term).ToListAsync();
 
@@ -95,7 +99,7 @@ public class AnimeExtensionService : IAnimeExtensionService
     public async Task<SearchResult?> SearchAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
-        var term = GetSelectedResult(anime);
+        var term = GetSearchTerm(anime);
         
         var results = await provider.SearchAsync(term).ToListAsync();
 
