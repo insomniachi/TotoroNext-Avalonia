@@ -17,8 +17,9 @@ internal class AnimeOnsenStreamResult
 [Serializable]
 internal class AnimeOnsenItemModel
 {
-    [JsonPropertyName("content_title")] public string Title { get; set; } = "";
-    [JsonPropertyName("content_id")] public string Id { get; set; } = "";
+    [JsonPropertyName("content_title_en")] public string TitleEnglish { get; set; } = string.Empty;
+    [JsonPropertyName("content_title")] public string Title { get; set; } = string.Empty;
+    [JsonPropertyName("content_id")] public string Id { get; set; } = string.Empty;
 }
 
 [Serializable]
@@ -29,6 +30,13 @@ internal class AnimeOnsenEpisode
 
     [JsonPropertyName("contentTitle_episode_jp")]
     public string TitleJapanese { get; set; } = "";
+}
+
+[Serializable]
+internal class ResultResponse<T>
+{
+    [JsonPropertyName("status")] public int Status { get; set; }
+    [JsonPropertyName("result")] public T? Result { get; set; }
 }
 
 [Serializable]
@@ -58,7 +66,7 @@ internal class AnimeOnsenSubtitles
             "fr-FR" => French,
             "it-IT" => Italian,
             "pt-BR" => PortugueseBrazil,
-            _ => English,
+            _ => English
         };
     }
 }

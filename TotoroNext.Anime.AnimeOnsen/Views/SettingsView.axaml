@@ -18,19 +18,8 @@
                           DisplayMemberBinding="{Binding Key}"
                           SelectedValue="{Binding SubtitleLanguage}"
                           SelectedValueBinding="{Binding Value}"
-                          HorizontalAlignment="Stretch"/>
+                          HorizontalAlignment="Stretch" />
             </u:FormItem>
-            <TextBox Text="{Binding Token, Mode=TwoWay}" u:FormItem.Label="Token"
-                     AcceptsReturn="True"
-                     TextWrapping="WrapWithOverflow"/>
-            <u:FormItem Label="Auto Update Token">
-                <ToggleSwitch IsChecked="{Binding AutoUpdateApiToken, Mode=TwoWay}"/>
-            </u:FormItem>
-            <Button Content="Authenticate"
-                    u:FormItem.NoLabel="True"
-                    Theme="{DynamicResource SolidButton}"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding UpdateApiTokenCommand}"/>
         </u:Form>
     </Grid>
 </UserControl>

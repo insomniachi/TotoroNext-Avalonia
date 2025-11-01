@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -7,23 +8,19 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.AnimeOnsen;
 
-public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
+public class AnimeProvider(
+    IModuleSettings<Settings> settings,
+    IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
-    private readonly string _apiToken = settings.Value.ApiToken?.Token ?? "";
-
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
-        var token = await Settings.SearchTokenTaskCompletionSource.Task;
+        using var client = CreateClient();
 
-        var response = await "https://search.animeonsen.xyz/indexes/content/search"
-                             .WithOAuthBearerToken(token)
-                             .PostJsonAsync(new
-                             {
-                                 q = query
-                             })
-                             .ReceiveJson<AnimeOnsenSearchResult>();
+        var response = await client.Request("search")
+                                   .AppendPathSegment(query)
+                                   .GetJsonAsync<ResultResponse<List<AnimeOnsenItemModel>>>();
 
-        foreach (var item in response.Data)
+        foreach (var item in response.Result ?? [])
         {
             var image = $"https://api.animeonsen.xyz/v4/image/210x300/{item.Id}";
             yield return new SearchResult(this, item.Id, item.Title, new Uri(image));
@@ -32,9 +29,10 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
-        var stream = await $"https://api.animeonsen.xyz/v4/content/{animeId}/video/{episodeId}"
-                           .WithOAuthBearerToken(_apiToken)
-                           .GetStreamAsync();
+        using var client = CreateClient();
+
+        var stream = await client.Request($"content/{animeId}/video/{episodeId}")
+                                 .GetStreamAsync();
 
         var doc = await JsonDocument.ParseAsync(stream);
         var response = doc.RootElement.GetProperty("uri").Deserialize<AnimeOnsenStream>()!;
@@ -55,9 +53,10 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
-        var response = await $"https://api.animeonsen.xyz/v4/content/{animeId}/episodes"
-                             .WithOAuthBearerToken(_apiToken)
-                             .GetJsonAsync<Dictionary<string, AnimeOnsenEpisode>>();
+        using var client = CreateClient();
+        var response = await client.Request($"content/{animeId}/episodes")
+                                   .WithHeader(HeaderNames.Referer, Http.UserAgent)
+                                   .GetJsonAsync<Dictionary<string, AnimeOnsenEpisode>>();
 
         foreach (var item in response)
         {
@@ -78,6 +77,11 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
                 }
             };
         }
+    }
+
+    private FlurlClient CreateClient()
+    {
+        return new FlurlClient(httpClientFactory.CreateClient(typeof(Module).FullName!));
     }
 
     private static SkipData? CovertSkipData(AnimeOnsenSkipData? skipData)

@@ -22,9 +22,14 @@ public class Module : IModule<Settings>
 
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddHttpClient(typeof(Module).FullName!, client => { client.BaseAddress = new Uri("https://api.animeonsen.xyz/v4/"); })
+                .AddHttpMessageHandler<AnimeOnsenApiInterceptor>();
+
+        services.AddTransient<AnimeOnsenApiInterceptor>()
+                .AddTransient<TokenProvider>();
+
         services.AddTransient(_ => Descriptor)
                 .AddModuleSettings(this)
-                .AddTransient<IBackgroundInitializer, BackgroundInitializer>()
                 .AddViewMap<SettingsView, SettingsViewModel>()
                 .AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
     }
@@ -32,10 +37,7 @@ public class Module : IModule<Settings>
 
 public class Settings
 {
-    public static readonly TaskCompletionSource<string> SearchTokenTaskCompletionSource = new();
     public string SubtitleLanguage { get; set; } = "en-US";
-    public AnimeOnsenApiToken? ApiToken { get; set; }
-    public bool AutoUpdateApiToken { get; set; } = false;
 }
 
 [Serializable]
