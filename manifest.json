@@ -12,7 +12,7 @@
     "EntryPoint": "TotoroNext.Anime.AllAnime.dll",
     "Versions": [
       {
-        "Version": "1.0.0",
+        "Version": "1.1.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AllAnime.zip"
@@ -108,6 +108,24 @@
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeKai.zip"
+      }
+    ]
+  },
+  {
+    "Id": "c37d57cf-5090-4b48-977d-dbaa78545433",
+    "Name": "Anime Onsen",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimeOnsen/Assets/animeonsen.jpg",
+    "EntryPoint": "TotoroNext.Anime.AnimeOnsen.dll",
+    "Versions": [
+      {
+        "Version": "1.1.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeOnsen.zip"
       }
     ]
   },
