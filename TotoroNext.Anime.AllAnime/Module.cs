@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.AllAnime.ViewModels;
@@ -29,9 +30,9 @@ public class Module : IModule<Settings>
     }
 }
 
-public class Settings
+public class Settings : OverridableConfig
 {
-    public TranslationType TranslationType { get; set; } = TranslationType.Sub;
+    [DisplayName("Translation Type")] public TranslationType TranslationType { get; set; } = TranslationType.Sub;
 }
 
 public enum TranslationType

@@ -12,9 +12,9 @@ namespace TotoroNext.Module;
 internal class ModuleSettings<TData> : IModuleSettings<TData>
     where TData : class, new()
 {
-    private readonly string _filePath;
     // ReSharper disable once StaticMemberInGenericType
     private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+    private readonly string _filePath;
 
     internal ModuleSettings(Descriptor descriptor)
     {
@@ -48,6 +48,28 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
 {
     protected TSettings Settings => data.Value;
 
+    public ModuleOptions? EditableSettings { get; private set; }
+
+    public void Initialize()
+    {
+        if (Settings is not OverridableConfig oc)
+        {
+            return;
+        }
+
+        EditableSettings = oc.ToModuleOptions();
+        OnPropertyChanged(nameof(EditableSettings));
+
+        foreach (var item in EditableSettings)
+        {
+            item.PropertyChanged += (_, _) =>
+            {
+                oc.UpdateValues(EditableSettings);
+                data.Save();
+            };
+        }
+    }
+
     protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, Action<TSettings> settingUpdate,
                                                  [CallerMemberName] string propertyName = "")
     {
@@ -78,14 +100,14 @@ public static class ModuleHelper
         if (descriptor is null)
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                "TotoroNext", 
-                                "Modules", 
+                                "TotoroNext",
+                                "Modules",
                                 fileName);
         }
-        
+
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                            "TotoroNext", 
-                            "Modules", 
+                            "TotoroNext",
+                            "Modules",
                             descriptor.EntryPoint,
                             fileName);
     }

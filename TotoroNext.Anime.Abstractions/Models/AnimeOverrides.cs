@@ -1,3 +1,5 @@
+using TotoroNext.Module;
+
 namespace TotoroNext.Anime.Abstractions.Models;
 
 public sealed class AnimeOverrides
@@ -8,6 +10,7 @@ public sealed class AnimeOverrides
     public SkipMethod OpeningSkipMethod { get; init; }
     public SkipMethod EndingSkipMethod { get; init; }
     public string? SearchTerm { get; init; }
+    public List<ModuleOptionItem> AnimeProviderOptions { get; init; } = [];
     public event EventHandler? Reverted;
 
     public void Revert()

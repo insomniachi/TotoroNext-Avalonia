@@ -3,8 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:allAnime="clr-namespace:TotoroNext.Anime.AllAnime"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.AllAnime.ViewModels"
+             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:SettingsViewModel"
              x:Class="TotoroNext.Anime.AllAnime.Views.SettingsView">
@@ -14,11 +14,8 @@
                Stretch="UniformToFill"
                Width="600" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
-            <u:FormItem Label="Type">
-                <u:EnumSelector EnumType="allAnime:TranslationType"
-                                Value="{Binding TranslationType}" 
-                                HorizontalAlignment="Stretch"/>
-            </u:FormItem>
+            <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"
+                                          IsVisible="{Binding EditableSettings, Converter={x:Static ObjectConverters.IsNotNull}}" />
         </u:Form>
     </Grid>
 </UserControl>

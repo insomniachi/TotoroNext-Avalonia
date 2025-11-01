@@ -8,6 +8,7 @@
              xmlns:semi="https://irihi.tech/semi"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              MinWidth="700"
              MaxWidth="700"
@@ -40,8 +41,7 @@
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
                 <fac:SettingsExpander Header="Provider"
-                                      Description="The provider to use for this anime"
-                                      IsExpanded="{Binding HasProvider}">
+                                      Description="The provider to use for this anime">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
                     </fac:SettingsExpander.IconSource>
@@ -56,38 +56,38 @@
                             </ComboBox.Styles>
                         </ComboBox>
                     </fac:SettingsExpander.Footer>
-                    <fac:SettingsExpanderItem Content="Search Term"
-                                              Description="The search term to use when searching for this anime, use it when the default search term doesn't return the correct anime">
-                        <fac:SettingsExpanderItem.IconSource>
-                            <fac:PathIconSource Data="{StaticResource Search}" />
-                        </fac:SettingsExpanderItem.IconSource>
-                        <fac:SettingsExpanderItem.Footer>
-                            <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch">
-                                <TextBox.Styles>
-                                    <semi:SemiTheme Locale="en-US" />
-                                </TextBox.Styles>
-                            </TextBox>
-                        </fac:SettingsExpanderItem.Footer>
-                    </fac:SettingsExpanderItem>
-                    <fac:SettingsExpanderItem Content="Provider Result"
-                                              Description="The specific result to use when searching for this anime, use it when the default search term returns multiple results">
-                        <fac:SettingsExpanderItem.IconSource>
-                            <fac:PathIconSource Data="{StaticResource SearchResult}" />
-                        </fac:SettingsExpanderItem.IconSource>
-                        <fac:SettingsExpanderItem.Footer>
-                            <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
-                                      SelectedValue="{Binding SelectedResult}"
-                                      SelectedValueBinding="{Binding Title}"
-                                      DisplayMemberBinding="{Binding Title}"
-                                      HorizontalAlignment="Stretch">
-                                <ComboBox.Styles>
-                                    <semi:SemiTheme Locale="en-US" />
-                                </ComboBox.Styles>
-                            </ComboBox>
-                        </fac:SettingsExpanderItem.Footer>
-                    </fac:SettingsExpanderItem>
-
                 </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Search Term"
+                                      Description="The search term to use when searching for this anime, use it when the default search term doesn't return the correct anime">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Search}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch">
+                            <TextBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </TextBox.Styles>
+                        </TextBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Provider Result"
+                                      Description="The specific result to use when searching for this anime, use it when the default search term returns multiple results">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource SearchResult}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
+                                  SelectedValue="{Binding SelectedResult}"
+                                  SelectedValueBinding="{Binding Title}"
+                                  DisplayMemberBinding="{Binding Title}"
+                                  HorizontalAlignment="Stretch">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+                <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
                 <fac:SettingsExpander Header="Opening Skip Method" Description="How to skip the opening of this anime">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource Opening}" />

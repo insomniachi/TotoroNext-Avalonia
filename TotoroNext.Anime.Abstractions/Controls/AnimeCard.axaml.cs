@@ -83,7 +83,6 @@ public partial class AnimeCard : UserControl
         TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
     }
 
-    // ReSharper disable once AsyncVoidMethod
     private async void InputElement_OnPointerExited(object? sender, PointerEventArgs e)
     {
         try
@@ -112,7 +111,7 @@ public partial class AnimeCard : UserControl
             TitleTextBlock.TextWrapping = TextWrapping.NoWrap;
             TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
         }
-        catch (TaskCanceledException)
+        catch (Exception)
         {
             // Exit was canceled due to re-entry
         }

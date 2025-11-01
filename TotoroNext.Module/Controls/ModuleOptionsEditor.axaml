@@ -1,0 +1,44 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:TotoroNext.Module.Controls"
+             xmlns:module="clr-namespace:TotoroNext.Module"
+             xmlns:fac="using:FluentAvalonia.UI.Controls"
+             xmlns:semi="https://irihi.tech/semi"
+             xmlns:styling="clr-namespace:FluentAvalonia.Styling;assembly=FluentAvalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TotoroNext.Module.Controls.ModuleOptionsEditor">
+    <UserControl.Styles>
+        <styling:FluentAvaloniaTheme />
+    </UserControl.Styles>
+    <ItemsControl
+        ItemsSource="{Binding $parent[controls:ModuleOptionsEditor].Options}">
+        <ItemsControl.DataTemplates>
+            <DataTemplate DataType="module:SelectableModuleOptionItem">
+                <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding AllowedValues}"
+                                  SelectedItem="{Binding Value, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+            </DataTemplate>
+            <DataTemplate DataType="module:ModuleOptionItem">
+                <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <fac:SettingsExpander.Footer>
+                        <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                            <TextBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </TextBox.Styles>
+                        </TextBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+            </DataTemplate>
+        </ItemsControl.DataTemplates>
+    </ItemsControl>
+</UserControl>

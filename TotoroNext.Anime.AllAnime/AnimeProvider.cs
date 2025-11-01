@@ -4,6 +4,7 @@ using Flurl.Http;
 using FlurlGraphQL;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.AllAnime;
@@ -101,6 +102,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
                     {
                         yield return VideoServers.WithReferer(item.SourceName, links[0].Url, "https://allanime.day/");
                     }
+
                     continue;
                 case "Default":
                     var hls = jObject["links"].Deserialize<List<DefaultResponse>>() ?? [];
@@ -143,6 +145,16 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
             yield return new SearchResult(this, id, title, image);
         }
+    }
+
+    public List<ModuleOptionItem> GetOptions()
+    {
+        return settings.Value.ToModuleOptions();
+    }
+
+    public void UpdateOptions(List<ModuleOptionItem> options)
+    {
+        settings.Value.UpdateValues(options);
     }
 
     private static string Decrypt(string target)
