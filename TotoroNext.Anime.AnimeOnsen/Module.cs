@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.AnimeOnsen.ViewModels;
 using TotoroNext.Anime.AnimeOnsen.Views;
@@ -35,8 +37,10 @@ public class Module : IModule<Settings>
     }
 }
 
-public class Settings
+public class Settings : OverridableConfig
 {
+    [DisplayName("Subtitle")]
+    [AllowedValues("en-US","fr-FR","es-LA","pt-BR","it-IT","de-DE")]
     public string SubtitleLanguage { get; set; } = "en-US";
 }
 

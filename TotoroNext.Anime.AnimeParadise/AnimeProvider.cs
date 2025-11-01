@@ -92,6 +92,16 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
         }
     }
 
+    public List<ModuleOptionItem> GetOptions()
+    {
+        return settings.Value.ToModuleOptions();
+    }
+
+    public void UpdateOptions(List<ModuleOptionItem> options)
+    {
+        settings.Value.UpdateValues(options);
+    }
+
     private static Abstractions.Models.SkipData? GetSkipData(SkipData? skipData)
     {
         if (skipData is null)

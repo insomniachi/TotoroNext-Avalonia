@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -24,12 +26,9 @@ public class Module : IModule<Settings>
     }
 }
 
-public class Settings
+public class Settings : OverridableConfig
 {
-    public static List<string> SubtitleLanguages { get; } =
-    [
-        "English",
-    ];
-    
+    [DisplayName("Subtitle")]
+    [AllowedValues("English")]
     public string SubtitleLanguage { get; set; } = "English";
 }

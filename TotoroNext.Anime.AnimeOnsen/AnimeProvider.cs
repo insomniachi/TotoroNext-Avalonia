@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -77,6 +76,16 @@ public class AnimeProvider(
                 }
             };
         }
+    }
+
+    public List<ModuleOptionItem> GetOptions()
+    {
+        return settings.Value.ToModuleOptions();
+    }
+
+    public void UpdateOptions(List<ModuleOptionItem> options)
+    {
+        settings.Value.UpdateValues(options);
     }
 
     private FlurlClient CreateClient()
