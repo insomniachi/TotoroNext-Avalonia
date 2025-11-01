@@ -1,8 +1,6 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using Flurl;
 using Flurl.Http;
-using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
@@ -93,19 +91,19 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
             yield return new Episode(this, animeId, item.Id, number);
         }
     }
-    
-    private static TotoroNext.Anime.Abstractions.Models.SkipData? GetSkipData(SkipData? skipData)
+
+    private static Abstractions.Models.SkipData? GetSkipData(SkipData? skipData)
     {
         if (skipData is null)
         {
             return null;
         }
 
-        var data = new TotoroNext.Anime.Abstractions.Models.SkipData();
-        
+        var data = new Abstractions.Models.SkipData();
+
         if (skipData.Intro.End > 0)
         {
-            data.Opening = new Segment()
+            data.Opening = new Segment
             {
                 Start = TimeSpan.FromSeconds(skipData.Intro.Start),
                 End = TimeSpan.FromSeconds(skipData.Intro.End)
@@ -114,7 +112,7 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 
         if (skipData.Outro.End > 0)
         {
-            data.Ending = new Segment()
+            data.Ending = new Segment
             {
                 Start = TimeSpan.FromSeconds(skipData.Outro.Start),
                 End = TimeSpan.FromSeconds(skipData.Outro.End)
