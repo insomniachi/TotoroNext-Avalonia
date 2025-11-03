@@ -39,20 +39,25 @@
               Grid.Row="0"
               RowDefinitions="Auto,*"
               RowSpacing="16"
-              Background="{DynamicResource SemiColorTertiary}"
-              IsVisible="{Binding IsEpisodesVisible}">
+              IsVisible="{Binding IsEpisodesVisible}"
+              Background="{DynamicResource SemiColorBackground2}">
             <TextBlock Text="Episodes"
                        Classes.H1="true"
                        Margin="8 8 0 0"
                        Theme="{DynamicResource TitleTextBlock}" />
-            <u:LoadingContainer Grid.Row="1" IsLoading="{Binding IsEpisodesLoading}"
-                                Background="{DynamicResource SemiColorTertiary}">
+            <u:LoadingContainer Grid.Row="1" IsLoading="{Binding IsEpisodesLoading}">
                 <ListBox
                     Width="800"
                     MinHeight="200"
                     ItemsSource="{Binding Episodes}"
                     SelectedItem="{Binding SelectedEpisode}"
                     SelectionChanged="SelectingItemsControl_OnSelectionChanged">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="8 4" />
+                        </Style>
+                    </ListBox.Styles>
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="aam:Episode">
                             <Grid ColumnDefinitions="*,1.8*" Height="160">
@@ -68,9 +73,9 @@
                                                    TextWrapping="NoWrap"
                                                    FontSize="{DynamicResource SemiFontSizeHeader4}"
                                                    FontWeight="Bold">
-                                            <Run Text="Episode" Foreground="{DynamicResource SemiColorText3}" />
-                                            <Run Text="{Binding Number}" Foreground="{DynamicResource SemiColorText3}" />
-                                            <Run Text=":" Foreground="{DynamicResource SemiColorText3}" />
+                                            <Run Text="Episode" Foreground="{DynamicResource TextBlockQuaternaryForeground}" />
+                                            <Run Text="{Binding Number}" Foreground="{DynamicResource TextBlockQuaternaryForeground}" />
+                                            <Run Text=":" Foreground="{DynamicResource TextBlockQuaternaryForeground}" />
                                             <Run Text="{Binding Info.Titles.English, FallbackValue={x:Null}}" />
                                         </TextBlock>
                                         <StackPanel Grid.Row="1"
@@ -100,6 +105,11 @@
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
                 </ListBox>
             </u:LoadingContainer>
         </Grid>
