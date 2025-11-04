@@ -3,6 +3,7 @@ using System.Text.Json;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReactiveUI;
@@ -24,10 +25,10 @@ public partial class MainWindowViewModel : ObservableObject,
                                            IRecipient<NavigateToViewModelDialogMessage>,
                                            IRecipient<NavigateToKeyDialogMessage>
 {
-    private readonly IViewRegistry _locator;
-    private readonly IMessenger _messenger;
     private readonly IDialogService _dialogService;
+    private readonly IViewRegistry _locator;
     private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly IMessenger _messenger;
     private readonly UpdateManager _updateManager;
 
     public MainWindowViewModel(IEnumerable<NavMenuItem> menuItems,
@@ -62,46 +63,35 @@ public partial class MainWindowViewModel : ObservableObject,
     public List<NavMenuItem> MenuItems { get; }
     public List<NavMenuItem> FooterMenuItems { get; }
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
-    
-    public async Task CheckForUpdatesAsync()
-    {
-        try
-        {
-            var updateInfo = await _updateManager.CheckForUpdatesAsync();
-            if (updateInfo is null)
-            {
-                await _dialogService.Information("You are running the latest version.");
-                return;
-            }
-
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Update found: {info}", JsonSerializer.Serialize(updateInfo));
-            }
-            
-            var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.TargetFullRelease.Version}?");
-
-            if (answer == MessageBoxResult.Yes)
-            {
-                _messenger.Send(new NavigateToViewModelDialogMessage
-                {
-                    Button = DialogButton.None,
-                    CloseButtonVisible = false,
-                    Title = "Downloading Update",
-                    ViewModel = typeof(DownloadUpdateViewModel),
-                    Data = updateInfo
-                });
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
-    }
 
     public void Receive(NavigateToDataMessage message)
     {
         Navigator?.NavigateToData(message.Data);
+    }
+
+    public void Receive(NavigateToKeyDialogMessage message)
+    {
+        var map = _locator.FindByKey(message.Key);
+
+        if (map is null)
+        {
+            return;
+        }
+
+        NavigateToDialog(map, message);
+    }
+
+
+    public void Receive(NavigateToViewModelDialogMessage message)
+    {
+        var map = _locator.FindByViewModel(message.ViewModel);
+
+        if (map is null)
+        {
+            return;
+        }
+
+        NavigateToDialog(map, message);
     }
 
     public void Receive(NavigateToViewModelMessage message)
@@ -166,30 +156,41 @@ public partial class MainWindowViewModel : ObservableObject,
 
         Drawer.ShowModal(viewObj, vmObj, options: options);
     }
-    
-    
-    public void Receive(NavigateToViewModelDialogMessage message)
+
+    [UsedImplicitly]
+    public async Task CheckForUpdatesAsync()
     {
-        var map = _locator.FindByViewModel(message.ViewModel);
-        
-        if (map is null)
+        try
         {
-            return;
+            var updateInfo = await _updateManager.CheckForUpdatesAsync();
+            if (updateInfo is null)
+            {
+                return;
+            }
+
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("Update found: {info}", JsonSerializer.Serialize(updateInfo));
+            }
+
+            var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.TargetFullRelease.Version}?");
+
+            if (answer == MessageBoxResult.Yes)
+            {
+                _messenger.Send(new NavigateToViewModelDialogMessage
+                {
+                    Button = DialogButton.None,
+                    CloseButtonVisible = false,
+                    Title = "Downloading Update",
+                    ViewModel = typeof(DownloadUpdateViewModel),
+                    Data = updateInfo
+                });
+            }
         }
-
-        NavigateToDialog(map, message);
-    }
-
-    public void Receive(NavigateToKeyDialogMessage message)
-    {
-        var map = _locator.FindByKey(message.Key);
-        
-        if (map is null)
+        catch (Exception e)
         {
-            return;
+            Console.WriteLine(e);
         }
-
-        NavigateToDialog(map, message);
     }
 
     private void UpdateSelection(NavigationResult result)
@@ -252,13 +253,13 @@ public partial class MainWindowViewModel : ObservableObject,
             ? ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel)
             : ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel, message.Data);
 
-        var options = new DialogOptions()
+        var options = new DialogOptions
         {
             CanResize = false,
             IsCloseButtonVisible = message.CloseButtonVisible,
             Title = message.Title,
             Button = message.Button,
-            ShowInTaskBar = false,
+            ShowInTaskBar = false
         };
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
