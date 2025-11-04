@@ -25,6 +25,16 @@ public partial class MainWindow : UrsaWindow
         });
 
         GetTopLevel(this)!.KeyDown += OnKeyDown;
+
+#if !DEBUG
+        DataContextChanged += async (_, e) =>
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                await vm.CheckForUpdatesAsync();
+            }
+        };
+#endif
     }
 
     protected override async Task<bool> CanClose()
@@ -34,6 +44,7 @@ public partial class MainWindow : UrsaWindow
         {
             await App.AppHost.StopAsync();
         }
+
         return canClose;
     }
 

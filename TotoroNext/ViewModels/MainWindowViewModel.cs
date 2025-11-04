@@ -1,14 +1,17 @@
 ﻿using System.Reactive.Linq;
+using System.Text.Json;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using Ursa.Common;
 using Ursa.Controls;
 using Ursa.Controls.Options;
+using Velopack;
 
 namespace TotoroNext.ViewModels;
 
@@ -22,12 +25,23 @@ public partial class MainWindowViewModel : ObservableObject,
                                            IRecipient<NavigateToKeyDialogMessage>
 {
     private readonly IViewRegistry _locator;
+    private readonly IMessenger _messenger;
+    private readonly IDialogService _dialogService;
+    private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly UpdateManager _updateManager;
 
     public MainWindowViewModel(IEnumerable<NavMenuItem> menuItems,
                                IViewRegistry locator,
-                               IMessenger messenger)
+                               IMessenger messenger,
+                               IDialogService dialogService,
+                               ILogger<MainWindowViewModel> logger,
+                               UpdateManager updateManager)
     {
         _locator = locator;
+        _messenger = messenger;
+        _dialogService = dialogService;
+        _logger = logger;
+        _updateManager = updateManager;
         var items = menuItems.OrderBy(x => x.Tag is not NavMenuItemTag tag ? 0 : tag.Order).ToList();
         MapChildren(items);
         MenuItems = [..items.Where(x => IsTopLevelNavItem(x) && !IsFooterNavItem(x))];
@@ -48,6 +62,42 @@ public partial class MainWindowViewModel : ObservableObject,
     public List<NavMenuItem> MenuItems { get; }
     public List<NavMenuItem> FooterMenuItems { get; }
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
+    
+    public async Task CheckForUpdatesAsync()
+    {
+        try
+        {
+            var updateInfo = await _updateManager.CheckForUpdatesAsync();
+            if (updateInfo is null)
+            {
+                await _dialogService.Information("You are running the latest version.");
+                return;
+            }
+
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("Update found: {info}", JsonSerializer.Serialize(updateInfo));
+            }
+            
+            var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.TargetFullRelease.Version}?");
+
+            if (answer == MessageBoxResult.Yes)
+            {
+                _messenger.Send(new NavigateToViewModelDialogMessage
+                {
+                    Button = DialogButton.None,
+                    CloseButtonVisible = false,
+                    Title = "Downloading Update",
+                    ViewModel = typeof(DownloadUpdateViewModel),
+                    Data = updateInfo
+                });
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
 
     public void Receive(NavigateToDataMessage message)
     {
