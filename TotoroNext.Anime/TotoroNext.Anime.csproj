@@ -15,4 +15,8 @@
       <PackageReference Include="Downloader" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\nothingtoseehere_transparent_small.png" />
+    </ItemGroup>
+
 </Project>

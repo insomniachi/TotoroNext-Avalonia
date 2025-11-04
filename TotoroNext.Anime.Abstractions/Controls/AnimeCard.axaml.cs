@@ -28,6 +28,7 @@ public partial class AnimeCard : UserControl
         AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(SettingsCommand));
 
     private CancellationTokenSource? _exitDelayToken;
+    private static SolidColorBrush _statusBorderBrush = new(Color.Parse("#AA000000"));
 
     public AnimeCard()
     {
@@ -75,7 +76,6 @@ public partial class AnimeCard : UserControl
         StatusBorder.Height = 300;
         StatusBorder.Background = Brushes.Transparent;
         BadgeContainer.Opacity = 0;
-        ScoreContainer.Opacity = 0;
         TitleBorder.Height = double.NaN;
         TitleBorder.MaxHeight = 120;
         TitleTextBlock.FontWeight = FontWeight.Bold;
@@ -88,7 +88,6 @@ public partial class AnimeCard : UserControl
         }
 
         Tint.IsVisible = true;
-        Grid.SetRowSpan(ImageContainer, 2);
     }
 
     private async void InputElement_OnPointerExited(object? sender, PointerEventArgs e)
@@ -111,8 +110,8 @@ public partial class AnimeCard : UserControl
             }
 
             StatusBorder.Height = 60;
+            StatusBorder.Background = _statusBorderBrush;
             BadgeContainer.Opacity = 1;
-            ScoreContainer.Opacity = 1;
             TitleBorder.Height = 54;
             TitleTextBlock.FontWeight = FontWeight.Normal;
             TitleTextBlock.FontSize = 15;
@@ -124,7 +123,6 @@ public partial class AnimeCard : UserControl
             }
 
             Tint.IsVisible = false;
-            Grid.SetRowSpan(ImageContainer, 1);
         }
         catch (Exception)
         {

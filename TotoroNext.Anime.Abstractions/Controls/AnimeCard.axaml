@@ -22,7 +22,7 @@
             Background="Transparent"
             BorderThickness="1">
         <Grid RowDefinitions="*,Auto" x:Name="MainContent">
-            <Grid x:Name="ImageContainer">
+            <Grid x:Name="ImageContainer" Grid.RowSpan="2">
                 <Grid.Effect>
                     <BlurEffect Radius="0">
                         <BlurEffect.Transitions>
@@ -72,23 +72,15 @@
                             FontWeight="Bold" />
                     </Border>
                 </Grid>
-
-                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        Background="{StaticResource BackgroundOnImage}" Padding="8"
-                        IsVisible="{Binding $parent[local:AnimeCard].Anime.MeanScore, Converter={x:Static ObjectConverters.IsNotNull}}"
-                        x:Name="ScoreContainer">
-                    <TextBlock Text="{Binding $parent[local:AnimeCard].Anime.MeanScore, Mode=OneWay}" FontSize="18"
-                               FontWeight="Bold" />
-                </Border>
             </Grid>
             <Border
                 x:Name="StatusBorder"
                 x:FieldModifier="public"
                 Grid.Row="1"
                 Height="60"
-                CornerRadius="0 0 8 8"
+                ClipToBounds="True"
                 Padding="6 3"
-                Background="{DynamicResource SemiColorNavBackground}"
+                Background="#AA000000"
                 BorderThickness="0,4,0,0">
                 <Grid RowDefinitions="Auto, *">
                     <Border x:Name="TitleBorder" Height="54" VerticalAlignment="Stretch">

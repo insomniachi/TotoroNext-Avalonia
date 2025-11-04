@@ -25,7 +25,8 @@
         <StackPanel
             HorizontalAlignment="Center"
             Orientation="Horizontal"
-            Spacing="18">
+            Spacing="18"
+            IsVisible="{Binding !NothingToSee}">
             <u:SelectionList ItemsSource="{Binding AllStatus}" SelectedItem="{Binding Filter.Status}">
                 <u:SelectionList.ItemTemplate>
                     <DataTemplate>
@@ -77,7 +78,8 @@
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Stretch"
             Background="Transparent"
-            IsLoading="{Binding IsLoading}">
+            IsLoading="{Binding IsLoading}"
+            IsVisible="{Binding !NothingToSee}">
             <ScrollViewer>
                 <ItemsRepeater
                     Margin="16,0"
@@ -107,36 +109,23 @@
                             MinItemWidth="250"
                             MinRowSpacing="16" />
                     </ItemsRepeater.Layout>
-
                 </ItemsRepeater>
-                <!--  <ItemsControl ItemsSource="{Binding Anime}"  -->
-                <!--  module:Animations.ItemsReorderAnimationDuration="0:0:0.400">  -->
-                <!--     <ItemsControl.ItemsPanel> -->
-                <!--         <ItemsPanelTemplate> -->
-                <!--  <modc:ElasticWrapPanelEx  -->
-                <!--  ItemHeight="400"  -->
-                <!--  ItemWidth="250"  -->
-                <!--  IsFillHorizontal="True" />  -->
-                <!--         </ItemsPanelTemplate> -->
-                <!--     </ItemsControl.ItemsPanel> -->
-                <!--     <ItemsControl.ItemTemplate> -->
-                <!--         <DataTemplate> -->
-                <!--  <ac:AnimeCard Anime="{Binding}"  -->
-                <!--  Margin="8"  -->
-                <!--  HasDetailsPane="True"  -->
-                <!--  DetailsCommand="{x:Static am:Commands.DetailsCommand}"  -->
-                <!--  WatchCommand="{x:Static am:Commands.WatchCommand}"  -->
-                <!--  SettingsCommand="{x:Static am:Commands.SettingsCommand}">  -->
-                <!--                 <Interaction.Behaviors> -->
-                <!--                     <behaviors:UnwatchedEpisodesBehavior/> -->
-                <!--                     <behaviors:AiringStatusBehavior/> -->
-                <!--                 </Interaction.Behaviors> -->
-                <!--             </ac:AnimeCard> -->
-                <!--         </DataTemplate> -->
-                <!--     </ItemsControl.ItemTemplate> -->
-                <!-- </ItemsControl> -->
             </ScrollViewer>
         </u:LoadingContainer>
+
+        <StackPanel Grid.Row="0"
+                    Grid.RowSpan="2"
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    IsVisible="{Binding NothingToSee}">
+            <Image Source="/Assets/nothingtoseehere_transparent_small.png"
+                   Stretch="Uniform"
+                   Height="300"/>
+            <TextBlock Text="No tracking services authenticated, please authenticate and choose a default tracker."
+                       HorizontalAlignment="Center"
+                       Foreground="{DynamicResource TextBlockQuaternaryForeground}"
+                       FontSize="{DynamicResource SemiFontSizeHeader4}"
+                       Margin="0 12 0 0 "/>
+        </StackPanel>
     </Grid>
 
 </UserControl>
