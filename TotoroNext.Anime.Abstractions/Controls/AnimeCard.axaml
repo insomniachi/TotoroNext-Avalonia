@@ -23,8 +23,20 @@
             BorderThickness="1">
         <Grid RowDefinitions="*,Auto" x:Name="MainContent">
             <Grid x:Name="ImageContainer">
+                <Grid.Effect>
+                    <BlurEffect Radius="0">
+                        <BlurEffect.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Radius" Duration="0:0:0.45" Easing="CubicEaseInOut" />
+                            </Transitions>
+                        </BlurEffect.Transitions>
+                    </BlurEffect>
+                </Grid.Effect>
                 <Image Stretch="UniformToFill"
-                       ail:ImageLoader.Source="{Binding $parent[local:AnimeCard].Anime.Image}" />
+                       ail:ImageLoader.Source="{Binding $parent[local:AnimeCard].Anime.Image}"
+                       x:Name="ImageControl" />
+
+                <Border Background="#AA000000" x:Name="Tint" IsVisible="False" />
 
                 <Grid VerticalAlignment="Top"
                       ColumnDefinitions="*,Auto"
@@ -78,11 +90,6 @@
                 Padding="6 3"
                 Background="{DynamicResource SemiColorNavBackground}"
                 BorderThickness="0,4,0,0">
-                <Border.Transitions>
-                    <Transitions>
-                        <DoubleTransition Property="Height" Duration="0:0:0.05" />
-                    </Transitions>
-                </Border.Transitions>
                 <Grid RowDefinitions="Auto, *">
                     <Border x:Name="TitleBorder" Height="54" VerticalAlignment="Stretch">
                         <TextBlock

@@ -73,6 +73,7 @@ public partial class AnimeCard : UserControl
 
         _exitDelayToken?.Cancel(); // Cancel any pending collapse
         StatusBorder.Height = 300;
+        StatusBorder.Background = Brushes.Transparent;
         BadgeContainer.Opacity = 0;
         ScoreContainer.Opacity = 0;
         TitleBorder.Height = double.NaN;
@@ -81,6 +82,13 @@ public partial class AnimeCard : UserControl
         TitleTextBlock.FontSize = 18;
         TitleTextBlock.TextWrapping = TextWrapping.WrapWithOverflow;
         TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+        if (ImageContainer.Effect is BlurEffect effect)
+        {
+            effect.Radius = 25;
+        }
+
+        Tint.IsVisible = true;
+        Grid.SetRowSpan(ImageContainer, 2);
     }
 
     private async void InputElement_OnPointerExited(object? sender, PointerEventArgs e)
@@ -92,11 +100,11 @@ public partial class AnimeCard : UserControl
                 await _exitDelayToken.CancelAsync();
                 _exitDelayToken.Dispose();
             }
-            
+
             _exitDelayToken = new CancellationTokenSource();
 
             await Task.Delay(50, _exitDelayToken.Token); // Wait 300ms
-            
+
             if (!HasDetailsPane)
             {
                 return;
@@ -110,6 +118,13 @@ public partial class AnimeCard : UserControl
             TitleTextBlock.FontSize = 15;
             TitleTextBlock.TextWrapping = TextWrapping.NoWrap;
             TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+            if (ImageContainer.Effect is BlurEffect effect)
+            {
+                effect.Radius = 0;
+            }
+
+            Tint.IsVisible = false;
+            Grid.SetRowSpan(ImageContainer, 1);
         }
         catch (Exception)
         {
@@ -119,7 +134,7 @@ public partial class AnimeCard : UserControl
 
     private void OnEditClicked(object? sender, RoutedEventArgs e)
     {
-        WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage()
+        WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage
         {
             Title = Anime.Title,
             Key = $"tracking/{Anime.ServiceName}",
@@ -130,7 +145,7 @@ public partial class AnimeCard : UserControl
 
     private void OnDownloadClicked(object? sender, RoutedEventArgs e)
     {
-        WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage()
+        WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage
         {
             Title = Anime.Title,
             Data = Anime,
