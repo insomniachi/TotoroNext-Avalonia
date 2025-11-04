@@ -29,7 +29,7 @@ public partial class MainWindow : UrsaWindow
 #if !DEBUG
         DataContextChanged += async (_, e) =>
         {
-            if (DataContext is MainWindowViewModel vm)
+            if (DataContext is ViewModels.MainWindowViewModel vm)
             {
                 await vm.CheckForUpdatesAsync();
             }
