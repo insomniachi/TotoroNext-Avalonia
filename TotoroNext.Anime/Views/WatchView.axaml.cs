@@ -1,11 +1,10 @@
-﻿using System.Globalization;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
-using Avalonia.Data.Converters;
+using Avalonia.Controls.Templates;
 using LibVLCSharp.Avalonia;
 using ReactiveUI;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Anime.ViewModels;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.MediaEngine.Abstractions.Controls;
@@ -35,13 +34,13 @@ public partial class WatchView : UserControl
 
         var vm = new TransportControlsViewModel(embeddedVlcPlayer);
         vm.Initialize();
-        
-        return new VideoView()
+
+        return new VideoView
         {
             [Grid.RowProperty] = 0,
             [Grid.ColumnProperty] = 0,
             MediaPlayer = embeddedVlcPlayer.MediaPlayer,
-            Content = new TransportControls()
+            Content = new TransportControls
             {
                 [DataContextProperty] = vm
             }
@@ -66,5 +65,28 @@ public partial class WatchView : UserControl
         }
 
         lb.ScrollIntoView(item);
+    }
+}
+
+public class EpisodeTemplateSelector : IDataTemplate
+{
+    public IDataTemplate? MinimalTemplate { get; set; }
+    public IDataTemplate? DetailedTemplate { get; set; }
+
+    // Build the DataTemplate here
+    public Control? Build(object? param)
+    {
+        return param switch
+        {
+            Episode episode => string.IsNullOrEmpty(episode.Info?.Titles.English) ? MinimalTemplate?.Build(param) : DetailedTemplate?.Build(param),
+            EpisodeInfo epInfo => string.IsNullOrEmpty(epInfo.Titles.English) ? MinimalTemplate?.Build(param) : DetailedTemplate?.Build(param),
+            _ => new TextBlock { Text = "Invalid Data" }
+        };
+    }
+
+    // Check if we can accept the provided data
+    public bool Match(object? data)
+    {
+        return data is Episode or EpisodeInfo;
     }
 }
