@@ -309,7 +309,11 @@ public sealed partial class WatchViewModel(
 
         MediaPlayer
             .PlaybackStopped
-            .Do(_ => messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" }))
+            .Do(_ =>
+            {
+                messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
+                CurrentSegment = null;
+            })
             .Where(_ => SelectedEpisode is { IsCompleted: true } && Episodes is not null)
             .ObserveOn(RxApp.MainThreadScheduler)
             .SelectMany(_ => AskIfContinueWatching())
