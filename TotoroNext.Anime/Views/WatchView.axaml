@@ -14,7 +14,7 @@
     <UserControl.Resources>
         <DataTemplate x:Key="MinimalTemplate" x:DataType="aam:Episode">
             <Grid ColumnDefinitions="*,1.8*" Height="160">
-                <Border Background="Gray"/>
+                <Border Background="Gray" />
                 <Border Grid.Column="1" Padding="8">
                     <Grid RowDefinitions="Auto,Auto,*">
                         <TextBlock Margin="0 0 0 8"
@@ -39,7 +39,7 @@
                             <iconPacks:PackIconControl
                                 Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
                                 Height="20" Width="20" />
-                            <TextBlock Text="??"/>
+                            <TextBlock Text="??" />
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -126,10 +126,17 @@
               RowSpacing="16"
               IsVisible="{Binding IsEpisodesVisible}"
               Background="{DynamicResource SemiColorBackground2}">
-            <TextBlock Text="Episodes"
-                       Classes.H1="true"
-                       Margin="8 8 0 0"
-                       Theme="{DynamicResource TitleTextBlock}" />
+            <StackPanel Spacing="16" Orientation="Horizontal" Margin="8 8 0 0">
+                <TextBlock Text="Episodes"
+                           Classes.H1="true"
+                           Theme="{DynamicResource TitleTextBlock}"
+                           VerticalAlignment="Center"/>
+                <ToggleSwitch IsChecked="{Binding AutoPlayNextEpisode}" 
+                              OnContent="Auto Play" 
+                              OffContent="Auto Play"
+                              VerticalAlignment="Center"/>
+            </StackPanel>
+
             <u:LoadingContainer Grid.Row="1" IsLoading="{Binding IsEpisodesLoading}"
                                 Background="{DynamicResource SemiColorBackground2}">
                 <ListBox

@@ -63,6 +63,8 @@ public sealed partial class WatchViewModel(
 
     [ObservableProperty] public partial bool IsEpisodesLoading { get; set; } = true;
 
+    [ObservableProperty] public partial bool AutoPlayNextEpisode { get; set; }
+
     public async Task InitializeAsync()
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
@@ -287,7 +289,7 @@ public sealed partial class WatchViewModel(
         {
             return;
         }
-        
+
         MediaPlayer
             .PositionChanged
             .Where(_ => Anime is not null && SelectedEpisode is not null)
@@ -371,7 +373,7 @@ public sealed partial class WatchViewModel(
 
         if ((int)SelectedEpisode.Number == Anime.TotalEpisodes)
         {
-            messenger.Send(new NavigateToKeyDialogMessage()
+            messenger.Send(new NavigateToKeyDialogMessage
             {
                 Title = Anime.Title,
                 Key = $"tracking/{Anime.ServiceName}",
@@ -386,7 +388,10 @@ public sealed partial class WatchViewModel(
             return null;
         }
 
-        var answer = await dialogService.Question("Tracking Updated", "Play the next episode?");
+        var answer = AutoPlayNextEpisode
+            ? MessageBoxResult.Yes
+            : await dialogService.Question("Tracking Updated", "Play the next episode?");
+        
         return answer is MessageBoxResult.Yes
             ? nextEp
             : null;
