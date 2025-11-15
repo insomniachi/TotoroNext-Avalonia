@@ -161,48 +161,52 @@ public class JsonStringEnumConverterEx<T> : JsonConverter<T>
 
 public static class EnumExtensions
 {
-    public static string ToEnumString<TField>(this TField field)
-        where TField : Enum
-    {
-        var fieldInfo = typeof(TField).GetField(field.ToString()) ??
-                        throw new UnreachableException($"Field {nameof(field)} was not found.");
+	extension<TField>(TField field) where TField : Enum
+	{
+		public string ToEnumString()
+		{
+			var fieldInfo = typeof(TField).GetField(field.ToString()) ??
+							throw new UnreachableException($"Field {nameof(field)} was not found.");
 
-        var attributes = (EnumMemberAttribute[])fieldInfo.GetCustomAttributes(typeof(EnumMemberAttribute), false);
-        if (attributes.Length == 0)
-        {
-            throw
-                new NotImplementedException($"The field has not been annotated with a {nameof(EnumMemberAttribute)}.");
-        }
+			var attributes = (EnumMemberAttribute[])fieldInfo.GetCustomAttributes(typeof(EnumMemberAttribute), false);
+			if (attributes.Length == 0)
+			{
+				throw
+					new NotImplementedException($"The field has not been annotated with a {nameof(EnumMemberAttribute)}.");
+			}
 
-        var value = attributes[0].Value ??
-                    throw new
-                        NotImplementedException($"{nameof(EnumMemberAttribute)}.{nameof(EnumMemberAttribute.Value)} has not been set for this field.");
+			var value = attributes[0].Value ??
+						throw new
+							NotImplementedException($"{nameof(EnumMemberAttribute)}.{nameof(EnumMemberAttribute.Value)} has not been set for this field.");
 
-        return value;
-    }
+			return value;
+		}
+	}
 
-    public static TField FromEnumString<TField>(this string str)
-        where TField : Enum
-    {
-        var fields = typeof(TField).GetFields();
-        foreach (var field in fields)
-        {
-            var attributes = (EnumMemberAttribute[])field.GetCustomAttributes(typeof(EnumMemberAttribute), false);
-            if (attributes.Length == 0)
-            {
-                continue;
-            }
+	extension(string str)
+	{
+		public TField FromEnumString<TField>() where TField : Enum
+		{
+			var fields = typeof(TField).GetFields();
+			foreach (var field in fields)
+			{
+				var attributes = (EnumMemberAttribute[])field.GetCustomAttributes(typeof(EnumMemberAttribute), false);
+				if (attributes.Length == 0)
+				{
+					continue;
+				}
 
-            var value = attributes[0].Value ??
-                        throw new
-                            NotImplementedException($"{nameof(EnumMemberAttribute)}.{nameof(EnumMemberAttribute.Value)} has not been set for the field {field.Name}.");
+				var value = attributes[0].Value ??
+							throw new
+								NotImplementedException($"{nameof(EnumMemberAttribute)}.{nameof(EnumMemberAttribute.Value)} has not been set for the field {field.Name}.");
 
-            if (string.Equals(value, str, StringComparison.OrdinalIgnoreCase))
-            {
-                return (TField)Enum.Parse(typeof(TField), field.Name) ?? throw new ArgumentNullException(field.Name);
-            }
-        }
+				if (string.Equals(value, str, StringComparison.OrdinalIgnoreCase))
+				{
+					return (TField)Enum.Parse(typeof(TField), field.Name) ?? throw new ArgumentNullException(field.Name);
+				}
+			}
 
-        throw new InvalidOperationException($"'{str}' was not found in enum {typeof(TField).Name}.");
-    }
+			throw new InvalidOperationException($"'{str}' was not found in enum {typeof(TField).Name}.");
+		}
+	}
 }

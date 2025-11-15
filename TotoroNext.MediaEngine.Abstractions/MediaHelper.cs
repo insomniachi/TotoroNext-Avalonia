@@ -118,37 +118,39 @@ public static class MediaHelper
         return double.TryParse(output.Trim(), out var seconds) ? TimeSpan.FromSeconds(seconds) : TimeSpan.Zero;
     }
 
-    public static IEnumerable<MediaSegment> MakeContiguousSegments(this List<MediaSegment> segments,
-                                                                   TimeSpan mediaLength)
-    {
-        if (segments.Count == 0)
-        {
-            return segments;
-        }
+	extension(List<MediaSegment> segments)
+	{
+		public IEnumerable<MediaSegment> MakeContiguousSegments(TimeSpan mediaLength)
+		{
+			if (segments.Count == 0)
+			{
+				return segments;
+			}
 
-        var newSegments = new List<MediaSegment>();
-        for (var i = 0; i < segments.Count - 1; i++)
-        {
-            var current = segments[i];
-            var next = segments[i + 1];
-            if (current.End != next.Start)
-            {
-                newSegments.Add(new MediaSegment(MediaSectionType.Content, current.End, next.Start));
-            }
-        }
+			var newSegments = new List<MediaSegment>();
+			for (var i = 0; i < segments.Count - 1; i++)
+			{
+				var current = segments[i];
+				var next = segments[i + 1];
+				if (current.End != next.Start)
+				{
+					newSegments.Add(new MediaSegment(MediaSectionType.Content, current.End, next.Start));
+				}
+			}
 
-        var last = segments.Last();
-        if (last.End < mediaLength)
-        {
-            newSegments.Add(new MediaSegment(MediaSectionType.Content, last.End, mediaLength));
-        }
+			var last = segments.Last();
+			if (last.End < mediaLength)
+			{
+				newSegments.Add(new MediaSegment(MediaSectionType.Content, last.End, mediaLength));
+			}
 
-        segments.AddRange(newSegments);
+			segments.AddRange(newSegments);
 
-        return segments.OrderBy(x => x.Start);
-    }
+			return segments.OrderBy(x => x.Start);
+		}
+	}
 
-    private static MediaSectionType GetType(string sectionName)
+	private static MediaSectionType GetType(string sectionName)
     {
         return sectionName switch
         {

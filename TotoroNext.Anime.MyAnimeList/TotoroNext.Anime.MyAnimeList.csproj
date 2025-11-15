@@ -12,7 +12,6 @@
     <ItemGroup>
         <PackageReference Include="JikanDotNet"/>
         <PackageReference Include="MalApi.V2"/>
-        <PackageReference Include="System.Text.Encodings.Web" />
     </ItemGroup>
 
     <ItemGroup>

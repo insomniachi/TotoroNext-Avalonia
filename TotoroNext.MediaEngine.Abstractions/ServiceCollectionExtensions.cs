@@ -5,12 +5,15 @@ namespace TotoroNext.MediaEngine.Abstractions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddInternalMediaPlayer(this IServiceCollection services)
-    {
-        services.AddTransient<IEmbeddedVlcMediaPlayer, EmbeddedVlcMediaPlayer>();
-        services.AddKeyedTransient<IMediaPlayer, EmbeddedVlcMediaPlayer>(Guid.Empty);
-        services.AddTransient<IBackgroundInitializer, BackgroundInitializer>();
-        
-        return services;
-    }
+	extension(IServiceCollection services)
+	{
+		public IServiceCollection AddInternalMediaPlayer()
+		{
+			services.AddTransient<IEmbeddedVlcMediaPlayer, EmbeddedVlcMediaPlayer>();
+			services.AddKeyedTransient<IMediaPlayer, EmbeddedVlcMediaPlayer>(Guid.Empty);
+			services.AddTransient<IBackgroundInitializer, BackgroundInitializer>();
+
+			return services;
+		}
+	}
 }

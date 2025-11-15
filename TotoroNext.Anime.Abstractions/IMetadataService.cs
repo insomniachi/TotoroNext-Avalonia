@@ -19,22 +19,25 @@ public interface IMetadataService
 
 public static class MetadataServiceExtensions
 {
-    public static async ValueTask<AnimeModel?> FindAnimeAsync(this IMetadataService service, AnimeModel anime)
-    {
-        if (anime.ServiceId == service.Id)
-        {
-            return anime;
-        }
+	extension(IMetadataService service)
+	{
+		public async ValueTask<AnimeModel?> FindAnimeAsync(AnimeModel anime)
+		{
+			if (anime.ServiceId == service.Id)
+			{
+				return anime;
+			}
 
-        var response = await service.SearchAnimeAsync(anime.Title);
+			var response = await service.SearchAnimeAsync(anime.Title);
 
-        return response switch
-        {
-            { Count: 0 } => null,
-            { Count: 1 } => response[0],
-            _ => response.FirstOrDefault(x => x.Season == anime.Season)
-        };
-    }
+			return response switch
+			{
+				{ Count: 0 } => null,
+				{ Count: 1 } => response[0],
+				_ => response.FirstOrDefault(x => x.Season == anime.Season)
+			};
+		}
+	}
 }
 
 public class AdvancedSearchRequest
