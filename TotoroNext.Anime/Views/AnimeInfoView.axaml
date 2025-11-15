@@ -25,32 +25,32 @@
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <panels:FlexPanel AlignContent="Center" 
+                    <panels:FlexPanel AlignContent="Center"
                                       AlignItems="Center"
                                       JustifyContent="Center"
                                       Wrap="Wrap"
-                                      ColumnSpacing="8" 
-                                      RowSpacing="8"/>
+                                      ColumnSpacing="8"
+                                      RowSpacing="8" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <u:Divider Grid.Row="1" Content="Details" HorizontalContentAlignment="Center"/>
-        
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding Fields}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="{Binding Key}" FontWeight="Bold" />
-                        <TextBlock Text="{Binding Value}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
+        <u:Divider Grid.Row="1" Content="Details" HorizontalContentAlignment="Center" />
+
+        <u:Descriptions Grid.Row="2"
+                        Classes.Small="true"
+                        ItemsSource="{Binding Fields}"
+                        LabelMemberBinding="{Binding Key}"
+                        DisplayMemberBinding="{Binding Value}"
+                        LabelPosition="Top"
+                        ItemAlignment="Center"
+                        VerticalAlignment="Top"
+                        Orientation="Vertical">
+            <u:Descriptions.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel LineSpacing="36" ItemSpacing="12" Orientation="Vertical" />
                 </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+            </u:Descriptions.ItemsPanel>
+        </u:Descriptions>
     </Grid>
 </UserControl>
