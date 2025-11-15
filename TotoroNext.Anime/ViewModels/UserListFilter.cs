@@ -12,7 +12,7 @@ public partial class UserListFilter : ObservableObject
 {
     public UserListFilter()
     {
-        var propertyChanged = this.WhenAnyPropertyChanged().Select(_ => Unit.Default);
+        var propertyChanged = this.WhenAnyPropertyChanged().Throttle(TimeSpan.FromMilliseconds(500)).Select(_ => Unit.Default);
         var genresChanged = Genres.ToObservableChangeSet().Select(_ => Unit.Default);
         Predicate = propertyChanged.Merge(genresChanged).Select(_ => (Func<AnimeModel, bool>)IsVisible);
     }

@@ -14,7 +14,7 @@
     </UserControl.Resources>
     <u:Form Margin="0">
         <u:FormGroup Header="Filters">
-            <TextBox Width="300" u:FormItem.Label="Title" Text="{Binding Filter.Term, UpdateSourceTrigger=LostFocus}" />
+            <TextBox Width="300" u:FormItem.Label="Title" Text="{Binding Filter.Term, UpdateSourceTrigger=PropertyChanged}" />
             <TextBox Width="300" u:FormItem.Label="Year" Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}" />
             <u:FormItem Label="Format">
                 <u:EnumSelector EnumType="aa:AnimeMediaFormat"

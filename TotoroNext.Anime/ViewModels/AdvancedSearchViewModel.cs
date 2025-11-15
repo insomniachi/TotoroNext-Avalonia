@@ -64,7 +64,8 @@ public partial class AdvancedSearchViewModel(
                                                             nameof(MinimumScore),
                                                             nameof(MaximumScore),
                                                             nameof(MaximumYear))
-                                    .Select(_ => Unit.Default);
+                                    .Throttle(TimeSpan.FromMilliseconds(500))
+									.Select(_ => Unit.Default);
 
         var includedGenresChanged = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                                                    h => IncludedGenres.CollectionChanged += h,

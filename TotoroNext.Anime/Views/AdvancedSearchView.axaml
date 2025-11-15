@@ -34,7 +34,7 @@
                           HorizontalAlignment="Stretch"/>
             </u:FormItem>
             <u:FormItem Label="Name">
-                <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                <TextBox Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             </u:FormItem>
             <u:Form.ItemsPanel>
                 <ItemsPanelTemplate>

@@ -57,7 +57,6 @@ public partial class AnimeExtensionsViewModel(
         IsNsfw = overrides?.IsNsfw ?? false;
         _suppressProviderChange = true;
         ProviderId = overrides?.Provider;
-        _suppressProviderChange = false;
         OpeningSkipMethod = overrides?.OpeningSkipMethod ?? SkipMethod.Ask;
         EndingSkipMethod = overrides?.EndingSkipMethod ?? SkipMethod.Ask;
         ProviderOptions = overrides?.AnimeProviderOptions ?? [];
@@ -96,7 +95,6 @@ public partial class AnimeExtensionsViewModel(
         providerIdStream
             .Where(x => x != Guid.Empty && x.HasValue)
             .Where(_ => !_suppressProviderChange)
-            .Skip(1)
             .Subscribe(id =>
             {
                 Unsubscribe(ProviderOptions);
