@@ -264,20 +264,6 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
-# SQL Server files
-*.mdf
-*.ldf
-*.ndf
-
-# Business Intelligence projects
-*.rdl.data
-*.bim.layout
-*.bim_*.settings
-*.rptproj.rsuser
-*- [Bb]ackup.rdl
-*- [Bb]ackup ([0-9]).rdl
-*- [Bb]ackup ([0-9][0-9]).rdl
-
 # Microsoft Fakes
 FakesAssemblies/
 
@@ -406,4 +392,4 @@ solution-config.props
 !**/Properties/PublishProfiles/*.pubxml
 
 # rider
-.idea/*
+/.idea/
