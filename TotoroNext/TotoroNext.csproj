@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -26,6 +25,7 @@
     <ItemGroup>
         <PackageReference Include="Serilog.Extensions.Logging" />
         <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Include="System.Text.Encodings.Web" />
         <PackageReference Include="Velopack" />
         <PackageReference Include="VideoLAN.LibVLC.Mac" Condition="$([MSBuild]::IsOsPlatform('OSX'))"/>
         <PackageReference Include="VideoLAN.LibVLC.Windows" Condition="$([MSBuild]::IsOsPlatform('Windows'))"/>
