@@ -28,6 +28,11 @@ jobs:
       -   name: 'Checkout'
           uses: actions/checkout@v2
 
+      -   name: 'Install dotnet for vpk'
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: '9.0'
+            
       -   name: 'Install dotnet'
           uses: actions/setup-dotnet@v1
           with:
