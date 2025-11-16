@@ -72,6 +72,23 @@
                             FontWeight="Bold" />
                     </Border>
                 </Grid>
+                <Border x:Name="CompletedCheckMark"
+                        Padding="5" 
+                        Margin="0 3.5 5 0"
+                        Width="50"
+                        Background="LawnGreen"
+                        BorderBrush="Black"
+                        BorderThickness="1"
+                        CornerRadius="15"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        IsVisible="False">
+                    <iconPacks:PackIconMaterialDesign Kind="Check"
+                                                      Height="15"
+                                                      Width="15"
+                                                      HorizontalAlignment="Center"
+                                                      Foreground="Black"/>
+                </Border>
             </Grid>
             <Border
                 x:Name="StatusBorder"

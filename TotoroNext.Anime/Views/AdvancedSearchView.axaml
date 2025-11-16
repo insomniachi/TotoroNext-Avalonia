@@ -107,9 +107,11 @@
                                           HasDetailsPane="True"
                                           DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                           WatchCommand="{x:Static am:Commands.WatchCommand}"
-                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}">
+                                          SettingsCommand="{x:Static am:Commands.SettingsCommand}"
+                                          ShowCompletedStatus="True">
                                 <Interaction.Behaviors>
                                     <behaviors:AiringStatusBehavior />
+                                    <behaviors:CompletedCheckMarkBehavior/>
                                 </Interaction.Behaviors>
                             </ac:AnimeCard>
                         </DataTemplate>
