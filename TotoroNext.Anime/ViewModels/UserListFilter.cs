@@ -4,17 +4,29 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
+using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
 
 namespace TotoroNext.Anime.ViewModels;
 
 public partial class UserListFilter : ObservableObject
 {
+    private static readonly string[] Properties =
+    [
+        nameof(Status),
+        nameof(Year),
+        nameof(Format),
+        nameof(ScoreFilter)
+    ];
+
     public UserListFilter()
     {
-        var propertyChanged = this.WhenAnyPropertyChanged().Throttle(TimeSpan.FromMilliseconds(500)).Select(_ => Unit.Default);
+        var propertyChanged = this.WhenAnyPropertyChanged(Properties).Select(_ => Unit.Default);
+        var titleChanged = this.WhenAnyValue(x => x.Term).Throttle(TimeSpan.FromMilliseconds(500)).Select(_ => Unit.Default);
         var genresChanged = Genres.ToObservableChangeSet().Select(_ => Unit.Default);
-        Predicate = propertyChanged.Merge(genresChanged).Select(_ => (Func<AnimeModel, bool>)IsVisible);
+        Predicate = propertyChanged.Merge(titleChanged)
+                                   .Merge(genresChanged)
+                                   .Select(_ => (Func<AnimeModel, bool>)IsVisible);
     }
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = ListItemStatus.Watching;

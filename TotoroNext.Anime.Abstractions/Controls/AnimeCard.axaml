@@ -139,7 +139,7 @@
                         </StackPanel>
 
                         <Border Grid.Row="1" Padding="4">
-                            <Grid>
+                            <Grid IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}">
                                 <StackPanel Orientation="Horizontal" Spacing="8" Margin="4" HorizontalAlignment="Left">
                                     <Button CornerRadius="30" Height="30" Width="30" Click="OnEditClicked">
                                         <Viewbox Height="12" Width="12">

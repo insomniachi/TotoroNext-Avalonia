@@ -6,6 +6,7 @@ public class PlaybackState
     public required Episode Episode { get; init; }
     public required TimeSpan Duration { get; init; }
     public required TimeSpan Position { get; init; }
+    public bool IsPaused { get; init; }
 }
 
 public class SongPlaybackState

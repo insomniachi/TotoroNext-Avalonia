@@ -277,7 +277,7 @@ public sealed partial class WatchViewModel(
 
         return method switch
         {
-            SkipMethod.Always => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.Yes),
+            SkipMethod.Always => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString(), MessageBoxResult.Yes)),
             SkipMethod.Never => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.No),
             _ => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()))
         };
@@ -289,6 +289,19 @@ public sealed partial class WatchViewModel(
         {
             return;
         }
+
+        MediaPlayer.StateChanged
+                   .Subscribe(state =>
+                   {
+                       messenger.Send(new PlaybackState
+                       {
+                           Anime = Anime!,
+                           Episode = SelectedEpisode!,
+                           Position = _currentPosition,
+                           Duration = _duration,
+                           IsPaused = state is MediaPlayerState.Paused
+                       });
+                   });
 
         MediaPlayer
             .PositionChanged

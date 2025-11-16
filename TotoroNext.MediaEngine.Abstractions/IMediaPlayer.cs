@@ -1,4 +1,5 @@
 using System.Reactive;
+using System.Reactive.Linq;
 using LibVLCSharp.Shared;
 
 namespace TotoroNext.MediaEngine.Abstractions;
@@ -8,6 +9,7 @@ public interface IMediaPlayer
     IObservable<TimeSpan> DurationChanged { get; }
     IObservable<TimeSpan> PositionChanged { get; }
     IObservable<Unit> PlaybackStopped { get; }
+    IObservable<MediaPlayerState> StateChanged { get; }
     void Play(Media media, TimeSpan startPosition);
 }
 
@@ -16,11 +18,11 @@ public interface ISeekable
     Task SeekTo(TimeSpan position);
 }
 
+
 public interface IEmbeddedVlcMediaPlayer : IMediaPlayer, ISeekable
 {
     MediaPlayer MediaPlayer { get; }
     MediaPlayerState CurrentState { get; }
-    IObservable<MediaPlayerState> StateChanged { get; }
     void Pause();
     void Play();
 }

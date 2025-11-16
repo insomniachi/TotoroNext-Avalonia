@@ -49,7 +49,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
         await MessageBox.ShowOverlayAsync(info, "Info", icon: MessageBoxIcon.Information, button: MessageBoxButton.OK);
     }
 
-    public async Task<MessageBoxResult> AskSkip(string type)
+    public async Task<MessageBoxResult> AskSkip(string type, MessageBoxResult defaultResult = MessageBoxResult.No)
     {
         var progressBar = new ProgressBar
         {
@@ -130,7 +130,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
             catch (ObjectDisposedException) { }
 
             var field = typeof(Window).GetField("_dialogResult", BindingFlags.Instance | BindingFlags.NonPublic);
-            field?.SetValue(messageWindow, MessageBoxResult.Cancel);
+            field?.SetValue(messageWindow, defaultResult);
             messageWindow.Close();
         };
 

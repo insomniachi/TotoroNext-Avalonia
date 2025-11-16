@@ -82,14 +82,28 @@ internal class RpcService(
         {
             p.Type = ActivityType.Watching;
             p.Details = message.Anime.Title;
-            p.State = $"Episode {message.Episode.Number}";
+            if (message.Anime.MediaFormat is not AnimeMediaFormat.Movie)
+            {
+                p.State = message.IsPaused 
+                    ? $"Episode {message.Episode.Number} (paused)"
+                    : $"Episode {message.Episode.Number}";
+            }
             p.Assets ??= new Assets();
             p.Assets.LargeImageKey = message.Anime.Image;
-            p.Timestamps = new Timestamps
+
+            if (message.IsPaused)
             {
-                Start = now - message.Position,
-                End = now + (message.Duration - message.Position)
-            };
+                p.Timestamps = null;
+            }
+            else
+            {
+                p.Timestamps = new Timestamps
+                {
+                    Start = now - message.Position,
+                    End = now + (message.Duration - message.Position)
+                };
+            }
+    
             p.Buttons =
             [
                 new Button

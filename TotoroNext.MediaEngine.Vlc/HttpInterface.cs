@@ -96,6 +96,7 @@ internal class HttpInterface
     }
 }
 
+[Serializable]
 internal class VlcStatus
 {
     [JsonPropertyName("time")] public int Time { get; set; }

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using Flurl.Http;
 using TotoroNext.MediaEngine.Abstractions;
@@ -22,6 +23,7 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
     public IObservable<TimeSpan> DurationChanged => _durationSubject;
     public IObservable<TimeSpan> PositionChanged => _positionSubject;
     public IObservable<Unit> PlaybackStopped => _playbackStoppedSubject;
+    public IObservable<MediaPlayerState> StateChanged => Observable.Empty<MediaPlayerState>();
 
     public void Play(Media media, TimeSpan startPosition)
     {

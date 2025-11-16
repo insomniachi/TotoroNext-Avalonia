@@ -12,15 +12,17 @@ namespace TotoroNext.MediaEngine.Mpv;
 internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer, ISeekable
 {
     private readonly Subject<TimeSpan> _durationSubject = new();
-    private readonly Subject<Unit> _playbackStoped = new();
+    private readonly Subject<Unit> _playbackStopped = new();
     private readonly Subject<TimeSpan> _positionSubject = new();
+    private readonly Subject<MediaPlayerState> _stateSubject = new();
     private readonly Settings _settings = settings.Value;
     private NamedPipeClientStream? _ipcStream;
     private Process? _process;
 
     public IObservable<TimeSpan> DurationChanged => _durationSubject;
     public IObservable<TimeSpan> PositionChanged => _positionSubject;
-    public IObservable<Unit> PlaybackStopped => _playbackStoped;
+    public IObservable<Unit> PlaybackStopped => _playbackStopped;
+    public IObservable<MediaPlayerState> StateChanged => _stateSubject;
 
     public void Play(Media media, TimeSpan startPosition)
     {
@@ -78,7 +80,12 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
             StartInfo = startInfo,
             EnableRaisingEvents = true
         };
-        _process.Exited += (_, _) => _playbackStoped.OnNext(Unit.Default);
+        
+        _process.Exited += (_, _) =>
+        {
+            _playbackStopped.OnNext(Unit.Default);
+            _stateSubject.OnNext(MediaPlayerState.Ended);
+        };
 
         Task.Run(() => IpcLoop(_process, pipeName));
     }
@@ -186,24 +193,40 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
         {
             var eventType = evt.GetString();
 
-            if (eventType == "property-change")
+            switch (eventType)
             {
-                var name = root.GetProperty("name").GetString();
-                var data = root.GetProperty("data");
-                if (name == "duration" && data.ValueKind == JsonValueKind.Number)
+                case "property-change":
                 {
-                    _durationSubject.OnNext(TimeSpan.FromSeconds(data.GetDouble()));
+                    var name = root.GetProperty("name").GetString();
+                    var data = root.GetProperty("data");
+                    switch (name)
+                    {
+                        case "duration" when data.ValueKind == JsonValueKind.Number:
+                            _durationSubject.OnNext(TimeSpan.FromSeconds(data.GetDouble()));
+                            break;
+                        case "time-pos" when data.ValueKind == JsonValueKind.Number:
+                            _positionSubject.OnNext(TimeSpan.FromSeconds(data.GetDouble()));
+                            break;
+                        case "pause":
+                            var isPaused = data.GetBoolean();
+                            _stateSubject.OnNext(isPaused ? MediaPlayerState.Paused : MediaPlayerState.Playing);
+                            break;
+                    }
+
+                    break;
                 }
-                else if (name == "time-pos" && data.ValueKind == JsonValueKind.Number)
-                {
-                    _positionSubject.OnNext(TimeSpan.FromSeconds(data.GetDouble()));
-                }
-            }
-            else if (eventType == "file-loaded")
-            {
-                // Observe properties
-                await SendIpcCommand(pipe, new { command = new object[] { "observe_property", 1, "duration" } });
-                await SendIpcCommand(pipe, new { command = new object[] { "observe_property", 2, "time-pos" } });
+                case "file-loaded":
+                    _stateSubject.OnNext(MediaPlayerState.Opening);
+                    
+                    Task[] commands =
+                    [
+                        SendIpcCommand(pipe, new { command = new object[] { "observe_property", 1, "duration" } }),
+                        SendIpcCommand(pipe, new { command = new object[] { "observe_property", 2, "time-pos" } }),
+                        SendIpcCommand(pipe, new { command = new object[] { "observe_property", 3, "pause" } })
+                    ];
+                    
+                    await Task.WhenAll(commands);
+                    break;
             }
         }
     }
