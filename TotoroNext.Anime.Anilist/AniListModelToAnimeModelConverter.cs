@@ -158,6 +158,7 @@ public static partial class AniListModelToAnimeModelConverter
                         Title = x.Title.Romaji ?? x.Title.English ?? string.Empty,
                         EngTitle = x.Title.English ?? x.Title.Romaji ?? string.Empty,
                         RomajiTitle = x.Title.Romaji ?? x.Title.English ?? string.Empty,
+                        Description = x.Description,
                         Id = x.Id ?? 0,
                         Image = x.CoverImage.Large,
                         Tracking = ConvertTracking(x.MediaListEntry),

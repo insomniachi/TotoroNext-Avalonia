@@ -309,6 +309,7 @@ internal class AnilistMetadataService(
                           .WithEnglish()
                           .WithNative()
                           .WithRomaji())
+               .WithDescription()
                .WithCoverImage(new MediaCoverImageQueryBuilder()
                                    .WithLarge())
                .WithType()

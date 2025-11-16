@@ -8,30 +8,34 @@
              xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Views.UserListSortAndFilterView"
-             x:DataType="vm:UserListSortAndFilterViewModel">
+             x:DataType="vm:UserListSortAndFilterViewModel"
+             Width="300">
     <UserControl.Resources>
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </UserControl.Resources>
     <u:Form Margin="0">
         <u:FormGroup Header="Filters">
-            <TextBox Width="300" u:FormItem.Label="Title" Text="{Binding Filter.Term, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBox Width="300" u:FormItem.Label="Year" Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}" />
+            <TextBox u:FormItem.Label="Title"
+                     Text="{Binding Filter.Term, UpdateSourceTrigger=PropertyChanged}" 
+                     HorizontalAlignment="Stretch"/>
+            <TextBox u:FormItem.Label="Year" 
+                     Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}" 
+                     HorizontalAlignment="Stretch"/>
             <u:FormItem Label="Format">
                 <u:EnumSelector EnumType="aa:AnimeMediaFormat"
-                                Value="{Binding Filter.Format, Mode=TwoWay}" 
+                                Value="{Binding Filter.Format, Mode=TwoWay}"
                                 DisplayDescription="True"
-                                HorizontalAlignment="Stretch"/>
+                                HorizontalAlignment="Stretch" />
             </u:FormItem>
             <u:FormItem Label="Genres">
-                <u:MultiComboBox SelectedItems="{Binding Filter.Genres, Mode=TwoWay}"
-                                 ItemsSource="{Binding Genres, Mode=OneWay}"
-                                 HorizontalAlignment="Stretch"
-                                 WrapSelection="True"/>
+                <u:MultiAutoCompleteBox SelectedItems="{Binding Filter.Genres, Mode=TwoWay}"
+                                        ItemsSource="{Binding Genres, Mode=OneWay}"
+                                        HorizontalAlignment="Stretch" />
             </u:FormItem>
             <u:FormItem Label="User score">
                 <u:EnumSelector EnumType="vm:UserScoreFilter"
                                 Value="{Binding Filter.ScoreFilter}"
-                                HorizontalAlignment="Stretch"/>
+                                HorizontalAlignment="Stretch" />
             </u:FormItem>
         </u:FormGroup>
         <u:FormGroup Header="Sort Direction">
