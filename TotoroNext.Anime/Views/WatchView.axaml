@@ -110,10 +110,11 @@
             <u:SelectionList Grid.Column="1"
                              ItemsSource="{Binding Servers}"
                              SelectedItem="{Binding SelectedServer}"
-                             DisplayMemberBinding="{Binding Name}">
+                             DisplayMemberBinding="{Binding Name}"
+                             VerticalAlignment="Center">
                 <u:SelectionList.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
+                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center"/>
                     </ItemsPanelTemplate>
                 </u:SelectionList.ItemsPanel>
             </u:SelectionList>

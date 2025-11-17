@@ -73,7 +73,7 @@
                     </Border>
                 </Grid>
                 <Border x:Name="CompletedCheckMark"
-                        Padding="5" 
+                        Padding="5"
                         Margin="0 3.5 5 0"
                         Width="50"
                         Background="LawnGreen"
@@ -83,11 +83,12 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         IsVisible="False">
-                    <iconPacks:PackIconMaterialDesign Kind="Check"
-                                                      Height="15"
-                                                      Width="15"
-                                                      HorizontalAlignment="Center"
-                                                      Foreground="Black"/>
+                    <iconPacks:PackIconControl x:Name="IconControl"
+                                               Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Check}"
+                                               Height="15"
+                                               Width="15"
+                                               HorizontalAlignment="Center"
+                                               Foreground="Black" />
                 </Border>
             </Grid>
             <Border
@@ -139,7 +140,8 @@
                         </StackPanel>
 
                         <Border Grid.Row="1" Padding="4">
-                            <Grid IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}">
+                            <Grid
+                                IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}">
                                 <StackPanel Orientation="Horizontal" Spacing="8" Margin="4" HorizontalAlignment="Left">
                                     <Button CornerRadius="30" Height="30" Width="30" Click="OnEditClicked">
                                         <Viewbox Height="12" Width="12">

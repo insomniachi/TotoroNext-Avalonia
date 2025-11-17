@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
-using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -29,15 +28,23 @@ public partial class AnimeEpisodesListViewModel(
     [ObservableProperty] public partial EpisodeInfo? SelectedEpisode { get; set; }
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
-    
-public async Task InitializeAsync()
+
+    [ObservableProperty] public partial bool NothingToSee { get; set; }
+
+    public async Task InitializeAsync()
     {
         await UpdateEpisodes();
 
         this.WhenAnyValue(x => x.Episodes)
             .Where(x => x is { Count: > 0 })
             .Subscribe(_ => SelectedEpisode = GetNextUp());
+
+        this.WhenAnyValue(x => x.Episodes)
+            .Select(x => x is not { Count: > 0 })
+            .Subscribe(value => NothingToSee = value);
     }
+
+    public event EventHandler? Closed;
 
     [RelayCommand]
     private async Task WatchEpisode(EpisodeInfo episode)
@@ -59,7 +66,7 @@ public async Task InitializeAsync()
                 ep.Number -= relation.SourceEpisodesRage.Start - 1;
             }
         }
-        
+
         var selectedEpisode = episodes.FirstOrDefault(x => (int)x.Number == episode.EpisodeNumber);
 
         if (selectedEpisode is null)
@@ -71,8 +78,8 @@ public async Task InitializeAsync()
         {
             selectedEpisode.StartPosition = TimeSpan.FromSeconds(info.Position);
         }
-        
-                
+
+
         Closed?.Invoke(this, EventArgs.Empty);
 
         messenger.Send(new NavigateToDataMessage(new WatchViewModelNavigationParameter(searchResult,
@@ -80,7 +87,6 @@ public async Task InitializeAsync()
                                                                                        episodes,
                                                                                        selectedEpisode,
                                                                                        false)));
-
     }
 
     private async Task UpdateEpisodes()
@@ -90,7 +96,7 @@ public async Task InitializeAsync()
         {
             return;
         }
-        
+
         IsLoading = true;
         var eps = await metadataService.GetEpisodesAsync(Anime);
         var progress = playbackProgressService.GetProgress(Anime.Id);
@@ -115,6 +121,4 @@ public async Task InitializeAsync()
             ? Episodes.FirstOrDefault()
             : Episodes.FirstOrDefault(x => x.EpisodeNumber == (Anime.Tracking?.WatchedEpisodes ?? 0) + 1);
     }
-
-    public event EventHandler? Closed;
 }

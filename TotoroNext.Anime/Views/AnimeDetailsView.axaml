@@ -5,6 +5,7 @@
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:ail="using:AsyncImageLoader"
              xmlns:aa="using:TotoroNext.Anime.Abstractions"
+             xmlns:a="using:TotoroNext.Anime"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -24,8 +25,17 @@
                 <Image ail:ImageLoader.Source="{Binding Anime.Image}" Stretch="UniformToFill" />
             </Border>
 
-            <Grid Grid.Column="1" RowDefinitions="Auto,*">
-                <u:Form LabelPosition="Left" LabelWidth="*" HorizontalAlignment="Stretch">
+            <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*">
+                <Button Grid.Row="0"
+                        IsVisible="{Binding !IsTracked}"
+                        Command="{Binding AddToListCommand}"
+                        Content="Add to list"
+                        HorizontalAlignment="Stretch"/>
+                <u:Form Grid.Row="0"
+                        IsVisible="{Binding IsTracked}"
+                        LabelPosition="Left"
+                        LabelWidth="*"
+                        HorizontalAlignment="Stretch">
                     <u:FormItem Label="Status">
                         <u:EnumSelector EnumType="{x:Type aa:ListItemStatus}"
                                         Value="{Binding Status, Mode=TwoWay}"
@@ -45,17 +55,24 @@
                     <u:FormItem Label="Start Date">
                         <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
-                                      DisplayFormat="MMMM dd, yyyy" 
-                                      Classes="ClearButton"/>
+                                      DisplayFormat="MMMM dd, yyyy"
+                                      Classes="ClearButton" />
                     </u:FormItem>
                     <u:FormItem Label="Finish Date">
                         <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
                                       DisplayFormat="MMMM dd, yyyy"
-                                      Classes="ClearButton"/>
+                                      Classes="ClearButton" />
                     </u:FormItem>
                 </u:Form>
-                <ScrollViewer Grid.Row="1" Margin="0 8 0 0">
+                <Button Grid.Row="1"
+                        IsVisible="{Binding HasAnimeAired}"
+                        Command="{x:Static a:Commands.WatchCommand}"
+                        CommandParameter="{Binding Anime}"
+                        Content="Watch"
+                        HorizontalAlignment="Stretch"
+                        Margin="0 10 0 0"/>
+                <ScrollViewer Grid.Row="2" Margin="0 8 0 0">
                     <TextBlock Text="{Binding Anime.Description}" TextWrapping="Wrap" />
                 </ScrollViewer>
             </Grid>
@@ -65,14 +82,14 @@
                   SelectionChanged="SelectingItemsControl_OnSelectionChanged"
                   SelectedIndex="0"
                   x:Name="Selector">
-            <TabStripItem IsSelected="True" Content="Info"/>
-            <TabStripItem Content="Trailers" IsVisible="{Binding HasTrailers}"/>
-            <TabStripItem Content="Episodes" IsVisible="{Binding IsEpisodesTabVisible}"/>
-            <TabStripItem Content="Characters"/>
+            <TabStripItem IsSelected="True" Content="Info" />
+            <TabStripItem Content="Trailers" IsVisible="{Binding HasTrailers}" />
+            <TabStripItem Content="Episodes" IsVisible="{Binding IsEpisodesTabVisible}" />
+            <TabStripItem Content="Characters" />
             <TabStripItem Content="Related" IsVisible="{Binding HasRelated}" />
             <TabStripItem Content="Recommended" IsVisible="{Binding HasRecommended}" />
             <TabStripItem Content="Songs" IsVisible="{Binding HasAnimeAired}" />
-            <TabStripItem Content="Options" IsVisible="{Binding HasAnimeAired}"/>
+            <TabStripItem Content="Options" IsVisible="{Binding HasAnimeAired}" />
         </TabStrip>
 
         <TransitioningContentControl

@@ -16,6 +16,7 @@ public partial class WatchView : UserControl
     public WatchView()
     {
         InitializeComponent();
+        
         this.GetObservable(DataContextProperty)
             .Select(x => x as WatchViewModel)
             .WhereNotNull()

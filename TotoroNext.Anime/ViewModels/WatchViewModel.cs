@@ -27,7 +27,7 @@ public sealed partial class WatchViewModel(
     IDialogService dialogService,
     IMessenger messenger,
     ILocalSettingsService localSettingsService) : ObservableObject,
-                                                  IAsyncInitializable,
+                                                  IInitializable,
                                                   IDisposable,
                                                   IKeyBindingsProvider
 {
@@ -65,7 +65,12 @@ public sealed partial class WatchViewModel(
 
     [ObservableProperty] public partial bool AutoPlayNextEpisode { get; set; }
 
-    public async Task InitializeAsync()
+    public void Dispose()
+    {
+        messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
+    }
+
+    public void Initialize()
     {
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
 
@@ -83,77 +88,17 @@ public sealed partial class WatchViewModel(
         this.WhenAnyValue(x => x.ProviderResult)
             .WhereNotNull()
             .Where(_ => Episodes is { Count: 0 } or null)
-            .SelectMany(anime => anime.GetEpisodes().ToListAsync().AsTask())
+            .ObserveOn(RxApp.MainThreadScheduler).Do(_ => IsEpisodesLoading = true)
+            .SelectMany(providerResult => GetEpisodesAndMetadata(Anime, providerResult))
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(e =>
-            {
-                if (e.Count > (Anime.TotalEpisodes ?? 0) && relations.FindRelation(Anime!) is { } relation)
-                {
-                    var eps = e.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();
-                    foreach (var ep in eps)
-                    {
-                        ep.Number -= relation.SourceEpisodesRage.Start - 1;
-                    }
-
-                    Episodes = eps;
-                }
-                else
-                {
-                    Episodes = e;
-                }
-            });
-
-
-        IsEpisodesLoading = true;
-        var infos = await Anime.GetEpisodes();
-
-        this.WhenAnyValue(x => x.Episodes)
-            .WhereNotNull()
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(eps =>
-            {
-                foreach (var ep in eps)
-                {
-                    // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    ep.Info = infos.FirstOrDefault(x => x.EpisodeNumber == ep.Number);
-                }
-
-                IsEpisodesLoading = false;
-            });
+            .Subscribe(UpdateEpisodeMetadata);
 
         if (continueWatching)
         {
             this.WhenAnyValue(x => x.Episodes)
                 .WhereNotNull()
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(eps =>
-                {
-                    if (IsMovie)
-                    {
-                        SelectedEpisode = eps.FirstOrDefault();
-                    }
-                    else
-                    {
-                        var nextUp = (Anime?.Tracking?.WatchedEpisodes ?? 0) + 1;
-
-                        // ReSharper disable once CompareOfFloatsByEqualityOperator
-                        if (eps.FirstOrDefault(x => x.Number == nextUp) is not { } nextEp)
-                        {
-                            return;
-                        }
-
-                        if (Anime?.Id is { } id)
-                        {
-                            var progress = progressService.GetProgress(id);
-                            if (progress.TryGetValue(nextUp, out var epProgress))
-                            {
-                                nextEp.StartPosition = TimeSpan.FromSeconds(epProgress.Position);
-                            }
-                        }
-
-                        SelectedEpisode = nextEp;
-                    }
-                });
+                .Subscribe(SelectNextEpisode);
         }
 
         this.WhenAnyValue(x => x.SelectedEpisode)
@@ -190,27 +135,12 @@ public sealed partial class WatchViewModel(
             .WhereNotNull()
             .Where(x => x is { Type : MediaSectionType.Opening or MediaSectionType.Ending })
             .ObserveOn(RxApp.MainThreadScheduler)
-            .SelectMany(OnPlayingOpeningOrEnding)
-            .SelectMany(x =>
-            {
-                if (MediaPlayer is not ISeekable seekable)
-                {
-                    return Task.CompletedTask.ToObservable();
-                }
-
-                return x.Result is MessageBoxResult.Yes
-                    ? seekable.SeekTo(x.Segment.End).ToObservable()
-                    : Task.CompletedTask.ToObservable();
-            })
+            .SelectMany(ShouldSkipMediaSegment)
+            .SelectMany(x => HandleMediaSegment(x).ToObservable())
             .Subscribe();
 
         InitializePublishers();
         InitializeListeners();
-    }
-
-    public void Dispose()
-    {
-        messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
     }
 
     public IEnumerable<KeyBinding> GetKeyBindings()
@@ -243,6 +173,12 @@ public sealed partial class WatchViewModel(
                     case MediaPlayerState.Paused:
                         embeddedPlayer.Play();
                         break;
+                    case MediaPlayerState.Opening:
+                    case MediaPlayerState.Stopped:
+                    case MediaPlayerState.Ended:
+                    case MediaPlayerState.Error:
+                    default:
+                        break;
                 }
             })
         };
@@ -258,7 +194,7 @@ public sealed partial class WatchViewModel(
         };
     }
 
-    private async Task<(MediaSegment Segment, MessageBoxResult Result)> OnPlayingOpeningOrEnding(MediaSegment segment)
+    private async Task<(MediaSegment Segment, MessageBoxResult Result)> ShouldSkipMediaSegment(MediaSegment segment)
     {
         if (Anime is null)
         {
@@ -277,7 +213,9 @@ public sealed partial class WatchViewModel(
 
         return method switch
         {
-            SkipMethod.Always => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString(), MessageBoxResult.Yes)),
+            SkipMethod.Always => new ValueTuple<MediaSegment, MessageBoxResult>(segment,
+                                                                                await dialogService.AskSkip(segment.Type.ToString(),
+                                                                                 MessageBoxResult.Yes)),
             SkipMethod.Never => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.No),
             _ => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()))
         };
@@ -404,7 +342,7 @@ public sealed partial class WatchViewModel(
         var answer = AutoPlayNextEpisode
             ? MessageBoxResult.Yes
             : await dialogService.Question("Tracking Updated", "Play the next episode?");
-        
+
         return answer is MessageBoxResult.Yes
             ? nextEp
             : null;
@@ -453,7 +391,78 @@ public sealed partial class WatchViewModel(
         return [.. segments.MakeContiguousSegments(_duration)];
     }
 
-    public static bool IsMagnetLink(Uri uri)
+    private void SelectNextEpisode(List<Episode> eps)
+    {
+        if (IsMovie)
+        {
+            SelectedEpisode = eps.FirstOrDefault();
+        }
+        else
+        {
+            var nextUp = (Anime?.Tracking?.WatchedEpisodes ?? 0) + 1;
+
+            if (eps.FirstOrDefault(x => Math.Abs(x.Number - nextUp) == 0) is not { } nextEp)
+            {
+                return;
+            }
+
+            if (Anime?.Id is { } id)
+            {
+                var progress = progressService.GetProgress(id);
+                if (progress.TryGetValue(nextUp, out var epProgress))
+                {
+                    nextEp.StartPosition = TimeSpan.FromSeconds(epProgress.Position);
+                }
+            }
+
+            SelectedEpisode = nextEp;
+        }
+    }
+
+    private void UpdateEpisodeMetadata(ValueTuple<List<Episode>, List<EpisodeInfo>> tuple)
+    {
+        var (episodes, infos) = tuple;
+        if (Anime is not null &&
+            episodes.Count > (Anime.TotalEpisodes ?? 0) &&
+            relations.FindRelation(Anime!) is { } relation)
+        {
+            var eps = episodes.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End);
+            foreach (var ep in eps)
+            {
+                ep.Number -= relation.SourceEpisodesRage.Start - 1;
+            }
+        }
+
+        foreach (var ep in episodes)
+        {
+            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.EpisodeNumber - ep.Number) == 0);
+        }
+
+        Episodes = episodes;
+        IsEpisodesLoading = false;
+    }
+
+    private async Task HandleMediaSegment((MediaSegment Segment, MessageBoxResult Result) tuple)
+    {
+        var (segment, result) = tuple;
+
+        if (MediaPlayer is not ISeekable seekable ||
+            result is not MessageBoxResult.Yes)
+        {
+            return;
+        }
+
+        await seekable.SeekTo(segment.End);
+    }
+
+    private static async Task<(List<Episode> Episode, List<EpisodeInfo> Info)> GetEpisodesAndMetadata(AnimeModel anime, SearchResult providerResult)
+    {
+        var episodes = await providerResult.GetEpisodes().ToListAsync();
+        var infos = await anime.GetEpisodes();
+        return new ValueTuple<List<Episode>, List<EpisodeInfo>>(episodes, infos);
+    }
+
+    private static bool IsMagnetLink(Uri uri)
     {
         return uri.Scheme.Equals("magnet", StringComparison.OrdinalIgnoreCase);
     }

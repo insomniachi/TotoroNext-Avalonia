@@ -1,6 +1,7 @@
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
@@ -34,6 +35,7 @@ public sealed partial class AnimeDetailsViewModel(
     public bool HasTrailers => Anime.Trailers is { Count: > 0 };
     public bool HasRelated => Anime.Related.Any();
     public bool HasRecommended => Anime.Recommended.Any();
+    public bool IsTracked => Anime.Tracking is not null;
 
     public async Task InitializeAsync()
     {
@@ -42,15 +44,16 @@ public sealed partial class AnimeDetailsViewModel(
         {
             return;
         }
-        
+
         if (await service.GetAnimeAsync(Anime.Id) is { } model)
         {
             Anime = model;
             OnPropertyChanged(nameof(HasRelated));
             OnPropertyChanged(nameof(HasRecommended));
             OnPropertyChanged(nameof(HasTrailers));
+            OnPropertyChanged(nameof(IsTracked));
         }
-        
+
         this.WhenAnyValue(x => x.Status, x => x.Progress, x => x.Score, x => x.StartDate, x => x.FinishDate)
             .Skip(1)
             .Select(x => new Tracking
@@ -66,4 +69,10 @@ public sealed partial class AnimeDetailsViewModel(
     }
 
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
+
+    [RelayCommand]
+    private async Task AddToList()
+    {
+        await trackingUpdater.UpdateTracking(Anime, new Tracking { Status = ListItemStatus.PlanToWatch });
+    }
 }
