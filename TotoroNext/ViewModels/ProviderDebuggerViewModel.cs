@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
@@ -13,6 +14,7 @@ namespace TotoroNext.ViewModels;
 
 [UsedImplicitly]
 public partial class ProviderDebuggerViewModel(
+    IDialogService dialogService,
     IEnumerable<Descriptor> descriptors,
     IFactory<IAnimeProvider, Guid> providerFactory,
     IFactory<IMediaPlayer, Guid> playerFactory,
@@ -47,7 +49,7 @@ public partial class ProviderDebuggerViewModel(
         List<Descriptor> all = [..descriptors];
         AnimeProviders = all.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider)).ToList();
         MediaPlayers = all.Where(x => x.Components.Contains(ComponentTypes.MediaEngine)).ToList();
-        
+
         ProviderId = settings.SelectedAnimeProvider;
         MediaPlayerId = settings.SelectedMediaEngine;
 
@@ -62,10 +64,9 @@ public partial class ProviderDebuggerViewModel(
             });
 
         this.WhenAnyValue(x => x.Query)
-            .Where(_ => _provider != null)
             .Where(x => x is { Length: > 2 })
             .Throttle(TimeSpan.FromMilliseconds(500))
-            .SelectMany(query => _provider!.SearchAsync(query).ToListAsync().AsTask())
+            .SelectMany(term => _provider.GetSearchResults(term))
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(response =>
             {
@@ -76,7 +77,7 @@ public partial class ProviderDebuggerViewModel(
 
         this.WhenAnyValue(x => x.SelectedResult)
             .WhereNotNull()
-            .SelectMany(x => x.GetEpisodes().ToListAsync().AsTask())
+            .SelectMany(AnimeProviderExtensions.GetEpisodes)
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(ep =>
             {
@@ -87,13 +88,13 @@ public partial class ProviderDebuggerViewModel(
         this.WhenAnyValue(x => x.SelectedEpisode)
             .WhereNotNull()
             .Do(_ => Servers = [])
-            .SelectMany(x => x.GetServersAsync().ToListAsync().AsTask())
+            .SelectMany(AnimeProviderExtensions.GetServers)
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);
 
         this.WhenAnyValue(x => x.SelectedServer)
             .WhereNotNull()
-            .SelectMany(x => x.Extract().ToListAsync().AsTask())
+            .SelectMany(AnimeProviderExtensions.GetSources)
             .Select(x => x.FirstOrDefault())
             .WhereNotNull()
             .ObserveOn(RxApp.MainThreadScheduler)

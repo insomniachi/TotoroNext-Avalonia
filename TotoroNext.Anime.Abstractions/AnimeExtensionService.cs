@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 
@@ -6,16 +7,17 @@ namespace TotoroNext.Anime.Abstractions;
 
 public class AnimeExtensionService : IAnimeExtensionService
 {
+    private readonly Dictionary<long, AnimeOverrides> _extensions = [];
+
     private readonly string _file =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext",
                      "extensions.json");
 
-    private readonly Dictionary<long, AnimeOverrides> _extensions = [];
     private readonly IFactory<IAnimeProvider, Guid> _providerFactory;
     private readonly ISelectionUserInteraction<SearchResult> _selectAnimeDialog;
 
     public AnimeExtensionService(IFactory<IAnimeProvider, Guid> providerFactory,
-                                    ISelectionUserInteraction<SearchResult> selectAnimeDialog)
+                                 ISelectionUserInteraction<SearchResult> selectAnimeDialog)
     {
         _providerFactory = providerFactory;
         _selectAnimeDialog = selectAnimeDialog;
@@ -23,16 +25,6 @@ public class AnimeExtensionService : IAnimeExtensionService
         {
             _extensions = JsonSerializer.Deserialize<Dictionary<long, AnimeOverrides>>(File.ReadAllText(_file)) ?? [];
         }
-    }
-
-    public void Revert(long id)
-    {
-        if (!_extensions.TryGetValue(id, out var @override))
-        {
-            return;
-        }
-
-        @override.Revert();
     }
 
     public void RemoveExtension(long id)
@@ -49,11 +41,11 @@ public class AnimeExtensionService : IAnimeExtensionService
     {
         return _extensions.GetValueOrDefault(id)?.IsNsfw ?? false;
     }
-    
+
     public string GetSearchTerm(AnimeModel anime)
     {
         var extension = _extensions.GetValueOrDefault(anime.Id);
-        
+
         return string.IsNullOrEmpty(extension?.SearchTerm)
             ? anime.Title
             : extension.SearchTerm;
@@ -72,13 +64,13 @@ public class AnimeExtensionService : IAnimeExtensionService
         provider.UpdateOptions(extension.AnimeProviderOptions);
         return provider;
     }
-    
+
     public async Task<SearchResult?> SearchAndSelectAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
         var term = GetSearchTerm(anime);
-        
-        var results = await provider.SearchAsync(term).ToListAsync();
+
+        var results = await provider.GetSearchResults(term);
 
         switch (results.Count)
         {
@@ -95,12 +87,12 @@ public class AnimeExtensionService : IAnimeExtensionService
 
         return await _selectAnimeDialog.GetValue(results);
     }
-    
+
     public async Task<SearchResult?> SearchAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
         var term = GetSearchTerm(anime);
-        
+
         var results = await provider.SearchAsync(term).ToListAsync();
 
         switch (results.Count)
@@ -123,5 +115,15 @@ public class AnimeExtensionService : IAnimeExtensionService
     {
         _extensions[id] = overrides;
         File.WriteAllText(_file, JsonSerializer.Serialize(_extensions));
+    }
+
+    public void Revert(long id)
+    {
+        if (!_extensions.TryGetValue(id, out var @override))
+        {
+            return;
+        }
+
+        @override.Revert();
     }
 }

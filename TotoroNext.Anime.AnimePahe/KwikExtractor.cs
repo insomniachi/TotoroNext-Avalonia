@@ -43,7 +43,7 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
         var httpResponse = await client.HttpClient.PostAsync(postUrl, content);
         if (httpResponse.StatusCode == HttpStatusCode.Found)
         {
-            yield return new VideoSource { Url = new Uri(httpResponse!.Headers!.Location!.AbsoluteUri) };
+            yield return new VideoSource { Url = new Uri(httpResponse.Headers.Location!.AbsoluteUri) };
         }
     }
 

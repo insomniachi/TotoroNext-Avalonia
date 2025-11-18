@@ -113,7 +113,7 @@ public partial class AnimeExtensionsViewModel(
         this.WhenAnyValue(x => x.SearchTerm)
             .Where(x => x is { Length: > 2 })
             .Where(_ => _animeProvider is not null)
-            .SelectMany(term => _animeProvider!.SearchAsync(term!).ToListAsync().AsTask())
+            .SelectMany(GetSearchResults)
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(results => ProviderResults = results.Select(x => x.Title).ToList());
         
@@ -156,5 +156,22 @@ public partial class AnimeExtensionsViewModel(
         Unsubscribe(ProviderOptions);
         ProviderOptions = [];
         _isDeleting = false;
+    }
+
+    private async Task<List<SearchResult>> GetSearchResults(string? term)
+    {
+        if (_animeProvider is null || string.IsNullOrEmpty(term))
+        {
+            return [];
+        }
+
+        try
+        {
+            return await _animeProvider.SearchAsync(term).ToListAsync();
+        }
+        catch
+        {
+            return [];
+        }
     }
 }
