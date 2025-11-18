@@ -1,10 +1,8 @@
-using System.Reactive.Concurrency;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Flurl;
 using Flurl.Http;
 using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -93,94 +91,4 @@ public static class AnimeMetadataExtensions
 			return result;
 		}
 	}
-}
-
-public static class AnimeProviderExtensions
-{
-	extension(Episode ep)
-	{
-		public async Task<VideoServer?> SelectServer()
-		{
-			var servers = await ep.GetServersAsync().ToListAsync();
-
-			if (servers is not { Count: > 0 })
-			{
-				return null;
-			}
-
-			if (servers.Count == 1)
-			{
-				return servers[0];
-			}
-
-			return await Container.Services.GetRequiredService<ISelectionUserInteraction<VideoServer>>().GetValue(servers);
-		}
-		
-		public async Task<List<VideoServer>> GetServers()
-		{
-			try
-			{
-				return await ep.GetServersAsync().ToListAsync();
-			}
-			catch(Exception ex)
-			{
-				RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
-				return [];
-			}
-		}
-	}
-
-	extension(SearchResult result)
-	{
-		public async Task<List<Episode>> GetEpisodes()
-		{
-			try
-			{
-				return await result.GetEpisodes().ToListAsync();
-			}
-			catch(Exception ex)
-			{
-				RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
-				return [];
-			}
-		}
-	}
-
-	extension(IAnimeProvider? provider)
-	{
-		public async Task<List<SearchResult>> GetSearchResults(string? term)
-		{
-			if (provider is null || string.IsNullOrEmpty(term))
-			{
-				return [];
-			}
-
-			try
-			{
-				return await provider.SearchAsync(term).ToListAsync();
-			}
-			catch(Exception ex)
-			{
-				RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
-				return [];
-			}
-		}
-	}
-
-	extension(VideoServer server)
-	{
-		public async Task<List<VideoSource>> GetSources()
-		{
-			try
-			{
-				return await server.Extract().ToListAsync();
-			}
-			catch(Exception ex)
-			{
-				RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
-				return [];
-			}
-		}
-	}
-
 }
