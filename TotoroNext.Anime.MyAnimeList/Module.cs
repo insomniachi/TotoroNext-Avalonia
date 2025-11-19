@@ -32,7 +32,7 @@ public class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
-        services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>($"tracking/{nameof(ExternalIds.MyAnimeList)}");
+        services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>($"tracking/{nameof(AnimeId.MyAnimeList)}");
         services.AddChildNavigationViewItem<AnidleSolverView, AnidleSolverViewModel>("AniGuesser", "Anidle", PackIconMaterialKind.Puzzle);
 
         services.AddSingleton<IMalClient, MalClient>();

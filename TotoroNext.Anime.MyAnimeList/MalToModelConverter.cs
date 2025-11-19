@@ -15,14 +15,14 @@ public static class MalToModelConverter
         return new AnimeModel
         {
             Id = jikanModel.MalId ?? long.MinValue,
-            ExternalIds = new ExternalIds
+            ExternalIds = new AnimeId()
             {
                 MyAnimeList = jikanModel.MalId ?? long.MinValue
             },
             Title = GetTitle(jikanModel, "English"),
             Image = jikanModel.Images.JPG.ImageUrl,
             ServiceId = Module.Id,
-            ServiceName = nameof(ExternalIds.MyAnimeList),
+            ServiceName = nameof(AnimeId.MyAnimeList),
             Description = jikanModel.Synopsis,
             Url = $"https://myanimelist.net/anime/{jikanModel.MalId}/",
             MeanScore = (float?)jikanModel.Score
@@ -41,7 +41,7 @@ public static class MalToModelConverter
         var model = new AnimeModel
         {
             Id = malModel.Id,
-            ExternalIds = new ExternalIds
+            ExternalIds = new AnimeId()
             {
                 MyAnimeList = malModel.Id
             },
@@ -50,7 +50,7 @@ public static class MalToModelConverter
             RomajiTitle = malModel.Title,
             Image = malModel.MainPicture?.Large ?? string.Empty,
             ServiceId = Module.Id,
-            ServiceName = nameof(ExternalIds.MyAnimeList),
+            ServiceName = nameof(AnimeId.MyAnimeList),
             Description = malModel.Synopsis ?? string.Empty,
             Url = $"https://myanimelist.net/anime/{malModel.Id}/",
             MediaFormat = ConvertFormat(malModel.MediaType),

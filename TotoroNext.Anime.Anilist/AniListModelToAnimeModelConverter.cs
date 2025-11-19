@@ -34,10 +34,10 @@ public static partial class AniListModelToAnimeModelConverter
             EngTitle = media.Title.English ?? media.Title.Romaji ?? string.Empty,
             RomajiTitle = media.Title.Romaji ?? media.Title.English ?? string.Empty,
             Id = media.Id ?? 0,
-            ExternalIds = new ExternalIds
+            ExternalIds = new AnimeId
             {
-                Anilist = media.Id,
-                MyAnimeList = media.IdMal
+                Anilist = media.Id ?? 0,
+                MyAnimeList = media.IdMal ?? 0
             },
             Image = media.CoverImage.Large,
             TotalEpisodes = media.Episodes,
@@ -49,7 +49,7 @@ public static partial class AniListModelToAnimeModelConverter
             AiredEpisodes = media.NextAiringEpisode?.Episode - 1 ?? 0,
             Season = GetSeason(media.Season, media.SeasonYear),
             ServiceId = Module.Id,
-            ServiceName = nameof(ExternalIds.Anilist),
+            ServiceName = nameof(AnimeId.Anilist),
             Description = DescriptionCleanRegex().Replace(media.Description ?? string.Empty, string.Empty),
             Related = ConvertSimple(media.Relations?.Nodes ?? []),
             Recommended = ConvertSimple(media.Recommendations?.Nodes.Select(x => x.MediaRecommendation).Where(x => x is not null)
@@ -57,8 +57,8 @@ public static partial class AniListModelToAnimeModelConverter
             Episodes = ConvertEpisodes(media),
             Url = $"https://anilist.co/anime/{media.Id}/",
             MediaFormat = ConvertMediaFormat(media.Format),
-            Genres = [ ..media.Genres],
-            Studios = [ .. media.Studios?.Nodes.Where(x => x.IsAnimationStudio == true).Select(x => x.Name).Distinct() ?? []],
+            Genres = [..media.Genres],
+            Studios = [.. media.Studios?.Nodes.Where(x => x.IsAnimationStudio == true).Select(x => x.Name).Distinct() ?? []],
             Trailers = ConvertTrailers(media.Trailer)
         };
     }
@@ -74,7 +74,7 @@ public static partial class AniListModelToAnimeModelConverter
         {
             return
             [
-                new TrailerVideo()
+                new TrailerVideo
                 {
                     Url = "https://www.youtube.com/watch".AppendQueryParam("v", mediaTrailer.Id),
                     Title = "Trailer",
@@ -82,7 +82,7 @@ public static partial class AniListModelToAnimeModelConverter
                 }
             ];
         }
-        
+
         return [];
     }
 
@@ -90,8 +90,7 @@ public static partial class AniListModelToAnimeModelConverter
     {
         return mediaFormat switch
         {
-            MediaFormat.Tv => AnimeMediaFormat.Tv,
-            MediaFormat.TvShort => AnimeMediaFormat.Tv,
+            MediaFormat.Tv or MediaFormat.TvShort => AnimeMediaFormat.Tv,
             MediaFormat.Movie => AnimeMediaFormat.Movie,
             MediaFormat.Special => AnimeMediaFormat.Special,
             MediaFormat.Ova => AnimeMediaFormat.Ova,
@@ -164,7 +163,7 @@ public static partial class AniListModelToAnimeModelConverter
                         Tracking = ConvertTracking(x.MediaListEntry),
                         AiringStatus = ConvertStatus(x.Status),
                         ServiceId = Module.Id,
-                        ServiceName = nameof(ExternalIds.Anilist)
+                        ServiceName = nameof(AnimeId.Anilist)
                     })
         ];
     }
@@ -292,55 +291,6 @@ public static partial class AniListModelToAnimeModelConverter
             MediaSeason.Fall => AnimeSeason.Fall,
             MediaSeason.Winter => AnimeSeason.Winter,
             _ => throw new UnreachableException()
-        };
-    }
-
-    private static DayOfWeek? GetBroadcastDay(FuzzyDate? date)
-    {
-        if (date?.Year is null || date.Month is null || date.Day is null)
-        {
-            return null;
-        }
-
-        return new DateOnly(date.Year.Value, date.Month.Value, date.Day.Value).DayOfWeek;
-    }
-
-    private static IEnumerable<string> GetAlternateTitles(MediaTitle title)
-    {
-        var list = new List<string>();
-
-        if (!string.IsNullOrEmpty(title.English))
-        {
-            list.Add(title.English);
-        }
-
-        if (!string.IsNullOrEmpty(title.Romaji))
-        {
-            list.Add(title.Romaji);
-        }
-
-        if (!string.IsNullOrEmpty(title.Native))
-        {
-            list.Add(title.Native);
-        }
-
-        return list.Distinct();
-    }
-
-    private static string ConvertFormat(MediaFormat? format)
-    {
-        return format switch
-        {
-            MediaFormat.Tv => "TV",
-            MediaFormat.Ova => "OVA",
-            MediaFormat.Novel => "Novel",
-            MediaFormat.Movie => "Movie",
-            MediaFormat.Music => "Music",
-            MediaFormat.Ona => "ONA",
-            MediaFormat.Special => "Special",
-            MediaFormat.OneShot => "One Shot",
-            MediaFormat.TvShort => "TV Short",
-            _ => ""
         };
     }
 

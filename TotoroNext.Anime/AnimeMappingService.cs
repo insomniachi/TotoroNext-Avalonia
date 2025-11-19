@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Flurl.Http;
 using Microsoft.Data.Sqlite;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Module;
@@ -45,7 +44,7 @@ public class AnimeMappingService : IAnimeMappingService
 
         return new AnimeId
         {
-            MyAnimelist = malId,
+            MyAnimeList = malId,
             Anilist = anilistId,
             AniDb = aniDbId,
             Kitsu = kitsuId,
@@ -54,23 +53,7 @@ public class AnimeMappingService : IAnimeMappingService
         };
     }
 
-    public async Task Update()
-    {
-        var stream = await "https://api.github.com/repos/manami-project/anime-offline-database/releases/latest"
-                           .WithHeader(HeaderNames.UserAgent, Http.UserAgent)
-                           .GetStreamAsync();
-        using var doc = await JsonDocument.ParseAsync(stream);
-        var root = doc.RootElement;
-
-        var asset = root.GetProperty("assets")
-                        .EnumerateArray()
-                        .FirstOrDefault(x => x.GetProperty("name").GetString() == @"anime-offline-database.jsonl.zst");
-        var url = asset.GetProperty("browser_download_url").GetString();
-        var dbStream = await url.GetStreamAsync();
-        UpdateDb(dbStream);
-    }
-
-    private static void UpdateDb(Stream stream)
+    public void Update(Stream dbStream)
     {
         var db = ModuleHelper.GetFilePath(null, "anime.db");
         using var connection = new SqliteConnection(@$"Data Source={db}");
@@ -119,7 +102,7 @@ public class AnimeMappingService : IAnimeMappingService
         insertCmd.Parameters.Add("$simkl", SqliteType.Integer);
         insertCmd.Parameters.Add("$notifymoe", SqliteType.Text);
 
-        foreach (var id in ReadFromOfflineDb(stream))
+        foreach (var id in ReadFromOfflineDb(dbStream))
         {
             BindParams(insertCmd.Parameters, id);
             insertCmd.ExecuteNonQuery();
@@ -130,7 +113,7 @@ public class AnimeMappingService : IAnimeMappingService
 
     private static void BindParams(SqliteParameterCollection p, AnimeId id)
     {
-        p["$mal"].Value = id.MyAnimelist;
+        p["$mal"].Value = id.MyAnimeList;
         p["$anilist"].Value = id.Anilist;
         p["$anidb"].Value = id.AniDb;
         p["$kitsu"].Value = id.Kitsu;
@@ -182,7 +165,7 @@ public class AnimeMappingService : IAnimeMappingService
                 }
                 else if (url.StartsWith("https://myanimelist.net/"))
                 {
-                    id.MyAnimelist = long.Parse(serviceId);
+                    id.MyAnimeList = long.Parse(serviceId);
                 }
                 else if (url.StartsWith("https://simkl.com/"))
                 {

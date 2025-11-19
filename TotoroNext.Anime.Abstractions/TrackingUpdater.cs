@@ -7,6 +7,7 @@ namespace TotoroNext.Anime.Abstractions;
 public sealed class TrackingUpdater(
     IFactory<ITrackingService, Guid> factory,
     IFactory<IMetadataService, Guid> metadataFactory,
+    IAnimeMappingService animeMappingService,
     IMessenger messenger) : IRecipient<PlaybackState>, ITrackingUpdater
 {
     public void Receive(PlaybackState message)
@@ -30,7 +31,18 @@ public sealed class TrackingUpdater(
     {
         foreach (var trackingService in factory.CreateAll())
         {
-            var id = anime.ExternalIds.GetId(trackingService.Name) ?? await SearchId(anime, trackingService.Id);
+            var id = anime.ExternalIds.GetIdForService(trackingService.Name);
+
+            if (id is not > 0)
+            {
+                id = animeMappingService.GetId(anime)?.GetIdForService(trackingService.Name);
+            }
+
+            if (id is not > 0)
+            {
+                id = await SearchId(anime, trackingService.Id);
+            }
+            
 
             if (id is null)
             {

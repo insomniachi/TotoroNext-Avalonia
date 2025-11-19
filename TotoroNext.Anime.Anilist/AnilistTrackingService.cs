@@ -8,7 +8,7 @@ internal class AnilistTrackingService(GraphQLHttpClient client) : ITrackingServi
 {
     public Guid Id => Module.Id;
 
-    public string Name => nameof(ExternalIds.Anilist);
+    public string Name => nameof(AnimeId.Anilist);
 
     public async Task<List<AnimeModel>> GetUserList()
     {

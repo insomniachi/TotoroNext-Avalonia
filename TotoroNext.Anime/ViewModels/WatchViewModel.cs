@@ -23,6 +23,7 @@ public sealed partial class WatchViewModel(
     IFactory<IMediaSegmentsProvider, Guid> segmentsFactory,
     IPlaybackProgressService progressService,
     IAnimeExtensionService animeExtensionService,
+    IAnimeMappingService animeMappingService,
     IAnimeRelations relations,
     IDialogService dialogService,
     IMessenger messenger,
@@ -357,8 +358,7 @@ public sealed partial class WatchViewModel(
             segments.AddRange(await MediaHelper.GetChapters(source.Url, source.Headers));
             _duration = MediaHelper.GetDuration(source.Url, source.Headers);
         }
-
-
+        
         if (segments.Count >= 2)
         {
             return [.. segments.MakeContiguousSegments(_duration)];
@@ -377,14 +377,21 @@ public sealed partial class WatchViewModel(
             }
         }
 
-        if (segments.Count >= 2 ||
-            Anime is not { ExternalIds.MyAnimeList: not null } ||
+        if (Anime is null || segments.Count >= 2)
+        {
+            return [.. segments.MakeContiguousSegments(_duration)];
+        }
+
+        var id = animeMappingService.GetId(Anime);
+
+        if (id is null ||
+            id.MyAnimeList <= 0 ||
             segmentsFactory.CreateDefault() is not { } segmentsProvider)
         {
             return [.. segments.MakeContiguousSegments(_duration)];
         }
 
-        var providerSegments = await segmentsProvider.GetSegments(Anime.ExternalIds.MyAnimeList.Value, episode.Number, _duration.TotalSeconds);
+        var providerSegments = await segmentsProvider.GetSegments(id.MyAnimeList, episode.Number, _duration.TotalSeconds);
         var extras = providerSegments.Where(x => segments.All(s => s.Type != x.Type));
         segments.AddRange(extras);
 

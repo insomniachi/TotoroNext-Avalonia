@@ -63,7 +63,7 @@ public class ScheduledAnime(AnimeModel anime)
 public partial class AnimeModel : ObservableObject
 {
     public long Id { get; init; }
-    public ExternalIds ExternalIds { get; init; } = new();
+    public AnimeId ExternalIds { get; init; } = new();
     public string Image { get; set; } = "";
     public string Title { get; init; } = "";
     public string EngTitle { get; init; } = "";
@@ -87,23 +87,6 @@ public partial class AnimeModel : ObservableObject
     public IReadOnlyCollection<string> Genres { get; init; } = [];
     public IReadOnlyCollection<string> Studios { get; init; } = [];
     public IReadOnlyCollection<TrailerVideo> Trailers { get; init; } = [];
-}
-
-public class ExternalIds
-{
-    public long? MyAnimeList { get; init; }
-    public long? Anilist { get; set; }
-    public long? Kitsu { get; init; }
-
-    public long? GetId(string serviceType)
-    {
-        if (GetType().GetProperties().FirstOrDefault(x => x.Name.Equals(serviceType, StringComparison.OrdinalIgnoreCase)) is not { } property)
-        {
-            return null;
-        }
-
-        return (long?)property.GetValue(this);
-    }
 }
 
 public class Tracking

@@ -100,14 +100,14 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
         }
     }
 
-    private static ExternalIds ParseIds(string rulePart)
+    private static AnimeId ParseIds(string rulePart)
     {
         var ids = rulePart.Split('|');
-        return new ExternalIds
+        return new AnimeId
         {
-            MyAnimeList = long.TryParse(ids[0], out var malId) ? malId : null,
-            Kitsu = long.TryParse(ids[1], out var kitsuId) ? kitsuId : null,
-            Anilist = long.TryParse(ids[2], out var anilistId) ? anilistId : null,
+            MyAnimeList = long.TryParse(ids[0], out var malId) ? malId : 0,
+            Kitsu = long.TryParse(ids[1], out var kitsuId) ? kitsuId : 0,
+            Anilist = long.TryParse(ids[2], out var anilistId) ? anilistId : 0,
         };
     }
 
@@ -133,8 +133,8 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
 [Serializable]
 public class AnimeRelation
 {
-    public ExternalIds SourceIds { get; init; } = new();
-    public ExternalIds DestinationIds { get; init; } = new();
+    public AnimeId SourceIds { get; init; } = new();
+    public AnimeId DestinationIds { get; init; } = new();
     public EpisodeRange SourceEpisodesRage { get; init; } = new(0, 0);
     public EpisodeRange DestinationEpisodesRage { get; init; } = new(0, 0);
 }

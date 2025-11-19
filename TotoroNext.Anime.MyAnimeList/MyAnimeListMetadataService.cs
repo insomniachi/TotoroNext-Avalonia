@@ -7,9 +7,7 @@ using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
-using AnimeSeason = MalApi.AnimeSeason;
 using Genre = JikanDotNet.Genre;
-using Season = TotoroNext.Anime.Abstractions.Models.Season;
 
 namespace TotoroNext.Anime.MyAnimeList;
 
@@ -38,7 +36,7 @@ internal class MyAnimeListMetadataService : IMetadataService
         AnimeFieldNames.MediaType
     ];
 
-    private readonly Jikan _jikanClient = new Jikan();
+    private readonly Jikan _jikanClient = new();
 
     private readonly Settings _settings;
     private List<Genre> _genres = [];
@@ -64,7 +62,7 @@ internal class MyAnimeListMetadataService : IMetadataService
     public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
     {
         var jikanResponse = await _jikanClient.GetAnimeCharactersAsync(animeId);
-        return jikanResponse.Data.Select(x => new CharacterModel()
+        return jikanResponse.Data.Select(x => new CharacterModel
         {
             Name = x.Character.Name,
             Image = TryConvertUri(x.Character.Images?.JPG?.ImageUrl)
@@ -119,7 +117,7 @@ internal class MyAnimeListMetadataService : IMetadataService
 
     public Guid Id => Module.Id;
 
-    public string Name { get; } = nameof(ExternalIds.MyAnimeList);
+    public string Name => nameof(AnimeId.MyAnimeList);
 
     public async Task<AnimeModel> GetAnimeAsync(long id)
     {
@@ -157,7 +155,7 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         return [.. result.Data.Select(MalToModelConverter.ConvertModel)];
     }
-    
+
     private static Uri? TryConvertUri(string? url)
     {
         return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;

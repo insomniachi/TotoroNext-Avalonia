@@ -113,9 +113,9 @@ internal class AnilistMetadataService(
         return response.Data.GenreCollection.ToList();
     }
 
-    public Guid Id { get; } = Module.Id;
+    public Guid Id => Module.Id;
 
-    public string Name { get; } = nameof(ExternalIds.Anilist);
+    public string Name => nameof(AnimeId.Anilist);
 
     public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
     {

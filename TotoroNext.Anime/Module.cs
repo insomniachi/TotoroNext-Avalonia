@@ -20,12 +20,14 @@ public class Module : IModule
                 .AddTransient<IAnimeThemes, AnimeThemes>()
                 .AddSingleton<IAnimeRelations, AnimeRelations>()
                 .AddSingleton<IDownloadManager, DownloadManager>()
+                .AddSingleton<IAnimeMappingService, AnimeMappingService>()
                 .AddDebrid();
 
         // initializers
         services.AddTransient<IInitializer, AnimeRelationsParser>()
                 .AddTransient<IInitializer, Commands>()
-                .AddTransient<IBackgroundInitializer, AnimeRelationsParser>();
+                .AddTransient<IBackgroundInitializer, AnimeRelationsParser>()
+                .AddTransient<IBackgroundInitializer, OfflineDatabaseInitializer>();
 
         // main navigation
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", PackIconMaterialDesignKind.List);
