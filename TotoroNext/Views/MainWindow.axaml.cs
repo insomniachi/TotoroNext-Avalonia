@@ -54,8 +54,8 @@ public partial class MainWindow : UrsaWindow
         IsTitleBarVisible = !isFullscreen;
         IsFullScreenButtonVisible = !isFullscreen;
         IsCloseButtonVisible = !isFullscreen;
-        IsMinimizeButtonVisible = !isFullscreen;
-        IsRestoreButtonVisible = !isFullscreen;
+        CanMinimize = !isFullscreen;
+        CanMaximize = !isFullscreen;
         ContentArea.Margin = isFullscreen ? new Thickness(0) : new Thickness(12, 36, 12, 12);
     }
 

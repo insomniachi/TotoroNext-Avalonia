@@ -1,0 +1,21 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:viewModels="clr-namespace:TotoroNext.Torrents.RealDebrid.ViewModels"
+             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:SettingsViewModel"
+             x:Class="TotoroNext.Torrents.RealDebrid.Views.SettingsView">
+    <Grid RowDefinitions="Auto,*" RowSpacing="16">
+        <Image Grid.Row="0"
+               Source="avares://TotoroNext.Torrents.RealDebrid/Assets/rd.jpg"
+               Stretch="UniformToFill"
+               Width="600" />
+        <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
+            <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"
+                                          IsVisible="{Binding EditableSettings, Converter={x:Static ObjectConverters.IsNotNull}}" />
+        </u:Form>
+    </Grid>
+</UserControl>

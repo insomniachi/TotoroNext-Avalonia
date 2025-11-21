@@ -260,10 +260,6 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.AnimeGG.Module();
         yield return new Anime.AnimeKai.Module();
 
-        // Anime Tracking/Metadata
-        yield return new Anime.Anilist.Module();
-        yield return new Anime.MyAnimeList.Module();
-
         // Misc
         yield return new Anime.Aniskip.Module();
         yield return new Discord.Module();
@@ -274,6 +270,7 @@ public class DebugModuleStore : IModuleStore
 
         // Debrid
         yield return new Torrents.TorBox.Module();
+        yield return new Torrents.RealDebrid.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)

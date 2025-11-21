@@ -31,7 +31,8 @@
             <DataTemplate DataType="module:ModuleOptionItem">
                 <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
                     <fac:SettingsExpander.Footer>
-                        <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch">
+                        <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                                 MaxWidth="350" TextWrapping="WrapWithOverflow">
                             <TextBox.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </TextBox.Styles>

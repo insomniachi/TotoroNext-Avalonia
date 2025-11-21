@@ -1,4 +1,4 @@
-<Solution>
+﻿<Solution>
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
@@ -81,6 +81,9 @@
   </Folder>
   <Folder Name="/Torrents/">
     <Project Path="TotoroNext.Torrents.Abstractions/TotoroNext.Torrents.Abstractions.csproj">
+      <Platform Project="x64" />
+    </Project>
+    <Project Path="TotoroNext.Torrents.RealDebrid/TotoroNext.Torrents.RealDebrid.csproj">
       <Platform Project="x64" />
     </Project>
     <Project Path="TotoroNext.Torrents.TorBox/TotoroNext.Torrents.TorBox.csproj">

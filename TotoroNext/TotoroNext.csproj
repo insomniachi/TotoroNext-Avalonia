@@ -71,6 +71,7 @@
         <ProjectReference Include="..\TotoroNext.MediaEngine.Mpv\TotoroNext.MediaEngine.Mpv.csproj"/>
 
         <ProjectReference Include="..\TotoroNext.Torrents.TorBox\TotoroNext.Torrents.TorBox.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Torrents.RealDebrid\TotoroNext.Torrents.RealDebrid.csproj"/>
     </ItemGroup>
 
 </Project>

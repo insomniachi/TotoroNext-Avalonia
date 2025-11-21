@@ -14,7 +14,6 @@ namespace TotoroNext.ViewModels;
 
 [UsedImplicitly]
 public partial class ProviderDebuggerViewModel(
-    IDialogService dialogService,
     IEnumerable<Descriptor> descriptors,
     IFactory<IAnimeProvider, Guid> providerFactory,
     IFactory<IMediaPlayer, Guid> playerFactory,
