@@ -2,30 +2,6 @@
 
 var plugins = new List<PluginProject>
 {
-    new("TotoroNext.Anime.Anilist")
-    {
-        Dependencies =
-        [
-            "GraphQL.Client",
-            "GraphQL.Client.Serializer.Newtonsoft",
-            "GraphQL.Client.Abstractions",
-            "GraphQL.Client.Abstractions.Websocket",
-            "GraphQL.Primitives",
-            "Newtonsoft.Json"
-        ]
-    },
-    new("TotoroNext.Anime.MyAnimeList")
-    {
-        Dependencies =
-        [
-            "MalApi",
-            "JikanDotNet",
-            "Microsoft.AspNetCore.WebUtilities",
-            "Microsoft.Net.Http.Headers",
-            "System.Buffers",
-            "System.Text.Encodings.Web"
-        ]
-    },
     new("TotoroNext.Anime.AllAnime")
     {
         Dependencies =
@@ -73,7 +49,7 @@ var moduleDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder
 
 foreach (var project in plugins)
 {
-    var basePath = $"../../../../../{project.Name}/bin/x64/Release/net9.0";
+    var basePath = $"../../../../../{project.Name}/bin/x64/Release/net10.0";
     CleanBin(basePath, project);
     MovePlugin(moduleDir, basePath, project);
 }

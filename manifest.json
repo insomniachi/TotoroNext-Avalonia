@@ -130,6 +130,24 @@
     ]
   },
   {
+    "Id": "9b7a71c8-7633-46e8-be5e-288c19ac1330",
+    "Name": "SubsPlease",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimeOnsen/Assets/subsplease.jpg",
+    "EntryPoint": "TotoroNext.Anime.SubsPlease.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.SubsPlease.zip"
+      }
+    ]
+  },
+  {
     "Id": "b8c3f0d2-1c5e-4f6a-9b7d-3f8e1c5f0d2a",
     "Name": "MPV",
     "Description": "MPV Media Player is a free, open-source, and cross-platform media player known for its versatility and powerful performance. It supports a wide variety of media file formats, audio and video codecs, and subtitle types, making it suitable for both casual and advanced users. MPV is particularly noted for its scripting capabilities, allowing users to customize their experience extensively.",
@@ -141,7 +159,7 @@
     "EntryPoint": "TotoroNext.MediaEngine.Mpv.dll",
     "Versions": [
       {
-        "Version": "1.0.0",
+        "Version": "1.1.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.MediaEngine.Mpv.zip"
@@ -160,7 +178,7 @@
     "EntryPoint": "TotoroNext.MediaEngine.Vlc.dll",
     "Versions": [
       {
-        "Version": "1.0.0",
+        "Version": "1.1.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.MediaEngine.Vlc.zip"
