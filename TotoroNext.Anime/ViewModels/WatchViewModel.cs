@@ -358,7 +358,7 @@ public sealed partial class WatchViewModel(
             segments.AddRange(await MediaHelper.GetChapters(source.Url, source.Headers));
             _duration = MediaHelper.GetDuration(source.Url, source.Headers);
         }
-        
+
         if (segments.Count >= 2)
         {
             return [.. segments.MakeContiguousSegments(_duration)];
@@ -429,23 +429,32 @@ public sealed partial class WatchViewModel(
     private void UpdateEpisodeMetadata(ValueTuple<List<Episode>, List<EpisodeInfo>> tuple)
     {
         var (episodes, infos) = tuple;
+
+        foreach (var ep in episodes)
+        {
+            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.AbsoluteEpisodeNumber - ep.Number) == 0);
+        }
+
         if (Anime is not null &&
             episodes.Count > (Anime.TotalEpisodes ?? 0) &&
             relations.FindRelation(Anime!) is { } relation)
         {
-            var eps = episodes.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End);
+            var eps = episodes
+                      .Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End)
+                      .ToList();
+            
             foreach (var ep in eps)
             {
                 ep.Number -= relation.SourceEpisodesRage.Start - 1;
             }
-        }
 
-        foreach (var ep in episodes)
+            Episodes = eps.ToList();
+        }
+        else
         {
-            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.EpisodeNumber - ep.Number) == 0);
+            Episodes = episodes;
         }
-
-        Episodes = episodes;
+        
         IsEpisodesLoading = false;
     }
 

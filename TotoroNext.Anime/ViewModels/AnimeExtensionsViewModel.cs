@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -30,14 +31,12 @@ public partial class AnimeExtensionsViewModel(
     ];
 
     private IAnimeProvider? _animeProvider;
-    private bool _suppressProviderChange = true;
     private bool _isDeleting;
+    private bool _suppressProviderChange = true;
 
     [ObservableProperty] public partial bool IsNsfw { get; set; }
 
     [ObservableProperty] public partial Guid? ProviderId { get; set; }
-
-    [ObservableProperty] public partial List<string> ProviderResults { get; set; } = [];
 
     [ObservableProperty] public partial SkipMethod OpeningSkipMethod { get; set; }
 
@@ -48,6 +47,9 @@ public partial class AnimeExtensionsViewModel(
     [ObservableProperty] public partial bool HasProvider { get; set; }
 
     [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
+    [ObservableProperty] public partial ObservableCollection<string> ProviderResults { get; set; } = [];
+    [ObservableProperty] public partial bool IsDropDownOpen { get; set; }
+
     public List<Descriptor> Providers { get; } = [Descriptor.None, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
@@ -88,7 +90,7 @@ public partial class AnimeExtensionsViewModel(
                                    .DistinctUntilChanged()
                                    .Publish()
                                    .RefCount();
-        
+
         providerIdStream
             .Subscribe(x => HasProvider = x.HasValue && x.Value != Guid.Empty);
 
@@ -113,10 +115,14 @@ public partial class AnimeExtensionsViewModel(
         this.WhenAnyValue(x => x.SearchTerm)
             .Where(x => x is { Length: > 2 })
             .Where(_ => _animeProvider is not null)
-            .SelectMany(GetSearchResults)
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(results => ProviderResults = results.Select(x => x.Title).ToList());
-        
+            .Select(GetSearchResults)
+            .Switch()
+            .Subscribe(results =>
+            {
+                IsDropDownOpen = false;
+                ProviderResults = new ObservableCollection<string>(results.Select(x => x.Title));
+            });
+
         _suppressProviderChange = false;
     }
 
@@ -155,6 +161,7 @@ public partial class AnimeExtensionsViewModel(
         EndingSkipMethod = default;
         Unsubscribe(ProviderOptions);
         ProviderOptions = [];
+
         _isDeleting = false;
     }
 

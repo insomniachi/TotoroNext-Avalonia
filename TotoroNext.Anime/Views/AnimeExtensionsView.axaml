@@ -62,14 +62,15 @@
                         <fac:PathIconSource Data="{StaticResource Search}" />
                     </fac:SettingsExpander.IconSource>
                     <fac:SettingsExpander.Footer>
-                        <AutoCompleteBox Text="{Binding SearchTerm, Mode=TwoWay}"
-                                         ItemsSource="{Binding ProviderResults}"
-                                         FilterMode="ContainsOrdinal"
-                                         HorizontalAlignment="Stretch">
+                        <u:AutoCompleteBox Text="{Binding SearchTerm, Mode=TwoWay}"
+                                           ItemsSource="{Binding ProviderResults}"
+                                           IsDropDownOpen="{Binding IsDropDownOpen, Mode=TwoWay}"
+                                           FilterMode="ContainsOrdinal"
+                                           HorizontalAlignment="Stretch">
                             <AutoCompleteBox.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </AutoCompleteBox.Styles>
-                        </AutoCompleteBox>
+                        </u:AutoCompleteBox>
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
                 <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" />

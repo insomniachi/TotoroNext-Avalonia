@@ -28,7 +28,14 @@ public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
             stream = await client.Request("torrents", "info", id)
                                  .GetStreamAsync();
             doc = await JsonDocument.ParseAsync(stream);
-            var link = doc.RootElement.GetProperty("links").EnumerateArray().FirstOrDefault().GetString() ?? "";
+            var links = doc.RootElement.GetProperty("links").EnumerateArray().ToList();
+
+            if (links.Count == 0)
+            {
+                return null;
+            }
+            
+            var link = links.First().GetString() ?? "";
 
             stream = await client.Request("unrestrict", "link")
                                  .PostUrlEncodedAsync(new
