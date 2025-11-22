@@ -42,7 +42,8 @@ var plugins = new List<PluginProject>
     new("TotoroNext.MediaEngine.Mpv"),
     new("TotoroNext.MediaEngine.Vlc"),
     new("TotoroNext.Anime.Aniskip"),
-    new("TotoroNext.Torrents.TorBox")
+    new("TotoroNext.Torrents.TorBox"),
+    new("TotoroNext.Torrents.RealDebrid"),
 };
 
 var moduleDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
