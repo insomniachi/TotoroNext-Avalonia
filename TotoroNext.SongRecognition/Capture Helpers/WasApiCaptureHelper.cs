@@ -30,10 +30,8 @@ internal class WasapiCaptureHelper : ICaptureHelper
 
     public void Start()
     {
-        _capture.DataAvailable += (s, e) => { _captureBuf.AddSamples(e.Buffer, 0, e.BytesRecorded); };
-
-        _capture.RecordingStopped += (s, e) => { Exception = e.Exception; };
-
+        _capture.DataAvailable += (_, e) => { _captureBuf.AddSamples(e.Buffer, 0, e.BytesRecorded); };
+        _capture.RecordingStopped += (_, e) => { Exception = e.Exception; };
         _capture.StartRecording();
 
         SampleProvider = _resampler.ToSampleProvider();

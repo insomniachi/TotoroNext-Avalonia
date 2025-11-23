@@ -70,7 +70,7 @@ public static partial class AniDb
 
         foreach (var node in nameNodes?.OfType<HtmlNode>() ?? [])
         {
-            if(!int.TryParse(node.GetAttributeValue("href", "").Split("/").LastOrDefault(), out var animeId))
+            if (!int.TryParse(node.GetAttributeValue("href", "").Split("/").LastOrDefault(), out var animeId))
             {
                 continue;
             }
@@ -80,9 +80,9 @@ public static partial class AniDb
                 Id = animeId,
                 Title = node.InnerHtml.Trim()
             };
-        }   
+        }
     }
-    
+
     public static async IAsyncEnumerable<AniDbItem> FindAnimeFromSong(string title)
     {
         title = CleanTitleRegex().Replace(title, "");
@@ -92,13 +92,16 @@ public static partial class AniDb
         {
             songs = songs.Where(x => x.Rating != "N/A (0)").ToList();
         }
-        
+
         foreach (var anime in songs.SelectMany(song => FindAnimeBySongId(song.Id)))
         {
             yield return anime;
         }
     }
-    
+
+    [GeneratedRegex(@"\\(.*?\\)")]
+    private static partial Regex CleanTitleRegex();
+
     [DebuggerDisplay("{Title}")]
     [Serializable]
     public class AniDbItem
@@ -107,7 +110,4 @@ public static partial class AniDb
         [JsonPropertyName("name")] public string Title { get; set; } = "";
         [JsonPropertyName("desc")] public string Rating { get; set; } = "";
     }
-
-    [GeneratedRegex(@"\\(.*?\\)")]
-    private static partial Regex CleanTitleRegex();
 }

@@ -426,13 +426,24 @@ public sealed partial class WatchViewModel(
         }
     }
 
-    private void UpdateEpisodeMetadata(ValueTuple<List<Episode>, List<EpisodeInfo>> tuple)
+    private void UpdateEpisodeMetadata(ValueTuple<List<Episode>, List<EpisodeInfo>, List<EpisodeInfo>> tuple)
     {
-        var (episodes, infos) = tuple;
+        var (episodes, infos, specials) = tuple;
+        var specialsQueue = new Queue<EpisodeInfo>(specials);
 
         foreach (var ep in episodes)
         {
             ep.Info = infos.FirstOrDefault(x => Math.Abs(x.AbsoluteEpisodeNumber - ep.Number) == 0);
+        }
+
+        foreach (var ep in episodes.Where(x => x.Number is <= 0))
+        {
+            if (!specialsQueue.TryDequeue(out var info))
+            {
+                continue;
+            }
+
+            ep.Info = info;
         }
 
         if (Anime is not null &&
@@ -442,7 +453,7 @@ public sealed partial class WatchViewModel(
             var eps = episodes
                       .Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End)
                       .ToList();
-            
+
             foreach (var ep in eps)
             {
                 ep.Number -= relation.SourceEpisodesRage.Start - 1;
@@ -454,7 +465,7 @@ public sealed partial class WatchViewModel(
         {
             Episodes = episodes;
         }
-        
+
         IsEpisodesLoading = false;
     }
 
@@ -471,11 +482,27 @@ public sealed partial class WatchViewModel(
         await seekable.SeekTo(segment.End);
     }
 
-    private static async Task<(List<Episode> Episode, List<EpisodeInfo> Info)> GetEpisodesAndMetadata(AnimeModel anime, SearchResult providerResult)
+    private static async Task<(List<Episode> Episode, List<EpisodeInfo> Info, List<EpisodeInfo> Specials)> GetEpisodesAndMetadata(
+        AnimeModel anime, SearchResult providerResult)
     {
         var episodes = await providerResult.GetEpisodes().ToListAsync();
-        var infos = await anime.GetEpisodes();
-        return new ValueTuple<List<Episode>, List<EpisodeInfo>>(episodes, infos);
+        var all = await anime.GetEpisodes();
+        var infos = all.Where(x => !x.IsSpecial).ToList();
+        var specials = all.Where(x => x.IsSpecial).ToList();
+
+        if (infos.Count == 0)
+        {
+            return new ValueTuple<List<Episode>, List<EpisodeInfo>, List<EpisodeInfo>>(episodes, infos, specials);
+        }
+
+        var min = infos.Min(x => x.AbsoluteEpisodeNumber);
+        var diff = min - 1;
+        if (diff > 0)
+        {
+            infos.ForEach(x => x.AbsoluteEpisodeNumber -= diff);
+        }
+
+        return new ValueTuple<List<Episode>, List<EpisodeInfo>, List<EpisodeInfo>>(episodes, infos, specials);
     }
 
     private static bool IsMagnetLink(Uri uri)

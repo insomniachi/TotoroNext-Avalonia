@@ -17,9 +17,13 @@ public partial class Episode(IAnimeProvider provider, string showId, string id, 
         return provider.GetServersAsync(ShowId, Id);
     }
 
-    public bool IsFromProvider(Type providerType) => provider.GetType() == providerType;
+    public bool IsFromProvider(Type providerType)
+    {
+        return provider.GetType() == providerType;
+    }
 }
 
+[Serializable]
 public class EpisodeInfo
 {
     [JsonPropertyName("seasonNumber")] public int SeasonNumber { get; set; }
@@ -42,6 +46,8 @@ public class EpisodeInfo
     [JsonPropertyName("airDateUtc")] public DateTime? AirDateUtc { get; set; }
 
     [JsonIgnore] public ProgressInfo? Progress { get; set; }
+    
+    [JsonIgnore] public bool IsSpecial { get; set; }
 }
 
 public class Titles

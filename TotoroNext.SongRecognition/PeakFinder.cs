@@ -17,11 +17,11 @@ internal class PeakFinder
 
     private const float MinMagnSquared = 1f / 512 / 512;
 
-    private static readonly IReadOnlyList<int> BandFreqs = [250, 520, 1450, 3500, 5500];
+    private static readonly IReadOnlyList<int> BandFrequencies = [250, 520, 1450, 3500, 5500];
 
     private static readonly int
-        MinBin = Math.Max(Analysis.FreqToBin(BandFreqs.Min()), VBinDist),
-        MaxBin = Math.Min(Analysis.FreqToBin(BandFreqs.Max()), Analysis.BinCount - VBinDist);
+        MinBin = Math.Max(Analysis.FreqToBin(BandFrequencies.Min()), VBinDist),
+        MaxBin = Math.Min(Analysis.FreqToBin(BandFrequencies.Max()), Analysis.BinCount - VBinDist);
 
     private static readonly float
         LogMinMagnSquared = MathF.Log(MinMagnSquared);
@@ -37,7 +37,7 @@ internal class PeakFinder
         _analysis = analysis;
         _interpolation = interpolation;
 
-        _bands = Enumerable.Range(0, BandFreqs.Count - 1)
+        _bands = Enumerable.Range(0, BandFrequencies.Count - 1)
                            .Select(_ => new List<PeakInfo>())
                            .ToList();
     }
@@ -106,14 +106,14 @@ internal class PeakFinder
     {
         var freq = Analysis.BinToFreq(bin);
 
-        if (freq < BandFreqs[0])
+        if (freq < BandFrequencies[0])
         {
             return -1;
         }
 
-        for (var i = 1; i < BandFreqs.Count; i++)
+        for (var i = 1; i < BandFrequencies.Count; i++)
         {
-            if (freq < BandFreqs[i])
+            if (freq < BandFrequencies[i])
             {
                 return i - 1;
             }

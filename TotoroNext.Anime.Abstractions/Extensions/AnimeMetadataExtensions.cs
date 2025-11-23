@@ -65,6 +65,11 @@ public static class AnimeMetadataExtensions
 					continue;
 				}
 
+				if (property.Key.StartsWith('S'))
+				{
+					ep.IsSpecial = true;
+				}
+
 				result.Add(ep);
 			}
 
