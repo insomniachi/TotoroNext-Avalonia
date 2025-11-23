@@ -15,8 +15,11 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
     public IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
         return Catalog.Items
-                      .Where(x => Fuzz.Ratio(query, x.Title) > 50)
-                      .Select(x => new SearchResult(this, x.Id, x.Title)).ToAsyncEnumerable();
+                      .Select(show => new { Show = show , Score = Fuzz.Ratio(query, show.Title) })
+                      .Where(x => x.Score > 70)
+                      .OrderByDescending(x => x.Score)
+                      .Select(x => new SearchResult(this, x.Show.Id, x.Show.Title))
+                      .ToAsyncEnumerable();
     }
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
