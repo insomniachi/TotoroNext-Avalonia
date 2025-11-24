@@ -44,7 +44,7 @@ public class Module : IModule<Settings>
 
 public class Settings
 {
-    public const string ClientId = "748da32a6defdd448c1f47d60b4bbe69";
+    public const string ClientId = "b1d2bd6df963564d1bdb6194ce0a12e9";
     public OAuthToken? Auth { get; set; }
     public bool IncludeNsfw { get; set; }
     public int SearchLimit { get; set; } = 15;

@@ -50,6 +50,7 @@ public class EpisodeInfo
     [JsonIgnore] public bool IsSpecial { get; set; }
 }
 
+[Serializable]
 public class Titles
 {
     [JsonPropertyName("ja")] public string Japanese { get; set; } = "";
