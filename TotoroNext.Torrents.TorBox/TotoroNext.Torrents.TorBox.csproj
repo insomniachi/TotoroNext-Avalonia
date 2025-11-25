@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
       <ProjectReference Include="..\TotoroNext.Torrents.Abstractions\TotoroNext.Torrents.Abstractions.csproj" />
     </ItemGroup>
 

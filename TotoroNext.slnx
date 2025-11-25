@@ -83,6 +83,7 @@
     <Project Path="TotoroNext.Torrents.Abstractions/TotoroNext.Torrents.Abstractions.csproj">
       <Platform Project="x64" />
     </Project>
+    <Project Path="TotoroNext.Torrents.Nyaa/TotoroNext.Torrents.Nyaa.csproj" />
     <Project Path="TotoroNext.Torrents.RealDebrid/TotoroNext.Torrents.RealDebrid.csproj">
       <Platform Project="x64" />
     </Project>

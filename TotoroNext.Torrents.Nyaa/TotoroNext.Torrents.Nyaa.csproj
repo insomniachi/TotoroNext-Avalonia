@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Torrents.Abstractions\TotoroNext.Torrents.Abstractions.csproj" />
+        <ProjectReference Include="..\TotoroNext.Torrents.Abstractions\TotoroNext.Torrents.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\rd.jpg" />
+      <PackageReference Include="System.ServiceModel.Syndication" />
     </ItemGroup>
 
 </Project>

@@ -1,13 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
     
     <ItemGroup>
+        <PackageReference Include="AnitomySharp.NET6" />
         <PackageReference Include="MonoTorrent" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -9,14 +9,14 @@ using Path = System.IO.Path;
 
 namespace TotoroNext.Module;
 
-internal class ModuleSettings<TData> : IModuleSettings<TData>
+public class ModuleSettings<TData> : IModuleSettings<TData>
     where TData : class, new()
 {
     // ReSharper disable once StaticMemberInGenericType
     private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
     private readonly string _filePath;
 
-    internal ModuleSettings(Descriptor descriptor)
+    public ModuleSettings(Descriptor descriptor)
     {
         _filePath = ModuleHelper.GetFilePath(descriptor, "settings.json");
 
