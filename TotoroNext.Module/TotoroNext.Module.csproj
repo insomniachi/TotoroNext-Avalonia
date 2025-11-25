@@ -36,6 +36,7 @@
         <PackageReference Include="Irihi.Ursa.Themes.Semi"/>
         <PackageReference Include="AsyncImageLoader.Avalonia"/>
         <PackageReference Include="Semi.Avalonia"/>
+        <PackageReference Include="Semi.Avalonia.DataGrid" />
         <PackageReference Include="Xaml.Behaviors.Avalonia"/>
 
     </ItemGroup>

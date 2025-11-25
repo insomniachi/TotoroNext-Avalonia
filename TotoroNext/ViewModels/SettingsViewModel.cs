@@ -55,6 +55,12 @@ public class SettingsModel : ObservableObject
         get;
         set => SetAndSaveProperty(ref field, value);
     }
+    
+    public Guid SelectedTorrentIndexer
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    }
 
     public SkipMethod OpeningSkipMethod
     {

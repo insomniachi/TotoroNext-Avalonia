@@ -133,6 +133,11 @@
                                         VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
+                            <Button Content="Torrent"
+                                    Command="{Binding $parent[local:AnimeCard].SearchTorrentsCommand}"
+                                    CommandParameter="{Binding $parent[local:AnimeCard].Anime}"
+                                    IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}"
+                                    HorizontalAlignment="Stretch"/>
                             <Button Content="Details"
                                     HorizontalAlignment="Stretch"
                                     Command="{Binding $parent[local:AnimeCard].DetailsCommand}"

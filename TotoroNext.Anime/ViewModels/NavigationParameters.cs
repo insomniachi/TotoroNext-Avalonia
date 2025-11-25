@@ -19,3 +19,5 @@ public record WatchViewModelNavigationParameter(
 public record InfoViewNavigationParameters(AnimeModel Anime);
 
 public record CharactersViewNavigationParameters(AnimeModel Anime);
+
+public record TorrentsViewModelNavigationParameters(AnimeModel Anime);

@@ -15,12 +15,33 @@ public class Commands(
     public static ICommand? WatchCommand { get; private set; }
     public static ICommand? SettingsCommand { get; private set; }
     public static ICommand? DetailsCommand { get; private set; }
+    public static ICommand? SearchTorrentsCommand { get; private set; }
 
     public void Initialize()
     {
         WatchCommand = CreateWatchCommand();
         SettingsCommand = CreateSettingsCommand();
         DetailsCommand = CreateDetailsCommand();
+        SearchTorrentsCommand = CreateSearchTorrentsCommand();
+    }
+
+    private RelayCommand<AnimeModel> CreateSearchTorrentsCommand()
+    {
+        return new RelayCommand<AnimeModel>(anime =>
+        {
+            if (anime is null)
+            {
+                return;
+            }
+
+            messenger.Send(new NavigateToViewModelDialogMessage()
+            { 
+                Title = "Torrents",
+                Data = new TorrentsViewModelNavigationParameters(anime),
+                ViewModel = typeof(TorrentsViewModel),
+                CloseButtonVisible = true
+            });
+        });
     }
 
     private AsyncRelayCommand<AnimeModel> CreateWatchCommand()

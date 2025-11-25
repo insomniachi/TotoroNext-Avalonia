@@ -90,9 +90,10 @@
                             <ac:AnimeCard
                                 Anime="{Binding}"
                                 DetailsCommand="{x:Static am:Commands.DetailsCommand}"
-                                HasDetailsPane="True"
                                 SettingsCommand="{x:Static am:Commands.SettingsCommand}"
-                                WatchCommand="{x:Static am:Commands.WatchCommand}">
+                                WatchCommand="{x:Static am:Commands.WatchCommand}"
+                                SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
+                                HasDetailsPane="True">
                                 <Interaction.Behaviors>
                                     <behaviors:UnwatchedEpisodesBehavior />
                                     <behaviors:AiringStatusBehavior />

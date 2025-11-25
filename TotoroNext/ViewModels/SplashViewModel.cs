@@ -96,7 +96,8 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider))
-                                  .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService));
+                                  .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService))
+                                  .RegisterFactory<ITorrentIndexer>(nameof(SettingsModel.SelectedTorrentIndexer));
 
                           RegisterNavigationViewItems(services);
 
@@ -107,6 +108,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                               new SongRecognition.Module(),
                               new Anime.Anilist.Module(),
                               new Anime.MyAnimeList.Module(),
+                              new Torrents.Nyaa.Module(),
                               ..store.LoadModules()
                           ];
 

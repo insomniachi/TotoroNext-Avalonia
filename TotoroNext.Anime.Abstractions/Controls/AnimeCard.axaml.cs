@@ -20,6 +20,9 @@ public partial class AnimeCard : UserControl
 
     public static readonly StyledProperty<ICommand> DetailsCommandProperty =
         AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(DetailsCommand));
+    
+    public static readonly StyledProperty<ICommand> SearchTorrentsCommandProperty =
+        AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(SearchTorrentsCommand));
 
     public static readonly StyledProperty<bool> HasDetailsPaneProperty =
         AvaloniaProperty.Register<AnimeCard, bool>(nameof(HasDetailsPane));
@@ -54,6 +57,12 @@ public partial class AnimeCard : UserControl
     {
         get => GetValue(DetailsCommandProperty);
         set => SetValue(DetailsCommandProperty, value);
+    }
+
+    public ICommand SearchTorrentsCommand
+    {
+        get => GetValue(SearchTorrentsCommandProperty);
+        set => SetValue(SearchTorrentsCommandProperty, value);
     }
 
     public ICommand SettingsCommand

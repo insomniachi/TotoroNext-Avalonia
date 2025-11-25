@@ -1,14 +1,13 @@
 ﻿using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
-using AnitomySharp;
 using Flurl;
 using Flurl.Http;
 using TotoroNext.Torrents.Abstractions;
 
 namespace TotoroNext.Torrents.Nyaa;
 
-public class NyaaIndex
+public class Indexer : ITorrentIndexer
 {
     public async IAsyncEnumerable<TorrentModel> SearchAsync(string term, string group, string quality)
     {
@@ -62,7 +61,7 @@ public class NyaaIndex
                         break;
                 }
             }
-            
+
             yield return torrent;
         }
     }

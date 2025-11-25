@@ -108,6 +108,7 @@
                                           DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                           WatchCommand="{x:Static am:Commands.WatchCommand}"
                                           SettingsCommand="{x:Static am:Commands.SettingsCommand}"
+                                          SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
                                           ShowCompletedStatus="True">
                                 <Interaction.Behaviors>
                                     <behaviors:AiringStatusBehavior />
