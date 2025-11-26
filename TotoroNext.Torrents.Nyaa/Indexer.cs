@@ -25,7 +25,7 @@ public class Indexer : ITorrentIndexer
         var query = sb.ToString();
         var stream = await "https://nyaa.si/"
                            .AppendQueryParam("page", "rss")
-                           .AppendQueryParam("f", 0)
+                           .AppendQueryParam("f", 2)
                            .AppendQueryParam("c", "1_2")
                            .AppendQueryParam("q", query)
                            .GetStreamAsync();
