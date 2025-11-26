@@ -46,7 +46,7 @@ public partial class ProviderDebuggerViewModel(
     public void Initialize()
     {
         List<Descriptor> all = [..descriptors];
-        AnimeProviders = all.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider)).ToList();
+        AnimeProviders = all.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider)).OrderBy(x => x.Name).ToList();
         MediaPlayers = all.Where(x => x.Components.Contains(ComponentTypes.MediaEngine)).ToList();
 
         ProviderId = settings.SelectedAnimeProvider;

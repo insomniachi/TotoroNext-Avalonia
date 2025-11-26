@@ -26,7 +26,7 @@ public static class Catalog
                 continue;
             }
             
-            catalog.Add(new TokyoInsiderItem(link.GetAttributeValue("href", ""), link.InnerHtml.ToLower()));
+            catalog.Add(new TokyoInsiderItem(link.GetAttributeValue("href", ""), link.InnerHtml));
         }
         
         var file = ModuleHelper.GetFilePath(Module.Descriptor, "catalog.json");

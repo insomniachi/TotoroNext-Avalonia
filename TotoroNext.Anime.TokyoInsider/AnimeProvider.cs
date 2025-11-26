@@ -14,7 +14,7 @@ public class AnimeProvider : IAnimeProvider
     {
         var lowered = query.ToLower();
         return Catalog.Items
-                      .Select(show => new { Show = show, Score = Fuzz.PartialRatio(query, show.Title) })
+                      .Select(show => new { Show = show, Score = Fuzz.Ratio(lowered, show.Title.ToLower()) })
                       .Where(x => x.Score > 70)
                       .OrderByDescending(x => x.Score)
                       .Select(x => new SearchResult(this, x.Show.Id, x.Show.Title))
