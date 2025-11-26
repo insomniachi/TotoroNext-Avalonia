@@ -8,7 +8,7 @@ namespace TotoroNext.Anime.SubsPlease;
 
 internal static class Catalog
 {
-    private static readonly JsonSerializerOptions _options = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
     internal static List<SubsPleaseItem> Items { get; set; } = [];
 
     internal static async Task DownloadCatalog()
@@ -34,7 +34,7 @@ internal static class Catalog
         }
 
         Items = catalog;
-        await File.WriteAllTextAsync(file, JsonSerializer.Serialize(catalog, _options));
+        await File.WriteAllTextAsync(file, JsonSerializer.Serialize(catalog, Options));
     }
 
     [Serializable]
