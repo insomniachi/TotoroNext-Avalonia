@@ -85,6 +85,8 @@
       <Platform Project="x64" />
     </Project>
     <Project Path="TotoroNext.Torrents.Nyaa/TotoroNext.Torrents.Nyaa.csproj" />
+  </Folder>
+  <Folder Name="/Torrents/Debrid/">
     <Project Path="TotoroNext.Torrents.RealDebrid/TotoroNext.Torrents.RealDebrid.csproj">
       <Platform Project="x64" />
     </Project>

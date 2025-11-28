@@ -16,7 +16,7 @@ public sealed partial class AnimeDetailsViewModel(
     ITrackingUpdater trackingUpdater,
     IFactory<IMetadataService, Guid> metadataServiceFactory) : DialogViewModel, IAsyncInitializable, INavigatorHost
 {
-    public AnimeModel Anime { get; set; } = anime;
+    [ObservableProperty] public partial AnimeModel Anime { get; set; } = anime;
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = anime.Tracking?.Status;
 
@@ -45,13 +45,19 @@ public sealed partial class AnimeDetailsViewModel(
             return;
         }
 
+        this.WhenAnyValue(x => x.Anime)
+            .WhereNotNull()
+            .Subscribe(_ =>
+            {
+                OnPropertyChanged(nameof(HasRelated));
+                OnPropertyChanged(nameof(HasRecommended));
+                OnPropertyChanged(nameof(HasTrailers));
+                OnPropertyChanged(nameof(IsTracked));
+            });
+
         if (await service.GetAnimeAsync(Anime.Id) is { } model)
         {
             Anime = model;
-            OnPropertyChanged(nameof(HasRelated));
-            OnPropertyChanged(nameof(HasRecommended));
-            OnPropertyChanged(nameof(HasTrailers));
-            OnPropertyChanged(nameof(IsTracked));
         }
 
         this.WhenAnyValue(x => x.Status, x => x.Progress, x => x.Score, x => x.StartDate, x => x.FinishDate)
@@ -74,5 +80,13 @@ public sealed partial class AnimeDetailsViewModel(
     private async Task AddToList()
     {
         await trackingUpdater.UpdateTracking(Anime, new Tracking { Status = ListItemStatus.PlanToWatch });
+
+        if (Anime.ServiceId is null)
+        {
+            return;
+        }
+        
+        var service = metadataServiceFactory.Create(Anime.ServiceId.Value);
+        Anime = await service.GetAnimeAsync(Anime.Id);
     }
 }

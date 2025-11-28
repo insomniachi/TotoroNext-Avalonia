@@ -80,7 +80,8 @@
                     VerticalAlignment="Center"
                     Spacing="8">
             <Button Content="Download"
-                    Command="{Binding DownloadCommand}" />
+                    Command="{Binding DownloadCommand}" 
+                    IsVisible="False"/>
             <Button Content="Stream"
                     Command="{Binding StreamCommand}" />
         </StackPanel>

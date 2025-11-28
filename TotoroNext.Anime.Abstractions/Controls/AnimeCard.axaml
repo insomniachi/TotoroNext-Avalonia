@@ -133,11 +133,18 @@
                                         VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
-                            <Button Content="Torrent"
-                                    Command="{Binding $parent[local:AnimeCard].SearchTorrentsCommand}"
+                            <Button Command="{Binding $parent[local:AnimeCard].SearchTorrentsCommand}"
                                     CommandParameter="{Binding $parent[local:AnimeCard].Anime}"
                                     IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}"
-                                    HorizontalAlignment="Stretch"/>
+                                    HorizontalAlignment="Stretch">
+                                <StackPanel Spacing="8" Orientation="Horizontal">
+                                    <TextBlock Text="Torrent" VerticalAlignment="Center" />
+                                    <iconPacks:PackIconControl
+                                        Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
+                                        Height="15" Width="11"
+                                        VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
                             <Button Content="Details"
                                     HorizontalAlignment="Stretch"
                                     Command="{Binding $parent[local:AnimeCard].DetailsCommand}"
