@@ -148,6 +148,25 @@
     ]
   },
   {
+    "Id": "8caaa814-2abf-43db-8f92-ad1c56bd6a12",
+    "Name": "Tokyo Insider",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider",
+      "Anime Downloader"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.TokyoInsider/Assets/tokyoinsider.jpg",
+    "EntryPoint": "TotoroNext.Anime.TokyoInsider.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.TokyoInsider.zip"
+      }
+    ]
+  },
+  {
     "Id": "b8c3f0d2-1c5e-4f6a-9b7d-3f8e1c5f0d2a",
     "Name": "MPV",
     "Description": "MPV Media Player is a free, open-source, and cross-platform media player known for its versatility and powerful performance. It supports a wide variety of media file formats, audio and video codecs, and subtitle types, making it suitable for both casual and advanced users. MPV is particularly noted for its scripting capabilities, allowing users to customize their experience extensively.",
@@ -239,6 +258,25 @@
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Torrents.TorBox.zip"
+      }
+    ]
+  },
+  {
+    "Id": "5511cd15-1d0b-4740-b526-087e0ef2de77",
+    "Name": "Real Debrid",
+    "Description": "Real Debrid service integration",
+    "Owner": "Totoro",
+    "Categories": [
+      "Debrid"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Torrents.RealDebrid/Assets/rd.jpg",
+    "EntryPoint": "TotoroNext.Torrents.RealDebrid.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Torrents.RealDebrid.zip"
       }
     ]
   }

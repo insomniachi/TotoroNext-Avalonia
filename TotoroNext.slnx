@@ -46,7 +46,9 @@
     <Project Path="TotoroNext.Anime.SubsPlease/TotoroNext.Anime.SubsPlease.csproj">
       <Platform Project="x64" />
     </Project>
-    <Project Path="TotoroNext.Anime.TokyoInsider/TotoroNext.Anime.TokyoInsider.csproj" />
+    <Project Path="TotoroNext.Anime.TokyoInsider/TotoroNext.Anime.TokyoInsider.csproj">
+      <Platform Project="x64" />
+    </Project>
   </Folder>
   <Folder Name="/Media/">
     <Project Path="TotoroNext.Anime.Aniskip/TotoroNext.Anime.Aniskip.csproj">
