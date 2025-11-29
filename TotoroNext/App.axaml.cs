@@ -1,8 +1,11 @@
+using AsyncImageLoader;
+using AsyncImageLoader.Loaders;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.Hosting;
+using TotoroNext.Module;
 using TotoroNext.ViewModels;
 using TotoroNext.Views;
 
@@ -26,6 +29,7 @@ public class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
+            ImageLoader.AsyncImageLoader = new DiskCachedWebImageLoader(FileHelper.GetPath(Path.Combine("Cache", "Images")));
             desktop.MainWindow = new MainSplashWindow
             {
                 DataContext = new SplashViewModel(Host.CreateDefaultBuilder())

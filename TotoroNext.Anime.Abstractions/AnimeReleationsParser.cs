@@ -6,7 +6,7 @@ namespace TotoroNext.Anime.Abstractions;
 
 public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBackgroundInitializer
 {
-    private readonly string _path = ModuleHelper.GetFilePath(null, "relations.txt");
+    private readonly string _path = FileHelper.GetPath("relations.txt");
 
     public async Task BackgroundInitializeAsync()
     {

@@ -155,10 +155,20 @@
                             <Grid
                                 IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}">
                                 <StackPanel Orientation="Horizontal" Spacing="8" Margin="4" HorizontalAlignment="Left">
-                                    <Button CornerRadius="30" Height="30" Width="30" Click="OnEditClicked">
+                                    <Button CornerRadius="30" Height="30" Width="30" Click="OnEditClicked"
+                                            IsVisible="{Binding $parent[local:AnimeCard].Anime.Tracking, Converter={x:Static ObjectConverters.IsNotNull}}">
                                         <Viewbox Height="12" Width="12">
                                             <iconPacks:PackIconControl
                                                 Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Edit}" />
+                                        </Viewbox>
+                                    </Button>
+                                    <Button CornerRadius="30" Height="30" Width="30"
+                                            Command="{Binding $parent[local:AnimeCard].AddToListCommand}"
+                                            CommandParameter="{Binding $parent[local:AnimeCard].Anime}"
+                                            IsVisible="{Binding $parent[local:AnimeCard].Anime.Tracking, Converter={x:Static ObjectConverters.IsNull}}">
+                                        <Viewbox Height="12" Width="12">
+                                            <iconPacks:PackIconControl
+                                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Add}" />
                                         </Viewbox>
                                     </Button>
 

@@ -70,7 +70,7 @@ public class DownloadService(
 
     private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)
     {
-        var directory = message.SaveFolder ?? ModuleHelper.GetFilePath(null, "Downloads");
+        var directory = message.SaveFolder ?? FileHelper.GetPath("Downloads");
         var absoluteEpNumber = episode.Number + message.EpisodeOffset;
         
         var fileName = string.IsNullOrEmpty(message.FilenameFormat)

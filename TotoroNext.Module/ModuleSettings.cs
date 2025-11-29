@@ -18,7 +18,7 @@ public class ModuleSettings<TData> : IModuleSettings<TData>
 
     public ModuleSettings(Descriptor descriptor)
     {
-        _filePath = ModuleHelper.GetFilePath(descriptor, "settings.json");
+        _filePath = FileHelper.GetModulePath(descriptor, "settings.json");
 
         Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
         Value = new TData();
@@ -93,22 +93,21 @@ public static class ResourceHelper
     }
 }
 
-public static class ModuleHelper
+public static class FileHelper
 {
-    public static string GetFilePath(Descriptor? descriptor, string fileName)
+    public static string GetModulePath(Descriptor descriptor, string fileName)
     {
-        if (descriptor is null)
-        {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                "TotoroNext",
-                                "Modules",
-                                fileName);
-        }
-
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                             "TotoroNext",
                             "Modules",
                             descriptor.EntryPoint,
+                            fileName);
+    }
+
+    public static string GetPath(string fileName)
+    {
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                            "TotoroNext",
                             fileName);
     }
 }

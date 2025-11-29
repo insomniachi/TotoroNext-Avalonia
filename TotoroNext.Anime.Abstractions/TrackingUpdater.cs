@@ -29,6 +29,7 @@ public sealed class TrackingUpdater(
 
     public async Task UpdateTracking(AnimeModel anime, Tracking tracking)
     {
+        Tracking? ret = null;
         foreach (var trackingService in factory.CreateAll())
         {
             var id = anime.ExternalIds.GetIdForService(trackingService.Name);
@@ -42,7 +43,7 @@ public sealed class TrackingUpdater(
             {
                 id = await SearchId(anime, trackingService.Id);
             }
-            
+
 
             if (id is null)
             {
@@ -51,13 +52,15 @@ public sealed class TrackingUpdater(
 
             try
             {
-                await trackingService.Update(id.Value, tracking);
+                ret ??= await trackingService.Update(id.Value, tracking);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
         }
+
+        anime.Tracking = ret;
     }
 
     private async Task<long?> SearchId(AnimeModel anime, Guid serviceId)

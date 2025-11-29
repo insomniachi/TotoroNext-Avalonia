@@ -29,7 +29,7 @@ public static class Catalog
             catalog.Add(new TokyoInsiderItem(link.GetAttributeValue("href", ""), link.InnerHtml));
         }
         
-        var file = ModuleHelper.GetFilePath(Module.Descriptor, "catalog.json");
+        var file = FileHelper.GetModulePath(Module.Descriptor, "catalog.json");
         var directory = Path.GetDirectoryName(file);
         if (!string.IsNullOrEmpty(directory))
         {

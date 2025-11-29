@@ -33,7 +33,7 @@ public partial class DownloadOperation(AnimeModel anime, Episode episode, VideoS
         var configuration = new DownloadConfiguration { RequestConfiguration = new RequestConfiguration() };
         var builder = DownloadBuilder.New()
                                      .WithUrl(server.Url)
-                                     .WithDirectory(ModuleHelper.GetFilePath(null, "Downloads"))
+                                     .WithDirectory(FileHelper.GetPath("Downloads"))
                                      .WithFileName(FileName)
                                      .WithConfiguration(configuration);
 

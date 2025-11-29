@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using TotoroNext.Anime.Abstractions;
-using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.ViewModels;
 using TotoroNext.Module.Abstractions;
 
@@ -10,12 +9,14 @@ namespace TotoroNext.Anime;
 
 public class Commands(
     IMessenger messenger,
+    ITrackingUpdater trackingUpdater,
     IAnimeExtensionService extensionService) : IInitializer
 {
     public static ICommand? WatchCommand { get; private set; }
     public static ICommand? SettingsCommand { get; private set; }
     public static ICommand? DetailsCommand { get; private set; }
     public static ICommand? SearchTorrentsCommand { get; private set; }
+    public static ICommand? AddToListCommand { get; private set; }
 
     public void Initialize()
     {
@@ -23,6 +24,20 @@ public class Commands(
         SettingsCommand = CreateSettingsCommand();
         DetailsCommand = CreateDetailsCommand();
         SearchTorrentsCommand = CreateSearchTorrentsCommand();
+        AddToListCommand = CreateAddToListCommand();
+    }
+
+    private AsyncRelayCommand<AnimeModel> CreateAddToListCommand()
+    {
+        return new AsyncRelayCommand<AnimeModel>(async anime =>
+        {
+            if (anime is null)
+            {
+                return;
+            }
+            
+            await trackingUpdater.UpdateTracking(anime, new Tracking { Status = ListItemStatus.PlanToWatch });
+        });
     }
 
     private RelayCommand<AnimeModel> CreateSearchTorrentsCommand()
@@ -34,8 +49,8 @@ public class Commands(
                 return;
             }
 
-            messenger.Send(new NavigateToViewModelDialogMessage()
-            { 
+            messenger.Send(new NavigateToViewModelDialogMessage
+            {
                 Title = "Torrents",
                 Data = new TorrentsViewModelNavigationParameters(anime),
                 ViewModel = typeof(TorrentsViewModel),
@@ -52,7 +67,7 @@ public class Commands(
             {
                 return;
             }
-            
+
             var result = await extensionService.SearchAndSelectAsync(anime);
 
             if (result is null)
@@ -78,7 +93,7 @@ public class Commands(
                 ViewModel = typeof(AnimeExtensionsViewModel),
                 Title = anime.Title,
                 Data = new OverridesViewModelNavigationParameters(anime),
-                CloseButtonVisible = true,
+                CloseButtonVisible = true
             });
         });
     }

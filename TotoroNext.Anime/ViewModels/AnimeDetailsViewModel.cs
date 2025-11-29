@@ -75,18 +75,4 @@ public sealed partial class AnimeDetailsViewModel(
     }
 
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
-
-    [RelayCommand]
-    private async Task AddToList()
-    {
-        await trackingUpdater.UpdateTracking(Anime, new Tracking { Status = ListItemStatus.PlanToWatch });
-
-        if (Anime.ServiceId is null)
-        {
-            return;
-        }
-        
-        var service = metadataServiceFactory.Create(Anime.ServiceId.Value);
-        Anime = await service.GetAnimeAsync(Anime.Id);
-    }
 }

@@ -8,7 +8,7 @@ public class Initializer : IInitializer, IBackgroundInitializer
 {
     public void Initialize()
     {
-        var filePath = ModuleHelper.GetFilePath(Module.Descriptor, "catalog.json");
+        var filePath = FileHelper.GetModulePath(Module.Descriptor, "catalog.json");
         if (!File.Exists(filePath))
         {
             return;
@@ -20,7 +20,7 @@ public class Initializer : IInitializer, IBackgroundInitializer
 
     public async Task BackgroundInitializeAsync()
     {
-        var filePath = ModuleHelper.GetFilePath(Module.Descriptor, "catalog.json");
+        var filePath = FileHelper.GetModulePath(Module.Descriptor, "catalog.json");
         if (File.Exists(filePath))
         {
             return;

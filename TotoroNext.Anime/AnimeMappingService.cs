@@ -21,7 +21,7 @@ public class AnimeMappingService : IAnimeMappingService
             _ => throw new ArgumentException("Invalid service name")
         };
 
-        var db = ModuleHelper.GetFilePath(null, "anime.db");
+        var db = FileHelper.GetPath("anime.db");
         using var connection = new SqliteConnection(@$"Data Source={db}");
         connection.Open();
 
@@ -55,7 +55,7 @@ public class AnimeMappingService : IAnimeMappingService
 
     public void Update(Stream dbStream)
     {
-        var db = ModuleHelper.GetFilePath(null, "anime.db");
+        var db = FileHelper.GetPath("anime.db");
         using var connection = new SqliteConnection(@$"Data Source={db}");
         connection.Open();
 

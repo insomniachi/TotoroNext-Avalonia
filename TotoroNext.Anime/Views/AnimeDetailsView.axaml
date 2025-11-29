@@ -28,9 +28,10 @@
             <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*">
                 <Button Grid.Row="0"
                         IsVisible="{Binding !IsTracked}"
-                        Command="{Binding AddToListCommand}"
+                        Command="{x:Static a:Commands.AddToListCommand}"
+                        CommandParameter="{Binding Anime}"
                         Content="Add to list"
-                        HorizontalAlignment="Stretch"/>
+                        HorizontalAlignment="Stretch" />
                 <u:Form Grid.Row="0"
                         IsVisible="{Binding IsTracked}"
                         LabelPosition="Left"
@@ -71,7 +72,7 @@
                         CommandParameter="{Binding Anime}"
                         Content="Watch"
                         HorizontalAlignment="Stretch"
-                        Margin="0 10 0 0"/>
+                        Margin="0 10 0 0" />
                 <ScrollViewer Grid.Row="2" Margin="0 8 0 0">
                     <TextBlock Text="{Binding Anime.Description}" TextWrapping="Wrap" />
                 </ScrollViewer>
