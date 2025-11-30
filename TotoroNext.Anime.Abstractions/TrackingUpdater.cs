@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 
@@ -8,7 +9,8 @@ public sealed class TrackingUpdater(
     IFactory<ITrackingService, Guid> factory,
     IFactory<IMetadataService, Guid> metadataFactory,
     IAnimeMappingService animeMappingService,
-    IMessenger messenger) : IRecipient<PlaybackState>, ITrackingUpdater
+    IMessenger messenger,
+    ILogger<TrackingUpdater> logger) : IRecipient<PlaybackState>, ITrackingUpdater
 {
     public void Receive(PlaybackState message)
     {
@@ -29,7 +31,6 @@ public sealed class TrackingUpdater(
 
     public async Task UpdateTracking(AnimeModel anime, Tracking tracking)
     {
-        Tracking? ret = null;
         foreach (var trackingService in factory.CreateAll())
         {
             var id = anime.ExternalIds.GetIdForService(trackingService.Name);
@@ -52,15 +53,17 @@ public sealed class TrackingUpdater(
 
             try
             {
-                ret ??= await trackingService.Update(id.Value, tracking);
+                var response = await trackingService.Update(id.Value, tracking);
+                if (anime.ServiceName == trackingService.Name)
+                {
+                    anime.Tracking = response;
+                }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.LogError(e, "Failed to update tracking");
             }
         }
-
-        anime.Tracking = ret;
     }
 
     private async Task<long?> SearchId(AnimeModel anime, Guid serviceId)
