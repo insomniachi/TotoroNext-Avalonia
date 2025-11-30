@@ -57,21 +57,24 @@
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
                 <fac:SettingsExpander Header="Search Term"
-                                      Description="The search term to use when searching for this anime, use it when the default search term doesn't return the correct anime">
+                                      Description="The search term to use when searching for this anime, use it when the default search term doesn't return the correct anime"
+                                      IsExpanded="True"
+                                      IsVisible="{Binding HasProvider}">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource Search}" />
                     </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
-                        <u:AutoCompleteBox Text="{Binding SearchTerm, Mode=TwoWay}"
-                                           ItemsSource="{Binding ProviderResults}"
-                                           IsDropDownOpen="{Binding IsDropDownOpen, Mode=TwoWay}"
-                                           FilterMode="ContainsOrdinal"
-                                           HorizontalAlignment="Stretch">
-                            <AutoCompleteBox.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </AutoCompleteBox.Styles>
-                        </u:AutoCompleteBox>
-                    </fac:SettingsExpander.Footer>
+                    <fac:SettingsExpanderItem Content="Query" Description="The term used to search for this anime">
+                        <fac:SettingsExpanderItem.Footer>
+                            <TextBox Text="{Binding SearchTerm}"/>
+                        </fac:SettingsExpanderItem.Footer>
+                    </fac:SettingsExpanderItem>
+                    <fac:SettingsExpanderItem Content="Result" Description="Anime entry from the provider">
+                        <fac:SettingsExpanderItem.Footer>
+                            <ComboBox ItemsSource="{Binding ProviderResults}"
+                                      SelectedItem="{Binding SelectedProviderResult, Mode=TwoWay}"
+                                      HorizontalAlignment="Stretch"/>
+                        </fac:SettingsExpanderItem.Footer>
+                    </fac:SettingsExpanderItem>
                 </fac:SettingsExpander>
                 <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
                 <fac:SettingsExpander Header="Opening Skip Method" Description="How to skip the opening of this anime">

@@ -2,6 +2,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using TotoroNext.Module;
 
 namespace TotoroNext.MediaEngine.Abstractions;
 
@@ -9,113 +12,131 @@ public static class MediaHelper
 {
     public static async Task<List<MediaSegment>> GetChapters(Uri url, IDictionary<string, string>? headers = null)
     {
-        var executable = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
-                                  .FirstOrDefault(x => x.Contains("ffprobe"))!;
+        try
+        {
+            var executable = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
+                                      .FirstOrDefault(x => x.Contains("ffprobe"))!;
 
-        if (string.IsNullOrEmpty(executable))
-        {
-            return [];
-        }
-        
-        var psi = new ProcessStartInfo
-        {
-            FileName = executable,
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-        
-        psi.ArgumentList.Add("-i");
-        psi.ArgumentList.Add(url.ToString());
-        psi.ArgumentList.Add("-show_chapters");
-        psi.ArgumentList.Add("-print_format");
-        psi.ArgumentList.Add("json");
-        
-        if (headers is { Count: > 0 })
-        {
-            psi.ArgumentList.Add("-headers");
-            psi.ArgumentList.Add(string.Join("\r\n", headers.Select(x => $"{x.Key}: {x.Value}")));
-        }
-
-        using var process = Process.Start(psi);
-        if (process is null)
-        {
-            return [];
-        }
-        
-        var output = await process.StandardOutput.ReadToEndAsync();
-        await process.WaitForExitAsync();
-
-        var result = JsonSerializer.Deserialize<ChapterList>(output);
-        if (result is null or {Chapters: not {Count: > 1}})
-        {
-            return [];
-        }
-        
-        var segments = new List<MediaSegment>();
-        var lastChapter = TimeSpan.FromSeconds(double.Parse(result.Chapters.Last().EndTime));
-        foreach (var chapter in result.Chapters)
-        {
-            var start = TimeSpan.FromSeconds(double.Parse(chapter.StartTime));
-            var end = TimeSpan.FromSeconds(double.Parse(chapter.EndTime));
-            var type = GetType(chapter.Tags.Title);
-
-            if (type is MediaSectionType.Content)
+            if (string.IsNullOrEmpty(executable))
             {
-                var duration = end - start;
-                if (Math.Abs(90 - duration.TotalSeconds) < 5)
-                {
-                    type = start.TotalSeconds < (lastChapter.TotalSeconds / 2) ? MediaSectionType.Opening : MediaSectionType.Ending;
-                }
+                return [];
+            }
+        
+            var psi = new ProcessStartInfo
+            {
+                FileName = executable,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+        
+            psi.ArgumentList.Add("-i");
+            psi.ArgumentList.Add(url.ToString());
+            psi.ArgumentList.Add("-show_chapters");
+            psi.ArgumentList.Add("-print_format");
+            psi.ArgumentList.Add("json");
+        
+            if (headers is { Count: > 0 })
+            {
+                psi.ArgumentList.Add("-headers");
+                psi.ArgumentList.Add(string.Join("\r\n", headers.Select(x => $"{x.Key}: {x.Value}")));
             }
 
-            segments.Add(new MediaSegment(type, start, end));
-        }
+            using var process = Process.Start(psi);
+            if (process is null)
+            {
+                return [];
+            }
+        
+            var output = await process.StandardOutput.ReadToEndAsync();
+            await process.WaitForExitAsync();
 
-        return segments;
+            var result = JsonSerializer.Deserialize<ChapterList>(output);
+            if (result is null or {Chapters: not {Count: > 1}})
+            {
+                return [];
+            }
+        
+            var segments = new List<MediaSegment>();
+            var lastChapter = TimeSpan.FromSeconds(double.Parse(result.Chapters.Last().EndTime));
+            foreach (var chapter in result.Chapters)
+            {
+                var start = TimeSpan.FromSeconds(double.Parse(chapter.StartTime));
+                var end = TimeSpan.FromSeconds(double.Parse(chapter.EndTime));
+                var type = GetType(chapter.Tags.Title);
+
+                if (type is MediaSectionType.Content)
+                {
+                    var duration = end - start;
+                    if (Math.Abs(90 - duration.TotalSeconds) < 5)
+                    {
+                        type = start.TotalSeconds < (lastChapter.TotalSeconds / 2) ? MediaSectionType.Opening : MediaSectionType.Ending;
+                    }
+                }
+
+                segments.Add(new MediaSegment(type, start, end));
+            }
+
+            return segments;
+        }
+        catch (Exception e)
+        {
+            var logger = Container.Services.GetService<ILoggerFactory>()?.CreateLogger("MediaHelper");
+            logger?.LogError(e, "Failed to get chapters from media.");
+            return [];
+        }
     }
     
     public static TimeSpan GetDuration(Uri url, IDictionary<string, string>? headers = null)
     {
-        var executable = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
-                                   .FirstOrDefault(x => x.Contains("ffprobe"))!;
-
-        if (string.IsNullOrEmpty(executable))
+        try
         {
+            var executable = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!)
+                                      .FirstOrDefault(x => x.Contains("ffprobe"))!;
+
+            if (string.IsNullOrEmpty(executable))
+            {
+                return TimeSpan.Zero;
+            }
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = executable,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            if (headers is { Count: > 0 })
+            {
+                startInfo.ArgumentList.Add("-headers");
+                startInfo.ArgumentList.Add(string.Join("\r\n", headers.Select(x => $"{x.Key}: {x.Value}")));
+            }
+
+            startInfo.ArgumentList.Add("-i");
+            startInfo.ArgumentList.Add(url.ToString());
+            startInfo.ArgumentList.Add("-show_entries");
+            startInfo.ArgumentList.Add("format=duration");
+            startInfo.ArgumentList.Add("-v");
+            startInfo.ArgumentList.Add("quiet");
+            startInfo.ArgumentList.Add("-of");
+            startInfo.ArgumentList.Add("csv=p=0");
+
+            using var process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
+            var output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            return double.TryParse(output.Trim(), out var seconds) ? TimeSpan.FromSeconds(seconds) : TimeSpan.Zero;
+        }
+        catch (Exception e)
+        {
+            var logger = Container.Services.GetService<ILoggerFactory>()?.CreateLogger("MediaHelper");
+            logger?.LogError(e, "Failed to get duration from media.");
             return TimeSpan.Zero;
         }
-
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = executable,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        if (headers is { Count: > 0 })
-        {
-            startInfo.ArgumentList.Add("-headers");
-            startInfo.ArgumentList.Add(string.Join("\r\n", headers.Select(x => $"{x.Key}: {x.Value}")));
-        }
-
-        startInfo.ArgumentList.Add("-i");
-        startInfo.ArgumentList.Add(url.ToString());
-        startInfo.ArgumentList.Add("-show_entries");
-        startInfo.ArgumentList.Add("format=duration");
-        startInfo.ArgumentList.Add("-v");
-        startInfo.ArgumentList.Add("quiet");
-        startInfo.ArgumentList.Add("-of");
-        startInfo.ArgumentList.Add("csv=p=0");
-
-        using var process = new Process();
-        process.StartInfo = startInfo;
-        process.Start();
-        var output = process.StandardOutput.ReadToEnd();
-        process.WaitForExit();
-
-        return double.TryParse(output.Trim(), out var seconds) ? TimeSpan.FromSeconds(seconds) : TimeSpan.Zero;
     }
 
 	extension(List<MediaSegment> segments)
@@ -171,8 +192,6 @@ public class ChapterTag
 [Serializable]
 public class Chapter
 {
-    [JsonPropertyName("id")] public int Id { get; set; }
-
     [JsonPropertyName("time_base")] public string TimeBase { get; set; } = "";
 
     [JsonPropertyName("start")] public long Start { get; set; }

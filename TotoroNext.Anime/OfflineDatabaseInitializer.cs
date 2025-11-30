@@ -14,14 +14,14 @@ public class OfflineDatabaseInitializer(
 
     public async Task BackgroundInitializeAsync()
     {
-        var latUpdated = localSettingsService.ReadSetting(OfflineDbUpdatedAtKey, default(DateTime));
+        var lastUpdated = localSettingsService.ReadSetting(OfflineDbUpdatedAtKey, default(DateTime));
         var stream = await "https://api.github.com/repos/manami-project/anime-offline-database/releases/latest"
                            .WithHeader(HeaderNames.UserAgent, Http.UserAgent)
                            .GetStreamAsync();
         using var doc = await JsonDocument.ParseAsync(stream);
         var date = doc.RootElement.GetProperty("published_at").GetDateTime();
 
-        if (date > latUpdated)
+        if (date > lastUpdated || !File.Exists(FileHelper.GetPath("anime.db")))
         {
             localSettingsService.SaveSetting(OfflineDbUpdatedAtKey, date);
             var asset = doc.RootElement.GetProperty("assets")

@@ -26,7 +26,7 @@ public partial class AnimeExtensionsViewModel(
         nameof(ProviderId),
         nameof(OpeningSkipMethod),
         nameof(EndingSkipMethod),
-        nameof(SearchTerm),
+        nameof(SelectedProviderResult),
         nameof(ProviderOptions)
     ];
 
@@ -47,15 +47,17 @@ public partial class AnimeExtensionsViewModel(
     [ObservableProperty] public partial bool HasProvider { get; set; }
 
     [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
+  
     [ObservableProperty] public partial ObservableCollection<string> ProviderResults { get; set; } = [];
-    [ObservableProperty] public partial bool IsDropDownOpen { get; set; }
+    
+    [ObservableProperty] public partial string? SelectedProviderResult { get; set; }
 
     public List<Descriptor> Providers { get; } = [Descriptor.None, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
     {
         var overrides = animeExtensionService.GetExtension(parameters.Anime.Id);
-        SearchTerm = overrides?.SearchTerm;
+        SearchTerm = overrides?.SearchTerm ?? parameters.Anime.Title;
         IsNsfw = overrides?.IsNsfw ?? false;
         _suppressProviderChange = true;
         ProviderId = overrides?.Provider;
@@ -72,7 +74,7 @@ public partial class AnimeExtensionsViewModel(
         {
             Subscribe(ProviderOptions);
         }
-
+        
         this.WhenAnyPropertyChanged(ObservedProperties)
             .Where(_ => !_isDeleting)
             .Select(_ => new AnimeOverrides
@@ -82,6 +84,7 @@ public partial class AnimeExtensionsViewModel(
                 OpeningSkipMethod = OpeningSkipMethod,
                 EndingSkipMethod = EndingSkipMethod,
                 SearchTerm = SearchTerm,
+                SelectedProviderResult = SelectedProviderResult,
                 AnimeProviderOptions = ProviderOptions
             })
             .Subscribe(@override => animeExtensionService.CreateOrUpdateExtension(parameters.Anime.Id, @override));
@@ -119,8 +122,8 @@ public partial class AnimeExtensionsViewModel(
             .Switch()
             .Subscribe(results =>
             {
-                IsDropDownOpen = false;
                 ProviderResults = new ObservableCollection<string>(results.Select(x => x.Title));
+                SelectedProviderResult = ProviderResults.FirstOrDefault(x => x.Equals(overrides?.SelectedProviderResult, StringComparison.OrdinalIgnoreCase));
             });
 
         _suppressProviderChange = false;

@@ -46,9 +46,9 @@ public class AnimeExtensionService : IAnimeExtensionService
     {
         var extension = _extensions.GetValueOrDefault(anime.Id);
 
-        return string.IsNullOrEmpty(extension?.SearchTerm)
+        return string.IsNullOrEmpty(extension?.SelectedProviderResult)
             ? anime.Title
-            : extension.SearchTerm;
+            : extension.SelectedProviderResult;
     }
 
     public IAnimeProvider GetProvider(long id)
@@ -115,15 +115,5 @@ public class AnimeExtensionService : IAnimeExtensionService
     {
         _extensions[id] = overrides;
         File.WriteAllText(_file, JsonSerializer.Serialize(_extensions));
-    }
-
-    public void Revert(long id)
-    {
-        if (!_extensions.TryGetValue(id, out var @override))
-        {
-            return;
-        }
-
-        @override.Revert();
     }
 }

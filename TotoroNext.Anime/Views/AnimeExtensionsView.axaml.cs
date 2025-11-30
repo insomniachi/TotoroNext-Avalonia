@@ -10,12 +10,4 @@ public partial class AnimeExtensionsView : UserControl
     {
         InitializeComponent();
     }
-
-    private void AutoCompleteBox_OnDropDownClosing(object? sender, CancelEventArgs e)
-    {
-        if (DataContext is not AnimeExtensionsViewModel vm)
-        {
-            return;
-        }
-    }
 }
