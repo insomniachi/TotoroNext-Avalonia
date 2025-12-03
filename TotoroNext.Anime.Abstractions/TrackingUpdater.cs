@@ -12,6 +12,8 @@ public sealed class TrackingUpdater(
     IMessenger messenger,
     ILogger<TrackingUpdater> logger) : IRecipient<PlaybackState>, ITrackingUpdater
 {
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
+    
     public void Receive(PlaybackState message)
     {
         _ = ReceiveInternal(message);
@@ -81,46 +83,59 @@ public sealed class TrackingUpdater(
 
     private async Task ReceiveInternal(PlaybackState message)
     {
-        if (message.Duration == TimeSpan.Zero)
+        await _semaphore.WaitAsync();
+
+        try
         {
-            return;
+            if (message.Duration == TimeSpan.Zero)
+            {
+                return;
+            }
+
+            if (message.Episode.Number < (message.Anime.Tracking?.WatchedEpisodes ?? 0))
+            {
+                return;
+            }
+
+            if (IsNotCompleted(message))
+            {
+                return;
+            }
+
+            if (message.Episode.IsCompleted)
+            {
+                return;
+            }
+
+            message.Anime.Tracking ??= new Tracking
+            {
+                Status = ListItemStatus.Watching,
+                StartDate = DateTime.Now
+            };
+
+            message.Episode.IsCompleted = true;
+            var tracking = message.Anime.Tracking;
+
+            tracking.WatchedEpisodes = (int)message.Episode.Number;
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            tracking.Status = message.Anime.TotalEpisodes == message.Episode.Number ? ListItemStatus.Completed : ListItemStatus.Watching;
+
+            await UpdateTracking(message.Anime, tracking);
+
+            messenger.Send(new TrackingUpdated
+            {
+                Anime = message.Anime,
+                Episode = message.Episode
+            });
         }
-
-        if (message.Episode.Number < (message.Anime.Tracking?.WatchedEpisodes ?? 0))
+        catch (Exception e)
         {
-            return;
+            logger.LogError(e, "Failed to update tracking from playback state");
         }
-
-        if (IsNotCompleted(message))
+        finally
         {
-            return;
+            _semaphore.Release();
         }
-
-        if (message.Episode.IsCompleted)
-        {
-            return;
-        }
-
-        message.Anime.Tracking ??= new Tracking
-        {
-            Status = ListItemStatus.Watching,
-            StartDate = DateTime.Now
-        };
-
-        message.Episode.IsCompleted = true;
-        var tracking = message.Anime.Tracking;
-
-        tracking.WatchedEpisodes = (int)message.Episode.Number;
-        // ReSharper disable once CompareOfFloatsByEqualityOperator
-        tracking.Status = message.Anime.TotalEpisodes == message.Episode.Number ? ListItemStatus.Completed : ListItemStatus.Watching;
-
-        await UpdateTracking(message.Anime, tracking);
-
-        messenger.Send(new TrackingUpdated
-        {
-            Anime = message.Anime,
-            Episode = message.Episode
-        });
     }
 
     private static bool IsNotCompleted(PlaybackState message)

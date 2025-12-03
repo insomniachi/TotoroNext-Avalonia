@@ -267,6 +267,8 @@ public sealed partial class WatchViewModel(
             {
                 messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
                 CurrentSegment = null;
+                _currentPosition = TimeSpan.Zero;
+                _duration = TimeSpan.Zero;
             })
             .Where(_ => SelectedEpisode is { IsCompleted: true } && Episodes is not null)
             .ObserveOn(RxApp.MainThreadScheduler)
