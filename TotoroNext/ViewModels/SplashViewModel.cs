@@ -221,7 +221,6 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
     private void UpdateStatus(string? primary, string? secondary)
     {
-        Log.Logger.Debug("{primary} : {secondary}", primary, secondary);
         Dispatcher.UIThread.Invoke(() =>
         {
             if (primary is not null)

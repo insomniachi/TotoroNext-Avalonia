@@ -1,7 +1,6 @@
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
@@ -45,6 +44,10 @@ public sealed partial class AnimeDetailsViewModel(
             return;
         }
 
+        this.WhenAnyValue(x => x.Anime.Tracking)
+            .WhereNotNull()
+            .Subscribe(_ => { OnPropertyChanged(nameof(IsTracked)); });
+
         this.WhenAnyValue(x => x.Anime)
             .WhereNotNull()
             .Subscribe(_ =>
@@ -52,7 +55,6 @@ public sealed partial class AnimeDetailsViewModel(
                 OnPropertyChanged(nameof(HasRelated));
                 OnPropertyChanged(nameof(HasRecommended));
                 OnPropertyChanged(nameof(HasTrailers));
-                OnPropertyChanged(nameof(IsTracked));
             });
 
         if (await service.GetAnimeAsync(Anime.Id) is { } model)
