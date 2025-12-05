@@ -17,7 +17,7 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
         else
         {
             var fileInfo = new FileInfo(_path);
-            if ((DateTime.Now - fileInfo.CreationTime) > TimeSpan.FromDays(30))
+            if (DateTime.Now - fileInfo.CreationTime > TimeSpan.FromDays(30))
             {
                 await DownloadAndInitialize();
             }
@@ -51,7 +51,7 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
         {
             return;
         }
-        
+
         foreach (var line in File.ReadLines(_path))
         {
             var trimmed = line.Trim();
@@ -107,7 +107,7 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
         {
             MyAnimeList = long.TryParse(ids[0], out var malId) ? malId : 0,
             Kitsu = long.TryParse(ids[1], out var kitsuId) ? kitsuId : 0,
-            Anilist = long.TryParse(ids[2], out var anilistId) ? anilistId : 0,
+            Anilist = long.TryParse(ids[2], out var anilistId) ? anilistId : 0
         };
     }
 
@@ -125,7 +125,7 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
             "?" => int.MaxValue,
             _ => int.Parse(end)
         };
-            
+
         return new EpisodeRange(int.Parse(range[0]), endInt);
     }
 }

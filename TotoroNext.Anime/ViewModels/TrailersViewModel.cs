@@ -10,13 +10,14 @@ using TotoroNext.Module.Abstractions;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public partial class TrailersViewModel(List<TrailerVideo> trailers,
-                                       IFactory<IMediaPlayer, Guid> mediaPlayerFactory) : ObservableObject, IInitializable
+public partial class TrailersViewModel(
+    List<TrailerVideo> trailers,
+    IFactory<IMediaPlayer, Guid> mediaPlayerFactory) : ObservableObject, IInitializable
 {
     private readonly IMediaPlayer? _mediaPlayer = mediaPlayerFactory.CreateDefault();
     public List<TrailerVideo> Trailers { get; } = trailers;
     [ObservableProperty] public partial TrailerVideo? SelectedTrailer { get; set; }
-    
+
     public void Initialize()
     {
         this.WhenAnyValue(x => x.SelectedTrailer)

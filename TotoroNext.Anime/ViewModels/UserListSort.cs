@@ -13,8 +13,8 @@ public sealed partial class UserListSort : ObservableObject
     public UserListSort()
     {
         Comparer = this.WhenAnyValue(x => x.IsAscending, x => x.Field)
-            .Select(x => GetSortComparer(x.Item1, x.Item2))
-            .WhereNotNull();
+                       .Select(x => GetSortComparer(x.Item1, x.Item2))
+                       .WhereNotNull();
     }
 
     [ObservableProperty] public partial bool IsAscending { get; set; } = true;

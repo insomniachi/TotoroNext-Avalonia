@@ -27,14 +27,14 @@ public static class AnimeProviderExtensions
 
             return await Container.Services.GetRequiredService<ISelectionUserInteraction<VideoServer>>().GetValue(servers);
         }
-		
+
         public async Task<List<VideoServer>> GetServers()
         {
             try
             {
                 return await ep.GetServersAsync().ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
@@ -50,7 +50,7 @@ public static class AnimeProviderExtensions
             {
                 return await result.GetEpisodes().ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
@@ -71,7 +71,7 @@ public static class AnimeProviderExtensions
             {
                 return await provider.SearchAsync(term).ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
@@ -87,12 +87,11 @@ public static class AnimeProviderExtensions
             {
                 return await server.Extract().ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
             }
         }
     }
-
 }

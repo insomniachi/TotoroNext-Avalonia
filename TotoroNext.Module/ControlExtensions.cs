@@ -22,7 +22,7 @@ public class ControlExtensions
         TappedCommandProperty.Changed.AddClassHandler<Control>(OnTappedCommandAdded);
         DoubleTappedCommandProperty.Changed.AddClassHandler<Control>(OnDoubleTappedCommandAdded);
     }
-    
+
     private static void OnDoubleTappedCommandAdded(Control sender, AvaloniaPropertyChangedEventArgs args)
     {
         if (args.NewValue is not ICommand)
@@ -90,7 +90,7 @@ public class ControlExtensions
             command.Execute(null);
         }
     }
-    
+
     private static void OnDoubleTapped(object? sender, TappedEventArgs e)
     {
         if (sender is not Control c)

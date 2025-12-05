@@ -17,8 +17,8 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
     private readonly Settings _settings = settings.Value;
     private CompositeDisposable? _disposable;
     private Process? _process;
-    private HttpInterface? _webInterface;
     private string _subtitleFile = "";
+    private HttpInterface? _webInterface;
 
     public IObservable<TimeSpan> DurationChanged => _durationSubject;
     public IObservable<TimeSpan> PositionChanged => _positionSubject;
@@ -82,6 +82,7 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
             {
                 File.Delete(_subtitleFile);
             }
+
             _disposable.Dispose();
             _disposable = [];
         };

@@ -123,6 +123,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
             {
                 return;
             }
+
             try
             {
                 timer.Stop();

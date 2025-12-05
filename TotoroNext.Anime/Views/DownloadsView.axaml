@@ -15,7 +15,7 @@
             <Setter Property="Content" Value="Resume" />
         </Style>
         <Style Selector="TextBlock.cancelled">
-            <Setter Property="TextDecorations" Value="Strikethrough"/>
+            <Setter Property="TextDecorations" Value="Strikethrough" />
         </Style>
     </UserControl.Styles>
     <ScrollViewer>
@@ -24,10 +24,10 @@
                 <DataTemplate>
                     <Border Padding="16" Background="{DynamicResource SemiColorTertiaryLightActive}" CornerRadius="8">
                         <StackPanel Spacing="8">
-                            <TextBlock Text="{Binding FileName}" FontWeight="Bold" FontSize="15" 
-                                       Classes.cancelled="{Binding IsCancelled}"/>
-                            <TextBlock Text="{Binding Link}" FontSize="12" 
-                                       Classes.cancelled="{Binding IsCancelled}"/>
+                            <TextBlock Text="{Binding FileName}" FontWeight="Bold" FontSize="15"
+                                       Classes.cancelled="{Binding IsCancelled}" />
+                            <TextBlock Text="{Binding Link}" FontSize="12"
+                                       Classes.cancelled="{Binding IsCancelled}" />
                             <ProgressBar Value="{Binding Progress}"
                                          IsIndeterminate="{Binding !DownloadStarted}"
                                          IsVisible="{Binding !IsCompleted}">

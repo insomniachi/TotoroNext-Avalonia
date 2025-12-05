@@ -83,14 +83,14 @@ public partial class AnidleSolverViewModel(IFactory<IMetadataService, Guid> meta
     {
         Answer = anime.Title;
     }
-    
+
     private async Task<Unit> TryAnswer(string answer)
     {
         if (Date is null || string.IsNullOrEmpty(answer))
         {
             return Unit.Default;
         }
-        
+
         var response = await "https://cms.aniguessr.com/wp-json/aniguessr/v1/animdle"
                              .AppendQueryParam("answer", answer)
                              .AppendQueryParam("round", Round)
@@ -107,6 +107,7 @@ public partial class AnidleSolverViewModel(IFactory<IMetadataService, Guid> meta
             {
                 AutomaticGuess();
             }
+
             return Unit.Default;
         }
 
@@ -159,7 +160,6 @@ public partial class AnidleSolverViewModel(IFactory<IMetadataService, Guid> meta
             {
                 ErrorCount++;
             }
-            
         } while (nextAnswer.Title == Answer);
 
         _ = Task.Run(() => AttemptGuess(nextAnswer));

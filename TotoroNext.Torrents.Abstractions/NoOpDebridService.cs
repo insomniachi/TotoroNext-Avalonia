@@ -2,5 +2,8 @@
 
 public class NoOpDebridService : IDebrid
 {
-    public Task<Uri?> TryGetDirectDownloadLink(Uri magnet) => Task.FromResult<Uri?>(magnet);
+    public Task<Uri?> TryGetDirectDownloadLink(Uri magnet)
+    {
+        return Task.FromResult<Uri?>(magnet);
+    }
 }

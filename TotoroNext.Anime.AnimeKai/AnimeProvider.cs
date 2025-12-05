@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Flurl.Http;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -10,8 +9,8 @@ namespace TotoroNext.Anime.AnimeKai;
 
 public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
-    private readonly MegaUpExtractor _extractor = new MegaUpExtractor();
-    
+    private readonly MegaUpExtractor _extractor = new();
+
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
         using var client = CreateClient();
@@ -51,7 +50,7 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
         foreach (var category in doc.QuerySelectorAll(".server-items") ?? [])
         {
             var type = category.GetAttributeValue("data-id", string.Empty);
-            
+
             foreach (var server in category.QuerySelectorAll(".server"))
             {
                 var id = server.GetAttributeValue("data-lid", string.Empty);
@@ -109,12 +108,12 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
                                       .AppendQueryParam("id", id)
                                       .AppendQueryParam("_", enc.Result)
                                       .GetJsonAsync<ResultResponse<string>>();
-        
+
         var response = await "https://enc-dec.app/api/dec-kai"
-              .PostJsonAsync(new
-              {
-                  text = encodedLink.Result
-              }).ReceiveJson<ResultResponse<IFrameResponse>>();
+                             .PostJsonAsync(new
+                             {
+                                 text = encodedLink.Result
+                             }).ReceiveJson<ResultResponse<IFrameResponse>>();
 
         return response.Result;
     }
@@ -128,14 +127,14 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
     {
         return $"https://enc-dec.app/api/enc-kai?text={encoded}".GetJsonAsync<ResultResponse<string>>();
     }
-    
+
     private static Abstractions.Models.SkipData? ConvertSkipData(SkipData? skipData)
     {
         if (skipData is null)
         {
             return null;
         }
-        
+
         return new Abstractions.Models.SkipData
         {
             Opening = skipData.Intro.Length == 2

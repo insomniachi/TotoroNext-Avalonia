@@ -159,7 +159,7 @@ internal static class ShazamApi
         {
             return url;
         }
-        
+
         var qsIndex = url.IndexOf('?');
         if (qsIndex > -1)
         {

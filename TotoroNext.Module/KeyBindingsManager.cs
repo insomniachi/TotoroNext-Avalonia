@@ -22,11 +22,11 @@ public class KeyBindingsManager(IMessenger messenger) : IKeyBindingsManager
     {
         messenger.Register<KeyGesture>(this, (_, e) =>
         {
-            if(_providers.SelectMany(x => x.GetKeyBindings()).LastOrDefault(x => x.Gesture.Equals(e)) is not { } binding)
+            if (_providers.SelectMany(x => x.GetKeyBindings()).LastOrDefault(x => x.Gesture.Equals(e)) is not { } binding)
             {
                 return;
             }
-            
+
             binding.Command.Execute(binding.CommandParameter);
         });
 

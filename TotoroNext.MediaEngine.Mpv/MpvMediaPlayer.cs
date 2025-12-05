@@ -14,8 +14,8 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
     private readonly Subject<TimeSpan> _durationSubject = new();
     private readonly Subject<Unit> _playbackStopped = new();
     private readonly Subject<TimeSpan> _positionSubject = new();
-    private readonly Subject<MediaPlayerState> _stateSubject = new();
     private readonly Settings _settings = settings.Value;
+    private readonly Subject<MediaPlayerState> _stateSubject = new();
     private NamedPipeClientStream? _ipcStream;
     private Process? _process;
 
@@ -44,7 +44,7 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                 stream,
                 $"--title={media.Metadata.Title}",
                 $"--force-media-title={media.Metadata.Title}",
-                $"--input-ipc-server={pipePath}",
+                $"--input-ipc-server={pipePath}"
             }
         };
 
@@ -80,7 +80,7 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
             StartInfo = startInfo,
             EnableRaisingEvents = true
         };
-        
+
         _process.Exited += (_, _) =>
         {
             _playbackStopped.OnNext(Unit.Default);
@@ -217,14 +217,14 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                 }
                 case "file-loaded":
                     _stateSubject.OnNext(MediaPlayerState.Opening);
-                    
+
                     Task[] commands =
                     [
                         SendIpcCommand(pipe, new { command = new object[] { "observe_property", 1, "duration" } }),
                         SendIpcCommand(pipe, new { command = new object[] { "observe_property", 2, "time-pos" } }),
                         SendIpcCommand(pipe, new { command = new object[] { "observe_property", 3, "pause" } })
                     ];
-                    
+
                     await Task.WhenAll(commands);
                     break;
             }

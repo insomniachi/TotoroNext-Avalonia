@@ -59,7 +59,7 @@
                                        ToolTip.Tip="{Binding Value.Title}"
                                        VerticalAlignment="Center"
                                        TextTrimming="CharacterEllipsis"
-                                       Margin="12 0"/>
+                                       Margin="12 0" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -70,7 +70,7 @@
                                     Header="D"
                                     Binding="{Binding Value.Downloads}" />
                 <DataGridTextColumn Header="Size"
-                                    Binding="{Binding Value.Size}"/>
+                                    Binding="{Binding Value.Size}" />
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="2"
@@ -80,8 +80,8 @@
                     VerticalAlignment="Center"
                     Spacing="8">
             <Button Content="Download"
-                    Command="{Binding DownloadCommand}" 
-                    IsVisible="False"/>
+                    Command="{Binding DownloadCommand}"
+                    IsVisible="False" />
             <Button Content="Stream"
                     Command="{Binding StreamCommand}" />
         </StackPanel>

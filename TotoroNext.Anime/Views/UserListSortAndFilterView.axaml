@@ -16,11 +16,11 @@
     <u:Form Margin="0">
         <u:FormGroup Header="Filters">
             <TextBox u:FormItem.Label="Title"
-                     Text="{Binding Filter.Term, UpdateSourceTrigger=PropertyChanged}" 
-                     HorizontalAlignment="Stretch"/>
-            <TextBox u:FormItem.Label="Year" 
-                     Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}" 
-                     HorizontalAlignment="Stretch"/>
+                     Text="{Binding Filter.Term, UpdateSourceTrigger=PropertyChanged}"
+                     HorizontalAlignment="Stretch" />
+            <TextBox u:FormItem.Label="Year"
+                     Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}"
+                     HorizontalAlignment="Stretch" />
             <u:FormItem Label="Format">
                 <u:EnumSelector EnumType="aa:AnimeMediaFormat"
                                 Value="{Binding Filter.Format, Mode=TwoWay}"

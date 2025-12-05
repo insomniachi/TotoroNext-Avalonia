@@ -36,11 +36,11 @@ public sealed partial class AnimeSongsViewModel(
     public async Task InitializeAsync()
     {
         EmbeddedVlcMediaPlayer.StateChanged
-                           .ObserveOn(RxApp.MainThreadScheduler)
-                           .Subscribe(state => IsPlayingOrPaused = state is MediaPlayerState.Playing or MediaPlayerState.Paused);
+                              .ObserveOn(RxApp.MainThreadScheduler)
+                              .Subscribe(state => IsPlayingOrPaused = state is MediaPlayerState.Playing or MediaPlayerState.Paused);
 
         SubscriptionsForRpc(EmbeddedVlcMediaPlayer);
-        
+
         IsLoading = true;
 
         Themes = await animeThemes.FindById(@params.Anime.Id, @params.Anime.ServiceName ?? nameof(AnimeId.MyAnimeList));
@@ -82,7 +82,7 @@ public sealed partial class AnimeSongsViewModel(
         {
             return;
         }
-        
+
         SubscriptionsForRpc(player);
         player.Play(new Media(uri, new MediaMetadata(theme.DisplayName)), TimeSpan.Zero);
     }

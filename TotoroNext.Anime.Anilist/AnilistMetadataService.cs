@@ -26,10 +26,10 @@ internal class AnilistMetadataService(
         var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
                                                           .WithCharacters(new CharacterConnectionQueryBuilder()
                                                                               .WithNodes(new CharacterQueryBuilder()
-                                                                                             .WithName(new CharacterNameQueryBuilder()
-                                                                                                 .WithFull())
-                                                                                             .WithImage(new CharacterImageQueryBuilder()
-                                                                                                 .WithLarge()))), (int)animeId,
+                                                                                         .WithName(new CharacterNameQueryBuilder()
+                                                                                                       .WithFull())
+                                                                                         .WithImage(new CharacterImageQueryBuilder()
+                                                                                                        .WithLarge()))), (int)animeId,
                                                       type: MediaType.Anime).Build();
 
         var response = await client.SendQueryAsync<Query>(new GraphQLRequest
@@ -42,7 +42,7 @@ internal class AnilistMetadataService(
             return [];
         }
 
-        return response.Data.Media.Characters.Nodes.Select(x => new CharacterModel()
+        return response.Data.Media.Characters.Nodes.Select(x => new CharacterModel
         {
             Name = x.Name.Full,
             Image = TryConvertUri(x.Image.Large)
@@ -146,7 +146,7 @@ internal class AnilistMetadataService(
         var page = 1;
         var result = new List<ScheduledAnime>();
         try
-        { 
+        {
             bool hasNextPage;
             do
             {
@@ -188,7 +188,7 @@ internal class AnilistMetadataService(
 
                     result.Add(new ScheduledAnime(anime)
                     {
-                        Start = startTime,
+                        Start = startTime
                     });
                 }
 
@@ -278,8 +278,8 @@ internal class AnilistMetadataService(
                .WithBannerImage()
                .WithStudios(new StudioConnectionQueryBuilder()
                                 .WithNodes(new StudioQueryBuilder()
-                                               .WithName()
-                                               .WithIsAnimationStudio()))
+                                           .WithName()
+                                           .WithIsAnimationStudio()))
                .WithRelations(new MediaConnectionQueryBuilder()
                                   .WithNodes(MediaQueryBuilderSimple()))
                .WithRecommendations(new RecommendationConnectionQueryBuilder()
@@ -321,7 +321,7 @@ internal class AnilistMetadataService(
                                    .WithProgress())
                .WithStatus();
     }
-    
+
     private static Uri? TryConvertUri(string? url)
     {
         return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;

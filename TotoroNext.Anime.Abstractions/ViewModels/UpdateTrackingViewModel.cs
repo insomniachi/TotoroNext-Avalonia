@@ -24,6 +24,8 @@ public partial class UpdateTrackingViewModel(
     [ObservableProperty]
     public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
+    public Action? Close { get; set; }
+
     public async Task Handle(DialogResult result)
     {
         if (result is not DialogResult.OK)
@@ -47,8 +49,6 @@ public partial class UpdateTrackingViewModel(
 
         await trackingUpdater.UpdateTracking(Anime, tracking);
     }
-
-    public Action? Close { get; set; }
 
     private static bool AreEqual(Tracking? left, Tracking? right)
     {

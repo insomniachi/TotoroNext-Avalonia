@@ -11,13 +11,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Downloader" />
-      <PackageReference Include="Microsoft.Data.Sqlite" />
-      <PackageReference Include="ZstdSharp.Port" />
+        <PackageReference Include="Downloader"/>
+        <PackageReference Include="Microsoft.Data.Sqlite"/>
+        <PackageReference Include="ZstdSharp.Port"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\nothingtoseehere_transparent_small.png" />
+        <AvaloniaResource Include="Assets\nothingtoseehere_transparent_small.png"/>
     </ItemGroup>
 
 </Project>

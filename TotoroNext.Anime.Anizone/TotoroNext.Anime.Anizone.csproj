@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\anizone.jpg" />
+        <AvaloniaResource Include="Assets\anizone.jpg"/>
     </ItemGroup>
 
 </Project>

@@ -14,10 +14,11 @@ public class Module : IModule<Settings>
         Id = new Guid("3b61e01b-dd7c-4492-a564-4ee031959097"),
         Name = "Anime Paradise",
         HeroImage = ResourceHelper.GetResource("animeparadise.jpg"),
-        Description = "Watch anime, always up to date and in high quality, with multiple sub direct from Japan The God of High School, Attack on Titan and more!",
+        Description =
+            "Watch anime, always up to date and in high quality, with multiple sub direct from Japan The God of High School, Attack on Titan and more!",
         Components = [ComponentTypes.AnimeProvider]
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);

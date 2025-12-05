@@ -42,7 +42,7 @@ public class ListStatusBehavior : Behavior<AnimeCard>
         return tracking.Status switch
         {
             ListItemStatus.Completed => PackIconMaterialDesignKind.Check,
-            ListItemStatus.Watching => PackIconPhosphorIconsKind.HourglassHighFill, 
+            ListItemStatus.Watching => PackIconPhosphorIconsKind.HourglassHighFill,
             ListItemStatus.OnHold => PackIconCodiconsKind.DebugPause,
             ListItemStatus.Dropped => PackIconMemoryIconsKind.MemoryTrash,
             ListItemStatus.PlanToWatch => PackIconPhosphorIconsKind.HourglassHighFill,

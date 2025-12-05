@@ -8,7 +8,7 @@ public class AnimeId
     public long Kitsu { get; set; }
     public long Simkl { get; set; }
     public string NotifyMoe { get; set; } = "";
-    
+
     public long? GetIdForService(string serviceType)
     {
         if (GetType().GetProperties().FirstOrDefault(x => x.Name.Equals(serviceType, StringComparison.OrdinalIgnoreCase)) is not { } property)

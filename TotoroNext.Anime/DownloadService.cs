@@ -72,7 +72,7 @@ public class DownloadService(
     {
         var directory = message.SaveFolder ?? FileHelper.GetPath("Downloads");
         var absoluteEpNumber = episode.Number + message.EpisodeOffset;
-        
+
         var fileName = string.IsNullOrEmpty(message.FilenameFormat)
             ? $"{message.Anime.Title} - Episode - {absoluteEpNumber}.{server.ContentType}"
             : $"{message.FilenameFormat.Replace("{ep}", absoluteEpNumber.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0'))}.{server.ContentType}";

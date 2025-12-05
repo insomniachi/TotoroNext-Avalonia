@@ -104,12 +104,12 @@ public class AnimeExtensionService : IAnimeExtensionService
             case 1:
                 return results[0];
         }
-        
+
         if (results.FirstOrDefault(x => x.ExternalId.GetIdForService(anime.ServiceName ?? "") == anime.Id) is { } exactMatch)
         {
             return exactMatch;
         }
-        
+
         if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
         {
             return result;

@@ -23,9 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog.Extensions.Logging" />
-        <PackageReference Include="Serilog.Sinks.File" />
-        <PackageReference Include="Velopack" />
+        <PackageReference Include="Serilog.Extensions.Logging"/>
+        <PackageReference Include="Serilog.Sinks.File"/>
+        <PackageReference Include="Velopack"/>
         <PackageReference Include="VideoLAN.LibVLC.Mac" Condition="$([MSBuild]::IsOsPlatform('OSX'))"/>
         <PackageReference Include="VideoLAN.LibVLC.Windows" Condition="$([MSBuild]::IsOsPlatform('Windows'))"/>
     </ItemGroup>
@@ -47,8 +47,9 @@
         <ProjectReference Include="..\TotoroNext.SongRecognition\TotoroNext.SongRecognition.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.MyAnimeList\TotoroNext.Anime.MyAnimeList.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.Local\TotoroNext.Anime.Local.csproj"/>
         <ProjectReference Include="..\TotoroNext.Torrents.Nyaa\TotoroNext.Torrents.Nyaa.csproj"/>
-        
+
         <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj"/>
         <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
         <ProjectReference Include="..\TotoroNext.Torrents.Abstractions\TotoroNext.Torrents.Abstractions.csproj"/>
@@ -57,15 +58,15 @@
     <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(DefineConstants)', '(^|;)REFER_PLUGINS(;|$)'))">
         <ProjectReference Include="..\TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.AnimePahe\TotoroNext.Anime.AnimePahe.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Anime.AnimeParadise\TotoroNext.Anime.AnimeParadise.csproj" />
-        <ProjectReference Include="..\TotoroNext.Anime.AnimeOnsen\TotoroNext.Anime.AnimeOnsen.csproj" />
-        <ProjectReference Include="..\TotoroNext.Anime.Anizone\TotoroNext.Anime.Anizone.csproj" />
-        <ProjectReference Include="..\TotoroNext.Anime.SubsPlease\TotoroNext.Anime.SubsPlease.csproj" />
-        <ProjectReference Include="..\TotoroNext.Anime.Jellyfin\TotoroNext.Anime.Jellyfin.csproj" />
-        <ProjectReference Include="..\TotoroNext.Anime.AnimeGG\TotoroNext.Anime.AnimeGG.csproj" />
-        <ProjectReference Include="..\TotoroNext.Anime.AnimeKai\TotoroNext.Anime.AnimeKai.csproj" />
-        <ProjectReference Include="..\TotoroNext.Anime.TokyoInsider\TotoroNext.Anime.TokyoInsider.csproj" />
-        
+        <ProjectReference Include="..\TotoroNext.Anime.AnimeParadise\TotoroNext.Anime.AnimeParadise.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.AnimeOnsen\TotoroNext.Anime.AnimeOnsen.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.Anizone\TotoroNext.Anime.Anizone.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.SubsPlease\TotoroNext.Anime.SubsPlease.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.Jellyfin\TotoroNext.Anime.Jellyfin.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.AnimeGG\TotoroNext.Anime.AnimeGG.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.AnimeKai\TotoroNext.Anime.AnimeKai.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.TokyoInsider\TotoroNext.Anime.TokyoInsider.csproj"/>
+
         <ProjectReference Include="..\TotoroNext.Anime.Aniskip\TotoroNext.Anime.Aniskip.csproj"/>
         <ProjectReference Include="..\TotoroNext.Discord\TotoroNext.Discord.csproj"/>
 

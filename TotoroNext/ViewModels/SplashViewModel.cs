@@ -106,6 +106,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                           [
                               new Anime.Module(),
                               new SongRecognition.Module(),
+                              new Anime.Local.Module(),
                               new Anime.Anilist.Module(),
                               new Anime.MyAnimeList.Module(),
                               new Torrents.Nyaa.Module(),

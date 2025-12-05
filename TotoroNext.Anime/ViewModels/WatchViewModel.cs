@@ -34,8 +34,8 @@ public sealed partial class WatchViewModel(
 {
     private TimeSpan _currentPosition;
     private TimeSpan _duration;
-    private Media? _media;
     private bool _isCancelled;
+    private Media? _media;
 
     public IMediaPlayer? MediaPlayer { get; } = mediaPlayerFactory.CreateDefault();
 
@@ -317,7 +317,7 @@ public sealed partial class WatchViewModel(
         var segments = await GetMediaSegments(source, SelectedEpisode);
         var metadata = new MediaMetadata(title, source.Headers, segments, source.Subtitle);
         _media = new Media(source.Url, metadata);
-        
+
         if (_isCancelled)
         {
             return;

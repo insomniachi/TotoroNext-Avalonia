@@ -65,14 +65,14 @@
                     </fac:SettingsExpander.IconSource>
                     <fac:SettingsExpanderItem Content="Query" Description="The term used to search for this anime">
                         <fac:SettingsExpanderItem.Footer>
-                            <TextBox Text="{Binding SearchTerm}"/>
+                            <TextBox Text="{Binding SearchTerm}" />
                         </fac:SettingsExpanderItem.Footer>
                     </fac:SettingsExpanderItem>
                     <fac:SettingsExpanderItem Content="Result" Description="Anime entry from the provider">
                         <fac:SettingsExpanderItem.Footer>
                             <ComboBox ItemsSource="{Binding ProviderResults}"
                                       SelectedItem="{Binding SelectedProviderResult, Mode=TwoWay}"
-                                      HorizontalAlignment="Stretch"/>
+                                      HorizontalAlignment="Stretch" />
                         </fac:SettingsExpanderItem.Footer>
                     </fac:SettingsExpanderItem>
                 </fac:SettingsExpander>

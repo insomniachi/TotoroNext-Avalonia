@@ -20,7 +20,7 @@
               RowSpacing="12">
             <Grid.Transitions>
                 <Transitions>
-                    <DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.5" />
                 </Transitions>
             </Grid.Transitions>
 
@@ -73,17 +73,17 @@
                         </Viewbox>
                     </Button>
                 </u:ToolBar>
-                
+
                 <u:ToolBar Grid.Column="2" VerticalAlignment="Center">
                     <Button Command="{Binding ToggleFullscreenCommand}">
                         <Viewbox Height="20" Width="20">
                             <iconPacks:PackIconControl
                                 Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Fullscreen}"
-                                x:Name="FullScreenIcon"/>
+                                x:Name="FullScreenIcon" />
                         </Viewbox>
                     </Button>
                 </u:ToolBar>
-                
+
             </Grid>
         </Grid>
     </Grid>

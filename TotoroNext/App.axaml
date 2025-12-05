@@ -24,7 +24,7 @@
         <semi:SemiPopupAnimations />
         <semi:SemiTheme Locale="en-US" />
         <u-Semi:SemiTheme Locale="en-US" />
-        <semi:DataGridSemiTheme/>
+        <semi:DataGridSemiTheme />
         <labs:ControlThemes />
         <StyleInclude Source="avares://IconPacks.Avalonia/Icons.axaml" />
         <Style Selector="u|DefaultDrawerControl">

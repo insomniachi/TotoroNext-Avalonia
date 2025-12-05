@@ -13,7 +13,7 @@ public class Factory<TService, TId>(
     {
         if (id is null)
         {
-            ArgumentNullException.ThrowIfNull(id, nameof(id));
+            ArgumentNullException.ThrowIfNull(id);
         }
 
         using var scope = serviceScopeFactory.CreateScope();
@@ -24,7 +24,8 @@ public class Factory<TService, TId>(
     {
         using var scope = serviceScopeFactory.CreateScope();
         var key = localSettingsService.ReadSetting<TId>(defaultKey);
-        return scope.ServiceProvider.GetKeyedService<TService>(key) ?? scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).FirstOrDefault();
+        return scope.ServiceProvider.GetKeyedService<TService>(key) ??
+               scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).FirstOrDefault();
     }
 
     public IEnumerable<TService> CreateAll()

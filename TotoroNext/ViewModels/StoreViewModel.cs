@@ -14,9 +14,9 @@ namespace TotoroNext.ViewModels;
 public partial class StoreViewModel : ObservableObject, IAsyncInitializable
 {
     private readonly IDialogService _dialogService;
+    private readonly ReadOnlyObservableCollection<ModuleManifest> _modules;
     private readonly SourceCache<ModuleManifest, string> _modulesCache = new(x => x.Id);
     private readonly IModuleStore _moduleStore;
-    private readonly ReadOnlyObservableCollection<ModuleManifest> _modules;
 
     public StoreViewModel(IModuleStore moduleStore,
                           IDialogService dialogService)
@@ -45,7 +45,7 @@ public partial class StoreViewModel : ObservableObject, IAsyncInitializable
         ComponentTypes.Debrid,
         ComponentTypes.MediaEngine,
         ComponentTypes.MediaSegments,
-        ComponentTypes.Miscellaneous,
+        ComponentTypes.Miscellaneous
     ];
 
     [ObservableProperty] public partial string SelectedFilterTag { get; set; } = "All";

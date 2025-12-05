@@ -17,7 +17,7 @@ public class Module : IModule
         HeroImage = ResourceHelper.GetResource("tokyoinsider.jpg"),
         SettingViewModel = typeof(SettingsViewModel)
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);

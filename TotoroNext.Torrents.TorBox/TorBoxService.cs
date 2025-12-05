@@ -9,16 +9,6 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
 {
     private readonly FlurlClient _client = new(httpClientFactory.CreateClient("TorBox"));
 
-    public async Task DeleteAllTorrents()
-    {
-        await _client.Request("torrents", "controltorrent")
-                     .PostJsonAsync(new
-                     {
-                         all = true,
-                         operation = "delete"
-                     });
-    }
-
     public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet)
     {
         try
@@ -52,6 +42,16 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
             Console.WriteLine(e);
             return null;
         }
+    }
+
+    public async Task DeleteAllTorrents()
+    {
+        await _client.Request("torrents", "controltorrent")
+                     .PostJsonAsync(new
+                     {
+                         all = true,
+                         operation = "delete"
+                     });
     }
 
     [Serializable]

@@ -149,7 +149,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
             yield return new SearchResult(this, id, title, image)
             {
-                ExternalId = new AnimeId()
+                ExternalId = new AnimeId
                 {
                     MyAnimeList = malId,
                     Anilist = anilistId

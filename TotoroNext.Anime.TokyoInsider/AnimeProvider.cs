@@ -68,7 +68,7 @@ public class AnimeProvider : IAnimeProvider
             {
                 continue;
             }
-            
+
             yield return new VideoServer(link.InnerHtml, new Uri(link.GetAttributeValue("href", "")));
         }
     }

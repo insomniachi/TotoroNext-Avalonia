@@ -31,7 +31,7 @@ public class MegaUpExtractor : IVideoExtractor
                                    agent = Http.UserAgent
                                }).ReceiveJson<ResultResponse<MegaUpResult>>();
 
-        if (megaResult.Result is not { Sources.Capacity: > 0})
+        if (megaResult.Result is not { Sources.Capacity: > 0 })
         {
             yield break;
         }
@@ -44,7 +44,7 @@ public class MegaUpExtractor : IVideoExtractor
                 Url = new Uri(sources.File),
                 Headers =
                 {
-                    {HeaderNames.Referer, url.ToString()}
+                    { HeaderNames.Referer, url.ToString() }
                 },
                 Subtitle = subtitles
             };

@@ -40,11 +40,12 @@ more complicated than the original Totoro project. but I believe it's worth it i
   and browser to the location of your media player (MPV or VLC) <br/>
   <img src="Screenshots/configure_media_engine.png" width="400"/> <br/>
 - Go to Settings and set up your defaults <br/>
-    <img src="Screenshots/settings.png" width="400"/> <br/>
+  <img src="Screenshots/settings.png" width="400"/> <br/>
 - Hovering over an anime in your list should show additional options. <br/>
   <img src="Screenshots/card.png"/> <br/>
-1 - Manually update tracking <br/>
-2 - Download episodes <br/>
-3 - Mange options specific to that anime like the source to use or auto skip op/ed. if not used default options will be applied <br/>
+  1 - Manually update tracking <br/>
+  2 - Download episodes <br/>
+  3 - Mange options specific to that anime like the source to use or auto skip op/ed. if not used default options will
+  be applied <br/>
 - Now you're all set to start using TotoroNext! <br/>
   

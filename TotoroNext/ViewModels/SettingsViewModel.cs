@@ -55,7 +55,7 @@ public class SettingsModel : ObservableObject
         get;
         set => SetAndSaveProperty(ref field, value);
     }
-    
+
     public Guid SelectedTorrentIndexer
     {
         get;
@@ -123,9 +123,9 @@ public class SettingsModel : ObservableObject
 public partial class SettingsViewModel : ObservableObject, IInitializable, IInitializer
 {
     private readonly IDialogService _dialogService;
+    private readonly ILogger<SettingsViewModel> _logger;
     private readonly IMessenger _messenger;
     private readonly SettingsModel _settings;
-    private readonly ILogger<SettingsViewModel> _logger;
     private readonly UpdateManager _updateManager;
 
     public SettingsViewModel(IEnumerable<Descriptor> modules,
@@ -204,7 +204,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
             {
                 _logger.LogDebug("Update found: {info}", JsonSerializer.Serialize(updateInfo));
             }
-            
+
             var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.TargetFullRelease.Version}?");
 
             if (answer == MessageBoxResult.Yes)

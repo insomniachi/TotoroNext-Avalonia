@@ -47,7 +47,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
         {
             return Unit.Default;
         }
-        
+
         card.Badge.Background = NotUploadedBrush;
         card.BadgeText.Text = diff.ToString();
 

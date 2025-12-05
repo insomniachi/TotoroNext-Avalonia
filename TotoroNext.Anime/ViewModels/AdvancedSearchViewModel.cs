@@ -36,7 +36,7 @@ public partial class AdvancedSearchViewModel(
     [ObservableProperty] public partial List<string> AllGenres { get; set; } = [];
     [ObservableProperty] public partial Descriptor? SelectedService { get; set; }
 
-    public List<Descriptor> MetadataServices { get; } = [..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
+    public List<Descriptor> MetadataServices { get; } = [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
 
     public int CurrentYear { get; } = DateTime.Now.Year;
 
@@ -47,7 +47,7 @@ public partial class AdvancedSearchViewModel(
             await dialogService.Warning("No metadata services found. Please install at least one metadata service module.");
             return;
         }
-        
+
         var defaultServiceId = localSettingsService.ReadSetting<Guid?>("SelectedTrackingService");
         SelectedService = MetadataServices.FirstOrDefault(x => x.Id == defaultServiceId);
 
@@ -65,7 +65,7 @@ public partial class AdvancedSearchViewModel(
                                                             nameof(MaximumScore),
                                                             nameof(MaximumYear))
                                     .Throttle(TimeSpan.FromMilliseconds(500))
-									.Select(_ => Unit.Default);
+                                    .Select(_ => Unit.Default);
 
         var includedGenresChanged = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                                                    h => IncludedGenres.CollectionChanged += h,
@@ -95,7 +95,10 @@ public partial class AdvancedSearchViewModel(
             })
             .SelectMany(_metadataService!.SearchAnimeAsync)
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(list => Anime = list);
+            .Subscribe(list =>
+            {
+                Anime = list;
+            });
     }
 
     [RelayCommand]

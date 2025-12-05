@@ -8,20 +8,20 @@
     <ItemGroup>
         <!-- Avalonia -->
         <PackageReference Include="Avalonia"/>
-        <PackageReference Include="Avalonia.Labs.Controls" />
-        <PackageReference Include="Avalonia.Labs.Panels" />
+        <PackageReference Include="Avalonia.Labs.Controls"/>
+        <PackageReference Include="Avalonia.Labs.Panels"/>
         <PackageReference Include="Avalonia.Markup.Declarative"/>
         <PackageReference Include="Avalonia.ReactiveUI"/>
-        <PackageReference Include="Avalonia.Controls.ItemsRepeater" />
-        <PackageReference Include="FluentAvaloniaUI" />
+        <PackageReference Include="Avalonia.Controls.ItemsRepeater"/>
+        <PackageReference Include="FluentAvaloniaUI"/>
 
         <PackageReference Include="Flurl.Http"/>
 
-        <PackageReference Include="FuzzySharp" />
+        <PackageReference Include="FuzzySharp"/>
 
-        <PackageReference Include="HtmlAgilityPack" />
+        <PackageReference Include="HtmlAgilityPack"/>
         <PackageReference Include="Humanizer"/>
-        <PackageReference Include="Microsoft.Playwright" />
+        <PackageReference Include="Microsoft.Playwright"/>
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator"/>
         <PackageReference Include="JetBrains.Annotations"/>
 
@@ -36,7 +36,7 @@
         <PackageReference Include="Irihi.Ursa.Themes.Semi"/>
         <PackageReference Include="AsyncImageLoader.Avalonia"/>
         <PackageReference Include="Semi.Avalonia"/>
-        <PackageReference Include="Semi.Avalonia.DataGrid" />
+        <PackageReference Include="Semi.Avalonia.DataGrid"/>
         <PackageReference Include="Xaml.Behaviors.Avalonia"/>
 
     </ItemGroup>

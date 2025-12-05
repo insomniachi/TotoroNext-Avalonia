@@ -30,7 +30,7 @@ public class EmbeddedVlcMediaPlayer : IEmbeddedVlcMediaPlayer
     public void Play(Media media, TimeSpan startPosition)
     {
         var vlcMedia = new LibVLCSharp.Shared.Media(LibVlc, media.Uri);
-        
+
         if (media.Metadata.Headers?.TryGetValue("user-agent", out var userAgent) == true)
         {
             vlcMedia.AddOption($":http-user-agent={userAgent}");
@@ -40,7 +40,7 @@ public class EmbeddedVlcMediaPlayer : IEmbeddedVlcMediaPlayer
         {
             vlcMedia.AddOption($":http-referrer={referer}");
         }
-        
+
         MediaPlayer.Play(vlcMedia);
     }
 

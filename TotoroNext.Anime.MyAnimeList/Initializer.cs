@@ -7,11 +7,11 @@ public class Initializer(IModuleSettings<Settings> settings) : IBackgroundInitia
 {
     public async Task BackgroundInitializeAsync()
     {
-        if (settings.Value.Auth is not {} auth)
+        if (settings.Value.Auth is not { } auth)
         {
             return;
         }
-        
+
         if (!auth.IsExpired)
         {
             return;

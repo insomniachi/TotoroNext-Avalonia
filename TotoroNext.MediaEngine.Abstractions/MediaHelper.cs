@@ -21,7 +21,7 @@ public static class MediaHelper
             {
                 return [];
             }
-        
+
             var psi = new ProcessStartInfo
             {
                 FileName = executable,
@@ -29,13 +29,13 @@ public static class MediaHelper
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-        
+
             psi.ArgumentList.Add("-i");
             psi.ArgumentList.Add(url.ToString());
             psi.ArgumentList.Add("-show_chapters");
             psi.ArgumentList.Add("-print_format");
             psi.ArgumentList.Add("json");
-        
+
             if (headers is { Count: > 0 })
             {
                 psi.ArgumentList.Add("-headers");
@@ -47,16 +47,16 @@ public static class MediaHelper
             {
                 return [];
             }
-        
+
             var output = await process.StandardOutput.ReadToEndAsync();
             await process.WaitForExitAsync();
 
             var result = JsonSerializer.Deserialize<ChapterList>(output);
-            if (result is null or {Chapters: not {Count: > 1}})
+            if (result is null or { Chapters: not { Count: > 1 } })
             {
                 return [];
             }
-        
+
             var segments = new List<MediaSegment>();
             var lastChapter = TimeSpan.FromSeconds(double.Parse(result.Chapters.Last().EndTime));
             foreach (var chapter in result.Chapters)
@@ -70,7 +70,7 @@ public static class MediaHelper
                     var duration = end - start;
                     if (Math.Abs(90 - duration.TotalSeconds) < 5)
                     {
-                        type = start.TotalSeconds < (lastChapter.TotalSeconds / 2) ? MediaSectionType.Opening : MediaSectionType.Ending;
+                        type = start.TotalSeconds < lastChapter.TotalSeconds / 2 ? MediaSectionType.Opening : MediaSectionType.Ending;
                     }
                 }
 
@@ -86,7 +86,7 @@ public static class MediaHelper
             return [];
         }
     }
-    
+
     public static TimeSpan GetDuration(Uri url, IDictionary<string, string>? headers = null)
     {
         try
@@ -139,39 +139,7 @@ public static class MediaHelper
         }
     }
 
-	extension(List<MediaSegment> segments)
-	{
-		public IEnumerable<MediaSegment> MakeContiguousSegments(TimeSpan mediaLength)
-		{
-			if (segments.Count == 0)
-			{
-				return segments;
-			}
-
-			var newSegments = new List<MediaSegment>();
-			for (var i = 0; i < segments.Count - 1; i++)
-			{
-				var current = segments[i];
-				var next = segments[i + 1];
-				if (current.End != next.Start)
-				{
-					newSegments.Add(new MediaSegment(MediaSectionType.Content, current.End, next.Start));
-				}
-			}
-
-			var last = segments.Last();
-			if (last.End < mediaLength)
-			{
-				newSegments.Add(new MediaSegment(MediaSectionType.Content, last.End, mediaLength));
-			}
-
-			segments.AddRange(newSegments);
-
-			return segments.OrderBy(x => x.Start);
-		}
-	}
-
-	private static MediaSectionType GetType(string sectionName)
+    private static MediaSectionType GetType(string sectionName)
     {
         return sectionName switch
         {
@@ -180,6 +148,38 @@ public static class MediaHelper
             _ when sectionName.Equals("Outro", StringComparison.InvariantCultureIgnoreCase) => MediaSectionType.Ending,
             _ => MediaSectionType.Content
         };
+    }
+
+    extension(List<MediaSegment> segments)
+    {
+        public IEnumerable<MediaSegment> MakeContiguousSegments(TimeSpan mediaLength)
+        {
+            if (segments.Count == 0)
+            {
+                return segments;
+            }
+
+            var newSegments = new List<MediaSegment>();
+            for (var i = 0; i < segments.Count - 1; i++)
+            {
+                var current = segments[i];
+                var next = segments[i + 1];
+                if (current.End != next.Start)
+                {
+                    newSegments.Add(new MediaSegment(MediaSectionType.Content, current.End, next.Start));
+                }
+            }
+
+            var last = segments.Last();
+            if (last.End < mediaLength)
+            {
+                newSegments.Add(new MediaSegment(MediaSectionType.Content, last.End, mediaLength));
+            }
+
+            segments.AddRange(newSegments);
+
+            return segments.OrderBy(x => x.Start);
+        }
     }
 }
 

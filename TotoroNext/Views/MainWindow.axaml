@@ -32,7 +32,7 @@
                     Name="Menu"
                     ExpandWidth="300"
                     ItemsSource="{Binding MenuItems}">
-                    
+
                     <u:NavMenu.HeaderTemplate>
                         <DataTemplate x:DataType="x:String">
                             <TextBlock HorizontalAlignment="Left" Text="{Binding}" VerticalAlignment="Center" />

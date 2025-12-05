@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using Avalonia.Controls;
-using TotoroNext.Anime.ViewModels;
+﻿using Avalonia.Controls;
 
 namespace TotoroNext.Anime.Views;
 

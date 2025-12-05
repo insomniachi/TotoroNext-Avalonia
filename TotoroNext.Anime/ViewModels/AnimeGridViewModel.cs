@@ -14,7 +14,7 @@ public partial class AnimeGridViewModel(
 {
     public List<AnimeModel> Items { get; } = items;
 
-    
+
     [RelayCommand]
     private void OpenAnimeDetails(AnimeModel anime)
     {

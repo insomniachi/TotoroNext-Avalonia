@@ -11,10 +11,10 @@ public class Module : IModule<Settings>
     {
         Id = new Guid("6df72a21-3130-4975-bc49-1d8982d96c35"),
         Name = "Nyaa",
-        Description = "Nyaa torrent indexer module",
+        Description = "Nyaa torrent indexer module"
     };
-    
-    
+
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
@@ -23,7 +23,7 @@ public class Module : IModule<Settings>
     }
 }
 
-public class Settings : OverridableConfig 
+public class Settings : OverridableConfig
 {
     public string ReleaseGroup { get; set; } = "";
     public string Quality { get; set; } = "1080";

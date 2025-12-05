@@ -13,7 +13,7 @@ public sealed class TrackingUpdater(
     ILogger<TrackingUpdater> logger) : IRecipient<PlaybackState>, ITrackingUpdater
 {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
-    
+
     public void Receive(PlaybackState message)
     {
         _ = ReceiveInternal(message);
