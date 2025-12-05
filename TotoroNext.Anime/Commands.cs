@@ -68,7 +68,7 @@ public class Commands(
                 return;
             }
 
-            var result = await extensionService.SearchAndSelectAsync(anime);
+            var result = await extensionService.SearchOrSelectAsync(anime);
 
             if (result is null)
             {

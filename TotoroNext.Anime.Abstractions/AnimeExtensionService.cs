@@ -42,27 +42,14 @@ public class AnimeExtensionService : IAnimeExtensionService
         return _extensions.GetValueOrDefault(id)?.IsNsfw ?? false;
     }
 
-    public async Task<SearchResult?> SearchAndSelectAsync(AnimeModel anime)
+    public async Task<SearchResult?> SearchOrSelectAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
         var term = GetSearchTerm(anime);
 
         var results = await provider.GetSearchResults(term);
 
-        switch (results.Count)
-        {
-            case 0:
-                return null;
-            case 1:
-                return results[0];
-        }
-        
-        if (results.FirstOrDefault(x => x.ExternalId.GetIdForService(anime.ServiceName ?? "") == anime.Id) is { } exactMatch)
-        {
-            return exactMatch;
-        }
-        
-        if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
+        if (TryFindMatch(results, anime, term) is { } result)
         {
             return result;
         }
@@ -75,22 +62,8 @@ public class AnimeExtensionService : IAnimeExtensionService
         var provider = GetProvider(anime.Id);
         var term = GetSearchTerm(anime);
 
-        var results = await provider.SearchAsync(term).ToListAsync();
-
-        switch (results.Count)
-        {
-            case 0:
-                return null;
-            case 1:
-                return results[0];
-        }
-
-        if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
-        {
-            return result;
-        }
-
-        return null;
+        var results = await provider.GetSearchResults(term);
+        return TryFindMatch(results, anime, term);
     }
 
     public void CreateOrUpdateExtension(long id, AnimeOverrides overrides)
@@ -120,5 +93,28 @@ public class AnimeExtensionService : IAnimeExtensionService
         var provider = _providerFactory.Create(extension.Provider.Value);
         provider.UpdateOptions(extension.AnimeProviderOptions);
         return provider;
+    }
+
+    private static SearchResult? TryFindMatch(List<SearchResult> results, AnimeModel anime, string term)
+    {
+        switch (results.Count)
+        {
+            case 0:
+                return null;
+            case 1:
+                return results[0];
+        }
+        
+        if (results.FirstOrDefault(x => x.ExternalId.GetIdForService(anime.ServiceName ?? "") == anime.Id) is { } exactMatch)
+        {
+            return exactMatch;
+        }
+        
+        if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
+        {
+            return result;
+        }
+
+        return null;
     }
 }

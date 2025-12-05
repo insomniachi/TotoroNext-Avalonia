@@ -49,7 +49,7 @@ public partial class AnimeEpisodesListViewModel(
     [RelayCommand]
     private async Task WatchEpisode(EpisodeInfo episode)
     {
-        var searchResult = await animeExtensionService.SearchAndSelectAsync(Anime);
+        var searchResult = await animeExtensionService.SearchOrSelectAsync(Anime);
 
         if (searchResult is null)
         {
