@@ -35,6 +35,7 @@ public sealed partial class WatchViewModel(
     private TimeSpan _currentPosition;
     private TimeSpan _duration;
     private Media? _media;
+    private bool _isCancelled;
 
     public IMediaPlayer? MediaPlayer { get; } = mediaPlayerFactory.CreateDefault();
 
@@ -69,6 +70,7 @@ public sealed partial class WatchViewModel(
     public void Dispose()
     {
         messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
+        _isCancelled = true;
     }
 
     public void Initialize()
@@ -116,6 +118,7 @@ public sealed partial class WatchViewModel(
 
         this.WhenAnyValue(x => x.SelectedServer)
             .WhereNotNull()
+            .DistinctUntilChanged()
             .ObserveOn(RxApp.TaskpoolScheduler)
             .SelectMany(server => server.Extract().ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
@@ -314,6 +317,11 @@ public sealed partial class WatchViewModel(
         var segments = await GetMediaSegments(source, SelectedEpisode);
         var metadata = new MediaMetadata(title, source.Headers, segments, source.Subtitle);
         _media = new Media(source.Url, metadata);
+        
+        if (_isCancelled)
+        {
+            return;
+        }
 
         MediaPlayer.Play(_media, SelectedEpisode.StartPosition);
     }
