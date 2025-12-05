@@ -134,16 +134,27 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
             var title = $"{item["name"]}";
             var id = $"{item["_id"]}";
             Uri? image = null;
+            long malId = 0;
+            long anilistId = 0;
             try
             {
                 image = new Uri($"{item["thumbnail"]}");
+                malId = long.Parse($"{item["malId"]}");
+                anilistId = long.Parse($"{item["aniListId"]}");
             }
             catch
             {
                 // ignored
             }
 
-            yield return new SearchResult(this, id, title, image);
+            yield return new SearchResult(this, id, title, image)
+            {
+                ExternalId = new AnimeId()
+                {
+                    MyAnimeList = malId,
+                    Anilist = anilistId
+                }
+            };
         }
     }
 

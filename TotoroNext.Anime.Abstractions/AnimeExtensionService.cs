@@ -42,29 +42,6 @@ public class AnimeExtensionService : IAnimeExtensionService
         return _extensions.GetValueOrDefault(id)?.IsNsfw ?? false;
     }
 
-    public string GetSearchTerm(AnimeModel anime)
-    {
-        var extension = _extensions.GetValueOrDefault(anime.Id);
-
-        return string.IsNullOrEmpty(extension?.SelectedProviderResult)
-            ? anime.Title
-            : extension.SelectedProviderResult;
-    }
-
-    public IAnimeProvider GetProvider(long id)
-    {
-        var extension = _extensions.GetValueOrDefault(id);
-
-        if (extension is null or { Provider: null })
-        {
-            return _providerFactory.CreateDefault()!;
-        }
-
-        var provider = _providerFactory.Create(extension.Provider.Value);
-        provider.UpdateOptions(extension.AnimeProviderOptions);
-        return provider;
-    }
-
     public async Task<SearchResult?> SearchAndSelectAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
@@ -79,7 +56,12 @@ public class AnimeExtensionService : IAnimeExtensionService
             case 1:
                 return results[0];
         }
-
+        
+        if (results.FirstOrDefault(x => x.ExternalId.GetIdForService(anime.ServiceName ?? "") == anime.Id) is { } exactMatch)
+        {
+            return exactMatch;
+        }
+        
         if (results.FirstOrDefault(x => string.Equals(x.Title, term, StringComparison.OrdinalIgnoreCase)) is { } result)
         {
             return result;
@@ -115,5 +97,28 @@ public class AnimeExtensionService : IAnimeExtensionService
     {
         _extensions[id] = overrides;
         File.WriteAllText(_file, JsonSerializer.Serialize(_extensions));
+    }
+
+    public string GetSearchTerm(AnimeModel anime)
+    {
+        var extension = _extensions.GetValueOrDefault(anime.Id);
+
+        return string.IsNullOrEmpty(extension?.SelectedProviderResult)
+            ? anime.Title
+            : extension.SelectedProviderResult;
+    }
+
+    public IAnimeProvider GetProvider(long id)
+    {
+        var extension = _extensions.GetValueOrDefault(id);
+
+        if (extension is null or { Provider: null })
+        {
+            return _providerFactory.CreateDefault()!;
+        }
+
+        var provider = _providerFactory.Create(extension.Provider.Value);
+        provider.UpdateOptions(extension.AnimeProviderOptions);
+        return provider;
     }
 }
