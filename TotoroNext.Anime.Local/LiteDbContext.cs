@@ -18,6 +18,8 @@ internal class LiteDbContext : ILiteDbContext
     
     public ILiteCollection<LocalAdditionalInfo> AdditionalInfo => _db.GetCollection<LocalAdditionalInfo>();
 
+    public bool HasData() => _db.GetCollectionNames().Any();
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         var now = DateTimeOffset.UtcNow;
@@ -36,6 +38,7 @@ internal class LiteDbContext : ILiteDbContext
 
 internal interface ILiteDbContext : IHostedService
 {
+    bool HasData();
     ILiteCollection<LocalAnimeModel> Anime { get; }
     ILiteCollection<LocalTracking> Tracking { get; }
     ILiteCollection<LocalEpisodeInfo> Episodes { get; }

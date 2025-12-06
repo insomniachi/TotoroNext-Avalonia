@@ -17,7 +17,7 @@ internal static class LocalModelConverter
 
     public static AnimeModel ToAnimeModel(LocalAnimeModel anime)
     {
-        return new AnimeModel
+        var model =  new AnimeModel
         {
             Title = anime.Title,
             TotalEpisodes = anime.TotalEpisodes,
@@ -41,6 +41,19 @@ internal static class LocalModelConverter
             Episodes = anime.EpisodeInfo?.Info ?? [],
             Tracking = anime.Tracking?.Tracking,
         };
+
+        if (anime.AdditionalInfo is not { } info)
+        {
+            return model;
+        }
+
+        model.Popularity = info.Info.Popularity;
+        model.Description = info.Info.Description;
+        model.Trailers = [..info.Info.Videos];
+        model.EngTitle = info.Info.TitleEnglish;
+        model.RomajiTitle = info.Info.TitleRomaji;
+
+        return model;
     }
 
 

@@ -50,6 +50,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
                 };
 
                 dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
+                dbContext.Anime.Upsert(anime);
             }
 
             tcs.SetResult(LocalModelConverter.ToAnimeModel(anime, dbContext.Anime));
@@ -155,16 +156,18 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
             return anime.Episodes;
         }
 
-        var infos = await anime.GetEpisodes();
-
-        dbContext.Episodes.Upsert(new LocalEpisodeInfo
+        var localAnime = dbContext.Anime.FindById(anime.Id);
+        localAnime.EpisodeInfo = new LocalEpisodeInfo
         {
             Id = anime.Id,
-            Info = infos,
+            Info = await anime.GetEpisodes(),
             ExpiresAt = DateTimeOffset.Now.AddDays(3)
-        });
+        };
 
-        return infos;
+        dbContext.Episodes.Upsert(localAnime.EpisodeInfo);
+        dbContext.Anime.Upsert(localAnime);
+
+        return localAnime.EpisodeInfo.Info;
     }
 
     public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
@@ -176,16 +179,17 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
             return anime.CharacterInfo.Characters;
         }
 
-        var characters = await AnilistHelper.GetCharactersAsync(ClientLazy.Value, animeId);
-
-        dbContext.Characters.Upsert(new LocalCharacterInfo
+        anime.CharacterInfo = new LocalCharacterInfo
         {
             Id = animeId,
-            Characters = characters,
+            Characters = await AnilistHelper.GetCharactersAsync(ClientLazy.Value, animeId),
             ExpiresAt = DateTimeOffset.Now.AddDays(3)
-        });
+        };
 
-        return characters;
+        dbContext.Characters.Upsert(anime.CharacterInfo);
+        dbContext.Anime.Upsert(anime);
+        
+        return anime.CharacterInfo.Characters;
     }
 
     public async Task<List<string>> GetGenresAsync()

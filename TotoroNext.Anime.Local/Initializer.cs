@@ -1,13 +1,14 @@
 ﻿using System.Text.Json;
 using Flurl.Http;
-using LiteDB;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using ZstdSharp;
 
 namespace TotoroNext.Anime.Local;
 
-public class Initializer(ILocalSettingsService localSettingsService) : IBackgroundInitializer
+internal class Initializer(
+    ILocalSettingsService localSettingsService,
+    ILiteDbContext dbContext) : IBackgroundInitializer
 {
     private const string OfflineDbUpdatedAtKey = "LocalDbUpdatedAt";
 
@@ -20,7 +21,7 @@ public class Initializer(ILocalSettingsService localSettingsService) : IBackgrou
         using var doc = await JsonDocument.ParseAsync(stream);
         var date = doc.RootElement.GetProperty("published_at").GetDateTime();
 
-        if (date > lastUpdated || !File.Exists(FileHelper.GetPath("animeData.db")))
+        if (date > lastUpdated || !dbContext.HasData())
         {
             localSettingsService.SaveSetting(OfflineDbUpdatedAtKey, date);
             var asset = doc.RootElement.GetProperty("assets")
@@ -32,21 +33,19 @@ public class Initializer(ILocalSettingsService localSettingsService) : IBackgrou
         }
     }
 
-    private static void Update(Stream stream)
+    private void Update(Stream stream)
     {
         using var decompressor = new DecompressionStream(stream);
         using var reader = new StreamReader(decompressor);
-        using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-        var collection = db.GetCollection<LocalAnimeModel>();
-        var existing = collection.FindAll().ToDictionary(x => x.AnilistId);
-        collection.EnsureIndex(x => x.MyAnimeListId);
+        var existing = dbContext.Anime.FindAll().ToDictionary(x => x.AnilistId);
+        dbContext.Anime.EnsureIndex(x => x.MyAnimeListId);
 
         var toUpsert = new List<LocalAnimeModel>();
         while (reader.ReadLine() is { } line)
         {
             using var doc = JsonDocument.Parse(line);
             var root = doc.RootElement;
-            if (!root.TryGetProperty("sources", out var sources))
+            if (!root.TryGetProperty("sources", out _))
             {
                 continue;
             }
@@ -71,6 +70,6 @@ public class Initializer(ILocalSettingsService localSettingsService) : IBackgrou
             }
         }
 
-        collection.Upsert(toUpsert);
+        dbContext.Anime.Upsert(toUpsert);
     }
 }

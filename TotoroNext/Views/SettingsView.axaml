@@ -95,6 +95,16 @@
                             </ComboBox.Styles>
                         </ComboBox>
                     </fac:SettingsExpander.Footer>
+                    <fac:SettingsExpanderItem>
+                        <fac:SettingsExpanderItem.Footer>
+                            <Button Content="Sync"
+                                    Command="{Binding SyncListCommand}">
+                                <Button.Styles>
+                                    <semi:SemiTheme Locale="en-US"/>
+                                </Button.Styles>
+                            </Button>
+                        </fac:SettingsExpanderItem.Footer>
+                    </fac:SettingsExpanderItem>
                 </fac:SettingsExpander>
                 <fac:SettingsExpander Header="Media Segments"
                                       Description="Default media segments provider">

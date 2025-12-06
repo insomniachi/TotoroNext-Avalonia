@@ -1,0 +1,6 @@
+﻿namespace TotoroNext.Anime.Abstractions;
+
+public interface ILocalTrackingService : ITrackingService
+{
+    void SyncList(List<AnimeModel> animeList);
+}
