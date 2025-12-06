@@ -1,10 +1,8 @@
-﻿using LiteDB;
-using TotoroNext.Anime.Abstractions;
-using TotoroNext.Module;
+﻿using TotoroNext.Anime.Abstractions;
 
 namespace TotoroNext.Anime.Local;
 
-public class TrackingService : ITrackingService
+internal class TrackingService(ILiteDbContext dbContext) : ITrackingService
 {
     public Guid Id => Guid.Empty;
 
@@ -12,17 +10,13 @@ public class TrackingService : ITrackingService
 
     public Task<Tracking> Update(long id, Tracking tracking)
     {
-        using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-        var collection = db.GetCollection<LocalTracking>();
-        collection.Upsert(new LocalTracking { Id = id, Tracking = tracking });
+        dbContext.Tracking.Upsert(new LocalTracking { Id = id, Tracking = tracking });
         return Task.FromResult(tracking);
     }
 
     public Task<bool> Remove(long id)
     {
-        using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-        var collection = db.GetCollection<LocalTracking>();
-        return Task.FromResult(collection.Delete(id));
+        return Task.FromResult(dbContext.Tracking.Delete(id));
     }
 
     public async Task<List<AnimeModel>> GetUserList()
@@ -31,13 +25,10 @@ public class TrackingService : ITrackingService
 
         await Task.Run(() =>
         {
-            using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-            var tracking = db.GetCollection<LocalTracking>();
-            var anime = db.GetCollection<LocalAnimeModel>();
-            var trackedIds = tracking.FindAll().Select(t => t.Id).ToHashSet();
-            var list = anime.Find(a => trackedIds.Contains(a.AnilistId))
-                            .Select(x => LocalModelConverter.ToAnimeModel(x, anime))
-                            .ToList();
+            var trackedIds = dbContext.Tracking.FindAll().Select(t => t.Id).ToHashSet();
+            var list = dbContext.Anime.Find(a => trackedIds.Contains(a.AnilistId))
+                                .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
+                                .ToList();
             tcs.SetResult(list);
         });
 

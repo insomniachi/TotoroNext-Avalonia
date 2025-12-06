@@ -298,9 +298,4 @@ internal class AnilistMetadataService(
                                    .WithProgress())
                .WithStatus();
     }
-
-    private static Uri? TryConvertUri(string? url)
-    {
-        return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
-    }
 }

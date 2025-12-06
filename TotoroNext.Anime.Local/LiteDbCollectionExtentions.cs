@@ -10,7 +10,8 @@ internal static class LiteDbCollectionExtensions
         {
             return collection.Include(x => x.Tracking)
                              .Include(x => x.EpisodeInfo)
-                             .Include(x => x.CharacterInfo);
+                             .Include(x => x.CharacterInfo)
+                             .Include(x => x.AdditionalInfo);
         }
     }
 }

@@ -11,6 +11,7 @@ internal class LocalAnimeModel
     [BsonRef(nameof(LocalTracking))] public LocalTracking? Tracking { get; set; }
     [BsonRef(nameof(LocalEpisodeInfo))] public LocalEpisodeInfo? EpisodeInfo { get; set; }
     [BsonRef(nameof(LocalCharacterInfo))] public LocalCharacterInfo? CharacterInfo { get; set; }
+    [BsonRef(nameof(LocalAdditionalInfo))] public LocalAdditionalInfo? AdditionalInfo { get; set; }
     [BsonId] public long AnilistId { get; set; }
     public long MyAnimeListId { get; set; }
     public long KitsuId { get; set; }
@@ -49,6 +50,24 @@ internal class LocalCharacterInfo
     [BsonId] public long Id { get; set; }
     public List<CharacterModel> Characters { get; set; } = [];
     public DateTimeOffset ExpiresAt { get; set; }
+}
+
+[Serializable]
+internal class LocalAdditionalInfo
+{
+    [BsonId] public long Id { get; set; }
+    public OfflineAdditionalInfo Info { get; set; } = new();
+    public DateTimeOffset ExpiresAt { get; set; }
+}
+
+[Serializable]
+internal class OfflineAdditionalInfo
+{
+    public string TitleEnglish { get; set; } = "";
+    public string TitleRomaji { get; set; } = "";
+    public string Description { get; set; } = "";
+    public int Popularity { get; set; }
+    public List<TrailerVideo> Videos { get; set; } = [];
 }
 
 [Serializable]

@@ -5,7 +5,7 @@ using TotoroNext.Anime.Anilist;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public class AnilistHelper
+public static class AnilistHelper
 {
     public static async Task<List<CharacterModel>> GetCharactersAsync(GraphQLHttpClient client, long anilistId)
     {

@@ -1,18 +1,20 @@
-﻿using FuzzySharp;
+﻿using Flurl;
+using FuzzySharp;
+using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
-using LiteDB;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
+using TotoroNext.Anime.Anilist;
 
 namespace TotoroNext.Anime.Local;
 
-public class MetadataService : IMetadataService
+internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
 {
-    private static readonly Lazy<GraphQLHttpClient> ClientLazy = new(new GraphQLHttpClient("https://graphql.anilist.co/", new NewtonsoftJsonSerializer(), new HttpClient()));
-    
+    private static readonly Lazy<GraphQLHttpClient> ClientLazy =
+        new(new GraphQLHttpClient("https://graphql.anilist.co/", new NewtonsoftJsonSerializer(), new HttpClient()));
+
     public Guid Id => Guid.Empty;
 
     public string Name => "Local";
@@ -21,12 +23,36 @@ public class MetadataService : IMetadataService
     {
         var tcs = new TaskCompletionSource<AnimeModel>();
 
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
-            using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-            var collection = db.GetCollection<LocalAnimeModel>().IncludeExtras();
-            var anime = collection.FindById(id);
-            tcs.SetResult(LocalModelConverter.ToAnimeModel(anime, collection));
+            var anime = dbContext.Anime.FindById(id);
+            if (anime.AdditionalInfo is null)
+            {
+                var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)id,
+                                                              type: MediaType.Anime).Build();
+                var response = await ClientLazy.Value.SendQueryAsync<Query>(new GraphQLRequest
+                {
+                    Query = query
+                });
+
+                anime.AdditionalInfo = new LocalAdditionalInfo
+                {
+                    Id = id,
+                    Info = new OfflineAdditionalInfo
+                    {
+                        TitleEnglish = response.Data.Media.Title.English,
+                        TitleRomaji = response.Data.Media.Title.Romaji,
+                        Description = response.Data.Media.Description,
+                        Popularity = response.Data.Media.Popularity ?? 0,
+                        Videos = [..ConvertTrailers(response.Data.Media.Trailer)]
+                    },
+                    ExpiresAt = DateTimeOffset.UtcNow.AddDays(1)
+                };
+
+                dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
+            }
+
+            tcs.SetResult(LocalModelConverter.ToAnimeModel(anime, dbContext.Anime));
         });
 
         return await tcs.Task;
@@ -38,16 +64,14 @@ public class MetadataService : IMetadataService
 
         await Task.Run(() =>
         {
-            using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-            var collection = db.GetCollection<LocalAnimeModel>().IncludeExtras();
             var prefix = term.Length >= 3 ? term[..3] : term;
-            var candidates = collection.Find(Query.Contains("Title", prefix)).Take(50);
+            var candidates = dbContext.Anime.Find(LiteDB.Query.Contains("Title", prefix)).Take(50);
             var results = candidates
                           .Select(a => new { Anime = a, Score = Fuzz.PartialRatio(a.Title, term) })
                           .Where(x => x.Score >= 70)
                           .OrderByDescending(x => x.Score)
                           .Select(x => x.Anime)
-                          .Select(x => LocalModelConverter.ToAnimeModel(x, collection)).ToList();
+                          .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime)).ToList();
             tcs.SetResult(results);
         });
 
@@ -65,16 +89,16 @@ public class MetadataService : IMetadataService
 
         await Task.Run(() =>
         {
-            using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-            var collection = db.GetCollection<LocalAnimeModel>().IncludeExtras();
             var term = request.Title;
             var candidates = string.IsNullOrEmpty(term)
-                ? collection.FindAll()
-                : collection.Find(Query.Contains("Title", term.Length >= 3 ? term[..3] : term))
-                            .Select(a => new { Anime = a, Score = Fuzz.PartialRatio(a.Title, term) })
-                            .Where(x => x.Score >= 70)
-                            .OrderByDescending(x => x.Score)
-                            .Select(x => x.Anime);
+                ? dbContext.Anime
+                           .FindAll()
+                : dbContext.Anime
+                           .Find(LiteDB.Query.Contains("Title", term.Length >= 3 ? term[..3] : term))
+                           .Select(a => new { Anime = a, Score = Fuzz.PartialRatio(a.Title, term) })
+                           .Where(x => x.Score >= 70)
+                           .OrderByDescending(x => x.Score)
+                           .Select(x => x.Anime);
 
             if (request.MinYear.HasValue)
             {
@@ -114,9 +138,9 @@ public class MetadataService : IMetadataService
             var response = candidates.OrderByDescending(x => x.MeanScore)
                                      .Where(x => x is { MyAnimeListId: > 0, AnilistId: > 0 })
                                      .Take(100)
-                                     .Select(x => LocalModelConverter.ToAnimeModel(x, collection))
+                                     .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
                                      .ToList();
-            
+
             tcs.SetResult(response);
         });
 
@@ -132,9 +156,8 @@ public class MetadataService : IMetadataService
         }
 
         var infos = await anime.GetEpisodes();
-        using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-        var collection = db.GetCollection<LocalEpisodeInfo>();
-        collection.Upsert(new LocalEpisodeInfo
+
+        dbContext.Episodes.Upsert(new LocalEpisodeInfo
         {
             Id = anime.Id,
             Info = infos,
@@ -146,25 +169,22 @@ public class MetadataService : IMetadataService
 
     public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
     {
-        using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-        var collection = db.GetCollection<LocalAnimeModel>().IncludeExtras();
-        var anime = collection.FindById(animeId);
-       
+        var anime = dbContext.Anime.FindById(animeId);
+
         if (anime.CharacterInfo is { Characters.Count: > 0 })
         {
             return anime.CharacterInfo.Characters;
         }
-        
+
         var characters = await AnilistHelper.GetCharactersAsync(ClientLazy.Value, animeId);
-        var charCollection = db.GetCollection<LocalCharacterInfo>();
-        
-        charCollection.Upsert(new LocalCharacterInfo
+
+        dbContext.Characters.Upsert(new LocalCharacterInfo
         {
             Id = animeId,
             Characters = characters,
             ExpiresAt = DateTimeOffset.Now.AddDays(3)
         });
-        
+
         return characters;
     }
 
@@ -174,14 +194,52 @@ public class MetadataService : IMetadataService
 
         await Task.Run(() =>
         {
-            using var db = new LiteDatabase(FileHelper.GetPath("animeData.db"));
-            var collection = db.GetCollection<LocalAnimeModel>();
-            var genres = collection.Find(x => x.Genres.Count > 0)
-                                   .SelectMany(x => x.Genres)
-                                   .ToHashSet();
+            var genres = dbContext.Anime
+                                  .Find(x => x.Genres.Count > 0)
+                                  .SelectMany(x => x.Genres)
+                                  .ToHashSet();
             tcs.SetResult([..genres]);
         });
 
         return await tcs.Task;
+    }
+
+    private static MediaQueryBuilder MediaQueryBuilderFull()
+    {
+        return new MediaQueryBuilder()
+               .WithId()
+               .WithTitle(new MediaTitleQueryBuilder()
+                          .WithEnglish()
+                          .WithNative()
+                          .WithRomaji())
+               .WithPopularity()
+               .WithDescription(false)
+               .WithTrailer(new MediaTrailerQueryBuilder()
+                            .WithSite()
+                            .WithThumbnail()
+                            .WithId());
+    }
+
+    private static IReadOnlyCollection<TrailerVideo> ConvertTrailers(MediaTrailer? mediaTrailer)
+    {
+        if (mediaTrailer is null)
+        {
+            return [];
+        }
+
+        if (mediaTrailer.Site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
+        {
+            return
+            [
+                new TrailerVideo
+                {
+                    Url = "https://www.youtube.com/watch".AppendQueryParam("v", mediaTrailer.Id),
+                    Title = "Trailer",
+                    Thumbnail = mediaTrailer.Thumbnail
+                }
+            ];
+        }
+
+        return [];
     }
 }
