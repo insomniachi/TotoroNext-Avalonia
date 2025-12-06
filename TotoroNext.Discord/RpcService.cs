@@ -109,7 +109,7 @@ internal class RpcService(
             [
                 new Button
                 {
-                    Label = message.Anime.ServiceName,
+                    Label = message.Anime.ServiceName == "Local" ? nameof(AnimeId.MyAnimeList) : message.Anime.ServiceName,
                     Url = message.Anime.Url
                 }
             ];
@@ -151,7 +151,7 @@ internal class RpcService(
             [
                 new Button
                 {
-                    Label = message.Anime.ServiceName,
+                    Label = message.Anime.ServiceName == "Local" ? nameof(AnimeId.MyAnimeList) : message.Anime.ServiceName,
                     Url = message.Anime.Url
                 }
             ];

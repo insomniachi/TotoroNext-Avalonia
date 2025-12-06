@@ -24,6 +24,7 @@ internal class LocalAnimeModel
     public float MeanScore { get; set; }
     public IReadOnlyCollection<string> Studios { get; set; } = [];
     public AiringStatus AiringStatus { get; set; }
+    public AnimeMediaFormat MediaFormat { get; set; }
     public IReadOnlyCollection<long> Related { get; set; } = [];
     public string Image { get; set; } = "";
     public string Thumbnail { get; set; } = "";

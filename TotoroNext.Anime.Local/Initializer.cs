@@ -59,6 +59,7 @@ internal class Initializer(
             var model = LocalModelConverter.Convert(anime);
             if (existing.TryGetValue(model.AnilistId, out var existingAnime))
             {
+                model.Tracking = existingAnime.Tracking;
                 if (model.TotalEpisodes != existingAnime.TotalEpisodes)
                 {
                     toUpsert.Add(model);

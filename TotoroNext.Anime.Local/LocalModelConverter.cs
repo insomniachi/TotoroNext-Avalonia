@@ -36,10 +36,12 @@ internal static class LocalModelConverter
                 MyAnimeList = anime.MyAnimeListId,
                 Kitsu = anime.KitsuId,
                 AniDb = anime.AniDbId,
-                Simkl = anime.SimklId
+                Simkl = anime.SimklId,
+                Local = anime.AnilistId
             },
             Episodes = anime.EpisodeInfo?.Info ?? [],
             Tracking = anime.Tracking?.Tracking,
+            Url = $"https://myanimelist.net/anime/{anime.MyAnimeListId}/"
         };
 
         if (anime.AdditionalInfo is not { } info)
@@ -68,6 +70,7 @@ internal static class LocalModelConverter
             MeanScore = (float)Math.Round(anime.Score?.ArithmeticMean ?? 0, 2),
             Studios = anime.Studios,
             AiringStatus = ConvertStatus(anime.Status),
+            MediaFormat = ConvertMediaFormat(anime.Type),
             Related = ConvertRelated(anime.RelatedAnime).ToList(),
             Image = anime.Picture,
             Thumbnail = anime.Thumbnail
@@ -76,6 +79,20 @@ internal static class LocalModelConverter
         UpdateIds(model, anime.Sources);
 
         return model;
+    }
+
+    private static AnimeMediaFormat ConvertMediaFormat(string animeType)
+    {
+        return animeType switch
+        {
+            "MOVIE" => AnimeMediaFormat.Movie,
+            "SPECIAL" => AnimeMediaFormat.Special,
+            "OVA" => AnimeMediaFormat.Ova,
+            "TV" => AnimeMediaFormat.Tv,
+            "MUSIC" => AnimeMediaFormat.Music,
+            "ONA" => AnimeMediaFormat.Ona,
+            _ => AnimeMediaFormat.Unknown
+        };
     }
 
     private static IEnumerable<long> ConvertRelated(List<string> related)

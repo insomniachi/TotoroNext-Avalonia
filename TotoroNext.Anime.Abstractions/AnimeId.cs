@@ -7,7 +7,7 @@ public class AnimeId
     public long Anilist { get; set; }
     public long Kitsu { get; set; }
     public long Simkl { get; set; }
-    public string NotifyMoe { get; set; } = "";
+    public long Local { get; set; }
 
     public long? GetIdForService(string serviceType)
     {
