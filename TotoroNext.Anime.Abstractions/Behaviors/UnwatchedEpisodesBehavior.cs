@@ -13,6 +13,7 @@ namespace TotoroNext.Anime.Abstractions.Behaviors;
 public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehavior<AnimeCard>
 {
     private static readonly SolidColorBrush NotUploadedBrush = new(Colors.Orange);
+    private static readonly SolidColorBrush UploadedBrush = new(Colors.Red);
     private static readonly IAnimeExtensionService ExtensionService = Container.Services.GetRequiredService<IAnimeExtensionService>();
     private static readonly IAnimeRelations Relations = Container.Services.GetRequiredService<IAnimeRelations>();
     private static readonly IAnimeMappingService MappingService = Container.Services.GetRequiredService<IAnimeMappingService>();
@@ -89,6 +90,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
             return Unit.Default;
         }
 
+        card.Badge.Background = UploadedBrush;
         card.BadgeText.Text = actualDiff.ToString();
 
         return Unit.Default;
