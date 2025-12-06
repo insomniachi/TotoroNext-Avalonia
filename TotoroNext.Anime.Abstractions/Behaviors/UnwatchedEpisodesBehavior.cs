@@ -2,6 +2,8 @@
 using System.Text;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
+using GraphQL.Client.Http;
+using GraphQL.Client.Serializer.Newtonsoft;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions.Controls;
 using TotoroNext.Module;
@@ -13,10 +15,13 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
     private static readonly SolidColorBrush NotUploadedBrush = new(Colors.Orange);
     private static readonly IAnimeExtensionService ExtensionService = Container.Services.GetRequiredService<IAnimeExtensionService>();
     private static readonly IAnimeRelations Relations = Container.Services.GetRequiredService<IAnimeRelations>();
+    private static readonly IAnimeMappingService MappingService = Container.Services.GetRequiredService<IAnimeMappingService>();
+    private static readonly Lazy<GraphQLHttpClient> ClientLazy =
+        new(new GraphQLHttpClient("https://graphql.anilist.co/", new NewtonsoftJsonSerializer(), new HttpClient()));
 
     public void Update(AnimeCard card)
     {
-        UpdateAiringTime(card, card.Anime);
+        _ = UpdateAiringTime(card, card.Anime);
         _ = UpdateBadge(card, card.Anime);
     }
 
@@ -85,9 +90,9 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
         return Unit.Default;
     }
 
-    private static void UpdateAiringTime(AnimeCard card, AnimeModel anime)
+    private static async Task UpdateAiringTime(AnimeCard card, AnimeModel anime)
     {
-        var time = ToNextEpisodeAiringTime(anime);
+        var time = await ToNextEpisodeAiringTime(anime);
         if (string.IsNullOrEmpty(time))
         {
             card.NextEpText.IsVisible = false;
@@ -98,10 +103,29 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
         card.NextEpText.Text = time;
     }
 
-    private static string ToNextEpisodeAiringTime(AnimeModel? anime)
+    private static async Task<string> ToNextEpisodeAiringTime(AnimeModel? anime)
     {
-        var airingAt = anime?.NextEpisodeAt;
-        var current = anime?.AiredEpisodes;
+        if (anime is null)
+        {
+            return string.Empty;
+        }
+        
+        var airingAt = anime.NextEpisodeAt;
+        var current = anime.AiredEpisodes;
+       
+        if (airingAt is null && 
+            anime.AiringStatus is AiringStatus.CurrentlyAiring &&
+            anime.ServiceName != nameof(AnimeId.Anilist))
+        {
+            var id = MappingService.GetId(anime);
+            if (id is null)
+            {
+                return string.Empty;
+            }
+            (current, airingAt) = await AnilistHelper.GetNextEpisodeInfo(ClientLazy.Value, id.Anilist);
+            current--;
+        }
+
         if (airingAt is null)
         {
             return string.Empty;

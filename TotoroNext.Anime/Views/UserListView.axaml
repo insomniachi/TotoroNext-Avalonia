@@ -105,10 +105,10 @@
                         <UniformGridLayout
                             ItemsJustification="Start"
                             ItemsStretch="Fill"
-                            MinColumnSpacing="16"
+                            MinColumnSpacing="32"
                             MinItemHeight="400"
                             MinItemWidth="250"
-                            MinRowSpacing="16" />
+                            MinRowSpacing="32" />
                     </ItemsRepeater.Layout>
                 </ItemsRepeater>
             </ScrollViewer>

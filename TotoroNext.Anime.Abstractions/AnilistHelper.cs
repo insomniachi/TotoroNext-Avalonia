@@ -7,6 +7,21 @@ namespace TotoroNext.Anime.Abstractions;
 
 public static class AnilistHelper
 {
+    public static async Task<(int AiredEpisodes, DateTime? NextAiringAt)> GetNextEpisodeInfo(GraphQLHttpClient client, long anilistId)
+    {
+        var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
+                                                          .WithNextAiringEpisode(new AiringScheduleQueryBuilder()
+                                                                                 .WithTimeUntilAiring()
+                                                                                 .WithEpisode()), (int)anilistId).Build();
+        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+        {
+            Query = query
+        });
+
+        return new ValueTuple<int, DateTime?>(response.Data.Media.NextAiringEpisode.Episode ?? 0,
+                                              ConvertToExactTime(response.Data.Media.NextAiringEpisode.TimeUntilAiring));
+    }
+
     public static async Task<List<CharacterModel>> GetCharactersAsync(GraphQLHttpClient client, long anilistId)
     {
         var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
@@ -34,9 +49,19 @@ public static class AnilistHelper
             Image = TryConvertUri(x.Image.Large)
         }).ToList();
     }
-    
+
     private static Uri? TryConvertUri(string? url)
     {
         return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
+    }
+
+    public static DateTime? ConvertToExactTime(int? secondsTillAiring)
+    {
+        if (secondsTillAiring is null)
+        {
+            return null;
+        }
+
+        return DateTime.Now + TimeSpan.FromSeconds(secondsTillAiring.Value);
     }
 }
