@@ -46,6 +46,10 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
 
         var watched = anime.Tracking?.WatchedEpisodes ?? 0;
         var total = anime.AiredEpisodes;
+        if (total == 0  && MappingService.GetId(anime) is {} id)
+        {
+            total = await AnilistHelper.GetTotalAiredEpisodes(ClientLazy.Value, id.Anilist);
+        }
         var diff = total - watched;
 
         if (diff <= 0)

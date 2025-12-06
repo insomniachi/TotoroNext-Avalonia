@@ -33,7 +33,6 @@ internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingServ
             AniDb = localAnime.AniDbId,
             Kitsu = localAnime.KitsuId,
             Simkl = localAnime.SimklId,
-            Local = localAnime.AnilistId
         };
     }
 }

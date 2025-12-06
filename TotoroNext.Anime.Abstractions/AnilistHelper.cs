@@ -7,6 +7,26 @@ namespace TotoroNext.Anime.Abstractions;
 
 public static class AnilistHelper
 {
+    public static async Task<int> GetTotalAiredEpisodes(GraphQLHttpClient client, long anilistId)
+    {
+        var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
+                                                      .WithStatus()
+                                                      .WithEpisodes()
+                                                      .WithNextAiringEpisode(new AiringScheduleQueryBuilder()
+                                                                                 .WithEpisode()), (int)anilistId).Build();
+        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+        {
+            Query = query
+        });
+
+        if (response.Data.Media.Status == MediaStatus.Finished)
+        {
+            return response.Data.Media.Episodes ?? -1;
+        }
+
+        return (response.Data.Media.NextAiringEpisode.Episode ?? 0) - 1;
+    }
+
     public static async Task<(int AiredEpisodes, DateTime? NextAiringAt)> GetNextEpisodeInfo(GraphQLHttpClient client, long anilistId)
     {
         var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()

@@ -164,8 +164,11 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
             ExpiresAt = DateTimeOffset.Now.AddDays(3)
         };
 
-        dbContext.Episodes.Upsert(localAnime.EpisodeInfo);
-        dbContext.Anime.Upsert(localAnime);
+        if (anime.AiringStatus == AiringStatus.FinishedAiring)
+        {
+            dbContext.Episodes.Upsert(localAnime.EpisodeInfo);
+            dbContext.Anime.Upsert(localAnime);
+        }
 
         return localAnime.EpisodeInfo.Info;
     }
@@ -188,7 +191,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
 
         dbContext.Characters.Upsert(anime.CharacterInfo);
         dbContext.Anime.Upsert(anime);
-        
+
         return anime.CharacterInfo.Characters;
     }
 

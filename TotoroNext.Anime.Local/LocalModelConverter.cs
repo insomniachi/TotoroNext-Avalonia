@@ -37,7 +37,6 @@ internal static class LocalModelConverter
                 Kitsu = anime.KitsuId,
                 AniDb = anime.AniDbId,
                 Simkl = anime.SimklId,
-                Local = anime.AnilistId
             },
             Episodes = anime.EpisodeInfo?.Info ?? [],
             Tracking = anime.Tracking?.Tracking,
