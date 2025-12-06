@@ -8,7 +8,9 @@ namespace TotoroNext.Anime.Local;
 [Serializable]
 internal class LocalAnimeModel
 {
-    [BsonRef("LocalTracking")] public LocalTracking? Tracking { get; set; }
+    [BsonRef(nameof(LocalTracking))] public LocalTracking? Tracking { get; set; }
+    [BsonRef(nameof(LocalEpisodeInfo))] public LocalEpisodeInfo? EpisodeInfo { get; set; }
+    [BsonRef(nameof(LocalCharacterInfo))] public LocalCharacterInfo? CharacterInfo { get; set; }
     [BsonId] public long AnilistId { get; set; }
     public long MyAnimeListId { get; set; }
     public long KitsuId { get; set; }
@@ -31,6 +33,22 @@ internal class LocalTracking
 {
     [BsonId] public long Id { get; set; }
     public Tracking Tracking { get; set; } = new();
+}
+
+[Serializable]
+internal class LocalEpisodeInfo
+{
+    [BsonId] public long Id { get; set; }
+    public List<EpisodeInfo> Info { get; set; } = [];
+    public DateTimeOffset ExpiresAt { get; set; }
+}
+
+[Serializable]
+internal class LocalCharacterInfo
+{
+    [BsonId] public long Id { get; set; }
+    public List<CharacterModel> Characters { get; set; } = [];
+    public DateTimeOffset ExpiresAt { get; set; }
 }
 
 [Serializable]

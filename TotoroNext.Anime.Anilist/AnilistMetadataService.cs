@@ -23,30 +23,7 @@ internal class AnilistMetadataService(
 
     public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
     {
-        var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
-                                                          .WithCharacters(new CharacterConnectionQueryBuilder()
-                                                                              .WithNodes(new CharacterQueryBuilder()
-                                                                                         .WithName(new CharacterNameQueryBuilder()
-                                                                                                       .WithFull())
-                                                                                         .WithImage(new CharacterImageQueryBuilder()
-                                                                                                        .WithLarge()))), (int)animeId,
-                                                      type: MediaType.Anime).Build();
-
-        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-        {
-            Query = query
-        });
-
-        if (response.Data.Media.Characters is null)
-        {
-            return [];
-        }
-
-        return response.Data.Media.Characters.Nodes.Select(x => new CharacterModel
-        {
-            Name = x.Name.Full,
-            Image = TryConvertUri(x.Image.Large)
-        }).ToList();
+        return await AnilistHelper.GetCharactersAsync(client, animeId);
     }
 
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)

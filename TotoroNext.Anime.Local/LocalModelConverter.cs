@@ -14,10 +14,10 @@ internal static class LocalModelConverter
                              .ToList();
         return model;
     }
-    
+
     public static AnimeModel ToAnimeModel(LocalAnimeModel anime)
     {
-        return new AnimeModel()
+        return new AnimeModel
         {
             Title = anime.Title,
             TotalEpisodes = anime.TotalEpisodes,
@@ -30,17 +30,20 @@ internal static class LocalModelConverter
             ServiceName = "Local",
             ServiceId = Guid.Empty,
             Id = anime.AnilistId,
-            ExternalIds = new AnimeId()
+            ExternalIds = new AnimeId
             {
                 Anilist = anime.AnilistId,
                 MyAnimeList = anime.MyAnimeListId,
                 Kitsu = anime.KitsuId,
                 AniDb = anime.AniDbId,
                 Simkl = anime.SimklId
-            }
+            },
+            Episodes = anime.EpisodeInfo?.Info ?? [],
+            Tracking = anime.Tracking?.Tracking,
         };
     }
-    
+
+
     public static LocalAnimeModel Convert(Anime anime)
     {
         var model = new LocalAnimeModel
@@ -49,7 +52,7 @@ internal static class LocalModelConverter
             TotalEpisodes = anime.Episodes,
             Genres = anime.Tags.ToList(),
             Season = ConvertSeason(anime.AnimeSeason),
-            MeanScore = (float)(Math.Round(anime.Score?.ArithmeticMean ?? 0, 2)),
+            MeanScore = (float)Math.Round(anime.Score?.ArithmeticMean ?? 0, 2),
             Studios = anime.Studios,
             AiringStatus = ConvertStatus(anime.Status),
             Related = ConvertRelated(anime.RelatedAnime).ToList(),

@@ -22,7 +22,6 @@ public partial class AdvancedSearchViewModel(
     IDialogService dialogService) : ObservableObject, IAsyncInitializable
 {
     private bool _isChangeNotificationsEnabled = true;
-    private IMetadataService? _metadataService;
 
     [ObservableProperty] public partial AnimeSeason? Season { get; set; }
     [ObservableProperty] public partial int? MinimumYear { get; set; }
@@ -36,7 +35,8 @@ public partial class AdvancedSearchViewModel(
     [ObservableProperty] public partial List<string> AllGenres { get; set; } = [];
     [ObservableProperty] public partial Descriptor? SelectedService { get; set; }
 
-    public List<Descriptor> MetadataServices { get; } = [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
+    public List<Descriptor> MetadataServices { get; } =
+        [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
 
     public int CurrentYear { get; } = DateTime.Now.Year;
 
@@ -51,21 +51,26 @@ public partial class AdvancedSearchViewModel(
         var defaultServiceId = localSettingsService.ReadSetting<Guid?>("SelectedTrackingService");
         SelectedService = MetadataServices.FirstOrDefault(x => x.Id == defaultServiceId);
 
-        this.WhenAnyValue(x => x.SelectedService)
-            .WhereNotNull()
-            .Do(service => _metadataService = metadataFactory.Create(service.Id))
-            .SelectMany(_ => _metadataService!.GetGenresAsync())
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(genres => AllGenres = genres);
+        var serviceChanged = this.WhenAnyValue(x => x.SelectedService)
+                                 .WhereNotNull()
+                                 .Select(s => metadataFactory.Create(s.Id))
+                                 .Replay(1)
+                                 .RefCount();
 
-        var propertiesChanged = this.WhenAnyPropertyChanged(nameof(Title),
-                                                            nameof(MinimumYear),
+        serviceChanged.SelectMany(x => x.GetGenresAsync())
+                      .ObserveOn(RxApp.MainThreadScheduler)
+                      .Subscribe(genres => AllGenres = genres);
+
+        var propertiesChanged = this.WhenAnyPropertyChanged(nameof(MinimumYear),
                                                             nameof(Season),
                                                             nameof(MinimumScore),
                                                             nameof(MaximumScore),
                                                             nameof(MaximumYear))
                                     .Throttle(TimeSpan.FromMilliseconds(500))
                                     .Select(_ => Unit.Default);
+        var titleChanged = this.WhenAnyValue(x => x.Title)
+                               .Throttle(TimeSpan.FromSeconds(1))
+                               .Select(_ => Unit.Default);
 
         var includedGenresChanged = Observable.FromEventPattern<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>(
                                                    h => IncludedGenres.CollectionChanged += h,
@@ -77,28 +82,32 @@ public partial class AdvancedSearchViewModel(
                                                    h => ExcludedGenres.CollectionChanged -= h)
                                               .Select(_ => Unit.Default);
 
-        var trigger = Observable.Merge(propertiesChanged, includedGenresChanged, excludedGenresChanged);
+        var trigger = Observable.Merge(titleChanged, propertiesChanged, includedGenresChanged, excludedGenresChanged);
 
-        trigger
-            .Where(_ => _isChangeNotificationsEnabled)
-            .Where(_ => _metadataService is not null)
-            .Select(_ => new AdvancedSearchRequest
+        serviceChanged
+            .Select(service =>
             {
-                Title = Title,
-                SeasonName = Season,
-                MinYear = MinimumYear,
-                MaxYear = MaximumYear,
-                IncludedGenres = IncludedGenres.Count > 0 ? [..IncludedGenres] : null,
-                ExcludedGenres = ExcludedGenres.Count > 0 ? [..ExcludedGenres] : null,
-                MinimumScore = MinimumScore,
-                MaximumScore = MaximumScore
+                ClearSearchFilters();
+                var metadataService = metadataFactory.Create(service.Id);
+                return trigger
+                       .Where(_ => _isChangeNotificationsEnabled)
+                       .Select(_ => new AdvancedSearchRequest
+                       {
+                           Title = Title,
+                           SeasonName = Season,
+                           MinYear = MinimumYear,
+                           MaxYear = MaximumYear,
+                           IncludedGenres = IncludedGenres.Count > 0 ? [..IncludedGenres] : null,
+                           ExcludedGenres = ExcludedGenres.Count > 0 ? [..ExcludedGenres] : null,
+                           MinimumScore = MinimumScore,
+                           MaximumScore = MaximumScore
+                       })
+                       .Where(x => !x.IsEmpty())
+                       .SelectMany(request => metadataService.SearchAnimeAsync(request));
             })
-            .SelectMany(_metadataService!.SearchAnimeAsync)
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(list =>
-            {
-                Anime = list;
-            });
+            .Subscribe(list => Anime = list);
     }
 
     [RelayCommand]
