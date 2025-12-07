@@ -14,7 +14,9 @@
         <Project Path="TotoroNext.Anime.Anilist/TotoroNext.Anime.Anilist.csproj">
             <Platform Project="x64"/>
         </Project>
-        <Project Path="TotoroNext.Anime.Local/TotoroNext.Anime.Local.csproj"/>
+        <Project Path="TotoroNext.Anime.Local/TotoroNext.Anime.Local.csproj">
+            <Platform Project="x64"/>
+        </Project>
         <Project Path="TotoroNext.Anime.MyAnimeList/TotoroNext.Anime.MyAnimeList.csproj">
             <Platform Project="x64"/>
         </Project>
