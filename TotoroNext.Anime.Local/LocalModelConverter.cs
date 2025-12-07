@@ -10,7 +10,9 @@ internal static class LocalModelConverter
     {
         var model = ToAnimeModel(anime);
         model.Related = anime.Related
-                             .Select(id => ToAnimeModel(collection.Include(x => x.Tracking).FindById(id)))
+                             .Select(id => collection.Include(x => x.Tracking).FindById(id))
+                             .Where(x => x is not null)
+                             .Select(ToAnimeModel)
                              .ToList();
         return model;
     }

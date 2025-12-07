@@ -137,7 +137,6 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
             }
 
             var response = candidates.OrderByDescending(x => x.MeanScore)
-                                     .Where(x => x is { MyAnimeListId: > 0, AnilistId: > 0 })
                                      .Take(100)
                                      .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
                                      .ToList();

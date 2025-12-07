@@ -13,8 +13,8 @@ internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingServ
         
         var localAnime = anime.ServiceName switch
         {
-            "MyAnimeList" => dbContext.Anime.FindOne(x => x.MyAnimeListId == anime.Id),
-            "Anilist" => dbContext.Anime.FindById(anime.Id),
+            "MyAnimeList" => dbContext.Anime.FindById(anime.Id),
+            "Anilist" => dbContext.Anime.FindOne(x => x.AnilistId == anime.Id),
             "AniDb" => dbContext.Anime.FindOne(x => x.AniDbId == anime.Id),
             "Kitsu" => dbContext.Anime.FindOne(x => x.KitsuId == anime.Id),
             "Simkl" => dbContext.Anime.FindOne(x => x.SimklId == anime.Id),

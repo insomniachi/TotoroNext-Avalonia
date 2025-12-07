@@ -12,7 +12,7 @@ internal class AnimeThemes(IHttpClientFactory httpClientFactory) : IAnimeThemes
         {
             if (serviceName == "Local")
             {
-                serviceName = nameof(AnimeId.Anilist);
+                serviceName = nameof(AnimeId.MyAnimeList);
             }
             
             using var client = httpClientFactory.CreateClient();

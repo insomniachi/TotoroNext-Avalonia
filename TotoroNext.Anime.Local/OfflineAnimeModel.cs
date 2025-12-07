@@ -12,8 +12,8 @@ internal class LocalAnimeModel
     [BsonRef(nameof(LocalEpisodeInfo))] public LocalEpisodeInfo? EpisodeInfo { get; set; }
     [BsonRef(nameof(LocalCharacterInfo))] public LocalCharacterInfo? CharacterInfo { get; set; }
     [BsonRef(nameof(LocalAdditionalInfo))] public LocalAdditionalInfo? AdditionalInfo { get; set; }
-    [BsonId] public long AnilistId { get; set; }
-    public long MyAnimeListId { get; set; }
+    [BsonId] public long MyAnimeListId { get; set; }
+    public long AnilistId { get; set; }
     public long KitsuId { get; set; }
     public long AniDbId { get; set; }
     public long SimklId { get; set; }
@@ -28,6 +28,13 @@ internal class LocalAnimeModel
     public IReadOnlyCollection<long> Related { get; set; } = [];
     public string Image { get; set; } = "";
     public string Thumbnail { get; set; } = "";
+
+    public bool HasChanged(LocalAnimeModel other)
+    {
+        return TotalEpisodes != other.TotalEpisodes ||
+               Math.Abs(MeanScore - other.MeanScore) > 0 ||
+               AiringStatus != other.AiringStatus;
+    }
 }
 
 [Serializable]

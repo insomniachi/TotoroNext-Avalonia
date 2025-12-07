@@ -37,8 +37,8 @@ internal class Initializer(
     {
         using var decompressor = new DecompressionStream(stream);
         using var reader = new StreamReader(decompressor);
-        var existing = dbContext.Anime.FindAll().ToDictionary(x => x.AnilistId);
-        dbContext.Anime.EnsureIndex(x => x.MyAnimeListId);
+        var existing = dbContext.Anime.FindAll().ToDictionary(x => x.MyAnimeListId);
+        dbContext.Anime.EnsureIndex(x => x.AnilistId);
 
         var toUpsert = new List<LocalAnimeModel>();
         while (reader.ReadLine() is { } line)
@@ -57,10 +57,15 @@ internal class Initializer(
             }
 
             var model = LocalModelConverter.Convert(anime);
-            if (existing.TryGetValue(model.AnilistId, out var existingAnime))
+            if (model.MyAnimeListId == 0)
+            {
+                continue;
+            }
+
+            if (existing.TryGetValue(model.MyAnimeListId, out var existingAnime))
             {
                 model.Tracking = existingAnime.Tracking;
-                if (model.TotalEpisodes != existingAnime.TotalEpisodes)
+                if (existingAnime.HasChanged(model))
                 {
                     toUpsert.Add(model);
                 }
