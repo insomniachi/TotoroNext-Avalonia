@@ -163,7 +163,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
             ExpiresAt = DateTimeOffset.Now.AddDays(3)
         };
 
-        if (anime.AiringStatus == AiringStatus.FinishedAiring)
+        if (anime.AiringStatus == AiringStatus.FinishedAiring && localAnime.EpisodeInfo.Info is { Count: > 0 })
         {
             dbContext.Episodes.Upsert(localAnime.EpisodeInfo);
             dbContext.Anime.Upsert(localAnime);

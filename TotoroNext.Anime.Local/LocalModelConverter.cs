@@ -31,7 +31,7 @@ internal static class LocalModelConverter
             Image = anime.Image,
             ServiceName = "Local",
             ServiceId = Guid.Empty,
-            Id = anime.AnilistId,
+            Id = anime.MyAnimeListId,
             ExternalIds = new AnimeId
             {
                 Anilist = anime.AnilistId,

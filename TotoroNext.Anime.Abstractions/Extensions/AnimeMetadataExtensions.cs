@@ -38,62 +38,70 @@ public static class AnimeMetadataExtensions
     {
         public async Task<List<EpisodeInfo>> GetEpisodes()
         {
-            var serviceType = anime.ServiceName switch
+            try
             {
-                "Anilist" => "anilist_id",
-                "MyAnimeList" or "Local" => "mal_id",
-                _ => throw new NotSupportedException($"Service type {anime.ServiceId} is not supported.")
-            };
-
-            var today = TimeProvider.System.GetUtcNow();
-
-            var response = await @"https://api.ani.zip/mappings".SetQueryParam(serviceType, anime.Id).GetStringAsync();
-            var jObject = (JsonObject)JsonNode.Parse(response)!;
-            var episodesObj = jObject["episodes"]!.AsObject();
-
-            var result = new List<EpisodeInfo>();
-
-            foreach (var property in episodesObj)
-            {
-                if (property.Value.Deserialize<EpisodeInfo>() is not { } ep)
+                var serviceType = anime.ServiceName switch
                 {
-                    continue;
+                    "Anilist" => "anilist_id",
+                    "MyAnimeList" or "Local" => "mal_id",
+                    _ => throw new NotSupportedException($"Service type {anime.ServiceId} is not supported.")
+                };
+
+                var today = TimeProvider.System.GetUtcNow();
+
+                var response = await @"https://api.ani.zip/mappings".SetQueryParam(serviceType, anime.Id).GetStringAsync();
+                var jObject = (JsonObject)JsonNode.Parse(response)!;
+                var episodesObj = jObject["episodes"]!.AsObject();
+
+                var result = new List<EpisodeInfo>();
+
+                foreach (var property in episodesObj)
+                {
+                    if (property.Value.Deserialize<EpisodeInfo>() is not { } ep)
+                    {
+                        continue;
+                    }
+
+                    if (ep.AirDateUtc is null || ep.AirDateUtc > today)
+                    {
+                        continue;
+                    }
+
+                    if (property.Key.StartsWith('S'))
+                    {
+                        ep.IsSpecial = true;
+                    }
+
+                    result.Add(ep);
                 }
 
-                if (ep.AirDateUtc is null || ep.AirDateUtc > today)
+                var first = result.FirstOrDefault();
+                if (first is null)
                 {
-                    continue;
+                    return result;
                 }
 
-                if (property.Key.StartsWith('S'))
+                var max = result.Max(x => x.EpisodeNumber);
+                var firstEp = first.EpisodeNumber;
+                foreach (var episode in result)
                 {
-                    ep.IsSpecial = true;
+                    if (episode.EpisodeNumber < firstEp)
+                    {
+                        episode.EpisodeNumber = max + 1;
+                    }
+                    else
+                    {
+                        episode.EpisodeNumber -= firstEp - 1;
+                    }
                 }
 
-                result.Add(ep);
-            }
-
-            var first = result.FirstOrDefault();
-            if (first is null)
-            {
                 return result;
             }
-
-            var max = result.Max(x => x.EpisodeNumber);
-            var firstEp = first.EpisodeNumber;
-            foreach (var episode in result)
+            catch (Exception e)
             {
-                if (episode.EpisodeNumber < firstEp)
-                {
-                    episode.EpisodeNumber = max + 1;
-                }
-                else
-                {
-                    episode.EpisodeNumber -= firstEp - 1;
-                }
+                Console.WriteLine(e);
+                return [];
             }
-
-            return result;
         }
     }
 }
