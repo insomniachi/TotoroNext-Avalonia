@@ -1,3 +1,4 @@
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using Avalonia.Input;
@@ -66,6 +67,8 @@ public sealed partial class WatchViewModel(
     [ObservableProperty] public partial bool IsEpisodesLoading { get; set; } = true;
 
     [ObservableProperty] public partial bool AutoPlayNextEpisode { get; set; }
+    
+    [ObservableProperty] public partial bool IsFetchingStream { get; set; }
 
     public void Dispose()
     {
@@ -105,8 +108,13 @@ public sealed partial class WatchViewModel(
         }
 
         this.WhenAnyValue(x => x.SelectedEpisode)
-            .Do(_ => Servers = [])
             .WhereNotNull()
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Do(_ =>
+            {
+                Servers = [];
+                IsFetchingStream = true;
+            })
             .SelectMany(ep => ep.GetServersAsync().ToListAsync().AsTask())
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);
@@ -315,6 +323,9 @@ public sealed partial class WatchViewModel(
 
         var title = string.Join(" - ", parts.Where(x => !string.IsNullOrEmpty(x)));
         var segments = await GetMediaSegments(source, SelectedEpisode);
+
+        RxApp.MainThreadScheduler.Schedule(() => IsFetchingStream = false);
+        
         var metadata = new MediaMetadata(title, source.Headers, segments, source.Subtitle);
         _media = new Media(source.Url, metadata);
 
