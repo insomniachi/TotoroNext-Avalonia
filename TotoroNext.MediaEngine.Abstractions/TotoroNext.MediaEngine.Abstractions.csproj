@@ -12,7 +12,7 @@
     <ItemGroup>
         <PackageReference Include="FFMpegCore"/>
         <PackageReference Include="LibVLCSharp"/>
-        <PackageReference Include="LibVLCSharp.Avalonia" />
+        <PackageReference Include="LibVLCSharp.Avalonia"/>
     </ItemGroup>
 
 </Project>

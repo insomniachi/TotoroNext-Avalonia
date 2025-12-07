@@ -6,18 +6,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
+        <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Crc32.NET" />
-      <PackageReference Include="MathNet.Numerics" />
-      <PackageReference Include="NAudio.Core" />
-      <PackageReference Include="NAudio.Wasapi" />
-      <PackageReference Include="NLayer.NAudioSupport" />
+        <PackageReference Include="Crc32.NET"/>
+        <PackageReference Include="MathNet.Numerics"/>
+        <PackageReference Include="NAudio.Core"/>
+        <PackageReference Include="NAudio.Wasapi"/>
+        <PackageReference Include="NLayer.NAudioSupport"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\shazam.jpg" />
+        <AvaloniaResource Include="Assets\shazam.jpg"/>
     </ItemGroup>
 </Project>

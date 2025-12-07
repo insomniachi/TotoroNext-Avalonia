@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -55,7 +56,7 @@ public class SettingsModel : ObservableObject
         get;
         set => SetAndSaveProperty(ref field, value);
     }
-    
+
     public Guid SelectedTorrentIndexer
     {
         get;
@@ -122,19 +123,22 @@ public class SettingsModel : ObservableObject
 [UsedImplicitly]
 public partial class SettingsViewModel : ObservableObject, IInitializable, IInitializer
 {
+    private readonly IFactory<ITrackingService, Guid> _trackingServiceFactory;
     private readonly IDialogService _dialogService;
+    private readonly ILogger<SettingsViewModel> _logger;
     private readonly IMessenger _messenger;
     private readonly SettingsModel _settings;
-    private readonly ILogger<SettingsViewModel> _logger;
     private readonly UpdateManager _updateManager;
 
     public SettingsViewModel(IEnumerable<Descriptor> modules,
+                             IFactory<ITrackingService, Guid> trackingServiceFactory,
                              IDialogService dialogService,
                              IMessenger messenger,
                              UpdateManager updateManager,
                              SettingsModel settings,
                              ILogger<SettingsViewModel> logger)
     {
+        _trackingServiceFactory = trackingServiceFactory;
         _dialogService = dialogService;
         _messenger = messenger;
         _updateManager = updateManager;
@@ -144,7 +148,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
 
         MediaEngines = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaEngine))];
         AnimeProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
-        TrackingServices = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.Tracking))];
+        TrackingServices = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.Tracking))];
         SegmentProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaSegments))];
         DebridServices = [Descriptor.None, .. allModules.Where(x => x.Components.Contains(ComponentTypes.Debrid))];
     }
@@ -204,7 +208,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
             {
                 _logger.LogDebug("Update found: {info}", JsonSerializer.Serialize(updateInfo));
             }
-            
+
             var answer = await _dialogService.Question("Update found", $"Download and install {updateInfo.TargetFullRelease.Version}?");
 
             if (answer == MessageBoxResult.Yes)
@@ -223,5 +227,23 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         {
             Console.WriteLine(e);
         }
+    }
+
+    [RelayCommand]
+    private async Task SyncList()
+    {
+        if (_settings.SelectedTrackingService == Guid.Empty)
+        {
+            return;
+        }
+
+        if (_trackingServiceFactory.Create(Guid.Empty) is not ILocalTrackingService lts)
+        {
+            return;
+        }
+
+        var service = _trackingServiceFactory.Create(_settings.SelectedTrackingService);
+        var userlist = await service.GetUserList();
+        await Task.Run(() => lts.SyncList(userlist));
     }
 }

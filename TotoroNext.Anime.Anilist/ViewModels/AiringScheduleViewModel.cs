@@ -10,7 +10,7 @@ public partial class AiringScheduleViewModel(IAnilistMetadataService metadataSer
 {
     [ObservableProperty] public partial bool IsLoading { get; set; }
     [ObservableProperty] public partial List<List<AnimeModel>> Schedule { get; set; } = [];
-    
+
     public DayOfWeek Today { get; } = DateTime.Now.DayOfWeek;
 
     public async Task InitializeAsync()
@@ -23,7 +23,7 @@ public partial class AiringScheduleViewModel(IAnilistMetadataService metadataSer
         var end = (int)new DateTimeOffset(sunday).ToUnixTimeSeconds();
 
         IsLoading = true;
-        
+
         var schedule = await metadataService.GetAiringSchedule(start, end);
 
         Schedule =
@@ -34,7 +34,7 @@ public partial class AiringScheduleViewModel(IAnilistMetadataService metadataSer
             [..schedule.Where(x => x.Start.DayOfWeek == DayOfWeek.Thursday).Select(x => x.Anime)],
             [..schedule.Where(x => x.Start.DayOfWeek == DayOfWeek.Friday).Select(x => x.Anime)],
             [..schedule.Where(x => x.Start.DayOfWeek == DayOfWeek.Saturday).Select(x => x.Anime)],
-            [..schedule.Where(x => x.Start.DayOfWeek == DayOfWeek.Sunday).Select(x => x.Anime)],
+            [..schedule.Where(x => x.Start.DayOfWeek == DayOfWeek.Sunday).Select(x => x.Anime)]
         ];
 
         IsLoading = false;

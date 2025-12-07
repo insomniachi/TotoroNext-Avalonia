@@ -40,7 +40,7 @@ public class Module : IModule<Settings>
 public class Settings : OverridableConfig
 {
     [DisplayName("Subtitle")]
-    [AllowedValues("en-US","fr-FR","es-LA","pt-BR","it-IT","de-DE")]
+    [AllowedValues("en-US", "fr-FR", "es-LA", "pt-BR", "it-IT", "de-DE")]
     public string SubtitleLanguage { get; set; } = "en-US";
 }
 

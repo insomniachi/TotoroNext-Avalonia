@@ -48,7 +48,7 @@ internal class RpcService(
         messenger.Unregister<SongPlaybackState>(this);
         return Task.CompletedTask;
     }
-    
+
     public void Receive(PlaybackEnded message)
     {
         _lastCompletedItem = message.Id;
@@ -66,8 +66,8 @@ internal class RpcService(
         {
             return;
         }
-        
-        if(message.Episode.Id == _lastCompletedItem)
+
+        if (message.Episode.Id == _lastCompletedItem)
         {
             return;
         }
@@ -76,7 +76,7 @@ internal class RpcService(
         {
             return;
         }
-        
+
         var now = DateTime.UtcNow;
         _client.Update(p =>
         {
@@ -84,10 +84,11 @@ internal class RpcService(
             p.Details = message.Anime.Title;
             if (message.Anime.MediaFormat is not AnimeMediaFormat.Movie)
             {
-                p.State = message.IsPaused 
+                p.State = message.IsPaused
                     ? $"Episode {message.Episode.Number} (paused)"
                     : $"Episode {message.Episode.Number}";
             }
+
             p.Assets ??= new Assets();
             p.Assets.LargeImageKey = message.Anime.Image;
 
@@ -103,12 +104,12 @@ internal class RpcService(
                     End = now + (message.Duration - message.Position)
                 };
             }
-    
+
             p.Buttons =
             [
                 new Button
                 {
-                    Label = message.Anime.ServiceName,
+                    Label = message.Anime.ServiceName == "Local" ? nameof(AnimeId.MyAnimeList) : message.Anime.ServiceName,
                     Url = message.Anime.Url
                 }
             ];
@@ -132,7 +133,7 @@ internal class RpcService(
         {
             return;
         }
-        
+
         var now = DateTime.UtcNow;
         _client.Update(p =>
         {
@@ -150,7 +151,7 @@ internal class RpcService(
             [
                 new Button
                 {
-                    Label = message.Anime.ServiceName,
+                    Label = message.Anime.ServiceName == "Local" ? nameof(AnimeId.MyAnimeList) : message.Anime.ServiceName,
                     Url = message.Anime.Url
                 }
             ];

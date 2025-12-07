@@ -39,7 +39,6 @@ public class LocalSettingsService : ILocalSettingsService
 
         SaveSetting(key, deafultValue);
         return deafultValue;
-
     }
 
     public void RemoveSetting(string key)

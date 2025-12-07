@@ -17,7 +17,7 @@
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"
                     HorizontalAlignment="Stretch"
-                    Command="{Binding UpdateCatalogCommand}"/>
+                    Command="{Binding UpdateCatalogCommand}" />
         </u:Form>
     </Grid>
 </UserControl>

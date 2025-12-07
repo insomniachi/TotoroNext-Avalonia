@@ -6,12 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj" />
-      <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
+        <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\animekai.jpg" />
+        <AvaloniaResource Include="Assets\animekai.jpg"/>
     </ItemGroup>
 
 </Project>

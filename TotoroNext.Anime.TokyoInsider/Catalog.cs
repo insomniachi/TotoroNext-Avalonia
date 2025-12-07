@@ -10,7 +10,7 @@ public static class Catalog
 {
     private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
     internal static List<TokyoInsiderItem> Items { get; set; } = [];
-    
+
     public static async Task DownloadCatalog()
     {
         var stream = await "https://www.tokyoinsider.com/anime/list".GetStreamAsync();
@@ -25,10 +25,10 @@ public static class Catalog
             {
                 continue;
             }
-            
+
             catalog.Add(new TokyoInsiderItem(link.GetAttributeValue("href", ""), link.InnerHtml));
         }
-        
+
         var file = FileHelper.GetModulePath(Module.Descriptor, "catalog.json");
         var directory = Path.GetDirectoryName(file);
         if (!string.IsNullOrEmpty(directory))

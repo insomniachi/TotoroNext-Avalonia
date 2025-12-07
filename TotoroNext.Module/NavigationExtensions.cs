@@ -86,7 +86,7 @@ public class NavigationExtensions
             HandleKeyBindings(vm, false);
             await HandleIAsyncInitializable(vm);
         };
-                    
+
         view.DetachedFromLogicalTree += async (_, _) =>
         {
             HandleDisposable(vm);
@@ -101,7 +101,7 @@ public class NavigationExtensions
         {
             return;
         }
-        
+
         var scope = Container.Services.GetRequiredService<IKeyBindingsManager>();
         if (isDetaching)
         {
@@ -119,7 +119,7 @@ public class NavigationExtensions
         {
             return;
         }
-        
+
         closeable.Closed += (_, _) =>
         {
             if (FindLogicalParentOfType<DefaultDrawerControl>(view) is not { } drawer)
@@ -137,7 +137,7 @@ public class NavigationExtensions
         {
             return;
         }
-        
+
         i.Initialize();
     }
 
@@ -147,7 +147,7 @@ public class NavigationExtensions
         {
             return;
         }
-        
+
         try
         {
             await ia.InitializeAsync();
@@ -164,7 +164,7 @@ public class NavigationExtensions
         {
             return;
         }
-        
+
         disposable.Dispose();
     }
 

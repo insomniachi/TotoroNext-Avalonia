@@ -22,7 +22,7 @@ public partial class AnimeCharactersViewModel(
         {
             return;
         }
-        
+
         Characters = await _metadataService.GetCharactersAsync(parameters.Anime.Id);
     }
 }

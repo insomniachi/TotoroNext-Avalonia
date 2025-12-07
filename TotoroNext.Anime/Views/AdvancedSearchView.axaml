@@ -105,7 +105,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <ac:AnimeCard Anime="{Binding}"
-                                          Margin="8"
+                                          Margin="16"
                                           HasDetailsPane="True"
                                           DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                           WatchCommand="{x:Static am:Commands.WatchCommand}"

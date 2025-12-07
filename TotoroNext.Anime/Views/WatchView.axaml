@@ -114,7 +114,7 @@
                              VerticalAlignment="Center">
                 <u:SelectionList.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center"/>
+                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" />
                     </ItemsPanelTemplate>
                 </u:SelectionList.ItemsPanel>
             </u:SelectionList>
@@ -131,11 +131,11 @@
                 <TextBlock Text="Episodes"
                            Classes.H1="true"
                            Theme="{DynamicResource TitleTextBlock}"
-                           VerticalAlignment="Center"/>
-                <ToggleSwitch IsChecked="{Binding AutoPlayNextEpisode}" 
-                              OnContent="Auto Play" 
+                           VerticalAlignment="Center" />
+                <ToggleSwitch IsChecked="{Binding AutoPlayNextEpisode}"
+                              OnContent="Auto Play"
                               OffContent="Auto Play"
-                              VerticalAlignment="Center"/>
+                              VerticalAlignment="Center" />
             </StackPanel>
 
             <u:LoadingContainer Grid.Row="1" IsLoading="{Binding IsEpisodesLoading}"

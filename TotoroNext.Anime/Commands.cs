@@ -35,7 +35,7 @@ public class Commands(
             {
                 return;
             }
-            
+
             await trackingUpdater.UpdateTracking(anime, new Tracking { Status = ListItemStatus.PlanToWatch });
         });
     }

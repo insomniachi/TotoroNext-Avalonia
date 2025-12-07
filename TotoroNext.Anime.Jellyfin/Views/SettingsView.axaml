@@ -13,14 +13,14 @@
                Stretch="UniformToFill"
                Width="600" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
-            <TextBox Text="{Binding ServerUrl}" u:FormItem.Label="Server Url"/>
-            <TextBox Text="{Binding Username}" u:FormItem.Label="Username"/>
-            <TextBox Text="{Binding Password}" u:FormItem.Label="Password"/>
+            <TextBox Text="{Binding ServerUrl}" u:FormItem.Label="Server Url" />
+            <TextBox Text="{Binding Username}" u:FormItem.Label="Username" />
+            <TextBox Text="{Binding Password}" u:FormItem.Label="Password" />
             <Button Content="Login"
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"
                     HorizontalAlignment="Stretch"
-                    Command="{Binding LoginCommand}"/>
+                    Command="{Binding LoginCommand}" />
         </u:Form>
     </Grid>
 </UserControl>

@@ -30,7 +30,7 @@ public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
             {
                 return null;
             }
-            
+
             var link = links.First().GetString() ?? "";
 
             stream = await client.Request("unrestrict", "link")
@@ -42,7 +42,7 @@ public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
             var downloadLink = doc.RootElement.GetProperty("download").GetString();
 
             await client.Request("torrents", "delete", id).DeleteAsync();
-            
+
             return downloadLink is null ? magnet : new Uri(downloadLink);
         }
         catch (Exception e)
@@ -57,10 +57,10 @@ public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
         if (IsMagnetLink(uri))
         {
             return await client.Request("torrents", "addMagnet")
-                        .PostUrlEncodedAsync(new
-                        {
-                            magnet = uri.ToString()
-                        }).ReceiveStream();
+                               .PostUrlEncodedAsync(new
+                               {
+                                   magnet = uri.ToString()
+                               }).ReceiveStream();
         }
 
         var stream = await uri.GetStreamAsync();
@@ -70,7 +70,7 @@ public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
                            .PutAsync(new ByteArrayContent(memoryStream.ToArray()))
                            .ReceiveStream();
     }
-    
+
     private static bool IsMagnetLink(Uri uri)
     {
         return uri.Scheme.Equals("magnet", StringComparison.OrdinalIgnoreCase);

@@ -19,25 +19,25 @@ public interface IMetadataService
 
 public static class MetadataServiceExtensions
 {
-	extension(IMetadataService service)
-	{
-		public async ValueTask<AnimeModel?> FindAnimeAsync(AnimeModel anime)
-		{
-			if (anime.ServiceId == service.Id)
-			{
-				return anime;
-			}
+    extension(IMetadataService service)
+    {
+        public async ValueTask<AnimeModel?> FindAnimeAsync(AnimeModel anime)
+        {
+            if (anime.ServiceId == service.Id)
+            {
+                return anime;
+            }
 
-			var response = await service.SearchAnimeAsync(anime.Title);
+            var response = await service.SearchAnimeAsync(anime.Title);
 
-			return response switch
-			{
-				{ Count: 0 } => null,
-				{ Count: 1 } => response[0],
-				_ => response.FirstOrDefault(x => x.Season == anime.Season)
-			};
-		}
-	}
+            return response switch
+            {
+                { Count: 0 } => null,
+                { Count: 1 } => response[0],
+                _ => response.FirstOrDefault(x => x.Season == anime.Season)
+            };
+        }
+    }
 }
 
 public class AdvancedSearchRequest
@@ -51,6 +51,18 @@ public class AdvancedSearchRequest
     public float? MaximumScore { get; init; }
     public int? MaxYear { get; init; }
     public int? MinYear { get; init; }
+
+    public bool IsEmpty()
+    {
+        return string.IsNullOrEmpty(Title) && SeasonName == null
+                                           && Source == null &&
+                                           (IncludedGenres == null || IncludedGenres.Count == 0) &&
+                                           (ExcludedGenres == null || ExcludedGenres.Count == 0) &&
+                                           MinimumScore == null
+                                           && MaximumScore == null &&
+                                           MinYear == null
+                                           && MaxYear == null;
+    }
 }
 
 public class ScheduledAnime(AnimeModel anime)
@@ -66,8 +78,8 @@ public partial class AnimeModel : ObservableObject
     public AnimeId ExternalIds { get; init; } = new();
     public string Image { get; set; } = "";
     public string Title { get; init; } = "";
-    public string EngTitle { get; init; } = "";
-    public string RomajiTitle { get; init; } = "";
+    public string EngTitle { get; set; } = "";
+    public string RomajiTitle { get; set; } = "";
     [ObservableProperty] public partial Tracking? Tracking { get; set; }
     public int? TotalEpisodes { get; set; }
     public AiringStatus AiringStatus { get; set; }
@@ -86,7 +98,7 @@ public partial class AnimeModel : ObservableObject
     public AnimeMediaFormat MediaFormat { get; init; } = AnimeMediaFormat.Unknown;
     public IReadOnlyCollection<string> Genres { get; init; } = [];
     public IReadOnlyCollection<string> Studios { get; init; } = [];
-    public IReadOnlyCollection<TrailerVideo> Trailers { get; init; } = [];
+    public IReadOnlyCollection<TrailerVideo> Trailers { get; set; } = [];
 }
 
 public class Tracking

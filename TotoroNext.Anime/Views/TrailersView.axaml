@@ -25,7 +25,7 @@
                 <u:ElasticWrapPanel IsFillHorizontal="True"
                                     ItemSpacing="4"
                                     LineSpacing="4"
-                                    ItemWidth="350"/>
+                                    ItemWidth="350" />
             </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
     </ListBox>

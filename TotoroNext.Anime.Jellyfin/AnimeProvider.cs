@@ -13,7 +13,7 @@ public class AnimeProvider(
 {
     public static string? SessionId { get; private set; }
     public static string? MediaSourceId { get; private set; }
-    
+
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
     {
         var result = await client.Items.GetAsync(x =>
@@ -53,9 +53,10 @@ public class AnimeProvider(
             yield break;
         }
 
-        
+
         var server = new VideoServer("Default", url);
-        var segments = await client.MediaSegments[id].GetAsync(x => x.QueryParameters.IncludeSegmentTypes = [MediaSegmentType.Intro, MediaSegmentType.Outro]);
+        var segments = await client.MediaSegments[id]
+                                   .GetAsync(x => x.QueryParameters.IncludeSegmentTypes = [MediaSegmentType.Intro, MediaSegmentType.Outro]);
         if (segments != null)
         {
             var skipData = new SkipData();
@@ -69,14 +70,14 @@ public class AnimeProvider(
                 switch (segment.Type)
                 {
                     case MediaSegmentDto_Type.Intro:
-                        skipData.Opening = new Segment()
+                        skipData.Opening = new Segment
                         {
                             Start = TimeSpan.FromTicks(start),
                             End = TimeSpan.FromTicks(end)
                         };
                         break;
                     case MediaSegmentDto_Type.Outro:
-                        skipData.Ending = new Segment()
+                        skipData.Ending = new Segment
                         {
                             Start = TimeSpan.FromTicks(start),
                             End = TimeSpan.FromTicks(end)
@@ -87,7 +88,7 @@ public class AnimeProvider(
 
             server.SkipData = skipData;
         }
-        
+
         yield return server;
     }
 
@@ -184,7 +185,7 @@ public class AnimeProvider(
         }
 
         MediaSourceId = mediaSource.Id;
-        
+
         if (!string.IsNullOrEmpty(mediaSource.TranscodingUrl) && mediaSource.SupportsTranscoding == true)
         {
             return null;
@@ -196,7 +197,7 @@ public class AnimeProvider(
                            .AppendPathSegment($"/Videos/{id}/stream")
                            .AppendQueryParam("container", mediaSource.Container)
                            .AppendQueryParam("playSessionId", SessionId)
-                           .AppendQueryParam("startTimeTicks",startTime)
+                           .AppendQueryParam("startTimeTicks", startTime)
                            .AppendQueryParam("static", true)
                            .AppendQueryParam("tag", mediaSource.ETag)
                            .AppendQueryParam("ApiKey", Settings.AccessToken)
@@ -205,5 +206,4 @@ public class AnimeProvider(
 
         return null;
     }
-    
 }

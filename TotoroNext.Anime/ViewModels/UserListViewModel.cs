@@ -12,7 +12,7 @@ using TotoroNext.Module.Abstractions;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public partial class UserListViewModel : ObservableObject, IAsyncInitializable, IKeyBindingsProvider 
+public partial class UserListViewModel : ObservableObject, IAsyncInitializable, IKeyBindingsProvider
 {
     private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
     private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
@@ -68,26 +68,14 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
         IsLoading = false;
     }
 
-    [RelayCommand]
-    private void OpenFilterPane()
-    {
-        _messenger.Send(new PaneNavigateToDataMessage(new UserListSortAndFilter(Sort, Filter), null!));
-    }
-
-    [RelayCommand]
-    private void ClearFilters()
-    {
-        Filter.Clear();
-    }
-
     public IEnumerable<KeyBinding> GetKeyBindings()
     {
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.F, KeyModifiers.Control),
             Command = OpenFilterPaneCommand
         };
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Right),
             Command = new RelayCommand(() =>
@@ -102,7 +90,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
                 Filter.Status = AllStatus[newIndex];
             })
         };
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Left),
             Command = new RelayCommand(() =>
@@ -117,6 +105,18 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
                 Filter.Status = AllStatus[newIndex];
             })
         };
+    }
+
+    [RelayCommand]
+    private void OpenFilterPane()
+    {
+        _messenger.Send(new PaneNavigateToDataMessage(new UserListSortAndFilter(Sort, Filter), null!));
+    }
+
+    [RelayCommand]
+    private void ClearFilters()
+    {
+        Filter.Clear();
     }
 }
 

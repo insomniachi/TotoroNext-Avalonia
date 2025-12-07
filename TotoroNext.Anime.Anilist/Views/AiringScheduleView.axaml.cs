@@ -2,8 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using Avalonia.Threading;
-using TotoroNext.Anime.Anilist.ViewModels;
 
 namespace TotoroNext.Anime.Anilist.Views;
 
@@ -26,8 +24,8 @@ public class DayMatchConverter : IValueConverter
 
         return today == day;
     }
-    
-    
+
+
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotImplementedException();

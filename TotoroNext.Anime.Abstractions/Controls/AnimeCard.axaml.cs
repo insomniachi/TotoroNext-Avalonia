@@ -20,10 +20,10 @@ public partial class AnimeCard : UserControl
 
     public static readonly StyledProperty<ICommand> DetailsCommandProperty =
         AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(DetailsCommand));
-    
+
     public static readonly StyledProperty<ICommand> SearchTorrentsCommandProperty =
         AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(SearchTorrentsCommand));
-    
+
     public static readonly StyledProperty<ICommand> AddToListCommandProperty =
         AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(AddToListCommand));
 
@@ -32,12 +32,13 @@ public partial class AnimeCard : UserControl
 
     public static readonly StyledProperty<ICommand> SettingsCommandProperty =
         AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(SettingsCommand));
-    
+
     public static readonly StyledProperty<bool> ShowCompletedStatusProperty =
         AvaloniaProperty.Register<AnimeCard, bool>(nameof(ShowCompletedStatus));
 
-    private CancellationTokenSource? _exitDelayToken;
     private static readonly SolidColorBrush StatusBorderBrush = new(Color.Parse("#AA000000"));
+
+    private CancellationTokenSource? _exitDelayToken;
 
     public AnimeCard()
     {
@@ -150,7 +151,6 @@ public partial class AnimeCard : UserControl
             {
                 effect.Radius = 0;
             }
-
         }
         catch (Exception)
         {

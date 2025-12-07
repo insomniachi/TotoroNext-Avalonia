@@ -1,4 +1,5 @@
 ﻿using AnitomySharp;
+using FuzzySharp;
 
 namespace TotoroNext.Torrents.Abstractions;
 
@@ -23,20 +24,20 @@ public class TorrentModel
         var season = parsedResults.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementAnimeSeason)?.Value;
         var episode = parsedResults.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementEpisodeNumber)?.Value;
         var releaseInfo = parsedResults.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementReleaseInformation)?.Value;
-            
+
         if (releaseInfo == "BATCH")
         {
             return null;
         }
-            
+
         if (releaseGroup is not null &&
             animeTitle is not null &&
-            FuzzySharp.Fuzz.PartialRatio(animeTitle, releaseGroup) > 50)
+            Fuzz.PartialRatio(animeTitle, releaseGroup) > 50)
         {
             releaseGroup = "";
         }
-        
-        return new TorrentModel()
+
+        return new TorrentModel
         {
             Torrent = torrent,
             Title = title,

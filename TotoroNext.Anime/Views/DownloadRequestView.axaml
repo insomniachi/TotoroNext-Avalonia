@@ -18,10 +18,10 @@
                 HorizontalAlignment="Stretch" />
         </u:FormItem>
         <u:FormItem Label="Filename format">
-            <TextBox HorizontalAlignment="Stretch" Text="{Binding FilenameFormat}"/>
+            <TextBox HorizontalAlignment="Stretch" Text="{Binding FilenameFormat}" />
         </u:FormItem>
         <u:FormItem Label="Episode offset">
-            <u:NumericIntUpDown Value="{Binding EpisodeOffset, Mode=TwoWay}"/>
+            <u:NumericIntUpDown Value="{Binding EpisodeOffset, Mode=TwoWay}" />
         </u:FormItem>
         <u:FormItem Label="Provider">
             <ComboBox ItemsSource="{Binding Providers}"

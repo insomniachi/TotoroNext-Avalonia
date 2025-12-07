@@ -22,7 +22,7 @@ public sealed partial class UserListSortAndFilterViewModel(
         {
             return;
         }
-        
+
         Genres = await service.GetGenresAsync();
     }
 }

@@ -14,7 +14,7 @@ public class Module : IModule
         Components = [ComponentTypes.AnimeProvider],
         HeroImage = ResourceHelper.GetResource("anizone.jpg")
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);

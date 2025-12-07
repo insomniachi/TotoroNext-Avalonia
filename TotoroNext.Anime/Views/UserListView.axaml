@@ -105,10 +105,10 @@
                         <UniformGridLayout
                             ItemsJustification="Start"
                             ItemsStretch="Fill"
-                            MinColumnSpacing="16"
+                            MinColumnSpacing="32"
                             MinItemHeight="400"
                             MinItemWidth="250"
-                            MinRowSpacing="16" />
+                            MinRowSpacing="32" />
                     </ItemsRepeater.Layout>
                 </ItemsRepeater>
             </ScrollViewer>
@@ -120,12 +120,12 @@
                     IsVisible="{Binding NothingToSee}">
             <Image Source="/Assets/nothingtoseehere_transparent_small.png"
                    Stretch="Uniform"
-                   Height="300"/>
+                   Height="300" />
             <TextBlock Text="No tracking services authenticated, please authenticate and choose a default tracker."
                        HorizontalAlignment="Center"
                        Foreground="{DynamicResource TextBlockQuaternaryForeground}"
                        FontSize="{DynamicResource SemiFontSizeHeader4}"
-                       Margin="0 12 0 0 "/>
+                       Margin="0 12 0 0 " />
         </StackPanel>
     </Grid>
 

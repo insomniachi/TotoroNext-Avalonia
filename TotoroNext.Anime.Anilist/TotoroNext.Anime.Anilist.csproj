@@ -6,11 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="GraphQL.Client"/>
-        <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj"/>
     </ItemGroup>
 

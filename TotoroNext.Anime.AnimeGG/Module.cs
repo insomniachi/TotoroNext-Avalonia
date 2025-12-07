@@ -15,14 +15,11 @@ public class Module : IModule
         Components = [ComponentTypes.AnimeProvider],
         HeroImage = ResourceHelper.GetResource("animegg.jpg")
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
-        services.AddHttpClient("animegg",client =>
-        {
-            client.BaseAddress = new Uri("https://www.animegg.org/");
-        });
+        services.AddHttpClient("animegg", client => { client.BaseAddress = new Uri("https://www.animegg.org/"); });
     }
 }

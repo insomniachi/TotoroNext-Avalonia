@@ -9,7 +9,7 @@
              MinWidth="300"
              x:DataType="viewModels:UpdateTrackingViewModel"
              x:Class="TotoroNext.Anime.Abstractions.Views.UpdateTrackingView">
-    
+
     <u:Form LabelPosition="Left" LabelWidth="*" HorizontalAlignment="Stretch">
         <u:FormItem Label="Status">
             <u:EnumSelector EnumType="{x:Type aa:ListItemStatus}"
@@ -30,14 +30,14 @@
         <u:FormItem Label="Start Date">
             <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
                           HorizontalAlignment="Stretch"
-                          DisplayFormat="MMMM dd, yyyy" 
-                          Classes="ClearButton"/>
+                          DisplayFormat="MMMM dd, yyyy"
+                          Classes="ClearButton" />
         </u:FormItem>
         <u:FormItem Label="Finish Date">
             <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}"
                           HorizontalAlignment="Stretch"
                           DisplayFormat="MMMM dd, yyyy"
-                          Classes="ClearButton"/>
+                          Classes="ClearButton" />
         </u:FormItem>
     </u:Form>
 </UserControl>

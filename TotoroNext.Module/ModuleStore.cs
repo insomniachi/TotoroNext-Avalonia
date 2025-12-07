@@ -26,7 +26,7 @@ public class ModuleStore : IModuleStore
         {
             yield break;
         }
-        
+
         var directories = Directory.GetDirectories(_modulesPath, "*", SearchOption.AllDirectories);
 
         foreach (var item in directories.SelectMany(x => Directory.GetFiles(x, "*.dll", SearchOption.AllDirectories)))
@@ -40,7 +40,7 @@ public class ModuleStore : IModuleStore
             }
 
             SendMessage(null, fileName);
-            
+
             var context = new ModuleLoadContext(item);
             Assembly assembly;
             try
@@ -76,11 +76,14 @@ public class ModuleStore : IModuleStore
         {
             var downloadUrl = manifest.Versions[0].SourceUrl;
             var stream = await _client.GetStreamAsync(downloadUrl);
-            using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+            using var archive = new ZipArchive(stream, ZipArchiveMode.Read, true);
             foreach (var entry in archive.Entries)
             {
                 // Skip empty entries
-                if (string.IsNullOrEmpty(entry.Name)) continue;
+                if (string.IsNullOrEmpty(entry.Name))
+                {
+                    continue;
+                }
 
                 // Remove root folder from path
                 var parts = entry.FullName.Split('/', '\\');
@@ -88,8 +91,9 @@ public class ModuleStore : IModuleStore
 
                 var destinationPath = Path.Combine(targetDir, trimmedPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
-                entry.ExtractToFile(destinationPath, overwrite: true);
+                entry.ExtractToFile(destinationPath, true);
             }
+
             return true;
         }
         catch
@@ -113,6 +117,6 @@ public class ModuleStore : IModuleStore
 
     private static void SendMessage(string? primary, string? secondary)
     {
-        WeakReferenceMessenger.Default.Send(new Tuple<string?,string?>(primary, secondary));
+        WeakReferenceMessenger.Default.Send(new Tuple<string?, string?>(primary, secondary));
     }
 }

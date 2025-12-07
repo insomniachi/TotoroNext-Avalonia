@@ -15,7 +15,7 @@ public static class MalToModelConverter
         return new AnimeModel
         {
             Id = jikanModel.MalId ?? long.MinValue,
-            ExternalIds = new AnimeId()
+            ExternalIds = new AnimeId
             {
                 MyAnimeList = jikanModel.MalId ?? long.MinValue
             },
@@ -41,7 +41,7 @@ public static class MalToModelConverter
         var model = new AnimeModel
         {
             Id = malModel.Id,
-            ExternalIds = new AnimeId()
+            ExternalIds = new AnimeId
             {
                 MyAnimeList = malModel.Id
             },
@@ -135,12 +135,12 @@ public static class MalToModelConverter
         {
             return [];
         }
-        
+
         return malModelVideos.Select(x => new TrailerVideo
         {
             Thumbnail = x.Thumbnail,
             Title = x.Title,
-            Url = x.Url,
+            Url = x.Url
         }).ToList();
     }
 
@@ -158,7 +158,7 @@ public static class MalToModelConverter
             _ => AnimeMediaFormat.Unknown
         };
     }
-    
+
     private static AnimeSeason ConvertSeason(MalApi.AnimeSeason malSeason)
     {
         return malSeason switch

@@ -7,13 +7,15 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Torrents.Abstractions\TotoroNext.Torrents.Abstractions.csproj" />
+        <ProjectReference Include="..\TotoroNext.Torrents.Abstractions\TotoroNext.Torrents.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="GraphQL.Client"/>
+        <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft"/>
         <PackageReference Include="HtmlAgilityPack"/>
         <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore"/>
-        <PackageReference Include="MonoTorrent" />
+        <PackageReference Include="MonoTorrent"/>
     </ItemGroup>
 
 </Project>

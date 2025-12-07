@@ -15,14 +15,11 @@ public class Module : IModule
         HeroImage = ResourceHelper.GetResource("animekai.jpg"),
         Description = "Largest anime library, Old series in good quality."
     };
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
-        services.AddHttpClient(typeof(Module).FullName!, client =>
-        {
-            client.BaseAddress = new Uri("https://animekai.to/");
-        });
+        services.AddHttpClient(typeof(Module).FullName!, client => { client.BaseAddress = new Uri("https://animekai.to/"); });
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
     }
 }

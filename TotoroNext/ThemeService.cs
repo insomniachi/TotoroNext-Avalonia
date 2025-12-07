@@ -10,16 +10,16 @@ public class ThemeService(SettingsModel settings) : IHostedService
 {
     private static readonly Dictionary<string, ThemeVariant> Themes = new()
     {
-        {"Default", ThemeVariant.Default},
-        {"Light", ThemeVariant.Light},
-        {"Dark", ThemeVariant.Dark},
-        {"Aquatic", SemiTheme.Aquatic},
-        {"Desert", SemiTheme.Desert},
-        {"Dusk", SemiTheme.Dusk},
-        {"NightSky", SemiTheme.NightSky}
+        { "Default", ThemeVariant.Default },
+        { "Light", ThemeVariant.Light },
+        { "Dark", ThemeVariant.Dark },
+        { "Aquatic", SemiTheme.Aquatic },
+        { "Desert", SemiTheme.Desert },
+        { "Dusk", SemiTheme.Dusk },
+        { "NightSky", SemiTheme.NightSky }
     };
 
-    
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         ApplyTheme(settings.SelectedTheme);
@@ -35,7 +35,12 @@ public class ThemeService(SettingsModel settings) : IHostedService
         {
             settings.SelectedTheme = "Dark";
         }
-        
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
         return Task.CompletedTask;
     }
 
@@ -50,9 +55,7 @@ public class ThemeService(SettingsModel settings) : IHostedService
         {
             return;
         }
-        
+
         application.RequestedThemeVariant = Themes[settingsSelectedTheme];
     }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

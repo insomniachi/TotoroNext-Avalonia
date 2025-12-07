@@ -46,7 +46,7 @@ public class EpisodeInfo
     [JsonPropertyName("airDateUtc")] public DateTime? AirDateUtc { get; set; }
 
     [JsonIgnore] public ProgressInfo? Progress { get; set; }
-    
+
     [JsonIgnore] public bool IsSpecial { get; set; }
 }
 

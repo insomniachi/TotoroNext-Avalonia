@@ -6,15 +6,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj" />
+        <ProjectReference Include="..\TotoroNext.Anime.Abstractions\TotoroNext.Anime.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Jellyfin.Sdk" />
+        <PackageReference Include="Jellyfin.Sdk"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\jellyfin.jpg" />
+        <AvaloniaResource Include="Assets\jellyfin.jpg"/>
     </ItemGroup>
 
 </Project>

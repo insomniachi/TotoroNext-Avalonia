@@ -1,4 +1,6 @@
-﻿namespace TotoroNext.SongRecognition;
+﻿using Force.Crc32;
+
+namespace TotoroNext.SongRecognition;
 
 // Based on https://github.com/marin-m/SongRec/blob/0.1.0/python-version/fingerprinting/signature_format.py
 
@@ -40,7 +42,7 @@ internal static class Sig
             writer.Write(contentLen);
         }
 
-        var crc = Force.Crc32.Crc32Algorithm.Compute(mem.GetBuffer(), 8, totalLen - 8);
+        var crc = Crc32Algorithm.Compute(mem.GetBuffer(), 8, totalLen - 8);
         mem.Position = 4;
         writer.Write(crc);
 

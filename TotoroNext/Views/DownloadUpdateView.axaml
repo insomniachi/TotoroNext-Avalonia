@@ -8,15 +8,15 @@
              x:Class="TotoroNext.Views.DownloadUpdateView">
     <Grid>
         <StackPanel Spacing="10" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-             <ProgressBar Value="{Binding Progress, Mode=OneWay}">
-                 <ProgressBar.Transitions>
-                     <Transitions>
-                         <DoubleTransition Property="Value" Duration="0:0:0.3" />
-                     </Transitions>
-                 </ProgressBar.Transitions>
-             </ProgressBar>
-             <Button Content="Cancel" HorizontalAlignment="Right" Command="{Binding CancelUpdateCommand}"
-                     Margin="0 10 0 0"/>
+            <ProgressBar Value="{Binding Progress, Mode=OneWay}">
+                <ProgressBar.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Value" Duration="0:0:0.3" />
+                    </Transitions>
+                </ProgressBar.Transitions>
+            </ProgressBar>
+            <Button Content="Cancel" HorizontalAlignment="Right" Command="{Binding CancelUpdateCommand}"
+                    Margin="0 10 0 0" />
         </StackPanel>
     </Grid>
 </UserControl>

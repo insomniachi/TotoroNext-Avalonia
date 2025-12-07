@@ -14,15 +14,15 @@ namespace TotoroNext.ViewModels;
 [UsedImplicitly]
 public sealed partial class ModulesViewModel : ObservableObject
 {
-    private readonly IMessenger _messenger;
-    private readonly SourceCache<Descriptor, Guid> _descriptorsCache = new(x => x.Id);
     private readonly ReadOnlyObservableCollection<Descriptor> _descriptors;
+    private readonly SourceCache<Descriptor, Guid> _descriptorsCache = new(x => x.Id);
+    private readonly IMessenger _messenger;
 
     public ModulesViewModel(IEnumerable<Descriptor> modules,
                             IMessenger messenger)
     {
         _messenger = messenger;
-        
+
         _descriptorsCache
             .Connect()
             .RefCount()
@@ -30,11 +30,12 @@ public sealed partial class ModulesViewModel : ObservableObject
             .Bind(out _descriptors)
             .DisposeMany()
             .Subscribe();
-        
+
         _descriptorsCache.AddOrUpdate([.. modules.Where(x => !x.IsInternal)]);
     }
 
     public ReadOnlyObservableCollection<Descriptor> Descriptors => _descriptors;
+
     public List<string> FilterTags { get; } =
     [
         "All",
@@ -60,7 +61,7 @@ public sealed partial class ModulesViewModel : ObservableObject
 
         _messenger.Send(new PaneNavigateToViewModelMessage(vmType, paneWidth: 600, title: descriptor.Name));
     }
-    
+
     private bool HasTag(Descriptor descriptor)
     {
         return SelectedFilterTag == "All" || descriptor.Components.Contains(SelectedFilterTag);

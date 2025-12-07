@@ -8,10 +8,10 @@
              x:DataType="viewModels:GetAnilistTokenDialogViewModel"
              x:Class="TotoroNext.Anime.Anilist.Views.GetAnilistTokenDialog">
     <u:Form>
-        <TextBox Text="{Binding Token}" u:FormItem.Label="Code" 
+        <TextBox Text="{Binding Token}" u:FormItem.Label="Code"
                  VerticalContentAlignment="Top"
-                 Width="400" 
+                 Width="400"
                  Height="300"
-                 TextWrapping="Wrap" AcceptsReturn="True"/>
+                 TextWrapping="Wrap" AcceptsReturn="True" />
     </u:Form>
 </UserControl>

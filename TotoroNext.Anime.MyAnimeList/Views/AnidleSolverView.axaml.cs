@@ -1,9 +1,7 @@
 ﻿using System.Globalization;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using IconPacks.Avalonia.MaterialDesign;
 using TotoroNext.Anime.MyAnimeList.ViewModels;
@@ -36,6 +34,7 @@ public class AnidleCriteriaIconConverter : IValueConverter
             ? PackIconMaterialDesignKind.ArrowDownward
             : PackIconMaterialDesignKind.ArrowUpward;
     }
+
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
@@ -55,8 +54,9 @@ public class AnidleCriteriaForegroundConverter : IValueConverter
             ? new SolidColorBrush(Colors.Green)
             : new SolidColorBrush(Colors.Red);
     }
+
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
     }
-} 
+}

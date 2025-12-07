@@ -12,28 +12,30 @@
           RowDefinitions="Auto, Auto, *"
           RowSpacing="8">
 
-        <ItemsControl ItemsSource="{Binding Anime.Genres, FallbackValue={x:Null}}" VerticalAlignment="Top">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border CornerRadius="4"
-                            BorderThickness="1"
-                            Background="{DynamicResource SemiColorPrimary}"
-                            Padding="8 4">
-                        <TextBlock Text="{Binding}" />
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <panels:FlexPanel AlignContent="Center"
-                                      AlignItems="Center"
-                                      JustifyContent="Center"
-                                      Wrap="Wrap"
-                                      ColumnSpacing="8"
-                                      RowSpacing="8" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        <ScrollViewer MaxHeight="100">
+            <ItemsControl ItemsSource="{Binding Anime.Genres, FallbackValue={x:Null}}" VerticalAlignment="Top">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="4"
+                                BorderThickness="1"
+                                Background="{DynamicResource SemiColorPrimary}"
+                                Padding="8 4">
+                            <TextBlock Text="{Binding}" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <panels:FlexPanel AlignContent="Center"
+                                          AlignItems="Center"
+                                          JustifyContent="Center"
+                                          Wrap="Wrap"
+                                          ColumnSpacing="8"
+                                          RowSpacing="8" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
 
         <u:Divider Grid.Row="1" Content="Details" HorizontalContentAlignment="Center" />
 

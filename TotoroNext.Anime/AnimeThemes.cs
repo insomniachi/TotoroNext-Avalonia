@@ -10,6 +10,11 @@ internal class AnimeThemes(IHttpClientFactory httpClientFactory) : IAnimeThemes
     {
         try
         {
+            if (serviceName == "Local")
+            {
+                serviceName = nameof(AnimeId.Anilist);
+            }
+            
             using var client = httpClientFactory.CreateClient();
             var searchResponse =
                 await
@@ -45,16 +50,19 @@ internal class AnimeThemes(IHttpClientFactory httpClientFactory) : IAnimeThemes
     }
 }
 
+[Serializable]
 internal class AnimeThemesSearchResponse
 {
     [JsonPropertyName("anime")] public List<AnimeItem> Anime { get; set; } = [];
 }
 
+[Serializable]
 internal class AnimeThemesResponse
 {
     [JsonPropertyName("anime")] public AnimeItem Anime { get; set; } = new();
 }
 
+[Serializable]
 internal class AnimeItem
 {
     [JsonPropertyName("id")] public int Id { get; set; }
@@ -74,6 +82,7 @@ internal class AnimeItem
     [JsonPropertyName("animethemes")] public List<AnimeTheme> AnimeThemes { get; set; } = [];
 }
 
+[Serializable]
 internal class AnimeTheme
 {
     [JsonPropertyName("id")] public int Id { get; set; }
@@ -90,6 +99,7 @@ internal class AnimeTheme
     public List<AnimeThemeEntry> AnimeThemeEntries { get; set; } = [];
 }
 
+[Serializable]
 internal class AnimeSong
 {
     [JsonPropertyName("id")] public int Id { get; set; }
@@ -99,6 +109,7 @@ internal class AnimeSong
     [JsonPropertyName("artists")] public List<AnimeArtist> Artists { get; set; } = [];
 }
 
+[Serializable]
 internal class AnimeArtist
 {
     [JsonPropertyName("id")] public int Id { get; set; }
@@ -106,6 +117,7 @@ internal class AnimeArtist
     [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
 }
 
+[Serializable]
 internal class AnimeThemeEntry
 {
     [JsonPropertyName("id")] public int Id { get; set; }
@@ -123,6 +135,7 @@ internal class AnimeThemeEntry
     [JsonPropertyName("videos")] public List<AnimeThemeVideo> Videos { get; set; } = [];
 }
 
+[Serializable]
 internal class AnimeThemeVideo
 {
     [JsonPropertyName("id")] public int Id { get; set; }
@@ -156,6 +169,7 @@ internal class AnimeThemeVideo
     [JsonPropertyName("audio")] public AnimeAudio Audio { get; set; } = new();
 }
 
+[Serializable]
 internal class AnimeAudio
 {
     [JsonPropertyName("id")] public int Id { get; set; }

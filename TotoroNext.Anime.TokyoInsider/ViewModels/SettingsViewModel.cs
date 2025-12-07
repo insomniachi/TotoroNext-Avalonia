@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using JetBrains.Annotations;
 
 namespace TotoroNext.Anime.TokyoInsider.ViewModels;
 
