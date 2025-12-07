@@ -22,7 +22,7 @@ internal static class LocalModelConverter
         var model =  new AnimeModel
         {
             Title = anime.Title,
-            TotalEpisodes = anime.TotalEpisodes,
+            TotalEpisodes = anime.AiringStatus == AiringStatus.FinishedAiring ? anime.TotalEpisodes : null,
             Genres = anime.Genres.ToList(),
             Season = anime.Season,
             MeanScore = anime.MeanScore,
@@ -42,7 +42,8 @@ internal static class LocalModelConverter
             },
             Episodes = anime.EpisodeInfo?.Info ?? [],
             Tracking = anime.Tracking?.Tracking,
-            Url = $"https://myanimelist.net/anime/{anime.MyAnimeListId}/"
+            Url = $"https://myanimelist.net/anime/{anime.MyAnimeListId}/",
+            MediaFormat = anime.MediaFormat
         };
 
         if (anime.AdditionalInfo is not { } info)
