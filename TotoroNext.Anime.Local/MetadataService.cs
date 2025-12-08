@@ -160,7 +160,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
         {
             Id = anime.Id,
             Info = await anime.GetEpisodes(),
-            ExpiresAt = DateTimeOffset.Now.AddDays(3)
+            ExpiresAt = DateTimeOffset.Now.AddDays(6)
         };
 
         if (anime.AiringStatus == AiringStatus.FinishedAiring && localAnime.EpisodeInfo.Info is { Count: > 0 })
@@ -185,7 +185,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
         {
             Id = animeId,
             Characters = await AnilistHelper.GetCharactersAsync(ClientLazy.Value, animeId),
-            ExpiresAt = DateTimeOffset.Now.AddDays(3)
+            ExpiresAt = DateTimeOffset.Now.AddDays(1)
         };
 
         dbContext.Characters.Upsert(anime.CharacterInfo);
