@@ -119,13 +119,6 @@ internal class TrackingService(ILiteDbContext dbContext,
 
             writer.WriteElementString("series_animedb_id", anime.ExternalIds.MyAnimeList.ToString());
 
-            writer.WriteStartElement("series_title");
-            await writer.WriteCDataAsync(anime.Title);
-            await writer.WriteEndElementAsync();
-
-            writer.WriteElementString("series_type", anime.MediaFormat.ToString().ToUpper());
-            writer.WriteElementString("series_episodes", anime.TotalEpisodes.ToString());
-
             if (anime.Tracking is { } tracking)
             {
                 if (tracking.WatchedEpisodes > 0)
