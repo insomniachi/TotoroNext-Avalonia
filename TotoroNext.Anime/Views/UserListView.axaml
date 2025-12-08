@@ -71,6 +71,10 @@
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>
+            <Button Command="{Binding ExportListCommand}"
+                    IsVisible="{Binding IsLocalTracker}"
+                    Content="Export"
+                    Height="40" />
         </StackPanel>
 
         <u:LoadingContainer

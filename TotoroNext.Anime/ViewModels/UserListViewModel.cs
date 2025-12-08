@@ -35,10 +35,13 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
             .Bind(out _anime)
             .DisposeMany()
             .Subscribe();
+
+        IsLocalTracker = _trackingService is ILocalTrackingService;
     }
 
     public UserListFilter Filter { get; } = new();
     public UserListSort Sort { get; } = new();
+    public bool IsLocalTracker { get; }
     [ObservableProperty] public partial bool NothingToSee { get; set; }
 
     public List<ListItemStatus> AllStatus { get; } =
@@ -117,6 +120,17 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
     private void ClearFilters()
     {
         Filter.Clear();
+    }
+
+    [RelayCommand]
+    private async Task ExportList()
+    {
+        if (!IsLocalTracker || _trackingService is not ILocalTrackingService lts)
+        {
+            return;
+        }
+
+        await lts.ExportList(_allItems.ToList());
     }
 }
 

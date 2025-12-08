@@ -99,7 +99,7 @@ internal static class LocalModelConverter
 
     private static IEnumerable<long> ConvertRelated(List<string> related)
     {
-        return related.Where(x => x.StartsWith("https://anilist.co/"))
+        return related.Where(x => x.StartsWith("https://myanimelist.net/"))
                       .Select(url => url.Split('/').LastOrDefault())
                       .OfType<string>()
                       .Select(long.Parse);

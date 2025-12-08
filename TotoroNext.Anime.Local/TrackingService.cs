@@ -100,7 +100,7 @@ internal class TrackingService(ILiteDbContext dbContext,
         }
 
         var file = Path.Combine(folders[0].Path.LocalPath, "totoro_list.xml");
-        await using var writer = XmlWriter.Create(file, new XmlWriterSettings { Indent = true });
+        await using var writer = XmlWriter.Create(file, new XmlWriterSettings { Indent = true, Async = true });
         await writer.WriteStartDocumentAsync();
         writer.WriteStartElement("myanimelist");
         writer.WriteStartElement("myinfo");

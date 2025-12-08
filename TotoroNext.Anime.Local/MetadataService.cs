@@ -28,7 +28,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
             var anime = dbContext.Anime.FindById(id);
             if (anime.AdditionalInfo is null)
             {
-                var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)id,
+                var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)anime.AnilistId,
                                                               type: MediaType.Anime).Build();
                 var response = await ClientLazy.Value.SendQueryAsync<Query>(new GraphQLRequest
                 {
@@ -184,7 +184,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
         anime.CharacterInfo = new LocalCharacterInfo
         {
             Id = animeId,
-            Characters = await AnilistHelper.GetCharactersAsync(ClientLazy.Value, animeId),
+            Characters = await AnilistHelper.GetCharactersAsync(ClientLazy.Value, anime.AnilistId),
             ExpiresAt = DateTimeOffset.Now.AddDays(1)
         };
 
