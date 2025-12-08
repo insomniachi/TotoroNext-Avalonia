@@ -1,4 +1,8 @@
 ﻿using System.Diagnostics;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -72,6 +76,15 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                       {
                           var updateManager = new UpdateManager(new GithubSource("https://github.com/insomniachi/TotoroNext-Avalonia/", null,
                                                                                  false));
+                          services.AddTransient<IStorageProvider>(_ => TopLevel
+                                                                       .GetTopLevel((Application.Current?.ApplicationLifetime as
+                                                                                        IClassicDesktopStyleApplicationLifetime)!.MainWindow)!
+                                                                       .StorageProvider);
+                          services.AddTransient<ILauncher>(_ => TopLevel
+                                                                .GetTopLevel((Application.Current?.ApplicationLifetime as
+                                                                                 IClassicDesktopStyleApplicationLifetime)!.MainWindow)!
+                                                                .Launcher);
+
                           services.AddSingleton<UpdateManager>(_ => updateManager);
                           services.AddDataViewMap<DownloadUpdateView, DownloadUpdateViewModel, UpdateInfo>();
 
