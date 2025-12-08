@@ -169,7 +169,14 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
             foreach (var initializer in initializers)
             {
                 UpdateStatus(null, initializer.GetType().Name);
-                initializer.Initialize();
+                try
+                {
+                    initializer.Initialize();
+                }
+                catch (Exception e)
+                {
+                    Log.Logger.Error(e, "Unable to initialize service");
+                }
             }
         }
 
