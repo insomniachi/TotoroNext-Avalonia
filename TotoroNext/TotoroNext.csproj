@@ -45,9 +45,9 @@
     <ItemGroup>
         <ProjectReference Include="..\TotoroNext.Anime\TotoroNext.Anime.csproj"/>
         <ProjectReference Include="..\TotoroNext.SongRecognition\TotoroNext.SongRecognition.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Anime.MyAnimeList\TotoroNext.Anime.MyAnimeList.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Local\TotoroNext.Anime.Local.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.MyAnimeList\TotoroNext.Anime.MyAnimeList.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.Anilist\TotoroNext.Anime.Anilist.csproj"/>
         <ProjectReference Include="..\TotoroNext.Torrents.Nyaa\TotoroNext.Torrents.Nyaa.csproj"/>
 
         <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj"/>
