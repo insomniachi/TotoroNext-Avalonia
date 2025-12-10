@@ -37,7 +37,7 @@ internal class TrackingService(ILiteDbContext dbContext,
         await Task.Run(() =>
         {
             var trackedIds = dbContext.Tracking.FindAll().Select(t => t.Id).ToHashSet();
-            var list = dbContext.Anime.Find(a => trackedIds.Contains(a.AnilistId))
+            var list = dbContext.Anime.Find(a => trackedIds.Contains(a.MyAnimeListId))
                                 .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
                                 .ToList();
             tcs.SetResult(list);
@@ -59,7 +59,7 @@ internal class TrackingService(ILiteDbContext dbContext,
 
             var localAnime = anime.ServiceName switch
             {
-                nameof(AnimeId.MyAnimeList) => dbContext.Anime.FindOne(x => x.MyAnimeListId == anime.Id),
+                nameof(AnimeId.MyAnimeList) => dbContext.Anime.FindById(anime.Id),
                 nameof(AnimeId.Anilist) => dbContext.Anime.FindOne(x => x.AnilistId == anime.Id),
                 nameof(AnimeId.AniDb) => dbContext.Anime.FindOne(x => x.AniDbId == anime.Id),
                 nameof(AnimeId.Kitsu) => dbContext.Anime.FindOne(x => x.KitsuId == anime.Id),
@@ -74,7 +74,7 @@ internal class TrackingService(ILiteDbContext dbContext,
 
             var localTracking = new LocalTracking
             {
-                Id = localAnime.AnilistId,
+                Id = localAnime.MyAnimeListId,
                 Tracking = anime.Tracking
             };
 
