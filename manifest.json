@@ -148,6 +148,24 @@
     ]
   },
   {
+    "Id": "13bd2ef6-5d5b-4bea-a3f5-d4b9c1391322",
+    "Name": "Jellyfin",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Jellyfin/Assets/jellyfin.jpg",
+    "EntryPoint": "TotoroNext.Anime.Jellyfin.dll",
+    "Versions": [
+      {
+        "Version": "1.1.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Jellyfin.zip"
+      }
+    ]
+  },
+  {
     "Id": "8caaa814-2abf-43db-8f92-ad1c56bd6a12",
     "Name": "Tokyo Insider",
     "Owner": "Totoro",
