@@ -21,33 +21,7 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
                       .Select(x => new SearchResult(this, x.Show.Id, x.Show.Title))
                       .ToAsyncEnumerable();
     }
-
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
-    {
-        var episodes = await GetEpisodesNode(animeId);
-
-        if (!episodes.HasValue)
-        {
-            yield break;
-        }
-
-        var episodeNode = episodes.Value.GetProperty(episodeId);
-        var model = episodeNode.Deserialize<SubsPleaseEpisode>();
-
-        if (model is null)
-        {
-            yield break;
-        }
-
-        var items = model.Downloads
-                         .OrderByDescending(x => !int.TryParse(x.Resolution, out var resolution) ? int.MinValue : resolution);
-
-        foreach (var resolution in items)
-        {
-            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Magnet), extractor);
-        }
-    }
-
+    
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
         var episodes = await GetEpisodesNode(animeId);
@@ -72,6 +46,32 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
             }
 
             yield return new Episode(this, animeId, prop.Name, ep);
+        }
+    }
+
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    {
+        var episodes = await GetEpisodesNode(animeId);
+
+        if (!episodes.HasValue)
+        {
+            yield break;
+        }
+
+        var episodeNode = episodes.Value.GetProperty(episodeId);
+        var model = episodeNode.Deserialize<SubsPleaseEpisode>();
+
+        if (model is null)
+        {
+            yield break;
+        }
+
+        var items = model.Downloads
+                         .OrderByDescending(x => !int.TryParse(x.Resolution, out var resolution) ? int.MinValue : resolution);
+
+        foreach (var resolution in items)
+        {
+            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Magnet), extractor);
         }
     }
 

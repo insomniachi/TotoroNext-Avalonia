@@ -27,6 +27,38 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
             yield return new SearchResult(this, result.Url, result.Name);
         }
     }
+    
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    {
+        using var client = GetClient();
+        var stream = await client.Request(animeId).GetStreamAsync();
+
+        var doc = new HtmlDocument();
+        doc.Load(stream);
+
+        var episodes = doc.QuerySelectorAll(".newmanga li") ?? [];
+
+        foreach (var episode in episodes.Reverse())
+        {
+            var title = episode.QuerySelector(".anititle")?.InnerText ?? "";
+            var link = episode.QuerySelector(".anm_det_pop");
+            var id = link?.GetAttributeValue("href", "") ?? "";
+            var content = link?.InnerText ?? "";
+            var number = content.Split(" ").LastOrDefault();
+            _ = float.TryParse(number, out var episodeNumber);
+
+            yield return new Episode(this, animeId, id, episodeNumber)
+            {
+                Info = new EpisodeInfo
+                {
+                    Titles =
+                    {
+                        English = title
+                    }
+                }
+            };
+        }
+    }
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
@@ -78,39 +110,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
             }
         }
     }
-
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
-    {
-        using var client = GetClient();
-        var stream = await client.Request(animeId).GetStreamAsync();
-
-        var doc = new HtmlDocument();
-        doc.Load(stream);
-
-        var episodes = doc.QuerySelectorAll(".newmanga li") ?? [];
-
-        foreach (var episode in episodes.Reverse())
-        {
-            var title = episode.QuerySelector(".anititle")?.InnerText ?? "";
-            var link = episode.QuerySelector(".anm_det_pop");
-            var id = link?.GetAttributeValue("href", "") ?? "";
-            var content = link?.InnerText ?? "";
-            var number = content.Split(" ").LastOrDefault();
-            _ = float.TryParse(number, out var episodeNumber);
-
-            yield return new Episode(this, animeId, id, episodeNumber)
-            {
-                Info = new EpisodeInfo
-                {
-                    Titles =
-                    {
-                        English = title
-                    }
-                }
-            };
-        }
-    }
-
+    
     [GeneratedRegex(@"videoSources\s*=\s*(\[.*?\]);", RegexOptions.Singleline)]
     private static partial Regex VideoSourcesRegex();
 

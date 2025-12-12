@@ -38,6 +38,52 @@ public class AnimeProvider(
             yield return new SearchResult(this, $"{item.Id}", item.Name ?? "", new Uri(image));
         }
     }
+    
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    {
+        var id = Guid.Parse(animeId);
+        var item = await client.Items[id].GetAsync();
+
+        if (item is null)
+        {
+            yield break;
+        }
+
+        if (item.Type == BaseItemDto_Type.Movie)
+        {
+            yield return new Episode(this, animeId, animeId, 1);
+        }
+        else
+        {
+            var result = await GetChildItems(id);
+
+            if (result is null)
+            {
+                yield break;
+            }
+
+            var seasons = result.Items?.Where(x => x.Type == BaseItemDto_Type.Season) ?? [];
+            var episodeNumber = 0;
+            foreach (var season in seasons)
+            {
+                if (season.Id is null)
+                {
+                    continue;
+                }
+
+                var episodes = await GetChildItems(season.Id.Value, ItemSortBy.IndexNumber);
+                if (episodes is null)
+                {
+                    continue;
+                }
+
+                foreach (var ep in episodes.Items ?? [])
+                {
+                    yield return new Episode(this, animeId, $"{ep.Id}", ++episodeNumber);
+                }
+            }
+        }
+    }
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
@@ -90,52 +136,6 @@ public class AnimeProvider(
         }
 
         yield return server;
-    }
-
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
-    {
-        var id = Guid.Parse(animeId);
-        var item = await client.Items[id].GetAsync();
-
-        if (item is null)
-        {
-            yield break;
-        }
-
-        if (item.Type == BaseItemDto_Type.Movie)
-        {
-            yield return new Episode(this, animeId, animeId, 1);
-        }
-        else
-        {
-            var result = await GetChildItems(id);
-
-            if (result is null)
-            {
-                yield break;
-            }
-
-            var seasons = result.Items?.Where(x => x.Type == BaseItemDto_Type.Season) ?? [];
-            var episodeNumber = 0;
-            foreach (var season in seasons)
-            {
-                if (season.Id is null)
-                {
-                    continue;
-                }
-
-                var episodes = await GetChildItems(season.Id.Value, ItemSortBy.IndexNumber);
-                if (episodes is null)
-                {
-                    continue;
-                }
-
-                foreach (var ep in episodes.Items ?? [])
-                {
-                    yield return new Episode(this, animeId, $"{ep.Id}", ++episodeNumber);
-                }
-            }
-        }
     }
 
     private async Task<BaseItemDtoQueryResult?> GetChildItems(Guid id, ItemSortBy sortBy = ItemSortBy.SortName)

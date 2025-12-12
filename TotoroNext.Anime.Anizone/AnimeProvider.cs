@@ -26,36 +26,7 @@ public class AnimeProvider : IAnimeProvider
             yield return new SearchResult(this, id, title, new Uri(image));
         }
     }
-
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
-    {
-        var detailsUrl = $"https://anizone.to/anime/{animeId}/{episodeId}";
-        var stream = await detailsUrl.GetStreamAsync();
-
-        var doc = new HtmlDocument();
-        doc.Load(stream);
-
-        var mediaPlayer = doc.QuerySelector("media-player");
-        var src = mediaPlayer.GetAttributeValue("src", "");
-        var subtitle = "";
-        foreach (var track in mediaPlayer.QuerySelectorAll("track"))
-        {
-            var lang = track.GetAttributeValue("srclang", "");
-            if (lang != "en")
-            {
-                continue;
-            }
-
-            subtitle = track.GetAttributeValue("src", "");
-            break;
-        }
-
-        yield return new VideoServer("Default", new Uri(src))
-        {
-            Subtitle = subtitle
-        };
-    }
-
+    
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
         var detailsUrl = $"https://anizone.to/anime/{animeId}/";
@@ -84,5 +55,34 @@ public class AnimeProvider : IAnimeProvider
                 }
             };
         }
+    }
+
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    {
+        var detailsUrl = $"https://anizone.to/anime/{animeId}/{episodeId}";
+        var stream = await detailsUrl.GetStreamAsync();
+
+        var doc = new HtmlDocument();
+        doc.Load(stream);
+
+        var mediaPlayer = doc.QuerySelector("media-player");
+        var src = mediaPlayer.GetAttributeValue("src", "");
+        var subtitle = "";
+        foreach (var track in mediaPlayer.QuerySelectorAll("track"))
+        {
+            var lang = track.GetAttributeValue("srclang", "");
+            if (lang != "en")
+            {
+                continue;
+            }
+
+            subtitle = track.GetAttributeValue("src", "");
+            break;
+        }
+
+        yield return new VideoServer("Default", new Uri(src))
+        {
+            Subtitle = subtitle
+        };
     }
 }

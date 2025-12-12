@@ -23,6 +23,22 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
             yield return new SearchResult(this, item.Id, item.Title, new Uri(item.PosterImage.Original));
         }
     }
+    
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    {
+        var response = await $"https://api.animeparadise.moe/anime/{animeId}/episode"
+            .GetJsonAsync<EpisodeResponse>();
+
+        foreach (var item in response.Data)
+        {
+            if (!float.TryParse(item.Number, out var number))
+            {
+                continue;
+            }
+
+            yield return new Episode(this, animeId, item.Id, number);
+        }
+    }
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
@@ -74,22 +90,6 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 
 
         yield return server;
-    }
-
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
-    {
-        var response = await $"https://api.animeparadise.moe/anime/{animeId}/episode"
-            .GetJsonAsync<EpisodeResponse>();
-
-        foreach (var item in response.Data)
-        {
-            if (!float.TryParse(item.Number, out var number))
-            {
-                continue;
-            }
-
-            yield return new Episode(this, animeId, item.Id, number);
-        }
     }
 
     public List<ModuleOptionItem> GetOptions()

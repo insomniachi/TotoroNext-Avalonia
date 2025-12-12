@@ -32,6 +32,39 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
             yield return new SearchResult(this, id, title, new Uri(image));
         }
     }
+    
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    {
+        using var client = CreateClient();
+        var enc = await EncodeDecodeEndpoint(animeId);
+
+        var response = await client.Request("ajax/episodes/list")
+                                   .AppendQueryParam("ani_id", animeId)
+                                   .AppendQueryParam("_", enc.Result)
+                                   .GetJsonAsync<ResultResponse<string>>();
+
+        var doc = new HtmlDocument();
+        doc.LoadHtml(response.Result!);
+
+        foreach (var item in doc.QuerySelectorAll(".eplist a") ?? [])
+        {
+            var number = item.GetAttributeValue("num", string.Empty);
+            var token = item.GetAttributeValue("token", string.Empty);
+            var title = item.InnerText;
+
+            yield return new Episode(this, animeId, token, float.Parse(number))
+            {
+                Info = new EpisodeInfo
+                {
+                    Titles =
+                    {
+                        English = title
+                    }
+                }
+            };
+        }
+    }
+
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
     {
@@ -68,39 +101,7 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
             }
         }
     }
-
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
-    {
-        using var client = CreateClient();
-        var enc = await EncodeDecodeEndpoint(animeId);
-
-        var response = await client.Request("ajax/episodes/list")
-                                   .AppendQueryParam("ani_id", animeId)
-                                   .AppendQueryParam("_", enc.Result)
-                                   .GetJsonAsync<ResultResponse<string>>();
-
-        var doc = new HtmlDocument();
-        doc.LoadHtml(response.Result!);
-
-        foreach (var item in doc.QuerySelectorAll(".eplist a") ?? [])
-        {
-            var number = item.GetAttributeValue("num", string.Empty);
-            var token = item.GetAttributeValue("token", string.Empty);
-            var title = item.InnerText;
-
-            yield return new Episode(this, animeId, token, float.Parse(number))
-            {
-                Info = new EpisodeInfo
-                {
-                    Titles =
-                    {
-                        English = title
-                    }
-                }
-            };
-        }
-    }
-
+    
     private static async Task<IFrameResponse?> ExtractIFrame(FlurlClient client, string id)
     {
         var enc = await EncodeDecodeEndpoint(id);

@@ -25,31 +25,7 @@ public class AnimeProvider(
             yield return new SearchResult(this, item.Id, item.Title, new Uri(image));
         }
     }
-
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
-    {
-        using var client = CreateClient();
-
-        var stream = await client.Request($"content/{animeId}/video/{episodeId}")
-                                 .GetStreamAsync();
-
-        var doc = await JsonDocument.ParseAsync(stream);
-        var response = doc.RootElement.GetProperty("uri").Deserialize<AnimeOnsenStream>()!;
-        var metadata = doc.RootElement.GetProperty("metadata");
-        var episode = metadata.GetProperty("episode");
-        var skipData = episode.EnumerateArray().ElementAt(1).Deserialize<AnimeOnsenSkipData>();
-
-        yield return new VideoServer("Default", new Uri(response.Url))
-        {
-            Subtitle = response.Subtitles.Get(settings.Value.SubtitleLanguage),
-            Headers =
-            {
-                [HeaderNames.Referer] = "https://www.animeonsen.xyz/"
-            },
-            SkipData = CovertSkipData(skipData)
-        };
-    }
-
+    
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
         using var client = CreateClient();
@@ -76,6 +52,30 @@ public class AnimeProvider(
                 }
             };
         }
+    }
+
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    {
+        using var client = CreateClient();
+
+        var stream = await client.Request($"content/{animeId}/video/{episodeId}")
+                                 .GetStreamAsync();
+
+        var doc = await JsonDocument.ParseAsync(stream);
+        var response = doc.RootElement.GetProperty("uri").Deserialize<AnimeOnsenStream>()!;
+        var metadata = doc.RootElement.GetProperty("metadata");
+        var episode = metadata.GetProperty("episode");
+        var skipData = episode.EnumerateArray().ElementAt(1).Deserialize<AnimeOnsenSkipData>();
+
+        yield return new VideoServer("Default", new Uri(response.Url))
+        {
+            Subtitle = response.Subtitles.Get(settings.Value.SubtitleLanguage),
+            Headers =
+            {
+                [HeaderNames.Referer] = "https://www.animeonsen.xyz/"
+            },
+            SkipData = CovertSkipData(skipData)
+        };
     }
 
     public List<ModuleOptionItem> GetOptions()

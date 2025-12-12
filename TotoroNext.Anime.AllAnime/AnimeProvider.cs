@@ -11,6 +11,52 @@ namespace TotoroNext.Anime.AllAnime;
 
 internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
+    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    {
+        var jObject = await GraphQl.Api
+                                   .WithGraphQLQuery(GraphQl.SearchQuery)
+                                   .SetGraphQLVariables(new
+                                   {
+                                       search = new
+                                       {
+                                           allowAdult = true,
+                                           allowUnknown = true,
+                                           query
+                                       },
+                                       limit = 40
+                                   })
+                                   .PostGraphQLQueryAsync()
+                                   .ReceiveGraphQLRawSystemTextJsonResponse();
+
+        foreach (var item in jObject?["shows"]?["edges"]?.AsArray().OfType<JsonObject>() ?? [])
+        {
+            var title = $"{item["name"]}";
+            var id = $"{item["_id"]}";
+            Uri? image = null;
+            long malId = 0;
+            long anilistId = 0;
+            try
+            {
+                image = new Uri($"{item["thumbnail"]}");
+                malId = long.Parse($"{item["malId"]}");
+                anilistId = long.Parse($"{item["aniListId"]}");
+            }
+            catch
+            {
+                // ignored
+            }
+
+            yield return new SearchResult(this, id, title, image)
+            {
+                ExternalId = new AnimeId
+                {
+                    MyAnimeList = malId,
+                    Anilist = anilistId
+                }
+            };
+        }
+    }
+    
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
     {
         var jObject = await GraphQl.Api
@@ -109,52 +155,6 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
                     yield return new VideoServer(item.SourceName, new Uri(hls[0].Link));
                     continue;
             }
-        }
-    }
-
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
-    {
-        var jObject = await GraphQl.Api
-                                   .WithGraphQLQuery(GraphQl.SearchQuery)
-                                   .SetGraphQLVariables(new
-                                   {
-                                       search = new
-                                       {
-                                           allowAdult = true,
-                                           allowUnknown = true,
-                                           query
-                                       },
-                                       limit = 40
-                                   })
-                                   .PostGraphQLQueryAsync()
-                                   .ReceiveGraphQLRawSystemTextJsonResponse();
-
-        foreach (var item in jObject?["shows"]?["edges"]?.AsArray().OfType<JsonObject>() ?? [])
-        {
-            var title = $"{item["name"]}";
-            var id = $"{item["_id"]}";
-            Uri? image = null;
-            long malId = 0;
-            long anilistId = 0;
-            try
-            {
-                image = new Uri($"{item["thumbnail"]}");
-                malId = long.Parse($"{item["malId"]}");
-                anilistId = long.Parse($"{item["aniListId"]}");
-            }
-            catch
-            {
-                // ignored
-            }
-
-            yield return new SearchResult(this, id, title, image)
-            {
-                ExternalId = new AnimeId
-                {
-                    MyAnimeList = malId,
-                    Anilist = anilistId
-                }
-            };
         }
     }
 

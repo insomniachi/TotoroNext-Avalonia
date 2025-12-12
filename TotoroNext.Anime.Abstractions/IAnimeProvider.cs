@@ -6,13 +6,9 @@ namespace TotoroNext.Anime.Abstractions;
 public interface IAnimeProvider
 {
     IAsyncEnumerable<SearchResult> SearchAsync(string query);
-    IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId);
     IAsyncEnumerable<Episode> GetEpisodes(string animeId);
+    IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId);
 
-    List<ModuleOptionItem> GetOptions()
-    {
-        return [];
-    }
-
+    List<ModuleOptionItem> GetOptions() => [];
     void UpdateOptions(List<ModuleOptionItem> options) { }
 }
