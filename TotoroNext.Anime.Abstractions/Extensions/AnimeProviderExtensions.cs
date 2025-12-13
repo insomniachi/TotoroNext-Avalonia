@@ -50,9 +50,8 @@ public static class AnimeProviderExtensions
             {
                 return await result.GetEpisodesAsync(ct).ToListAsync(ct);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
             }
         }
@@ -71,9 +70,8 @@ public static class AnimeProviderExtensions
             {
                 return await provider.SearchAsync(term, ct).ToListAsync(ct);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
             }
         }
@@ -81,15 +79,14 @@ public static class AnimeProviderExtensions
 
     extension(VideoServer server)
     {
-        public async Task<List<VideoSource>> GetSources()
+        public async Task<List<VideoSource>> GetSources(CancellationToken ct)
         {
             try
             {
-                return await server.Extract().ToListAsync();
+                return await server.Extract(ct).ToListAsync(ct);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
             }
         }

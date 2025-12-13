@@ -1,4 +1,5 @@
-﻿using TotoroNext.Anime.Abstractions.Models;
+﻿using System.Runtime.CompilerServices;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
 
@@ -6,7 +7,7 @@ namespace TotoroNext.Anime.Abstractions;
 
 public class TorrentExtractor(IFactory<IDebrid, Guid> debridFactory) : ITorrentExtractor
 {
-    public async IAsyncEnumerable<VideoSource> Extract(Uri url)
+    public async IAsyncEnumerable<VideoSource> Extract(Uri url, [EnumeratorCancellation] CancellationToken ct)
     {
         var debrid = debridFactory.CreateDefault();
 
@@ -19,7 +20,7 @@ public class TorrentExtractor(IFactory<IDebrid, Guid> debridFactory) : ITorrentE
             yield break;
         }
 
-        var directLink = await debrid.TryGetDirectDownloadLink(url);
+        var directLink = await debrid.TryGetDirectDownloadLink(url, ct);
         yield return new VideoSource
         {
             Url = directLink ?? url

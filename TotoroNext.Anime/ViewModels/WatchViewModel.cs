@@ -130,7 +130,8 @@ public sealed partial class WatchViewModel(
             .WhereNotNull()
             .DistinctUntilChanged()
             .ObserveOn(RxApp.TaskpoolScheduler)
-            .SelectMany(server => server.Extract().ToListAsync().AsTask())
+            .Select(server => Observable.FromAsync(server.GetSources))
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(sources => Sources = sources);
 

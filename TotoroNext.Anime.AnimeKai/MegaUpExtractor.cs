@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using Flurl;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
@@ -9,7 +10,7 @@ namespace TotoroNext.Anime.AnimeKai;
 
 public class MegaUpExtractor : IVideoExtractor
 {
-    public async IAsyncEnumerable<VideoSource> Extract(Uri url)
+    public async IAsyncEnumerable<VideoSource> Extract(Uri url, [EnumeratorCancellation] CancellationToken ct)
     {
         var token = url.Segments.LastOrDefault();
         if (string.IsNullOrEmpty(token))
@@ -22,14 +23,15 @@ public class MegaUpExtractor : IVideoExtractor
                                       .AppendPathSegment(token)
                                       .WithHeader(HeaderNames.UserAgent, Http.UserAgent)
                                       .WithHeader(HeaderNames.Referer, url)
-                                      .GetJsonAsync<ResultResponse<string>>();
+                                      .GetJsonAsync<ResultResponse<string>>(cancellationToken: ct);
 
         var megaResult = await "https://enc-dec.app/api/dec-mega"
                                .PostJsonAsync(new
                                {
                                    text = megaTokenResponse.Result,
                                    agent = Http.UserAgent
-                               }).ReceiveJson<ResultResponse<MegaUpResult>>();
+                               }, cancellationToken: ct)
+                               .ReceiveJson<ResultResponse<MegaUpResult>>();
 
         if (megaResult.Result is not { Sources.Capacity: > 0 })
         {
@@ -39,6 +41,8 @@ public class MegaUpExtractor : IVideoExtractor
         var subtitles = megaResult.Result.Tracks.FirstOrDefault(x => x.Kind == "captions" && x.File.EndsWith(".vtt"))?.File;
         foreach (var sources in megaResult.Result.Sources)
         {
+            ct.ThrowIfCancellationRequested();
+            
             yield return new VideoSource
             {
                 Url = new Uri(sources.File),

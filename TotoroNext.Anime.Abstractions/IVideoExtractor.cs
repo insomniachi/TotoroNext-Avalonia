@@ -4,7 +4,7 @@ namespace TotoroNext.Anime.Abstractions;
 
 public interface IVideoExtractor
 {
-    IAsyncEnumerable<VideoSource> Extract(Uri url);
+    IAsyncEnumerable<VideoSource> Extract(Uri url, CancellationToken ct);
 }
 
 public interface ITorrentExtractor : IVideoExtractor;

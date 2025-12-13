@@ -2,5 +2,5 @@
 
 public interface IDebrid
 {
-    Task<Uri?> TryGetDirectDownloadLink(Uri magnet);
+    Task<Uri?> TryGetDirectDownloadLink(Uri magnet, CancellationToken ct);
 }

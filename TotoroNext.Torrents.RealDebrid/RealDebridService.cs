@@ -6,24 +6,25 @@ namespace TotoroNext.Torrents.RealDebrid;
 
 public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
 {
-    public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet)
+    public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet, CancellationToken ct)
     {
         try
         {
             using var client = new FlurlClient(httpClientFactory.CreateClient("RealDebrid"));
             var stream = await AddTorrent(client, magnet);
-            var doc = await JsonDocument.ParseAsync(stream);
+            var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
             var id = doc.RootElement.GetProperty("id").GetString();
 
             _ = await client.Request("torrents", "selectFiles", id)
                             .PostUrlEncodedAsync(new
                             {
                                 files = "1"
-                            }).ReceiveStream();
+                            }, cancellationToken: ct)
+                            .ReceiveStream();
 
             stream = await client.Request("torrents", "info", id)
-                                 .GetStreamAsync();
-            doc = await JsonDocument.ParseAsync(stream);
+                                 .GetStreamAsync(cancellationToken: ct);
+            doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
             var links = doc.RootElement.GetProperty("links").EnumerateArray().ToList();
 
             if (links.Count == 0)
@@ -37,11 +38,12 @@ public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
                                  .PostUrlEncodedAsync(new
                                  {
                                      link
-                                 }).ReceiveStream();
-            doc = await JsonDocument.ParseAsync(stream);
+                                 }, cancellationToken: ct)
+                                 .ReceiveStream();
+            doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
             var downloadLink = doc.RootElement.GetProperty("download").GetString();
 
-            await client.Request("torrents", "delete", id).DeleteAsync();
+            await client.Request("torrents", "delete", id).DeleteAsync(cancellationToken: ct);
 
             return downloadLink is null ? magnet : new Uri(downloadLink);
         }

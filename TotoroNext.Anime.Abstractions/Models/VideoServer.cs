@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace TotoroNext.Anime.Abstractions.Models;
 
@@ -13,7 +14,7 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
     public string? Subtitle { get; set; }
     public SkipData? SkipData { get; set; }
 
-    public async IAsyncEnumerable<VideoSource> Extract()
+    public async IAsyncEnumerable<VideoSource> Extract([EnumeratorCancellation] CancellationToken ct)
     {
         if (videoExtractor is null)
         {
@@ -28,7 +29,7 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
         }
         else
         {
-            await foreach (var stream in videoExtractor.Extract(Url))
+            await foreach (var stream in videoExtractor.Extract(Url, ct))
             {
                 yield return stream;
             }

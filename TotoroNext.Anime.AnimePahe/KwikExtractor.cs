@@ -1,4 +1,5 @@
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
@@ -11,13 +12,13 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
     internal const string ClientName = "RedirectOff";
     private const string CharacterMap = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/";
 
-    public async IAsyncEnumerable<VideoSource> Extract(Uri url)
+    public async IAsyncEnumerable<VideoSource> Extract(Uri url, [EnumeratorCancellation] CancellationToken ct)
     {
         var httpClient = httpClientFactory.CreateClient(ClientName);
         var client = new FlurlClient(httpClient);
-        var response = await client.Request(url).GetStringAsync();
+        var response = await client.Request(url).GetStringAsync(cancellationToken: ct);
         var redirectUrl = KwikRedirectionRegex().Match(response).Groups[1].Value;
-        var downloadPage = await client.Request(redirectUrl).GetStringAsync();
+        var downloadPage = await client.Request(redirectUrl).GetStringAsync(cancellationToken: ct);
         var match = KwikParamsRegex().Match(downloadPage);
 
         if (!match.Success)
@@ -40,7 +41,7 @@ public partial class KwikExtractor(IHttpClientFactory httpClientFactory) : IVide
             ["_token"] = token
         });
 
-        var httpResponse = await client.HttpClient.PostAsync(postUrl, content);
+        var httpResponse = await client.HttpClient.PostAsync(postUrl, content, ct);
         if (httpResponse.StatusCode == HttpStatusCode.Found)
         {
             yield return new VideoSource { Url = new Uri(httpResponse.Headers.Location!.AbsoluteUri) };

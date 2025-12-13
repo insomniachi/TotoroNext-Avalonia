@@ -9,7 +9,7 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
 {
     private readonly FlurlClient _client = new(httpClientFactory.CreateClient("TorBox"));
 
-    public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet)
+    public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet, CancellationToken ct)
     {
         try
         {
@@ -18,7 +18,7 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
                                         {
                                             magnet = magnet.ToString(),
                                             add_only_if_cached = true
-                                        })
+                                        }, cancellationToken: ct)
                                         .ReceiveJson<TorBoxResponse<CreateTorrentData>>();
 
             if (response is { Success: false } or { Data: null })
@@ -33,7 +33,7 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
             var dlResponse = await _client.Request("torrents", "requestdl")
                                           .SetQueryParam("token", token)
                                           .SetQueryParam("torrent_id", response.Data.TorrentId)
-                                          .GetJsonAsync<TorBoxResponse<string>>();
+                                          .GetJsonAsync<TorBoxResponse<string>>(cancellationToken: ct);
 
             return dlResponse is { Success: false } or { Data: null } ? null : new Uri(dlResponse.Data);
         }

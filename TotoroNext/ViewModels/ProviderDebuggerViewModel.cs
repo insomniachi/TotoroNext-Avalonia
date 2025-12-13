@@ -77,7 +77,8 @@ public partial class ProviderDebuggerViewModel(
 
         this.WhenAnyValue(x => x.SelectedResult)
             .WhereNotNull()
-            .SelectMany(AnimeProviderExtensions.GetEpisodes)
+            .Select(result => Observable.FromAsync(result.GetEpisodes))
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(ep =>
             {
@@ -88,7 +89,8 @@ public partial class ProviderDebuggerViewModel(
         this.WhenAnyValue(x => x.SelectedEpisode)
             .WhereNotNull()
             .Do(_ => Servers = [])
-            .SelectMany(AnimeProviderExtensions.GetServers)
+            .Select(ep => Observable.FromAsync(ep.GetServers))
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);
 
