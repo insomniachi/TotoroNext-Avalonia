@@ -56,7 +56,7 @@ public partial class AnimeEpisodesListViewModel(
             return;
         }
 
-        var episodes = await searchResult.GetEpisodes().ToListAsync();
+        var episodes = await searchResult.GetEpisodesAsync(CancellationToken.None).ToListAsync();
 
         if (episodes.Count > (Anime.TotalEpisodes ?? 0) && relations.FindRelation(Anime) is { } relation)
         {

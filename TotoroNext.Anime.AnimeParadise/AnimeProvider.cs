@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
 using Flurl;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
@@ -11,26 +12,29 @@ namespace TotoroNext.Anime.AnimeParadise;
 public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
     private readonly Settings _settings = settings.Value;
-
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    
+    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         var response = await "https://api.animeparadise.moe/search"
                              .AppendQueryParam("q", query)
-                             .GetJsonAsync<SearchResponseRoot>();
+                             .GetJsonAsync<SearchResponseRoot>(cancellationToken: ct);
 
         foreach (var item in response.Data.Items)
         {
+            ct.ThrowIfCancellationRequested();
             yield return new SearchResult(this, item.Id, item.Title, new Uri(item.PosterImage.Original));
         }
     }
     
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var response = await $"https://api.animeparadise.moe/anime/{animeId}/episode"
-            .GetJsonAsync<EpisodeResponse>();
+            .GetJsonAsync<EpisodeResponse>(cancellationToken: ct);
 
         foreach (var item in response.Data)
         {
+            ct.ThrowIfCancellationRequested();
+            
             if (!float.TryParse(item.Number, out var number))
             {
                 continue;
@@ -40,12 +44,12 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var response = await $"https://www.animeparadise.moe/watch/{episodeId}"
                              .AppendQueryParam("origin", animeId)
                              .WithHeader("next-action", "60c9f65b91846ebfe54b8b0e10169ad4b80073404a")
-                             .PostStringAsync($"""["{episodeId}","{animeId}"]""")
+                             .PostStringAsync($"""["{episodeId}","{animeId}"]""", cancellationToken: ct)
                              .ReceiveString();
 
         var payload = response.Split('\n', StringSplitOptions.RemoveEmptyEntries).Last()["1:".Length..];

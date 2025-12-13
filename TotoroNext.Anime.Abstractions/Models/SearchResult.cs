@@ -10,8 +10,8 @@ public class SearchResult(IAnimeProvider provider, string id, string title, Uri?
     public Uri? Image { get; } = image;
     public AnimeId ExternalId { get; init; } = new();
 
-    public IAsyncEnumerable<Episode> GetEpisodes()
+    public IAsyncEnumerable<Episode> GetEpisodesAsync(CancellationToken ct)
     {
-        return provider.GetEpisodes(Id);
+        return provider.GetEpisodes(Id, ct);
     }
 }

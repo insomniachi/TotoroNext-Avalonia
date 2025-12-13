@@ -95,7 +95,8 @@ public sealed partial class WatchViewModel(
             .WhereNotNull()
             .Where(_ => Episodes is { Count: 0 } or null)
             .ObserveOn(RxApp.MainThreadScheduler).Do(_ => IsEpisodesLoading = true)
-            .SelectMany(providerResult => GetEpisodesAndMetadata(Anime, providerResult))
+            .Select(providerResult => Observable.FromAsync(ct => GetEpisodesAndMetadata(Anime, providerResult, ct)))
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(UpdateEpisodeMetadata);
 
@@ -115,7 +116,8 @@ public sealed partial class WatchViewModel(
                 Servers = [];
                 IsFetchingStream = true;
             })
-            .SelectMany(ep => ep.GetServersAsync().ToListAsync().AsTask())
+            .Select(ep => Observable.FromAsync(ep.GetServers))
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);
 
@@ -504,10 +506,10 @@ public sealed partial class WatchViewModel(
     }
 
     private static async Task<(List<Episode> Episode, List<EpisodeInfo> Info, List<EpisodeInfo> Specials)> GetEpisodesAndMetadata(
-        AnimeModel anime, SearchResult providerResult)
+        AnimeModel anime, SearchResult providerResult, CancellationToken ct)
     {
-        var episodes = await providerResult.GetEpisodes().ToListAsync();
-        var all = await anime.GetEpisodes();
+        var episodes = await providerResult.GetEpisodes(ct);
+        var all = await anime.GetEpisodes(ct);
         var infos = all.Where(x => !x.IsSpecial).ToList();
         var specials = all.Where(x => x.IsSpecial).ToList();
 

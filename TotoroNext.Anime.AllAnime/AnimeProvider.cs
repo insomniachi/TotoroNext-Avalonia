@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Flurl.Http;
@@ -11,7 +12,7 @@ namespace TotoroNext.Anime.AllAnime;
 
 internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         var jObject = await GraphQl.Api
                                    .WithGraphQLQuery(GraphQl.SearchQuery)
@@ -25,11 +26,13 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
                                        },
                                        limit = 40
                                    })
-                                   .PostGraphQLQueryAsync()
+                                   .PostGraphQLQueryAsync(ct)
                                    .ReceiveGraphQLRawSystemTextJsonResponse();
 
         foreach (var item in jObject?["shows"]?["edges"]?.AsArray().OfType<JsonObject>() ?? [])
         {
+            ct.ThrowIfCancellationRequested();
+
             var title = $"{item["name"]}";
             var id = $"{item["_id"]}";
             Uri? image = null;
@@ -57,12 +60,12 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         }
     }
     
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var jObject = await GraphQl.Api
                                    .WithGraphQLQuery(GraphQl.ShowQuery)
                                    .SetGraphQLVariable("showId", animeId)
-                                   .PostGraphQLQueryAsync()
+                                   .PostGraphQLQueryAsync(ct)
                                    .ReceiveGraphQLRawSystemTextJsonResponse();
 
         if (jObject?["show"]?["availableEpisodesDetail"] is not JsonObject episodeDetails)
@@ -74,11 +77,12 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
         foreach (var episode in Enumerable.Reverse(GetEpisodeDetails(details, settings.Value.TranslationType)))
         {
+            ct.ThrowIfCancellationRequested();
             yield return new Episode(this, animeId, episode, float.Parse(episode));
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var jsonNode = await GraphQl.Api
                                     .WithGraphQLQuery(GraphQl.EpisodeQuery)
@@ -88,7 +92,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
                                         translationType = GetTranslationType(settings.Value.TranslationType),
                                         episodeString = episodeId
                                     })
-                                    .PostGraphQLQueryAsync()
+                                    .PostGraphQLQueryAsync(ct)
                                     .ReceiveGraphQLRawSystemTextJsonResponse();
 
         if (jsonNode?["errors"] is not null)
@@ -102,6 +106,8 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
         foreach (var item in sourceObjs)
         {
+            ct.ThrowIfCancellationRequested();
+            
             if (item.SourceUrl.StartsWith("--"))
             {
                 item.SourceUrl = DecryptSourceUrl(item.SourceUrl);

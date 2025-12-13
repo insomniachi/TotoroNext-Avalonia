@@ -11,9 +11,9 @@ public static class AnimeProviderExtensions
 {
     extension(Episode ep)
     {
-        public async Task<VideoServer?> SelectServer()
+        public async Task<VideoServer?> SelectServer(CancellationToken ct)
         {
-            var servers = await ep.GetServersAsync().ToListAsync();
+            var servers = await ep.GetServersAsync(ct).ToListAsync(ct);
 
             if (servers is not { Count: > 0 })
             {
@@ -28,11 +28,11 @@ public static class AnimeProviderExtensions
             return await Container.Services.GetRequiredService<ISelectionUserInteraction<VideoServer>>().GetValue(servers);
         }
 
-        public async Task<List<VideoServer>> GetServers()
+        public async Task<List<VideoServer>> GetServers(CancellationToken ct)
         {
             try
             {
-                return await ep.GetServersAsync().ToListAsync();
+                return await ep.GetServersAsync(ct).ToListAsync(ct);
             }
             catch (Exception ex)
             {
@@ -44,11 +44,11 @@ public static class AnimeProviderExtensions
 
     extension(SearchResult result)
     {
-        public async Task<List<Episode>> GetEpisodes()
+        public async Task<List<Episode>> GetEpisodes(CancellationToken ct)
         {
             try
             {
-                return await result.GetEpisodes().ToListAsync();
+                return await result.GetEpisodesAsync(ct).ToListAsync(ct);
             }
             catch (Exception ex)
             {
@@ -60,7 +60,7 @@ public static class AnimeProviderExtensions
 
     extension(IAnimeProvider? provider)
     {
-        public async Task<List<SearchResult>> GetSearchResults(string? term)
+        public async Task<List<SearchResult>> GetSearchResults(string? term, CancellationToken ct)
         {
             if (provider is null || string.IsNullOrEmpty(term))
             {
@@ -69,7 +69,7 @@ public static class AnimeProviderExtensions
 
             try
             {
-                return await provider.SearchAsync(term).ToListAsync();
+                return await provider.SearchAsync(term, ct).ToListAsync(ct);
             }
             catch (Exception ex)
             {

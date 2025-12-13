@@ -52,7 +52,7 @@ public class AnimeExtensionService : IAnimeExtensionService
             return new SearchResult(provider, searchResult.Id, searchResult.Title);
         }
         
-        var results = await provider.GetSearchResults(anime.Title);
+        var results = await provider.GetSearchResults(anime.Title, CancellationToken.None);
 
         if (TryFindMatch(results, anime, anime.Title) is { } result)
         {
@@ -72,7 +72,7 @@ public class AnimeExtensionService : IAnimeExtensionService
             return new SearchResult(provider, searchResult.Id, searchResult.Title);
         }
         
-        var results = await provider.GetSearchResults(anime.Title);
+        var results = await provider.GetSearchResults(anime.Title, CancellationToken.None);
         return TryFindMatch(results, anime, anime.Title);
     }
 

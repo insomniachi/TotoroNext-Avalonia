@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Flurl;
 using Flurl.Http;
@@ -12,7 +13,7 @@ namespace TotoroNext.Anime.SubsPlease;
 
 public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
 {
-    public IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
         return Catalog.Items
                       .Select(show => new { Show = show, Score = Fuzz.Ratio(query, show.Title) })
@@ -22,9 +23,9 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
                       .ToAsyncEnumerable();
     }
     
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
-        var episodes = await GetEpisodesNode(animeId);
+        var episodes = await GetEpisodesNode(animeId, ct);
 
         if (!episodes.HasValue)
         {
@@ -33,6 +34,8 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
 
         foreach (var prop in episodes.Value.EnumerateObject().Reverse())
         {
+            ct.ThrowIfCancellationRequested();
+            
             var episode = prop.Value.Deserialize<SubsPleaseEpisode>();
 
             if (episode is null)
@@ -49,9 +52,9 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
-        var episodes = await GetEpisodesNode(animeId);
+        var episodes = await GetEpisodesNode(animeId, ct);
 
         if (!episodes.HasValue)
         {
@@ -71,13 +74,14 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
 
         foreach (var resolution in items)
         {
+            ct.ThrowIfCancellationRequested();
             yield return new VideoServer(resolution.Resolution, new Uri(resolution.Magnet), extractor);
         }
     }
 
-    private static async Task<JsonElement?> GetEpisodesNode(string animeId)
+    private static async Task<JsonElement?> GetEpisodesNode(string animeId, CancellationToken ct)
     {
-        var stream = await $"https://subsplease.org/shows/{animeId}".GetStreamAsync();
+        var stream = await $"https://subsplease.org/shows/{animeId}".GetStreamAsync(cancellationToken: ct);
         var doc = new HtmlDocument();
         doc.Load(stream);
 
@@ -94,9 +98,9 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
                              .AppendQueryParam("f", "show")
                              .AppendQueryParam("tz", TimeZoneInfo.Local.Id)
                              .AppendQueryParam("sid", id)
-                             .GetStreamAsync();
+                             .GetStreamAsync(cancellationToken: ct);
 
-        var jsonDoc = await JsonDocument.ParseAsync(response);
+        var jsonDoc = await JsonDocument.ParseAsync(response, cancellationToken: ct);
         return jsonDoc.RootElement.GetProperty("episode");
     }
 }

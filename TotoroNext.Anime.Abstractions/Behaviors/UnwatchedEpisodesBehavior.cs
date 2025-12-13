@@ -6,6 +6,7 @@ using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions.Controls;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
@@ -68,7 +69,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
             return Unit.Default;
         }
 
-        var episodes = await result.GetEpisodes().ToListAsync();
+        var episodes = await result.GetEpisodes(CancellationToken.None);
         if (episodes.Count > (anime.TotalEpisodes ?? 0) && Relations.FindRelation(anime) is { } relation)
         {
             episodes = episodes.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();

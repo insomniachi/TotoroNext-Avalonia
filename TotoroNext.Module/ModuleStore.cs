@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -42,27 +41,27 @@ public class ModuleStore : IModuleStore
             SendMessage(null, fileName);
 
             var context = new ModuleLoadContext(item);
-            Assembly assembly;
+            var modules = new List<IModule>();
             try
             {
-                assembly = context.LoadFromAssemblyPath(item);
+                var assembly = context.LoadFromAssemblyPath(item);
+                modules.AddRange(assembly.GetTypes().Where(x => x.IsAssignableTo(typeof(IModule)) && !x.IsAbstract)
+                                         .Select(moduleType => (IModule)Activator.CreateInstance(moduleType)!));
+
+                if (modules.Count == 0)
+                {
+                    context.Unload();
+                    continue;
+                }
+
+                _contexts.Add(context);
             }
             catch
             {
                 continue;
             }
 
-            var modules = assembly.GetTypes().Where(x => x.IsAssignableTo(typeof(IModule)) && !x.IsAbstract).ToList();
-
-            if (modules.Count == 0)
-            {
-                context.Unload();
-                continue;
-            }
-
-            _contexts.Add(context);
-
-            foreach (var module in modules.Select(moduleType => (IModule)Activator.CreateInstance(moduleType)!))
+            foreach (var module in modules)
             {
                 yield return module;
             }
@@ -76,7 +75,7 @@ public class ModuleStore : IModuleStore
         {
             var downloadUrl = manifest.Versions[0].SourceUrl;
             var stream = await _client.GetStreamAsync(downloadUrl);
-            using var archive = new ZipArchive(stream, ZipArchiveMode.Read, true);
+            await using var archive = new ZipArchive(stream, ZipArchiveMode.Read, true);
             foreach (var entry in archive.Entries)
             {
                 // Skip empty entries
@@ -91,7 +90,7 @@ public class ModuleStore : IModuleStore
 
                 var destinationPath = Path.Combine(targetDir, trimmedPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
-                entry.ExtractToFile(destinationPath, true);
+                await entry.ExtractToFileAsync(destinationPath, true);
             }
 
             return true;

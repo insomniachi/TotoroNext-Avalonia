@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Flurl.Http;
@@ -11,8 +12,8 @@ namespace TotoroNext.Anime.AnimePahe;
 public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
     private readonly KwikExtractor _extractor = new(httpClientFactory);
-
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    
+    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = GetClient();
 
@@ -24,7 +25,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
                                    q = query,
                                    l = 8
                                })
-                               .GetStringAsync();
+                               .GetStringAsync(cancellationToken: ct);
 
         if (string.IsNullOrEmpty(json))
         {
@@ -39,6 +40,8 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
         foreach (var item in dataArray.EnumerateArray())
         {
+            ct.ThrowIfCancellationRequested();
+            
             var title = item.GetProperty("title").GetString() ?? "";
             var poster = item.GetProperty("poster").GetString() ?? "";
             var session = item.GetProperty("session").GetString() ?? "";
@@ -52,34 +55,35 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
         }
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = GetClient();
-        var stream = await client.Request("anime", animeId).GetStreamAsync();
+        var stream = await client.Request("anime", animeId).GetStreamAsync(cancellationToken: ct);
         var doc = new HtmlDocument();
         doc.Load(stream);
 
         var releaseId = IdRegex().Match(doc.Text).Groups[1].Value;
-        var page = await GetSessionPage(client, releaseId, 1);
+        var page = await GetSessionPage(client, releaseId, 1, ct);
 
         for (var pageNumber = 1; pageNumber <= page.LastPage; pageNumber++)
         {
             if (pageNumber != 1)
             {
-                page = await GetSessionPage(client, releaseId, pageNumber);
+                page = await GetSessionPage(client, releaseId, pageNumber, ct);
             }
 
             foreach (var ep in page.Data)
             {
+                ct.ThrowIfCancellationRequested();
                 yield return new Episode(this, releaseId, ep.Session, (float)ep.Episode);
             }
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = GetClient();
-        var streamData = await client.Request("play", animeId, episodeId).GetStreamAsync();
+        var streamData = await client.Request("play", animeId, episodeId).GetStreamAsync(cancellationToken: ct);
         var doc = new HtmlDocument();
         doc.Load(streamData);
 
@@ -98,6 +102,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
         foreach (var server in servers)
         {
+            ct.ThrowIfCancellationRequested();
             yield return new VideoServer(server.Title.Replace("&middot;", "•"), new Uri(server.Url), _extractor);
         }
     }
@@ -118,7 +123,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
     private static partial Regex IdRegex();
 
 
-    private static async Task<AnimePaheEpisodePage> GetSessionPage(FlurlClient client, string releaseId, int page)
+    private static async Task<AnimePaheEpisodePage> GetSessionPage(FlurlClient client, string releaseId, int page, CancellationToken ct)
     {
         return await client.Request("api").SetQueryParams(new
         {
@@ -126,7 +131,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
             id = releaseId,
             sort = "episode_asc",
             page
-        }).GetJsonAsync<AnimePaheEpisodePage>();
+        }).GetJsonAsync<AnimePaheEpisodePage>(cancellationToken: ct);
     }
 
     private FlurlClient GetClient()

@@ -1,4 +1,5 @@
-﻿using Flurl;
+﻿using System.Runtime.CompilerServices;
+using Flurl;
 using Jellyfin.Sdk;
 using Jellyfin.Sdk.Generated.Models;
 using TotoroNext.Anime.Abstractions;
@@ -14,7 +15,7 @@ public class AnimeProvider(
     public static string? SessionId { get; private set; }
     public static string? MediaSourceId { get; private set; }
 
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         var result = await client.Items.GetAsync(x =>
         {
@@ -25,7 +26,7 @@ public class AnimeProvider(
             qp.Recursive = true;
             qp.Limit = 20;
             qp.IncludeItemTypes = [BaseItemKind.Series, BaseItemKind.Movie];
-        });
+        }, ct);
 
         if (result is null)
         {
@@ -34,15 +35,16 @@ public class AnimeProvider(
 
         foreach (var item in result.Items ?? [])
         {
+            ct.ThrowIfCancellationRequested();
             var image = settings.Value.ServerUrl.AppendPathSegment($"/Items/{item.Id}/Images/Primary");
             yield return new SearchResult(this, $"{item.Id}", item.Name ?? "", new Uri(image));
         }
     }
-    
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var id = Guid.Parse(animeId);
-        var item = await client.Items[id].GetAsync();
+        var item = await client.Items[id].GetAsync(cancellationToken: ct);
 
         if (item is null)
         {
@@ -55,7 +57,7 @@ public class AnimeProvider(
         }
         else
         {
-            var result = await GetChildItems(id);
+            var result = await GetChildItems(id, cancellationToken: ct);
 
             if (result is null)
             {
@@ -66,12 +68,14 @@ public class AnimeProvider(
             var episodeNumber = 0;
             foreach (var season in seasons)
             {
+                ct.ThrowIfCancellationRequested();
+
                 if (season.Id is null)
                 {
                     continue;
                 }
 
-                var episodes = await GetChildItems(season.Id.Value, ItemSortBy.IndexNumber);
+                var episodes = await GetChildItems(season.Id.Value, ItemSortBy.IndexNumber, ct);
                 if (episodes is null)
                 {
                     continue;
@@ -79,16 +83,17 @@ public class AnimeProvider(
 
                 foreach (var ep in episodes.Items ?? [])
                 {
+                    ct.ThrowIfCancellationRequested();
                     yield return new Episode(this, animeId, $"{ep.Id}", ++episodeNumber);
                 }
             }
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var id = Guid.Parse(episodeId);
-        var item = await client.Items[id].GetAsync(x => x.QueryParameters.UserId = Settings.UserId);
+        var item = await client.Items[id].GetAsync(x => x.QueryParameters.UserId = Settings.UserId, ct);
         if (item is null)
         {
             yield break;
@@ -138,7 +143,7 @@ public class AnimeProvider(
         yield return server;
     }
 
-    private async Task<BaseItemDtoQueryResult?> GetChildItems(Guid id, ItemSortBy sortBy = ItemSortBy.SortName)
+    private async Task<BaseItemDtoQueryResult?> GetChildItems(Guid id, ItemSortBy sortBy = ItemSortBy.SortName, CancellationToken cancellationToken = default)
     {
         return await client.Items.GetAsync(x =>
         {
@@ -150,7 +155,7 @@ public class AnimeProvider(
             query.ImageTypeLimit = 1;
             query.EnableImageTypes = [ImageType.Primary, ImageType.Backdrop, ImageType.Banner, ImageType.Thumb];
             query.ParentId = id;
-        });
+        }, cancellationToken);
     }
 
     private async Task<Uri?> GetMediaUrl(BaseItemDto dto)

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.CompilerServices;
+using System.Text.Json;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -11,30 +12,33 @@ public class AnimeProvider(
     IModuleSettings<Settings> settings,
     IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
 
         var response = await client.Request("search")
                                    .AppendPathSegment(query)
-                                   .GetJsonAsync<ResultResponse<List<AnimeOnsenItemModel>>>();
+                                   .GetJsonAsync<ResultResponse<List<AnimeOnsenItemModel>>>(cancellationToken: ct);
 
         foreach (var item in response.Result ?? [])
         {
+            ct.ThrowIfCancellationRequested();
             var image = $"https://api.animeonsen.xyz/v4/image/210x300/{item.Id}";
             yield return new SearchResult(this, item.Id, item.Title, new Uri(image));
         }
     }
     
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var response = await client.Request($"content/{animeId}/episodes")
                                    .WithHeader(HeaderNames.Referer, Http.UserAgent)
-                                   .GetJsonAsync<Dictionary<string, AnimeOnsenEpisode>>();
+                                   .GetJsonAsync<Dictionary<string, AnimeOnsenEpisode>>(cancellationToken: ct);
 
         foreach (var item in response)
         {
+            ct.ThrowIfCancellationRequested();
+            
             if (!float.TryParse(item.Key, out var number))
             {
                 continue;
@@ -54,14 +58,14 @@ public class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
 
         var stream = await client.Request($"content/{animeId}/video/{episodeId}")
-                                 .GetStreamAsync();
+                                 .GetStreamAsync(cancellationToken: ct);
 
-        var doc = await JsonDocument.ParseAsync(stream);
+        var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
         var response = doc.RootElement.GetProperty("uri").Deserialize<AnimeOnsenStream>()!;
         var metadata = doc.RootElement.GetProperty("metadata");
         var episode = metadata.GetProperty("episode");

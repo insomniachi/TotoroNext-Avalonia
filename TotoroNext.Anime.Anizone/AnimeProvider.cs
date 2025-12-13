@@ -1,4 +1,5 @@
-﻿using Flurl;
+﻿using System.Runtime.CompilerServices;
+using Flurl;
 using Flurl.Http;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -9,17 +10,19 @@ namespace TotoroNext.Anime.Anizone;
 
 public class AnimeProvider : IAnimeProvider
 {
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         var stream = await "https://anizone.to/anime"
                            .AppendQueryParam("search", query)
-                           .GetStreamAsync();
+                           .GetStreamAsync(cancellationToken: ct);
 
         var doc = new HtmlDocument();
         doc.Load(stream);
 
         foreach (var div in doc.QuerySelectorAll("div.grid > div") ?? [])
         {
+            ct.ThrowIfCancellationRequested();
+            
             var id = div.GetAttributeValue("wire:key", "")["a-".Length..];
             var title = div.QuerySelector("a.text-white").GetAttributeValue("title", "");
             var image = div.QuerySelector("img").GetAttributeValue("src", "");
@@ -27,16 +30,18 @@ public class AnimeProvider : IAnimeProvider
         }
     }
     
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var detailsUrl = $"https://anizone.to/anime/{animeId}/";
-        var stream = await detailsUrl.GetStreamAsync();
+        var stream = await detailsUrl.GetStreamAsync(cancellationToken: ct);
 
         var doc = new HtmlDocument();
         doc.Load(stream);
 
         foreach (var li in doc.QuerySelectorAll("ul.grid li") ?? [])
         {
+            ct.ThrowIfCancellationRequested();
+            
             var id = li.QuerySelector("a").GetAttributeValue("href", "")[detailsUrl.Length ..];
             var title = li.QuerySelector("h3").InnerHtml.Replace($"Episode {id} :", "").Trim();
             if (!float.TryParse(id, out var number))
@@ -57,10 +62,10 @@ public class AnimeProvider : IAnimeProvider
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var detailsUrl = $"https://anizone.to/anime/{animeId}/{episodeId}";
-        var stream = await detailsUrl.GetStreamAsync();
+        var stream = await detailsUrl.GetStreamAsync(cancellationToken: ct);
 
         var doc = new HtmlDocument();
         doc.Load(stream);

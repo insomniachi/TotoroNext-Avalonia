@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -66,11 +67,12 @@ public partial class DownloadRequestViewModel(
         this.WhenAnyValue(x => x.ProviderId)
             .WhereNotNull()
             .Where(x => x != Guid.Empty)
-            .SelectMany(id =>
+            .Select(id =>
             {
                 _provider = providerFactory.Create(id!.Value);
-                return _provider.SearchAsync(SearchTerm).ToListAsync().AsTask();
+                return Observable.FromAsync(ct => _provider.GetSearchResults(SearchTerm, ct));
             })
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(results =>
             {
@@ -84,11 +86,12 @@ public partial class DownloadRequestViewModel(
             .Skip(1)
             .Where(x => x is { Length: > 2 })
             .Where(_ => ProviderId.HasValue)
-            .SelectMany(term =>
+            .Select(term =>
             {
                 var provider = providerFactory.Create(ProviderId!.Value);
-                return provider.SearchAsync(term ?? "").ToListAsync().AsTask();
+                return Observable.FromAsync(ct => provider.GetSearchResults(term, ct));
             })
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(results =>
             {

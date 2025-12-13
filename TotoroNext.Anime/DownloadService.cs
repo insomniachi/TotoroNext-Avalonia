@@ -33,12 +33,12 @@ public class DownloadService(
 
     private async Task StartDownload(DownloadRequest message)
     {
-        var allEpisodes = await message.Provider.GetEpisodes(message.SearchResult.Id).ToListAsync();
+        var allEpisodes = await message.Provider.GetEpisodes(message.SearchResult.Id, CancellationToken.None).ToListAsync();
         var targetEpisodes = allEpisodes.Where(x => x.Number >= message.EpisodeStart && x.Number <= message.EpisodeEnd).ToList();
 
         foreach (var episode in targetEpisodes)
         {
-            var servers = await episode.GetServersAsync().ToListAsync();
+            var servers = await episode.GetServersAsync(CancellationToken.None).ToListAsync();
             foreach (var server in servers)
             {
                 // can't download hls

@@ -65,7 +65,8 @@ public partial class ProviderDebuggerViewModel(
         this.WhenAnyValue(x => x.Query)
             .Where(x => x is { Length: > 2 })
             .Throttle(TimeSpan.FromMilliseconds(500))
-            .SelectMany(term => _provider.GetSearchResults(term))
+            .Select(term => Observable.FromAsync(ct => _provider.GetSearchResults(term, ct)))
+            .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(response =>
             {

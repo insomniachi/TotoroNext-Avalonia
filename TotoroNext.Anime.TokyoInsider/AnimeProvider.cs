@@ -1,4 +1,5 @@
-﻿using Flurl;
+﻿using System.Runtime.CompilerServices;
+using Flurl;
 using Flurl.Http;
 using FuzzySharp;
 using HtmlAgilityPack;
@@ -10,7 +11,7 @@ namespace TotoroNext.Anime.TokyoInsider;
 
 public class AnimeProvider : IAnimeProvider
 {
-    public IAsyncEnumerable<SearchResult> SearchAsync(string query)
+    public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
         var lowered = query.ToLower();
         return Catalog.Items
@@ -21,16 +22,18 @@ public class AnimeProvider : IAnimeProvider
                       .ToAsyncEnumerable();
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId)
+    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var stream = await "https://www.tokyoinsider.com/"
                            .AppendPathSegment(animeId)
-                           .GetStreamAsync();
+                           .GetStreamAsync(cancellationToken: ct);
         var doc = new HtmlDocument();
         doc.Load(stream);
 
         foreach (var node in doc.QuerySelectorAll(".episode").Reverse())
         {
+            ct.ThrowIfCancellationRequested();
+            
             var link = node.QuerySelector("a");
             if (link is null)
             {
@@ -53,16 +56,18 @@ public class AnimeProvider : IAnimeProvider
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId)
+    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var stream = await "https://www.tokyoinsider.com/"
                            .AppendPathSegment(episodeId)
-                           .GetStreamAsync();
+                           .GetStreamAsync(cancellationToken: ct);
         var doc = new HtmlDocument();
         doc.Load(stream);
 
         foreach (var node in doc.QuerySelectorAll(".c_h2,.c_h2b"))
         {
+            ct.ThrowIfCancellationRequested();
+            
             var link = node.QuerySelectorAll("a").ElementAt(1);
             if (link is null)
             {

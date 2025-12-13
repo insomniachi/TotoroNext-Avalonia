@@ -36,7 +36,7 @@ public static class AnimeMetadataExtensions
 
     extension(AnimeModel anime)
     {
-        public async Task<List<EpisodeInfo>> GetEpisodes()
+        public async Task<List<EpisodeInfo>> GetEpisodes(CancellationToken ct = default)
         {
             try
             {
@@ -49,7 +49,7 @@ public static class AnimeMetadataExtensions
 
                 var today = TimeProvider.System.GetUtcNow();
 
-                var response = await @"https://api.ani.zip/mappings".SetQueryParam(serviceType, anime.Id).GetStringAsync();
+                var response = await @"https://api.ani.zip/mappings".SetQueryParam(serviceType, anime.Id).GetStringAsync(cancellationToken: ct);
                 var jObject = (JsonObject)JsonNode.Parse(response)!;
                 var episodesObj = jObject["episodes"]!.AsObject();
 

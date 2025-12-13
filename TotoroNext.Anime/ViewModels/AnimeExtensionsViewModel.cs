@@ -130,7 +130,7 @@ public partial class AnimeExtensionsViewModel(
         _suppressProviderChange = false;
     }
     
-    public async Task<List<SearchResult>> GetSearchResults(string? term)
+    public async Task<List<SearchResult>> GetSearchResults(string? term, CancellationToken ct)
     {
         if (_animeProvider is null || string.IsNullOrEmpty(term))
         {
@@ -139,7 +139,7 @@ public partial class AnimeExtensionsViewModel(
 
         try
         {
-            return await _animeProvider.SearchAsync(term).ToListAsync();
+            return await _animeProvider.SearchAsync(term, ct).ToListAsync(ct);
         }
         catch
         {

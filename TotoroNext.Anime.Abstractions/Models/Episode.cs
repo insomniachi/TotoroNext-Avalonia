@@ -12,9 +12,9 @@ public partial class Episode(IAnimeProvider provider, string showId, string id, 
     public TimeSpan StartPosition { get; set; } = TimeSpan.Zero;
     public bool IsCompleted { get; set; }
 
-    public IAsyncEnumerable<VideoServer> GetServersAsync()
+    public IAsyncEnumerable<VideoServer> GetServersAsync(CancellationToken ct)
     {
-        return provider.GetServersAsync(ShowId, Id);
+        return provider.GetServersAsync(ShowId, Id, ct);
     }
 
     public bool IsFromProvider(Type providerType)
