@@ -20,7 +20,6 @@
     <UserControl.Resources>
         <StreamGeometry x:Key="Incognito">M17.06 13C15.2 13 13.64 14.33 13.24 16.1C12.29 15.69 11.42 15.8 10.76 16.09C10.35 14.31 8.79 13 6.94 13C4.77 13 3 14.79 3 17C3 19.21 4.77 21 6.94 21C9 21 10.68 19.38 10.84 17.32C11.18 17.08 12.07 16.63 13.16 17.34C13.34 19.39 15 21 17.06 21C19.23 21 21 19.21 21 17C21 14.79 19.23 13 17.06 13M6.94 19.86C5.38 19.86 4.13 18.58 4.13 17S5.39 14.14 6.94 14.14C8.5 14.14 9.75 15.42 9.75 17S8.5 19.86 6.94 19.86M17.06 19.86C15.5 19.86 14.25 18.58 14.25 17S15.5 14.14 17.06 14.14C18.62 14.14 19.88 15.42 19.88 17S18.61 19.86 17.06 19.86M22 10.5H2V12H22V10.5M15.53 2.63C15.31 2.14 14.75 1.88 14.22 2.05L12 2.79L9.77 2.05L9.72 2.04C9.19 1.89 8.63 2.17 8.43 2.68L6 9H18L15.56 2.68L15.53 2.63Z</StreamGeometry>
         <StreamGeometry x:Key="VideoLibrary">M 4,6 H 2 v 14 c 0,1.1 0.9,2 2,2 H 18 V 20 H 4 Z M 20,2 H 8 C 6.9,2 6,2.9 6,4 v 12 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-2 V 4 C 22,2.9 21.1,2 20,2 Z m -8,12.5 v -9 l 6,4.5 z</StreamGeometry>
-        <StreamGeometry x:Key="Search">M15 4H5V20H19V8H15V4ZM3 2.9918C3 2.44405 3.44749 2 3.9985 2H16L20.9997 7L21 20.9925C21 21.5489 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5447 3 21.0082V2.9918ZM13.529 14.4464C11.9951 15.3524 9.98633 15.1464 8.66839 13.8284C7.1063 12.2663 7.1063 9.73367 8.66839 8.17157C10.2305 6.60948 12.7631 6.60948 14.3252 8.17157C15.6432 9.48951 15.8492 11.4983 14.9432 13.0322L17.1537 15.2426L15.7395 16.6569L13.529 14.4464ZM12.911 12.4142C13.6921 11.6332 13.6921 10.3668 12.911 9.58579C12.13 8.80474 10.8637 8.80474 10.0826 9.58579C9.30156 10.3668 9.30156 11.6332 10.0826 12.4142C10.8637 13.1953 12.13 13.1953 12.911 12.4142Z</StreamGeometry>
         <StreamGeometry x:Key="Opening">M28.125 281.25A9.375 9.375 0 0 0 37.5 271.875V28.125A9.375 9.375 0 0 0 18.75 28.125V271.875A9.375 9.375 0 0 0 28.125 281.25M56.25 168.75A18.75 18.75 0 0 0 75 187.5H262.5A18.75 18.75 0 0 0 281.25 168.75V131.25A18.75 18.75 0 0 0 262.5 112.5H75A18.75 18.75 0 0 0 56.25 131.25z</StreamGeometry>
         <StreamGeometry x:Key="Ending">M271.875 281.25A9.375 9.375 0 0 1 262.5 271.875V28.125A9.375 9.375 0 0 1 281.25 28.125V271.875A9.375 9.375 0 0 1 271.875 281.25M243.75 168.75A18.75 18.75 0 0 1 225 187.5H37.5A18.75 18.75 0 0 1 18.75 168.75V131.25A18.75 18.75 0 0 1 37.5 112.5H225A18.75 18.75 0 0 1 243.75 131.25z</StreamGeometry>
     </UserControl.Resources>
@@ -40,7 +39,8 @@
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
                 <fac:SettingsExpander Header="Provider"
-                                      Description="The provider to use for this anime">
+                                      Description="The provider to use for this anime"
+                                      IsExpanded="True">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
                     </fac:SettingsExpander.IconSource>
@@ -55,24 +55,27 @@
                             </ComboBox.Styles>
                         </ComboBox>
                     </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Search Term"
-                                      Description="The search term to use when searching for this anime, use it when the default search term doesn't return the correct anime"
-                                      IsExpanded="True"
-                                      IsVisible="{Binding HasProvider}">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Search}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpanderItem Content="Query" Description="The term used to search for this anime">
+                    <fac:SettingsExpanderItem Content="Provider Item" Description="Media item inside the provider"
+                                              IsVisible="{Binding HasProvider}">
                         <fac:SettingsExpanderItem.Footer>
-                            <TextBox Text="{Binding SearchTerm}" />
-                        </fac:SettingsExpanderItem.Footer>
-                    </fac:SettingsExpanderItem>
-                    <fac:SettingsExpanderItem Content="Result" Description="Anime entry from the provider">
-                        <fac:SettingsExpanderItem.Footer>
-                            <ComboBox ItemsSource="{Binding ProviderResults}"
-                                      SelectedItem="{Binding SelectedProviderResult, Mode=TwoWay}"
-                                      HorizontalAlignment="Stretch" />
+                            <u:AutoCompleteBox x:Name="AutoCompleteBox"
+                                             Text="{Binding SearchTerm}"
+                                             SelectedItem="{Binding ProviderResult}"
+                                             ValueMemberBinding="{ReflectionBinding Title}"
+                                             FilterMode="None"
+                                             MaxDropDownHeight="300"
+                                             MinimumPopulateDelay="0:0:0.500"
+                                             MinimumPrefixLength="2"
+                                             Width="200">
+                                <u:AutoCompleteBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SearchResult">
+                                        <TextBlock Text="{Binding Title}"
+                                                   ToolTip.Tip="{Binding Title}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Width="200" />
+                                    </DataTemplate>
+                                </u:AutoCompleteBox.ItemTemplate>
+                            </u:AutoCompleteBox>
                         </fac:SettingsExpanderItem.Footer>
                     </fac:SettingsExpanderItem>
                 </fac:SettingsExpander>

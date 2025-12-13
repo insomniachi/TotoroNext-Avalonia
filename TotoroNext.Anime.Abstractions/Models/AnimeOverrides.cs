@@ -8,7 +8,13 @@ public sealed class AnimeOverrides
     public Guid? Provider { get; init; }
     public SkipMethod OpeningSkipMethod { get; init; }
     public SkipMethod EndingSkipMethod { get; init; }
-    public string? SearchTerm { get; init; }
-    public string? SelectedProviderResult { get; init; }
+    public ProviderItemResult? ProviderResult { get; set; }
     public List<ModuleOptionItem> AnimeProviderOptions { get; init; } = [];
+}
+
+[Serializable]
+public class ProviderItemResult
+{
+    public required string Title { get; init; }
+    public required string Id { get; init; }
 }

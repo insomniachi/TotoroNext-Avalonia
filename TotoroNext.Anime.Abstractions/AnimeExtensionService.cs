@@ -45,11 +45,16 @@ public class AnimeExtensionService : IAnimeExtensionService
     public async Task<SearchResult?> SearchOrSelectAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
-        var term = GetSearchTerm(anime);
+        var searchResult = GetSearchResult(anime.Id);
 
-        var results = await provider.GetSearchResults(term);
+        if (searchResult is not null)
+        {
+            return new SearchResult(provider, searchResult.Id, searchResult.Title);
+        }
+        
+        var results = await provider.GetSearchResults(anime.Title);
 
-        if (TryFindMatch(results, anime, term) is { } result)
+        if (TryFindMatch(results, anime, anime.Title) is { } result)
         {
             return result;
         }
@@ -60,25 +65,21 @@ public class AnimeExtensionService : IAnimeExtensionService
     public async Task<SearchResult?> SearchAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
-        var term = GetSearchTerm(anime);
-
-        var results = await provider.GetSearchResults(term);
-        return TryFindMatch(results, anime, term);
+        var searchResult = GetSearchResult(anime.Id);
+        
+        if (searchResult is not null)
+        {
+            return new SearchResult(provider, searchResult.Id, searchResult.Title);
+        }
+        
+        var results = await provider.GetSearchResults(anime.Title);
+        return TryFindMatch(results, anime, anime.Title);
     }
 
     public void CreateOrUpdateExtension(long id, AnimeOverrides overrides)
     {
         _extensions[id] = overrides;
         File.WriteAllText(_file, JsonSerializer.Serialize(_extensions));
-    }
-
-    public string GetSearchTerm(AnimeModel anime)
-    {
-        var extension = _extensions.GetValueOrDefault(anime.Id);
-
-        return string.IsNullOrEmpty(extension?.SelectedProviderResult)
-            ? anime.Title
-            : extension.SelectedProviderResult;
     }
 
     public IAnimeProvider GetProvider(long id)
@@ -93,6 +94,12 @@ public class AnimeExtensionService : IAnimeExtensionService
         var provider = _providerFactory.Create(extension.Provider.Value);
         provider.UpdateOptions(extension.AnimeProviderOptions);
         return provider;
+    }
+
+    private ProviderItemResult? GetSearchResult(long id)
+    {
+        var extension = _extensions.GetValueOrDefault(id);
+        return extension?.ProviderResult;
     }
 
     private static SearchResult? TryFindMatch(List<SearchResult> results, AnimeModel anime, string term)

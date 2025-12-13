@@ -26,8 +26,8 @@ public partial class AnimeExtensionsViewModel(
         nameof(ProviderId),
         nameof(OpeningSkipMethod),
         nameof(EndingSkipMethod),
-        nameof(SelectedProviderResult),
-        nameof(ProviderOptions)
+        nameof(ProviderOptions),
+        nameof(ProviderResult)
     ];
 
     private IAnimeProvider? _animeProvider;
@@ -49,15 +49,15 @@ public partial class AnimeExtensionsViewModel(
     [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
 
     [ObservableProperty] public partial ObservableCollection<string> ProviderResults { get; set; } = [];
-
-    [ObservableProperty] public partial string? SelectedProviderResult { get; set; }
+    
+    [ObservableProperty] public partial SearchResult? ProviderResult { get; set; }
 
     public List<Descriptor> Providers { get; } = [Descriptor.None, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
     {
         var overrides = animeExtensionService.GetExtension(parameters.Anime.Id);
-        SearchTerm = overrides?.SearchTerm ?? parameters.Anime.Title;
+        SearchTerm = overrides?.ProviderResult is { } pr ? pr.Title : null;
         IsNsfw = overrides?.IsNsfw ?? false;
         _suppressProviderChange = true;
         ProviderId = overrides?.Provider;
@@ -77,15 +77,27 @@ public partial class AnimeExtensionsViewModel(
 
         this.WhenAnyPropertyChanged(ObservedProperties)
             .Where(_ => !_isDeleting)
-            .Select(_ => new AnimeOverrides
+            .Select(_ =>
             {
-                IsNsfw = IsNsfw,
-                Provider = ProviderId == Guid.Empty ? null : ProviderId,
-                OpeningSkipMethod = OpeningSkipMethod,
-                EndingSkipMethod = EndingSkipMethod,
-                SearchTerm = SearchTerm,
-                SelectedProviderResult = SelectedProviderResult,
-                AnimeProviderOptions = ProviderOptions
+                var extensions = new AnimeOverrides
+                {
+                    IsNsfw = IsNsfw,
+                    Provider = ProviderId == Guid.Empty ? null : ProviderId,
+                    OpeningSkipMethod = OpeningSkipMethod,
+                    EndingSkipMethod = EndingSkipMethod,
+                    AnimeProviderOptions = ProviderOptions,
+                };
+
+                if (ProviderId != null && ProviderResult is not null)
+                {
+                    extensions.ProviderResult = new ProviderItemResult()
+                    {
+                        Id = ProviderResult.Id,
+                        Title = ProviderResult.Title
+                    };
+                }
+
+                return extensions;
             })
             .Subscribe(@override => animeExtensionService.CreateOrUpdateExtension(parameters.Anime.Id, @override));
 
@@ -115,19 +127,24 @@ public partial class AnimeExtensionsViewModel(
             .Where(x => x != Guid.Empty)
             .Subscribe(_ => SearchTerm = "");
 
-        this.WhenAnyValue(x => x.SearchTerm)
-            .Where(x => x is { Length: > 2 })
-            .Where(_ => _animeProvider is not null)
-            .Select(GetSearchResults)
-            .Switch()
-            .Subscribe(results =>
-            {
-                ProviderResults = new ObservableCollection<string>(results.Select(x => x.Title));
-                SelectedProviderResult =
-                    ProviderResults.FirstOrDefault(x => x.Equals(overrides?.SelectedProviderResult, StringComparison.OrdinalIgnoreCase));
-            });
-
         _suppressProviderChange = false;
+    }
+    
+    public async Task<List<SearchResult>> GetSearchResults(string? term)
+    {
+        if (_animeProvider is null || string.IsNullOrEmpty(term))
+        {
+            return [];
+        }
+
+        try
+        {
+            return await _animeProvider.SearchAsync(term).ToListAsync();
+        }
+        catch
+        {
+            return [];
+        }
     }
 
     private void Unsubscribe(List<ModuleOptionItem> providerOptions)
@@ -163,26 +180,10 @@ public partial class AnimeExtensionsViewModel(
         SearchTerm = "";
         OpeningSkipMethod = default;
         EndingSkipMethod = default;
+        ProviderResult = null;
         Unsubscribe(ProviderOptions);
         ProviderOptions = [];
 
         _isDeleting = false;
-    }
-
-    private async Task<List<SearchResult>> GetSearchResults(string? term)
-    {
-        if (_animeProvider is null || string.IsNullOrEmpty(term))
-        {
-            return [];
-        }
-
-        try
-        {
-            return await _animeProvider.SearchAsync(term).ToListAsync();
-        }
-        catch
-        {
-            return [];
-        }
     }
 }
