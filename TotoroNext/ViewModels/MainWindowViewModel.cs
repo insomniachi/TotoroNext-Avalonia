@@ -54,7 +54,7 @@ public partial class MainWindowViewModel : ObservableObject,
             .Subscribe(navigator =>
             {
                 navigator.Navigated += (_, args) => { UpdateSelection(args); };
-                navigator.NavigateToRoute("Anime List");
+                navigator.NavigateToRoute("Home");
             });
 
         messenger.RegisterAll(this);
