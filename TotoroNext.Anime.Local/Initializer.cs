@@ -38,7 +38,6 @@ internal class Initializer(
         using var decompressor = new DecompressionStream(stream);
         using var reader = new StreamReader(decompressor);
         var existing = dbContext.Anime.FindAll().ToDictionary(x => x.MyAnimeListId);
-        dbContext.Anime.EnsureIndex(x => x.AnilistId);
 
         var toUpsert = new List<LocalAnimeModel>();
         while (reader.ReadLine() is { } line)

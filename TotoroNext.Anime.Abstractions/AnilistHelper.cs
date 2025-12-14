@@ -69,6 +69,34 @@ public static class AnilistHelper
             Image = TryConvertUri(x.Image.Large)
         }).ToList();
     }
+    
+    public static async Task<List<long>> GetPopularAnimeAsync(GraphQLHttpClient client)
+    {
+        try
+        {
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithMedia(new MediaQueryBuilder()
+                                                                            .WithId(),
+                                                                        sort: new List<MediaSort?> { MediaSort.TrendingDesc },
+                                                                        status: MediaStatus.Releasing,
+                                                                        type: MediaType.Anime), 1, 15)
+                                               .Build()
+            });
+
+            if (response.Errors?.Length > 0)
+            {
+                return [];
+            }
+
+            return [.. response.Data.Page.Media.Select(x => x.Id).Where(x => x is not null).Select(x => x!.Value)];
+        }
+        catch
+        {
+            return [];
+        }
+    }
 
     private static Uri? TryConvertUri(string? url)
     {

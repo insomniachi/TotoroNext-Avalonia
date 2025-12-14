@@ -53,22 +53,41 @@ internal class MyAnimeListMetadataService : IMetadataService
         _client = client;
         _settings = settings.Value;
     }
+    
+    public Guid Id => Module.Id;
 
-    public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
+    public string Name => nameof(AnimeId.MyAnimeList);
+    
+    public async Task<AnimeModel> GetAnimeAsync(long id)
     {
-        return await anime.GetEpisodes();
+        var malModel = await _client.Anime().WithId(id)
+                                    .WithFields(_commonFields)
+                                    .WithField(x => x.Genres)
+                                    .WithFields($"related_anime{{{RecursiveAnimeProperties}}}")
+                                    .WithFields($"recommendations{{{RecursiveAnimeProperties}}}")
+                                    .Find();
+
+        return MalToModelConverter.ConvertModel(malModel);
     }
-
-    public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
+    
+    public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
     {
-        var jikanResponse = await _jikanClient.GetAnimeCharactersAsync(animeId);
-        return jikanResponse.Data.Select(x => new CharacterModel
+        var request = _client
+                      .Anime()
+                      .WithName(term)
+                      .WithFields(_commonFields)
+                      .WithLimit(5);
+
+        if (_settings.IncludeNsfw)
         {
-            Name = x.Character.Name,
-            Image = TryConvertUri(x.Character.Images?.JPG?.ImageUrl)
-        }).ToList();
-    }
+            request.IncludeNsfw();
+        }
 
+        var result = await request.Find();
+
+        return [.. result.Data.Select(MalToModelConverter.ConvertModel)];
+    }
+    
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
         var uri = new Url("https://api.jikan.moe/v4/anime");
@@ -115,20 +134,19 @@ internal class MyAnimeListMetadataService : IMetadataService
         return [..items];
     }
 
-    public Guid Id => Module.Id;
-
-    public string Name => nameof(AnimeId.MyAnimeList);
-
-    public async Task<AnimeModel> GetAnimeAsync(long id)
+    public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
     {
-        var malModel = await _client.Anime().WithId(id)
-                                    .WithFields(_commonFields)
-                                    .WithField(x => x.Genres)
-                                    .WithFields($"related_anime{{{RecursiveAnimeProperties}}}")
-                                    .WithFields($"recommendations{{{RecursiveAnimeProperties}}}")
-                                    .Find();
+        return await anime.GetEpisodes();
+    }
 
-        return MalToModelConverter.ConvertModel(malModel);
+    public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
+    {
+        var jikanResponse = await _jikanClient.GetAnimeCharactersAsync(animeId);
+        return jikanResponse.Data.Select(x => new CharacterModel
+        {
+            Name = x.Character.Name,
+            Image = TryConvertUri(x.Character.Images?.JPG?.ImageUrl)
+        }).ToList();
     }
 
     public async Task<List<string>> GetGenresAsync()
@@ -137,23 +155,14 @@ internal class MyAnimeListMetadataService : IMetadataService
         _genres = response.Data.ToList();
         return [.._genres.Select(x => x.Name).Order()];
     }
-
-    public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
+    
+    public async Task<List<AnimeModel>> GetPopularAnimeAsync()
     {
-        var request = _client
-                      .Anime()
-                      .WithName(term)
-                      .WithFields(_commonFields)
-                      .WithLimit(5);
+        var result = await _client.Anime().Top(AnimeRankingType.Airing)
+                            .WithFields(_commonFields)
+                            .Find();
 
-        if (_settings.IncludeNsfw)
-        {
-            request.IncludeNsfw();
-        }
-
-        var result = await request.Find();
-
-        return [.. result.Data.Select(MalToModelConverter.ConvertModel)];
+        return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
     }
 
     private static Uri? TryConvertUri(string? url)

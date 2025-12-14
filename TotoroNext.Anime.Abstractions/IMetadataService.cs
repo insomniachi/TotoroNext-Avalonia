@@ -15,6 +15,7 @@ public interface IMetadataService
     Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime);
     Task<List<CharacterModel>> GetCharactersAsync(long animeId);
     Task<List<string>> GetGenresAsync();
+    Task<List<AnimeModel>> GetPopularAnimeAsync();
 }
 
 public static class MetadataServiceExtensions

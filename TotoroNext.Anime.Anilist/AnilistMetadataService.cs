@@ -16,14 +16,45 @@ internal class AnilistMetadataService(
     GraphQLHttpClient client,
     IModuleSettings<Settings> settings) : IAnilistMetadataService
 {
-    public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
-    {
-        return await anime.GetEpisodes();
-    }
+    public Guid Id => Module.Id;
 
-    public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
+    public string Name => nameof(AnimeId.Anilist);
+
+    public async Task<AnimeModel> GetAnimeAsync(long id)
     {
-        return await AnilistHelper.GetCharactersAsync(client, animeId);
+        var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)id,
+                                                      type: MediaType.Anime).Build();
+
+        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+        {
+            Query = query
+        });
+
+        return AniListModelToAnimeModelConverter.ConvertModel(response.Data.Media);
+    }
+    
+    public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
+    {
+        try
+        {
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithMedia(MediaQueryBuilder(), search: term, type: MediaType.Anime), 1,
+                                                         (int)settings.Value.SearchLimit).Build()
+            });
+
+            if (response.Errors?.Length > 0)
+            {
+                return [];
+            }
+
+            return [.. response.Data.Page.Media.Where(FilterNsfw).Select(AniListModelToAnimeModelConverter.ConvertModel)];
+        }
+        catch
+        {
+            return [];
+        }
     }
 
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
@@ -65,19 +96,6 @@ internal class AnilistMetadataService(
         }
     }
 
-    public async Task<AnimeModel> GetAnimeAsync(long id)
-    {
-        var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)id,
-                                                      type: MediaType.Anime).Build();
-
-        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-        {
-            Query = query
-        });
-
-        return AniListModelToAnimeModelConverter.ConvertModel(response.Data.Media);
-    }
-
     public async Task<List<string>> GetGenresAsync()
     {
         var query = new QueryQueryBuilder().WithGenreCollection().Build();
@@ -90,18 +108,27 @@ internal class AnilistMetadataService(
         return response.Data.GenreCollection.ToList();
     }
 
-    public Guid Id => Module.Id;
+    public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
+    {
+        return await anime.GetEpisodes();
+    }
 
-    public string Name => nameof(AnimeId.Anilist);
+    public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
+    {
+        return await AnilistHelper.GetCharactersAsync(client, animeId);
+    }
 
-    public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
+    public async Task<List<AnimeModel>> GetPopularAnimeAsync()
     {
         try
         {
             var response = await client.SendQueryAsync<Query>(new GraphQLRequest
             {
                 Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
-                                                             .WithMedia(MediaQueryBuilder(), search: term, type: MediaType.Anime), 1,
+                                                             .WithMedia(MediaQueryBuilder(),
+                                                                        sort: new List<MediaSort?> { MediaSort.TrendingDesc },
+                                                                        status: MediaStatus.Releasing,
+                                                                        type: MediaType.Anime), 1,
                                                          (int)settings.Value.SearchLimit).Build()
             });
 

@@ -22,6 +22,7 @@ internal class LiteDbContext : ILiteDbContext
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
+        Anime.EnsureIndex(x => x.AnilistId);
         var now = DateTimeOffset.UtcNow;
         Episodes.DeleteMany(x => x.ExpiresAt < now);
         Characters.DeleteMany(x => x.ExpiresAt < now);

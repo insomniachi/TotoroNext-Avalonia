@@ -146,8 +146,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
 
         return await tcs.Task;
     }
-
-
+    
     public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
     {
         if (anime.Episodes is { Count: > 0 })
@@ -208,6 +207,13 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
         });
 
         return await tcs.Task;
+    }
+
+    public async Task<List<AnimeModel>> GetPopularAnimeAsync()
+    {
+        var ids = await AnilistHelper.GetPopularAnimeAsync(ClientLazy.Value);
+        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
+        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
     }
 
     private static MediaQueryBuilder MediaQueryBuilderFull()
