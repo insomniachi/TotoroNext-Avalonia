@@ -39,14 +39,15 @@
                                     Text="{Binding Description, Converter={x:Static views:HomeView.HtmlToTextConverter}}"
                                     TextWrapping="Wrap"
                                     FontSize="20"
-                                    TextTrimming="CharacterEllipsis"/>
+                                    TextTrimming="CharacterEllipsis"
+                                    MaxHeight="200"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" 
                                         Orientation="Horizontal"
                                         VerticalAlignment="Bottom" 
                                         HorizontalAlignment="Right"
-                                        Margin="20"
+                                        Margin="20 0 20 20"
                                         Spacing="12">
                                 <Button HorizontalAlignment="Stretch"
                                         Command="{x:Static am:Commands.WatchCommand}"
