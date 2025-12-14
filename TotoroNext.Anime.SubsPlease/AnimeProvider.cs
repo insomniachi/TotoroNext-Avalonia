@@ -75,7 +75,7 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
         foreach (var resolution in items)
         {
             ct.ThrowIfCancellationRequested();
-            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Magnet), extractor);
+            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Torrent), extractor);
         }
     }
 
