@@ -40,6 +40,7 @@ public static partial class AniListModelToAnimeModelConverter
                 MyAnimeList = media.IdMal ?? 0
             },
             Image = media.CoverImage.Large,
+            BannerImage = string.IsNullOrEmpty(media.BannerImage) ? media.CoverImage.Large : media.BannerImage,
             TotalEpisodes = media.Episodes,
             AiringStatus = ConvertStatus(media.Status),
             MeanScore = media.MeanScore,

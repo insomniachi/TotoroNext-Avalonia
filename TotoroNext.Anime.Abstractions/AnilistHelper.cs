@@ -79,9 +79,37 @@ public static class AnilistHelper
                 Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
                                                              .WithMedia(new MediaQueryBuilder()
                                                                             .WithId(),
-                                                                        sort: new List<MediaSort?> { MediaSort.TrendingDesc },
+                                                                        sort: new List<MediaSort?> { MediaSort.TrendingDesc, MediaSort.PopularityDesc },
                                                                         status: MediaStatus.Releasing,
-                                                                        type: MediaType.Anime), 1, 15)
+                                                                        type: MediaType.Anime), 1, 20)
+                                               .Build()
+            });
+
+            if (response.Errors?.Length > 0)
+            {
+                return [];
+            }
+
+            return [.. response.Data.Page.Media.Select(x => x.Id).Where(x => x is not null).Select(x => x!.Value)];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+    
+    public static async Task<List<long>> GetUpcomingAnimeAsync(GraphQLHttpClient client)
+    {
+        try
+        {
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithMedia(new MediaQueryBuilder()
+                                                                            .WithId(),
+                                                                        sort: new List<MediaSort?> { MediaSort.PopularityDesc },
+                                                                        status: MediaStatus.NotYetReleased,
+                                                                        type: MediaType.Anime), 1, 20)
                                                .Build()
             });
 

@@ -164,6 +164,15 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
     }
+    
+    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync()
+    {
+        var result = await _client.Anime().Top(AnimeRankingType.Upcoming)
+                                  .WithFields(_commonFields)
+                                  .Find();
+
+        return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
+    }
 
     private static Uri? TryConvertUri(string? url)
     {

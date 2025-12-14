@@ -44,9 +44,10 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
                         TitleRomaji = response.Data.Media.Title.Romaji,
                         Description = response.Data.Media.Description,
                         Popularity = response.Data.Media.Popularity ?? 0,
-                        Videos = [..ConvertTrailers(response.Data.Media.Trailer)]
+                        Videos = [..ConvertTrailers(response.Data.Media.Trailer)],
+                        BannerImage = response.Data.Media.BannerImage,
                     },
-                    ExpiresAt = DateTimeOffset.UtcNow.AddDays(1)
+                    ExpiresAt = DateTimeOffset.UtcNow.AddMonths(1)
                 };
 
                 dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
@@ -212,6 +213,13 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
     public async Task<List<AnimeModel>> GetPopularAnimeAsync()
     {
         var ids = await AnilistHelper.GetPopularAnimeAsync(ClientLazy.Value);
+        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
+        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
+    }
+    
+    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync()
+    {
+        var ids = await AnilistHelper.GetUpcomingAnimeAsync(ClientLazy.Value);
         var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
         return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
     }

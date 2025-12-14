@@ -20,4 +20,11 @@
         <AvaloniaResource Include="Assets\nothingtoseehere_transparent_small.png"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Controls\HorizontalAnimeCardList.axaml.cs">
+        <DependentUpon>HorizontalAnimeCardList.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
 </Project>

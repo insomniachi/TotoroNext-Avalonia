@@ -29,6 +29,7 @@ internal static class LocalModelConverter
             Studios = anime.Studios,
             AiringStatus = anime.AiringStatus,
             Image = anime.Image,
+            BannerImage = string.IsNullOrEmpty(anime.AdditionalInfo?.Info.BannerImage) ? anime.Image : anime.AdditionalInfo.Info.BannerImage,
             ServiceName = "Local",
             ServiceId = Guid.Empty,
             Id = anime.MyAnimeListId,

@@ -1,0 +1,44 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             xmlns:c="clr-namespace:TotoroNext.Anime.Controls"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:HomeViewModel"
+             x:Class="TotoroNext.Anime.Views.HomeView">
+    <u:LoadingContainer IsLoading="{Binding IsLoading}">
+        <Grid RowDefinitions="1.2*,*,*" RowSpacing="16">
+            <Carousel ItemsSource="{Binding HeroItems}"
+                      SelectedIndex="{Binding SelectedHeroIndex}"
+                      Margin="40 0">
+                <Carousel.PageTransition>
+                    <PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
+                </Carousel.PageTransition>
+                <Carousel.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="*,*">
+                            <Image Grid.Column="0" Grid.ColumnSpan="2" ail:ImageLoader.Source="{Binding BannerImage}"
+                                   Stretch="UniformToFill">
+                                <Image.Effect>
+                                    <BlurEffect Radius="20"/>
+                                </Image.Effect>
+                            </Image>
+                            <Border Grid.Column="0" Grid.ColumnSpan="2" Background="#AA000000"/>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Bottom" 
+                                        Spacing="12"
+                                        Margin="20">
+                                <TextBlock Text="{Binding Title}" FontSize="30" FontWeight="Bold"/>
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </Carousel.ItemTemplate>
+            </Carousel>
+            <c:HorizontalAnimeCardList Grid.Row="1" Anime="{Binding Popular}" Title="Popular Airing" />
+            <c:HorizontalAnimeCardList Grid.Row="2" Anime="{Binding Upcoming}" Title="Upcoming" />
+        </Grid>
+    </u:LoadingContainer>
+</UserControl>

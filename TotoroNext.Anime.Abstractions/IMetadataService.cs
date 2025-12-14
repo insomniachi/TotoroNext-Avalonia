@@ -16,6 +16,7 @@ public interface IMetadataService
     Task<List<CharacterModel>> GetCharactersAsync(long animeId);
     Task<List<string>> GetGenresAsync();
     Task<List<AnimeModel>> GetPopularAnimeAsync();
+    Task<List<AnimeModel>> GetUpcomingAnimeAsync();
 }
 
 public static class MetadataServiceExtensions
@@ -78,6 +79,7 @@ public partial class AnimeModel : ObservableObject
     public long Id { get; init; }
     public AnimeId ExternalIds { get; init; } = new();
     public string Image { get; set; } = "";
+    public string BannerImage { get; set; } = "";
     public string Title { get; init; } = "";
     public string EngTitle { get; set; } = "";
     public string RomajiTitle { get; set; } = "";
@@ -94,7 +96,7 @@ public partial class AnimeModel : ObservableObject
     public string Description { get; set; } = "";
     public IEnumerable<AnimeModel> Related { get; set; } = [];
     public IEnumerable<AnimeModel> Recommended { get; set; } = [];
-    public List<EpisodeInfo> Episodes { get; set; } = [];
+    public List<EpisodeInfo> Episodes { get; init; } = [];
     public string Url { get; init; } = "";
     public AnimeMediaFormat MediaFormat { get; init; } = AnimeMediaFormat.Unknown;
     public IReadOnlyCollection<string> Genres { get; init; } = [];

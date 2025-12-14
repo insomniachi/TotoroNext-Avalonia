@@ -76,6 +76,7 @@ internal class OfflineAdditionalInfo
     public string Description { get; set; } = "";
     public int Popularity { get; set; }
     public List<TrailerVideo> Videos { get; set; } = [];
+    public string BannerImage { get; set; } = "";
 }
 
 [Serializable]
