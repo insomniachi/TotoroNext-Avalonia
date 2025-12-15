@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Flurl;
 using Flurl.Http;
 using FuzzySharp;
@@ -11,7 +12,7 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.SubsPlease;
 
-public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
+public partial class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
 {
     public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
@@ -75,7 +76,7 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
         foreach (var resolution in items)
         {
             ct.ThrowIfCancellationRequested();
-            yield return new VideoServer(resolution.Resolution, new Uri(resolution.Torrent), extractor);
+            yield return new VideoServer(resolution.Resolution, new Uri(ToDownloadUrl(resolution.Torrent)), extractor);
         }
     }
 
@@ -103,6 +104,21 @@ public class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
         var jsonDoc = await JsonDocument.ParseAsync(response, cancellationToken: ct);
         return jsonDoc.RootElement.GetProperty("episode");
     }
+    
+    private static string ToDownloadUrl(string url)
+    {
+        var match = ViewRegex().Match(url);
+        if (!match.Success)
+        {
+            throw new ArgumentException("URL is not a valid nyaa.si view URL.", nameof(url));
+        }
+
+        var id = match.Groups["id"].Value;
+        return $"https://nyaa.si/download/{id}.torrent";
+    }
+    
+    [GeneratedRegex(@"^https?://nyaa\.si/view/(?<id>\d+)/torrent$", RegexOptions.IgnoreCase)]
+    private static partial Regex ViewRegex();
 }
 
 [Serializable]
