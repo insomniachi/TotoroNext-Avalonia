@@ -1,9 +1,11 @@
-﻿using Avalonia;
+﻿using System.Reactive.Linq;
+using Avalonia;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
 
 namespace TotoroNext.Anime.Controls;
@@ -15,10 +17,18 @@ public partial class HorizontalAnimeCardList : UserControl
     
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<HorizontalAnimeCardList, string>(nameof(Title));
+    
+    public static readonly StyledProperty<Func<Task<List<AnimeModel>>>?> AsyncPopulatorProperty =
+        AvaloniaProperty.Register<HorizontalAnimeCardList, Func<Task<List<AnimeModel>>>?>(nameof(AsyncPopulator));
 
     public HorizontalAnimeCardList()
     {
         InitializeComponent();
+        this.GetObservable(AsyncPopulatorProperty)
+            .WhereNotNull()
+            .Select(_ => Observable.FromAsync(TryPopulate))
+            .Switch()
+            .Subscribe();
     }
 
     public List<AnimeModel> Anime
@@ -33,17 +43,22 @@ public partial class HorizontalAnimeCardList : UserControl
         set => SetValue(TitleProperty, value);
     }
 
+    public Func<Task<List<AnimeModel>>>? AsyncPopulator
+    {
+        get => GetValue(AsyncPopulatorProperty);
+        set => SetValue(AsyncPopulatorProperty, value);
+    }
+
     private void ScrollLeft(object? sender, RoutedEventArgs e)
     {
-        var count = Anime.Count();
-        if (count == 0)
+        if (Anime.Count == 0)
         {
             return;
         }
         
         const int viewPortLeft = 0;
         
-        for (var i = count; i >= 0; i--)
+        for (var i = Anime.Count; i >= 0; i--)
         {
             if (ItemsHost.ContainerFromIndex(i) is not ContentPresenter container)
             {
@@ -78,15 +93,14 @@ public partial class HorizontalAnimeCardList : UserControl
 
     private void ScrollRight(object? sender, RoutedEventArgs e)
     {
-        var count = Anime.Count();
-        if (count == 0)
+        if (Anime.Count == 0)
         {
             return;
         }
         
         var viewportRight = Scroller.Viewport.Width;
         
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < Anime.Count; i++)
         {
             if (ItemsHost.ContainerFromIndex(i) is not ContentPresenter container)
             {
@@ -127,7 +141,7 @@ public partial class HorizontalAnimeCardList : UserControl
     {
         var startX = scroller.Offset.X;
         var distance = targetX - startX;
-        var durationMs = 300; // adjust for speed
+        const int durationMs = 300; // adjust for speed
 
         var stopwatch = new System.Diagnostics.Stopwatch();
         stopwatch.Start();
@@ -147,5 +161,32 @@ public partial class HorizontalAnimeCardList : UserControl
 
             scroller.Offset = scroller.Offset.WithX(targetX); // snap to final
         });
+    }
+    
+    private async Task TryPopulate()
+    {
+        if (AsyncPopulator is null)
+        {
+            return;
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            LoadingContainer.IsLoading = true;
+        });
+
+        var list = await AsyncPopulator.Invoke();
+
+        if (list.Count == 0)
+        {
+            return;
+        }
+        
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Anime = list;
+            LoadingContainer.IsLoading = false;
+        });
+
     }
 }

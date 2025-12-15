@@ -1,22 +1,29 @@
 ﻿using System.Reflection;
 using Jellyfin.Sdk;
 using Jellyfin.Sdk.Generated.Models;
+using JetBrains.Annotations;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Jellyfin;
 
-public class Initializer(
+[UsedImplicitly]
+public class Authenticator(
     JellyfinSdkSettings jellyfinSettings,
     JellyfinApiClient client,
-    IModuleSettings<Settings> settings) : IBackgroundInitializer
+    IModuleSettings<Settings> settings)
 {
-    public async Task BackgroundInitializeAsync()
+    public async ValueTask<bool> LoginIfNotAuthenticated()
     {
         if (string.IsNullOrEmpty(settings.Value.ServerUrl) ||
             string.IsNullOrEmpty(settings.Value.Username) ||
             string.IsNullOrEmpty(settings.Value.Password))
         {
-            return;
+            return false;
+        }
+
+        if (!string.IsNullOrEmpty(jellyfinSettings.AccessToken))
+        {
+            return true;
         }
 
         var id = Environment.MachineName;
@@ -33,17 +40,20 @@ public class Initializer(
 
             if (result is null)
             {
-                return;
+                return false;
             }
 
             Settings.UserId = result.User?.Id;
             Settings.AccessToken = result.AccessToken;
 
             jellyfinSettings.SetAccessToken(result.AccessToken);
+
+            return true;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
+            return false;
         }
     }
 }

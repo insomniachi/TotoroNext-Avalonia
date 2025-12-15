@@ -10,6 +10,7 @@ namespace TotoroNext.Anime.Jellyfin;
 
 public class AnimeProvider(
     JellyfinApiClient client,
+    Authenticator authenticator,
     IModuleSettings<Settings> settings) : IAnimeProvider
 {
     public static string? SessionId { get; private set; }
@@ -17,6 +18,11 @@ public class AnimeProvider(
 
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
+        if (!await authenticator.LoginIfNotAuthenticated())
+        {
+            yield break;
+        }
+
         var result = await client.Items.GetAsync(x =>
         {
             var qp = x.QueryParameters;
@@ -107,7 +113,7 @@ public class AnimeProvider(
 
         var server = new VideoServer("Default", url);
         var segments = await client.MediaSegments[id]
-                                   .GetAsync(x => x.QueryParameters.IncludeSegmentTypes = [MediaSegmentType.Intro, MediaSegmentType.Outro]);
+                                   .GetAsync(x => x.QueryParameters.IncludeSegmentTypes = [MediaSegmentType.Intro, MediaSegmentType.Outro], ct);
         if (segments != null)
         {
             var skipData = new SkipData();
@@ -143,7 +149,8 @@ public class AnimeProvider(
         yield return server;
     }
 
-    private async Task<BaseItemDtoQueryResult?> GetChildItems(Guid id, ItemSortBy sortBy = ItemSortBy.SortName, CancellationToken cancellationToken = default)
+    private async Task<BaseItemDtoQueryResult?> GetChildItems(Guid id, ItemSortBy sortBy = ItemSortBy.SortName,
+                                                              CancellationToken cancellationToken = default)
     {
         return await client.Items.GetAsync(x =>
         {

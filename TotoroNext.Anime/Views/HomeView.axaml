@@ -83,8 +83,12 @@
                     </DataTemplate>
                 </Carousel.ItemTemplate>
             </Carousel>
-            <c:HorizontalAnimeCardList Grid.Row="1" Anime="{Binding Popular}" Title="Popular Airing" />
-            <c:HorizontalAnimeCardList Grid.Row="2" Anime="{Binding Upcoming}" Title="Upcoming" />
+            <c:HorizontalAnimeCardList Grid.Row="1" 
+                                       AsyncPopulator="{Binding PopulatePopular}"
+                                       Title="Popular Airing" />
+            <c:HorizontalAnimeCardList Grid.Row="2"
+                                       AsyncPopulator="{Binding PopulateUpcoming}"
+                                       Title="Upcoming" />
         </Grid>
     </u:LoadingContainer>
 </UserControl>

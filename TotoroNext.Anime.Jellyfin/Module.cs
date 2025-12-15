@@ -33,7 +33,7 @@ public class Module : IModule<Settings>
             var settings = sp.GetRequiredService<JellyfinSdkSettings>();
             return new JellyfinApiClient(new JellyfinRequestAdapter(new JellyfinAuthenticationProvider(settings), settings));
         });
-        services.AddTransient<IBackgroundInitializer, Initializer>();
+        services.AddTransient<Authenticator>();
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
         services.AddHostedService<JellyfinTrackingUpdater>();
     }
