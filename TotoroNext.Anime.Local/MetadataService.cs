@@ -224,6 +224,13 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
         return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
     }
 
+    public async Task<List<AnimeModel>> GetAiringToday()
+    {
+        var ids = await AnilistHelper.GetAiringToday(ClientLazy.Value);
+        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
+        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
+    }
+
     private static MediaQueryBuilder MediaQueryBuilderFull()
     {
         return new MediaQueryBuilder()

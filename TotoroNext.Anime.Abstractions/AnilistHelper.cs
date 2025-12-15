@@ -69,7 +69,7 @@ public static class AnilistHelper
             Image = TryConvertUri(x.Image.Large)
         }).ToList();
     }
-    
+
     public static async Task<List<long>> GetPopularAnimeAsync(GraphQLHttpClient client)
     {
         try
@@ -79,7 +79,8 @@ public static class AnilistHelper
                 Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
                                                              .WithMedia(new MediaQueryBuilder()
                                                                             .WithId(),
-                                                                        sort: new List<MediaSort?> { MediaSort.TrendingDesc, MediaSort.PopularityDesc },
+                                                                        sort: new List<MediaSort?>
+                                                                            { MediaSort.TrendingDesc, MediaSort.PopularityDesc },
                                                                         status: MediaStatus.Releasing,
                                                                         type: MediaType.Anime), 1, 20)
                                                .Build()
@@ -97,7 +98,7 @@ public static class AnilistHelper
             return [];
         }
     }
-    
+
     public static async Task<List<long>> GetUpcomingAnimeAsync(GraphQLHttpClient client)
     {
         try
@@ -119,6 +120,37 @@ public static class AnilistHelper
             }
 
             return [.. response.Data.Page.Media.Select(x => x.Id).Where(x => x is not null).Select(x => x!.Value)];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    public static async Task<List<long>> GetAiringToday(GraphQLHttpClient client)
+    {
+        try
+        {
+            var start = (int)((DateTimeOffset)DateTime.UtcNow.Date).ToUnixTimeSeconds();
+            var end = (int)((DateTimeOffset)DateTime.UtcNow.Date.AddDays(1)).ToUnixTimeSeconds();
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithAiringSchedules(new AiringScheduleQueryBuilder()
+                                                                                      .WithMedia(new MediaQueryBuilder()
+                                                                                                     .WithId()),
+                                                                                  airingAtGreater: start,
+                                                                                  airingAtLesser: end,
+                                                                                  sort: new List<AiringSort?> { AiringSort.Time }),1,20)
+                                               .Build()
+            });
+
+            if (response.Errors?.Length > 0)
+            {
+                return [];
+            }
+
+            return [.. response.Data.Page.AiringSchedules.Select(x => x.Media.Id).Where(x => x is not null).Select(x => x!.Value)];
         }
         catch
         {

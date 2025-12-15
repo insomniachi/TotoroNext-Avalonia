@@ -32,7 +32,7 @@ internal class AnilistMetadataService(
 
         return AniListModelToAnimeModelConverter.ConvertModel(response.Data.Media);
     }
-    
+
     public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
     {
         try
@@ -126,7 +126,8 @@ internal class AnilistMetadataService(
             {
                 Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
                                                              .WithMedia(MediaQueryBuilder(),
-                                                                        sort: new List<MediaSort?> { MediaSort.TrendingDesc, MediaSort.PopularityDesc },
+                                                                        sort: new List<MediaSort?>
+                                                                            { MediaSort.TrendingDesc, MediaSort.PopularityDesc },
                                                                         status: MediaStatus.Releasing,
                                                                         type: MediaType.Anime), 1,
                                                          (int)settings.Value.SearchLimit).Build()
@@ -144,7 +145,40 @@ internal class AnilistMetadataService(
             return [];
         }
     }
-    
+
+    public async Task<List<AnimeModel>> GetAiringToday()
+    {
+        try
+        {
+            var start = (int)((DateTimeOffset)DateTime.UtcNow.Date).ToUnixTimeSeconds();
+            var end = (int)((DateTimeOffset)DateTime.UtcNow.Date.AddDays(1)).ToUnixTimeSeconds();
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithAiringSchedules(new AiringScheduleQueryBuilder()
+                                                                                      .WithMedia(MediaQueryBuilder()),
+                                                                                  airingAtGreater: start,
+                                                                                  airingAtLesser: end,
+                                                                                  sort: new List<AiringSort?> { AiringSort.Time }), 1, 20)
+                                               .Build()
+            });
+
+            if (response.Errors?.Length > 0)
+            {
+                return [];
+            }
+
+            return [.. response.Data.Page.AiringSchedules
+                               .Select(x => x.Media)
+                               .Where(FilterNsfw)
+                               .Select(AniListModelToAnimeModelConverter.ConvertModel)];
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
     public async Task<List<AnimeModel>> GetUpcomingAnimeAsync()
     {
         try

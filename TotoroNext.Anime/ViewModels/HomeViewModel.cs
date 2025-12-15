@@ -24,6 +24,8 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
     [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulatePopular { get; set; }
 
     [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulateUpcoming { get; set; }
+    
+    [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulateAiringToday { get; set; }
 
     public Task InitializeAsync()
     {
@@ -39,6 +41,7 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
         };
         
         PopulateUpcoming = () => _metadataService.GetUpcomingAnimeAsync();
+        PopulateAiringToday = () => _metadataService.GetAiringToday();
 
         Observable.Timer(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10))
                   .Select(_ => SelectedHeroIndex == HeroItems.Count - 1 ? 0 : SelectedHeroIndex + 1)

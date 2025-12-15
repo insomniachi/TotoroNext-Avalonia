@@ -17,6 +17,7 @@ public interface IMetadataService
     Task<List<string>> GetGenresAsync();
     Task<List<AnimeModel>> GetPopularAnimeAsync();
     Task<List<AnimeModel>> GetUpcomingAnimeAsync();
+    Task<List<AnimeModel>> GetAiringToday();
 }
 
 public static class MetadataServiceExtensions

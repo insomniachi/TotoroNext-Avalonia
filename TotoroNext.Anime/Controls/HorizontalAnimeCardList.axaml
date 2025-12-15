@@ -40,7 +40,8 @@
                       x:Name="Scroller">
             <u:LoadingContainer x:Name="LoadingContainer">
                 <ItemsControl ItemsSource="{Binding $parent[local1:HorizontalAnimeCardList].Anime}"
-                              x:Name="ItemsHost">
+                              x:Name="ItemsHost"
+                              Height="300">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:AnimeCard Anime="{Binding}"
@@ -51,8 +52,8 @@
                                                 SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
                                                 AddToListCommand="{x:Static am:Commands.AddToListCommand}"
                                                 ShowCompletedStatus="True"
-                                                MaxHeight="400"
-                                                MaxWidth="250">
+                                                Height="300"
+                                                Width="210">
                                 <Interaction.Behaviors>
                                     <behaviors:ListStatusBehavior />
                                 </Interaction.Behaviors>

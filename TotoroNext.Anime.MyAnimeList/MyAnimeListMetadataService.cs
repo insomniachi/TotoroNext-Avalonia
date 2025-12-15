@@ -174,8 +174,29 @@ internal class MyAnimeListMetadataService : IMetadataService
         return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
     }
 
+    public async Task<List<AnimeModel>> GetAiringToday()
+    {
+        var response = await _jikanClient.GetScheduleAsync(ConvertDay(DateTime.UtcNow.DayOfWeek));
+        return response.Data.Select(MalToModelConverter.ConvertJikanModel).ToList();
+    }
+
     private static Uri? TryConvertUri(string? url)
     {
         return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
+    }
+
+    private static ScheduledDay ConvertDay(DayOfWeek dayOfWeek)
+    {
+        return dayOfWeek switch
+        {
+            DayOfWeek.Monday => ScheduledDay.Monday,
+            DayOfWeek.Tuesday => ScheduledDay.Tuesday,
+            DayOfWeek.Wednesday => ScheduledDay.Wednesday,
+            DayOfWeek.Thursday => ScheduledDay.Thursday,
+            DayOfWeek.Friday => ScheduledDay.Friday,
+            DayOfWeek.Saturday => ScheduledDay.Saturday,
+            DayOfWeek.Sunday => ScheduledDay.Sunday,
+            _ => ScheduledDay.Unknown
+        };
     }
 }
