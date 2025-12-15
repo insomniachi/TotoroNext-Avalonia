@@ -9,18 +9,4 @@ public partial class HomeView : UserControl
     {
         InitializeComponent();
     }
-
-    public static IValueConverter HtmlToTextConverter { get; } = new FuncValueConverter<string, string>(html =>
-    {
-        if (string.IsNullOrEmpty(html))
-        {
-            return "";
-        }
-
-        return html.Replace("<i>", "")
-                   .Replace("</i>", "")
-                   .Replace("<b>", "")
-                   .Replace("</b>", "")
-                   .Replace("<br><br>", Environment.NewLine);
-    });
 }

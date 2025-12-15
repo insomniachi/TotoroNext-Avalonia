@@ -74,7 +74,8 @@
                         HorizontalAlignment="Stretch"
                         Margin="0 10 0 0" />
                 <ScrollViewer Grid.Row="2" Margin="0 8 0 0">
-                    <TextBlock Text="{Binding Anime.Description}" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding Anime.Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}" 
+                               TextWrapping="Wrap" />
                 </ScrollViewer>
             </Grid>
         </Grid>

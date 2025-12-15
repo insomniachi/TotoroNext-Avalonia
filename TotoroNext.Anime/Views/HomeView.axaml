@@ -7,7 +7,7 @@
              xmlns:c="clr-namespace:TotoroNext.Anime.Controls"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:converters="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:am="clr-namespace:TotoroNext.Anime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -36,7 +36,7 @@
                                         Margin="20">
                                 <TextBlock Text="{Binding Title}" FontSize="40" FontWeight="Bold" />
                                 <TextBlock
-                                    Text="{Binding Description, Converter={x:Static views:HomeView.HtmlToTextConverter}}"
+                                    Text="{Binding Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}"
                                     TextWrapping="Wrap"
                                     FontSize="20"
                                     TextTrimming="CharacterEllipsis"
@@ -52,7 +52,7 @@
                                 <Button HorizontalAlignment="Stretch"
                                         Command="{x:Static am:Commands.WatchCommand}"
                                         CommandParameter="{Binding}"
-                                        IsVisible="{Binding Path=., Converter={x:Static converters:Converters.HasAiredConverter}}">
+                                        IsVisible="{Binding Path=., Converter={x:Static aa:Converters.HasAiredConverter}}">
                                     <StackPanel Spacing="8" Orientation="Horizontal">
                                         <TextBlock Text="Watch" VerticalAlignment="Center" />
                                         <iconPacks:PackIconControl
@@ -63,7 +63,7 @@
                                 </Button>
                                 <Button Command="{x:Static am:Commands.SearchTorrentsCommand}"
                                         CommandParameter="{Binding}"
-                                        IsVisible="{Binding Path=., Converter={x:Static converters:Converters.HasAiredConverter}}"
+                                        IsVisible="{Binding Path=., Converter={x:Static aa:Converters.HasAiredConverter}}"
                                         HorizontalAlignment="Stretch">
                                     <StackPanel Spacing="8" Orientation="Horizontal">
                                         <TextBlock Text="Torrent" VerticalAlignment="Center" />
