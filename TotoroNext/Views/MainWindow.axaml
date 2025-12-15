@@ -12,6 +12,7 @@
               WindowStartupLocation="CenterScreen"
               IsFullScreenButtonVisible="False"
               IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
+              WindowState="Maximized"
               Title="Totoro">
 
     <Panel>
