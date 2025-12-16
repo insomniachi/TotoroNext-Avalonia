@@ -107,19 +107,27 @@ public sealed class TrackingUpdater(
                 return;
             }
 
+            message.Episode.IsCompleted = true;
+            
             message.Anime.Tracking ??= new Tracking
             {
                 Status = ListItemStatus.Watching,
                 StartDate = DateTime.Now
             };
-
-            message.Episode.IsCompleted = true;
+            
             var tracking = message.Anime.Tracking;
-
             tracking.WatchedEpisodes = (int)message.Episode.Number;
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
-            tracking.Status = message.Anime.TotalEpisodes == message.Episode.Number ? ListItemStatus.Completed : ListItemStatus.Watching;
+            if (tracking.WatchedEpisodes == 1)
+            {
+                tracking.StartDate = DateTime.Now;
+            }
 
+            if (message.Anime.TotalEpisodes == tracking.WatchedEpisodes)
+            {
+                tracking.Status = ListItemStatus.Completed;
+                tracking.FinishDate = DateTime.Now;
+            }
+            
             await UpdateTracking(message.Anime, tracking);
 
             messenger.Send(new TrackingUpdated
