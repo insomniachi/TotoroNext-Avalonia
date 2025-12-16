@@ -127,6 +127,10 @@ public sealed class TrackingUpdater(
                 tracking.Status = ListItemStatus.Completed;
                 tracking.FinishDate = DateTime.Now;
             }
+            else
+            {
+                tracking.Status = ListItemStatus.Watching;
+            }
             
             await UpdateTracking(message.Anime, tracking);
 
