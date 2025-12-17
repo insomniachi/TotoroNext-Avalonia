@@ -14,6 +14,7 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
 {
     private readonly CompositeDisposable _disposables = new();
     private readonly IMetadataService _metadataService = metadataFactory.CreateDefault()!;
+    private readonly CancellationTokenSource _cts = new();
 
     [ObservableProperty] public partial List<AnimeModel> HeroItems { get; set; } = [];
 
@@ -31,7 +32,7 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
     {
         PopulatePopular = async () =>
         {
-            var popular = await _metadataService.GetPopularAnimeAsync();
+            var popular = await _metadataService.GetPopularAnimeAsync(_cts.Token);
             var current = AnimeHelpers.CurrentSeason();
             HeroItems = popular.OrderByDescending(x => x.MeanScore)
                                .Where(x => x.Season == current)
@@ -40,8 +41,8 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
             return popular;
         };
         
-        PopulateUpcoming = () => _metadataService.GetUpcomingAnimeAsync();
-        PopulateAiringToday = () => _metadataService.GetAiringToday();
+        PopulateUpcoming = () => _metadataService.GetUpcomingAnimeAsync(_cts.Token);
+        PopulateAiringToday = () => _metadataService.GetAiringToday(_cts.Token);
 
         Observable.Timer(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10))
                   .Select(_ => SelectedHeroIndex == HeroItems.Count - 1 ? 0 : SelectedHeroIndex + 1)
@@ -55,5 +56,7 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
     public void Dispose()
     {
         _disposables.Dispose();
+        _cts.Cancel();
+        _cts.Dispose();
     }
 }

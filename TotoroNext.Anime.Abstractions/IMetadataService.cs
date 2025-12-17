@@ -15,9 +15,9 @@ public interface IMetadataService
     Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime);
     Task<List<CharacterModel>> GetCharactersAsync(long animeId);
     Task<List<string>> GetGenresAsync();
-    Task<List<AnimeModel>> GetPopularAnimeAsync();
-    Task<List<AnimeModel>> GetUpcomingAnimeAsync();
-    Task<List<AnimeModel>> GetAiringToday();
+    Task<List<AnimeModel>> GetPopularAnimeAsync(CancellationToken ct);
+    Task<List<AnimeModel>> GetUpcomingAnimeAsync(CancellationToken ct);
+    Task<List<AnimeModel>> GetAiringToday(CancellationToken ct);
 }
 
 public static class MetadataServiceExtensions

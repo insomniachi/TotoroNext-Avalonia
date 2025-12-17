@@ -1,8 +1,11 @@
 using System.Net.Http.Headers;
+using System.Threading.RateLimiting;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using IconPacks.Avalonia.ForkAwesome;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
+using Polly;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.ViewModels;
 using TotoroNext.Anime.Abstractions.Views;
@@ -47,7 +50,30 @@ public sealed class Module : IModule<Settings>
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
+        }).AddResilienceHandler("anilist", pipeline =>
+        {
+            pipeline.AddRetry(new HttpRetryStrategyOptions
+            {
+                MaxRetryAttempts = 3,
+                BackoffType = DelayBackoffType.Exponential,
+                UseJitter = true
+            });
+            pipeline.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions
+            {
+                FailureRatio = 0.1,
+                SamplingDuration = TimeSpan.FromSeconds(30),
+                MinimumThroughput = 100, 
+                BreakDuration = TimeSpan.FromSeconds(5)
+            });
+            pipeline.AddRateLimiter(new FixedWindowRateLimiter(new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 90,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+            }));
         });
+
         services.AddTransient(sp =>
         {
             var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(AnilistMetadataService));

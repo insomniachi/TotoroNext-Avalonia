@@ -1,6 +1,5 @@
 ﻿using Avalonia.Data.Converters;
 using Humanizer;
-using Humanizer.Bytes;
 
 namespace TotoroNext.Module.Converters;
 

@@ -6,8 +6,9 @@ using TotoroNext.Module;
 namespace TotoroNext.Anime.Anilist.ViewModels;
 
 [UsedImplicitly]
-public partial class AiringScheduleViewModel(IAnilistMetadataService metadataService) : ObservableObject, IAsyncInitializable
+public sealed partial class AiringScheduleViewModel(IAnilistMetadataService metadataService) : ObservableObject, IAsyncInitializable, IDisposable
 {
+    private readonly CancellationTokenSource _cts = new();
     [ObservableProperty] public partial bool IsLoading { get; set; }
     [ObservableProperty] public partial List<List<AnimeModel>> Schedule { get; set; } = [];
 
@@ -24,7 +25,7 @@ public partial class AiringScheduleViewModel(IAnilistMetadataService metadataSer
 
         IsLoading = true;
 
-        var schedule = await metadataService.GetAiringSchedule(start, end);
+        var schedule = await metadataService.GetAiringSchedule(start, end, _cts.Token);
 
         Schedule =
         [
@@ -38,5 +39,11 @@ public partial class AiringScheduleViewModel(IAnilistMetadataService metadataSer
         ];
 
         IsLoading = false;
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
     }
 }

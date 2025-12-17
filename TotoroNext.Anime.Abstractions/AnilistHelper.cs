@@ -70,7 +70,7 @@ public static class AnilistHelper
         }).ToList();
     }
 
-    public static async Task<List<long>> GetPopularAnimeAsync(GraphQLHttpClient client)
+    public static async Task<List<long>> GetPopularAnimeAsync(GraphQLHttpClient client, CancellationToken ct)
     {
         try
         {
@@ -84,7 +84,7 @@ public static class AnilistHelper
                                                                         status: MediaStatus.Releasing,
                                                                         type: MediaType.Anime), 1, 20)
                                                .Build()
-            });
+            }, ct);
 
             if (response.Errors?.Length > 0)
             {
@@ -99,7 +99,7 @@ public static class AnilistHelper
         }
     }
 
-    public static async Task<List<long>> GetUpcomingAnimeAsync(GraphQLHttpClient client)
+    public static async Task<List<long>> GetUpcomingAnimeAsync(GraphQLHttpClient client, CancellationToken ct)
     {
         try
         {
@@ -112,7 +112,7 @@ public static class AnilistHelper
                                                                         status: MediaStatus.NotYetReleased,
                                                                         type: MediaType.Anime), 1, 20)
                                                .Build()
-            });
+            }, ct);
 
             if (response.Errors?.Length > 0)
             {
@@ -127,7 +127,7 @@ public static class AnilistHelper
         }
     }
 
-    public static async Task<List<long>> GetAiringToday(GraphQLHttpClient client)
+    public static async Task<List<long>> GetAiringToday(GraphQLHttpClient client, CancellationToken ct)
     {
         try
         {
@@ -143,7 +143,7 @@ public static class AnilistHelper
                                                                                   airingAtLesser: end,
                                                                                   sort: new List<AiringSort?> { AiringSort.Time }),1,20)
                                                .Build()
-            });
+            }, ct);
 
             if (response.Errors?.Length > 0)
             {

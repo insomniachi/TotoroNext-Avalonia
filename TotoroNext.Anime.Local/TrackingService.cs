@@ -30,7 +30,7 @@ internal class TrackingService(ILiteDbContext dbContext,
         return Task.FromResult(true);
     }
 
-    public async Task<List<AnimeModel>> GetUserList()
+    public async Task<List<AnimeModel>> GetUserList(CancellationToken ct)
     {
         var tcs = new TaskCompletionSource<List<AnimeModel>>();
 
@@ -41,7 +41,7 @@ internal class TrackingService(ILiteDbContext dbContext,
                                 .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
                                 .ToList();
             tcs.SetResult(list);
-        });
+        }, ct);
 
         return await tcs.Task;
     }

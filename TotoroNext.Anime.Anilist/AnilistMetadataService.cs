@@ -9,7 +9,7 @@ namespace TotoroNext.Anime.Anilist;
 
 public interface IAnilistMetadataService : IMetadataService
 {
-    Task<List<ScheduledAnime>> GetAiringSchedule(int start, int end);
+    Task<List<ScheduledAnime>> GetAiringSchedule(int start, int end, CancellationToken ct);
 }
 
 internal class AnilistMetadataService(
@@ -118,7 +118,7 @@ internal class AnilistMetadataService(
         return await AnilistHelper.GetCharactersAsync(client, animeId);
     }
 
-    public async Task<List<AnimeModel>> GetPopularAnimeAsync()
+    public async Task<List<AnimeModel>> GetPopularAnimeAsync(CancellationToken ct)
     {
         try
         {
@@ -131,7 +131,7 @@ internal class AnilistMetadataService(
                                                                         status: MediaStatus.Releasing,
                                                                         type: MediaType.Anime), 1,
                                                          (int)settings.Value.SearchLimit).Build()
-            });
+            }, ct);
 
             if (response.Errors?.Length > 0)
             {
@@ -146,7 +146,7 @@ internal class AnilistMetadataService(
         }
     }
 
-    public async Task<List<AnimeModel>> GetAiringToday()
+    public async Task<List<AnimeModel>> GetAiringToday(CancellationToken ct)
     {
         try
         {
@@ -161,7 +161,7 @@ internal class AnilistMetadataService(
                                                                                   airingAtLesser: end,
                                                                                   sort: new List<AiringSort?> { AiringSort.Time }), 1, 20)
                                                .Build()
-            });
+            }, ct);
 
             if (response.Errors?.Length > 0)
             {
@@ -179,7 +179,7 @@ internal class AnilistMetadataService(
         }
     }
 
-    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync()
+    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync(CancellationToken ct)
     {
         try
         {
@@ -191,7 +191,7 @@ internal class AnilistMetadataService(
                                                                         status: MediaStatus.NotYetReleased,
                                                                         type: MediaType.Anime), 1,
                                                          (int)settings.Value.SearchLimit).Build()
-            });
+            }, ct);
 
             if (response.Errors?.Length > 0)
             {
@@ -206,7 +206,7 @@ internal class AnilistMetadataService(
         }
     }
 
-    public async Task<List<ScheduledAnime>> GetAiringSchedule(int start, int end)
+    public async Task<List<ScheduledAnime>> GetAiringSchedule(int start, int end, CancellationToken ct)
     {
         var page = 1;
         var result = new List<ScheduledAnime>();
@@ -228,7 +228,7 @@ internal class AnilistMetadataService(
                                                                                   airingAtGreater: start,
                                                                                   airingAtLesser: end),
                                                              page).Build()
-                });
+                }, ct);
 
                 foreach (var item in response.Data.Page.AiringSchedules)
                 {

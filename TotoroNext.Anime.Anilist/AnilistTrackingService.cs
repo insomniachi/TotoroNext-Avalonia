@@ -10,12 +10,12 @@ internal class AnilistTrackingService(GraphQLHttpClient client) : ITrackingServi
 
     public string Name => nameof(AnimeId.Anilist);
 
-    public async Task<List<AnimeModel>> GetUserList()
+    public async Task<List<AnimeModel>> GetUserList(CancellationToken ct)
     {
         string? userName;
         try
         {
-            userName = await FetchUserName();
+            userName = await FetchUserName(ct);
         }
         catch
         {
@@ -30,7 +30,7 @@ internal class AnilistTrackingService(GraphQLHttpClient client) : ITrackingServi
         var response = await client.SendQueryAsync<Query>(new GraphQLRequest
         {
             Query = new QueryQueryBuilder().WithMediaListCollection(MediaListCollectionBuilder(), userName: userName, type: MediaType.Anime).Build()
-        });
+        }, ct);
 
 
         return
@@ -125,12 +125,12 @@ internal class AnilistTrackingService(GraphQLHttpClient client) : ITrackingServi
         return AniListModelToAnimeModelConverter.ConvertTracking(response.Data.SaveMediaListEntry) ?? tracking;
     }
 
-    private async Task<string?> FetchUserName()
+    private async Task<string?> FetchUserName(CancellationToken ct)
     {
         var response = await client.SendQueryAsync<Query>(new GraphQLRequest
         {
             Query = new QueryQueryBuilder().WithViewer(new UserQueryBuilder().WithName()).Build()
-        });
+        }, ct);
 
         return response.Data.Viewer?.Name;
     }

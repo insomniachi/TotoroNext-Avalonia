@@ -47,7 +47,7 @@ internal class MyAnimeListTrackingService : ITrackingService
 
     public string Name => nameof(AnimeId.MyAnimeList);
 
-    public async Task<List<AnimeModel>> GetUserList()
+    public async Task<List<AnimeModel>> GetUserList(CancellationToken ct)
     {
         var request = _client.Anime()
                              .OfUser()
@@ -66,8 +66,8 @@ internal class MyAnimeListTrackingService : ITrackingService
 
         while (!string.IsNullOrEmpty(result.Paging?.Next))
         {
+            ct.ThrowIfCancellationRequested();
             result = await _client.GetNextAnimePage(result);
-
             response.AddRange(result.Data.Select(MalToModelConverter.ConvertModel));
         }
 

@@ -156,27 +156,31 @@ internal class MyAnimeListMetadataService : IMetadataService
         return [.._genres.Select(x => x.Name).Order()];
     }
     
-    public async Task<List<AnimeModel>> GetPopularAnimeAsync()
+    public async Task<List<AnimeModel>> GetPopularAnimeAsync(CancellationToken ct)
     {
         var result = await _client.Anime().Top(AnimeRankingType.Airing)
                             .WithFields(_commonFields)
                             .Find();
-
+        
+        ct.ThrowIfCancellationRequested();
+        
         return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
     }
     
-    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync()
+    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync(CancellationToken ct)
     {
         var result = await _client.Anime().Top(AnimeRankingType.Upcoming)
                                   .WithFields(_commonFields)
                                   .Find();
 
+        ct.ThrowIfCancellationRequested();
+        
         return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
     }
 
-    public async Task<List<AnimeModel>> GetAiringToday()
+    public async Task<List<AnimeModel>> GetAiringToday(CancellationToken ct)
     {
-        var response = await _jikanClient.GetScheduleAsync(ConvertDay(DateTime.UtcNow.DayOfWeek));
+        var response = await _jikanClient.GetScheduleAsync(ConvertDay(DateTime.UtcNow.DayOfWeek), ct);
         return response.Data.Select(MalToModelConverter.ConvertJikanModel).ToList();
     }
 

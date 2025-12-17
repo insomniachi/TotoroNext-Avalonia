@@ -6,5 +6,5 @@ public interface ITrackingService
     public string Name { get; }
     Task<Tracking> Update(long id, Tracking tracking);
     Task<bool> Remove(long id);
-    Task<List<AnimeModel>> GetUserList();
+    Task<List<AnimeModel>> GetUserList(CancellationToken ct);
 }

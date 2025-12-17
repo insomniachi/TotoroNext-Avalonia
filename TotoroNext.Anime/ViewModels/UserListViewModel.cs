@@ -12,8 +12,9 @@ using TotoroNext.Module.Abstractions;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public partial class UserListViewModel : ObservableObject, IAsyncInitializable, IKeyBindingsProvider
+public sealed partial class UserListViewModel : ObservableObject, IAsyncInitializable, IKeyBindingsProvider, IDisposable
 {
+    private readonly CancellationTokenSource _cts = new();
     private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
     private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
     private readonly IMessenger _messenger;
@@ -64,7 +65,7 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
 
         IsLoading = true;
 
-        _allItems = await _trackingService.GetUserList();
+        _allItems = await _trackingService.GetUserList(_cts.Token);
         _animeCache.AddOrUpdate(_allItems);
         Filter.Refresh();
 
@@ -131,6 +132,13 @@ public partial class UserListViewModel : ObservableObject, IAsyncInitializable, 
         }
 
         await lts.ExportList(_allItems.ToList());
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+        _animeCache.Dispose();
     }
 }
 

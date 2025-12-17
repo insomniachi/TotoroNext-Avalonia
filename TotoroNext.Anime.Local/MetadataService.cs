@@ -2,7 +2,6 @@
 using FuzzySharp;
 using GraphQL;
 using GraphQL.Client.Http;
-using GraphQL.Client.Serializer.Newtonsoft;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -10,11 +9,8 @@ using TotoroNext.Anime.Anilist;
 
 namespace TotoroNext.Anime.Local;
 
-internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
+internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient client) : IMetadataService
 {
-    private static readonly Lazy<GraphQLHttpClient> ClientLazy =
-        new(new GraphQLHttpClient("https://graphql.anilist.co/", new NewtonsoftJsonSerializer(), new HttpClient()));
-
     public Guid Id => Guid.Empty;
 
     public string Name => "Local";
@@ -30,7 +26,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
             {
                 var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)anime.AnilistId,
                                                               type: MediaType.Anime).Build();
-                var response = await ClientLazy.Value.SendQueryAsync<Query>(new GraphQLRequest
+                var response = await client.SendQueryAsync<Query>(new GraphQLRequest
                 {
                     Query = query
                 });
@@ -45,7 +41,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
                         Description = response.Data.Media.Description,
                         Popularity = response.Data.Media.Popularity ?? 0,
                         Videos = [..ConvertTrailers(response.Data.Media.Trailer)],
-                        BannerImage = response.Data.Media.BannerImage,
+                        BannerImage = response.Data.Media.BannerImage
                     },
                     ExpiresAt = DateTimeOffset.UtcNow.AddMonths(1)
                 };
@@ -147,7 +143,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
 
         return await tcs.Task;
     }
-    
+
     public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
     {
         if (anime.Episodes is { Count: > 0 })
@@ -184,7 +180,7 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
         anime.CharacterInfo = new LocalCharacterInfo
         {
             Id = animeId,
-            Characters = await AnilistHelper.GetCharactersAsync(ClientLazy.Value, anime.AnilistId),
+            Characters = await AnilistHelper.GetCharactersAsync(client, anime.AnilistId),
             ExpiresAt = DateTimeOffset.Now.AddDays(1)
         };
 
@@ -210,23 +206,23 @@ internal class MetadataService(ILiteDbContext dbContext) : IMetadataService
         return await tcs.Task;
     }
 
-    public async Task<List<AnimeModel>> GetPopularAnimeAsync()
+    public async Task<List<AnimeModel>> GetPopularAnimeAsync(CancellationToken ct)
     {
-        var ids = await AnilistHelper.GetPopularAnimeAsync(ClientLazy.Value);
-        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
-        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
-    }
-    
-    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync()
-    {
-        var ids = await AnilistHelper.GetUpcomingAnimeAsync(ClientLazy.Value);
+        var ids = await AnilistHelper.GetPopularAnimeAsync(client, ct);
         var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
         return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
     }
 
-    public async Task<List<AnimeModel>> GetAiringToday()
+    public async Task<List<AnimeModel>> GetUpcomingAnimeAsync(CancellationToken ct)
     {
-        var ids = await AnilistHelper.GetAiringToday(ClientLazy.Value);
+        var ids = await AnilistHelper.GetUpcomingAnimeAsync(client, ct);
+        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
+        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
+    }
+
+    public async Task<List<AnimeModel>> GetAiringToday(CancellationToken ct)
+    {
+        var ids = await AnilistHelper.GetAiringToday(client, ct);
         var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
         return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
     }
