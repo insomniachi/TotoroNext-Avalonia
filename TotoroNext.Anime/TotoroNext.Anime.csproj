@@ -12,7 +12,6 @@
 
     <ItemGroup>
         <PackageReference Include="Downloader"/>
-        <PackageReference Include="Microsoft.Data.Sqlite"/>
         <PackageReference Include="ZstdSharp.Port"/>
     </ItemGroup>
 
