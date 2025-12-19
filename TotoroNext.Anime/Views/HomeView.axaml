@@ -7,13 +7,14 @@
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:ext="totoro.next/extensions"
              xmlns:am="clr-namespace:TotoroNext.Anime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:HomeViewModel"
              x:Class="TotoroNext.Anime.Views.HomeView">
     <Grid RowDefinitions="*,2*" RowSpacing="16">
         <Carousel ItemsSource="{Binding HeroItems}"
-                  SelectedIndex="{Binding SelectedHeroIndex}"
+                  ext:CarouselExtensions.ShuffleIntervalProperty="0:0:10"
                   Margin="40 0">
             <Carousel.PageTransition>
                 <PageSlide Duration="0:00:00.500" Orientation="Horizontal" />

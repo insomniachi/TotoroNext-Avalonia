@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:vm="clr-namespace:TotoroNext.Anime.MyAnimeList.ViewModels"
-             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:mod="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:mode="clr-namespace:TotoroNext.Module.Extensions;assembly=TotoroNext.Module"
              xmlns:controls1="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
              xmlns:views="clr-namespace:TotoroNext.Anime.MyAnimeList.Views"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
@@ -40,7 +41,7 @@
                             HorizontalContentAlignment="Stretch">
             <ScrollViewer>
                 <ItemsControl ItemsSource="{Binding PossibleAnswers, Mode=OneWay}"
-                              module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
+                              mod:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <u:ElasticWrapPanel
@@ -53,7 +54,7 @@
                         <DataTemplate>
                             <controls1:AnimeCard Anime="{Binding}"
                                                  Margin="8"
-                                                 module:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AnidleSolverViewModel)DataContext).AttemptGuessCommand, FallbackValue={x:Null}}" />
+                                                 mode:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AnidleSolverViewModel)DataContext).AttemptGuessCommand, FallbackValue={x:Null}}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

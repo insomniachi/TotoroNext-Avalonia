@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 
-namespace TotoroNext.Module;
+namespace TotoroNext.Module.Extensions;
 
 public class ControlExtensions
 {
