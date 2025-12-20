@@ -10,7 +10,7 @@ public partial class MainSplashWindow : SplashWindow
 {
     static MainSplashWindow()
     {
-        DataContextProperty.Changed.AddClassHandler<MainSplashWindow, object?>((window, e) => OnDataContextChange(e));
+        DataContextProperty.Changed.AddClassHandler<MainSplashWindow, object?>((_, e) => OnDataContextChange(e));
     }
 
     public MainSplashWindow()
@@ -22,7 +22,7 @@ public partial class MainSplashWindow : SplashWindow
     {
         if (args.NewValue.Value is SplashViewModel splashViewModel)
         {
-            _ = splashViewModel.InitializeAsync();
+            splashViewModel.InitializeAsync();
         }
     }
 

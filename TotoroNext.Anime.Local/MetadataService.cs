@@ -15,52 +15,49 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
 
     public string Name => "Local";
 
-    public async Task<AnimeModel> GetAnimeAsync(long id)
+    public Task<AnimeModel> GetAnimeAsync(long id)
     {
-        var tcs = new TaskCompletionSource<AnimeModel>();
-
-        await Task.Run(async () =>
+        return Task.Run(async () =>
         {
             var anime = dbContext.Anime.FindById(id);
-            if (anime.AdditionalInfo is null)
+
+            if (anime.AdditionalInfo is not null)
             {
-                var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)anime.AnilistId,
-                                                              type: MediaType.Anime).Build();
-                var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-                {
-                    Query = query
-                });
-
-                anime.AdditionalInfo = new LocalAdditionalInfo
-                {
-                    Id = id,
-                    Info = new OfflineAdditionalInfo
-                    {
-                        TitleEnglish = response.Data.Media.Title.English,
-                        TitleRomaji = response.Data.Media.Title.Romaji,
-                        Description = response.Data.Media.Description,
-                        Popularity = response.Data.Media.Popularity ?? 0,
-                        Videos = [..ConvertTrailers(response.Data.Media.Trailer)],
-                        BannerImage = response.Data.Media.BannerImage
-                    },
-                    ExpiresAt = DateTimeOffset.UtcNow.AddMonths(1)
-                };
-
-                dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
-                dbContext.Anime.Upsert(anime);
+                return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
             }
 
-            tcs.SetResult(LocalModelConverter.ToAnimeModel(anime, dbContext.Anime));
-        });
+            var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)anime.AnilistId,
+                                                          type: MediaType.Anime).Build();
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = query
+            });
 
-        return await tcs.Task;
+            anime.AdditionalInfo = new LocalAdditionalInfo
+            {
+                Id = id,
+                Info = new OfflineAdditionalInfo
+                {
+                    TitleEnglish = response.Data.Media.Title.English,
+                    TitleRomaji = response.Data.Media.Title.Romaji,
+                    Description = response.Data.Media.Description,
+                    Popularity = response.Data.Media.Popularity ?? 0,
+                    Videos = [..ConvertTrailers(response.Data.Media.Trailer)],
+                    BannerImage = response.Data.Media.BannerImage
+                },
+                ExpiresAt = DateTimeOffset.UtcNow.AddMonths(1)
+            };
+
+            dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
+            dbContext.Anime.Upsert(anime);
+
+            return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
+        });
     }
 
-    public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
+    public Task<List<AnimeModel>> SearchAnimeAsync(string term)
     {
-        var tcs = new TaskCompletionSource<List<AnimeModel>>();
-
-        await Task.Run(() =>
+        return Task.Run(() =>
         {
             var results = dbContext.Anime.FindAll().Select(x =>
                                    {
@@ -77,22 +74,18 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
                                    .Take(15)
                                    .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
                                    .ToList();
-            tcs.SetResult(results);
+            return results;
         });
-
-        return await tcs.Task;
     }
 
-    public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
+    public Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
         if (request.IsEmpty())
         {
-            return [];
+            return Task.FromResult<List<AnimeModel>>([]);
         }
 
-        var tcs = new TaskCompletionSource<List<AnimeModel>>();
-
-        await Task.Run(() =>
+        return Task.Run(() =>
         {
             var candidates = dbContext.Anime.FindAll();
             var term = request.Title?.ToLower();
@@ -152,10 +145,8 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
                                      .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
                                      .ToList();
 
-            tcs.SetResult(response);
+            return response;
         });
-
-        return await tcs.Task;
     }
 
     public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
@@ -204,41 +195,51 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
         return anime.CharacterInfo.Characters;
     }
 
-    public async Task<List<string>> GetGenresAsync()
+    public Task<List<string>> GetGenresAsync()
     {
-        var tcs = new TaskCompletionSource<List<string>>();
-
-        await Task.Run(() =>
+        return Task.Run(() =>
         {
-            var genres = dbContext.Anime
-                                  .Find(x => x.Genres.Count > 0)
-                                  .SelectMany(x => x.Genres)
-                                  .ToHashSet();
-            tcs.SetResult([..genres]);
+            return dbContext.Anime
+                            .Find(x => x.Genres.Count > 0)
+                            .SelectMany(x => x.Genres)
+                            .ToHashSet()
+                            .ToList();
         });
-
-        return await tcs.Task;
     }
 
     public async Task<List<AnimeModel>> GetPopularAnimeAsync(CancellationToken ct)
     {
         var ids = await AnilistHelper.GetPopularAnimeAsync(client, ct);
-        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
-        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
+        return await Task.Run(() =>
+        {
+            return dbContext.Anime.FindAll()
+                            .Where(x => ids.Contains(x.AnilistId))
+                            .Select(LocalModelConverter.ToAnimeModel)
+                            .ToList();
+        }, ct);
     }
 
     public async Task<List<AnimeModel>> GetUpcomingAnimeAsync(CancellationToken ct)
     {
         var ids = await AnilistHelper.GetUpcomingAnimeAsync(client, ct);
-        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
-        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
+        return await Task.Run(() =>
+        {
+            return dbContext.Anime.FindAll()
+                            .Where(x => ids.Contains(x.AnilistId))
+                            .Select(LocalModelConverter.ToAnimeModel)
+                            .ToList();
+        }, ct);
     }
 
     public async Task<List<AnimeModel>> GetAiringToday(CancellationToken ct)
     {
         var ids = await AnilistHelper.GetAiringToday(client, ct);
-        var anime = dbContext.Anime.FindAll().Where(x => ids.Contains(x.AnilistId));
-        return anime.Select(LocalModelConverter.ToAnimeModel).ToList();
+        return await Task.Run(() =>
+        {
+            return dbContext.Anime.FindAll()
+                            .Where(x => ids.Contains(x.AnilistId))
+                            .Select(LocalModelConverter.ToAnimeModel).ToList();
+        }, ct);
     }
 
     private static MediaQueryBuilder MediaQueryBuilderFull()

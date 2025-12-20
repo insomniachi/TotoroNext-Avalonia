@@ -29,29 +29,38 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 {
     [ObservableProperty] public partial string PrimaryText { get; set; } = "";
     [ObservableProperty] public partial string SecondaryText { get; set; } = "";
-
-    public void Close()
-    {
-        UpdateStatus("Launching application...", "");
-    }
-
+    
+    public void Close() => Close(DialogResult.OK);
+    
     public event EventHandler<object?>? RequestClose;
 
-    public async Task InitializeAsync()
+    public void InitializeAsync()
     {
         try
         {
             WeakReferenceMessenger.Default.Register<Tuple<string, string>>(this, (_, message) => { UpdateStatus(message.Item1, message.Item2); });
-            await BuildServiceProvider();
-            await StartBackgroundServicesAsync();
-            RequestClose?.Invoke(this, DialogResult.OK);
+            Task.Run(async () =>
+            {
+                await BuildServiceProvider();
+                await StartBackgroundServicesAsync();
+                Close(DialogResult.OK);
+            });
         }
         catch (Exception e)
         {
             Log.Logger.Fatal(e, "Unhandled exception");
-            RequestClose?.Invoke(this, DialogResult.None);
+            Close(DialogResult.None);
             throw;
         }
+    }
+    
+    private void Close(DialogResult result)
+    {
+        UpdateStatus("Launching application...", "");
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            RequestClose?.Invoke(this, result);
+        });
     }
 
     private async Task BuildServiceProvider()
@@ -173,7 +182,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
         }
     }
 
-    private async Task StartBackgroundServicesAsync()
+    private Task StartBackgroundServicesAsync()
     {
         UpdateStatus("Initializing services...", "");
 
@@ -195,7 +204,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
         UpdateStatus("Starting background services...", "");
 
-        await App.AppHost.StartAsync();
+        return App.AppHost.StartAsync();
     }
 
     private static IModuleStore CreateStore()

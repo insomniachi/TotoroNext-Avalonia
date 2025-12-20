@@ -79,19 +79,19 @@ public class NavigationExtensions
     public static void ConfigureView(StyledElement view, object vm)
     {
         view.DataContext = vm;
-        view.AttachedToLogicalTree += async (_, _) =>
+        view.AttachedToLogicalTree += (_, _) =>
         {
             HandleClosable(view, vm);
             HandleInitializable(vm);
             HandleKeyBindings(vm, false);
-            await HandleIAsyncInitializable(vm);
+            _ = HandleIAsyncInitializable(vm);
         };
-
-        view.DetachedFromLogicalTree += async (_, _) =>
+        
+        view.DetachedFromLogicalTree += (_, _) =>
         {
             HandleDisposable(vm);
             HandleKeyBindings(vm, true);
-            await HandleAsyncDisposable(vm);
+            _ = HandleAsyncDisposable(vm);
         };
     }
 

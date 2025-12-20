@@ -170,23 +170,29 @@ public partial class HorizontalAnimeCardList : UserControl
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        try
         {
-            LoadingContainer.IsLoading = true;
-        });
+            Dispatcher.UIThread.Invoke(() => { LoadingContainer.IsLoading = true; });
 
-        var list = await AsyncPopulator.Invoke();
-
-        if (list.Count == 0)
-        {
-            return;
+            var list = await AsyncPopulator.Invoke();
+            
+            if (list.Count == 0)
+            {
+                return;
+            }
+            
+            Dispatcher.UIThread.Invoke(() => { Anime = list; });
         }
-        
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        catch (Exception e)
         {
-            Anime = list;
-            LoadingContainer.IsLoading = false;
-        });
-
+            Console.WriteLine(e);
+        }
+        finally
+        {
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                LoadingContainer.IsLoading = false;
+            });
+        }
     }
 }
