@@ -1,8 +1,5 @@
-﻿using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
-using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -12,15 +9,15 @@ namespace TotoroNext.Anime.ViewModels;
 [UsedImplicitly]
 public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metadataFactory) : ObservableObject, IAsyncInitializable, IDisposable
 {
-    private readonly IMetadataService _metadataService = metadataFactory.CreateDefault()!;
     private readonly CancellationTokenSource _cts = new();
+    private readonly IMetadataService _metadataService = metadataFactory.CreateDefault()!;
 
     [ObservableProperty] public partial List<AnimeModel> HeroItems { get; set; } = [];
 
     [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulatePopular { get; set; }
 
     [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulateUpcoming { get; set; }
-    
+
     [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulateAiringToday { get; set; }
 
     public Task InitializeAsync()
@@ -35,9 +32,15 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
                                .ToList();
             return popular;
         };
-        
+
         PopulateUpcoming = () => _metadataService.GetUpcomingAnimeAsync(_cts.Token);
-        PopulateAiringToday = () => _metadataService.GetAiringToday(_cts.Token);
+        PopulateAiringToday = async () =>
+        {
+            var airingToday = await _metadataService.GetAiringToday(_cts.Token);
+            return airingToday.OrderBy(x => x.Tracking == null ? 1 : 0)
+                              .ThenByDescending(x => x.MeanScore)
+                              .ToList();
+        };
 
         return Task.CompletedTask;
     }
