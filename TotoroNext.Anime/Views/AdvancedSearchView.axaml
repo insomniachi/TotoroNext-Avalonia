@@ -88,6 +88,7 @@
         </ScrollViewer>
 
         <u:LoadingContainer Grid.Column="0"
+                            IsLoading="{Binding IsLoading}"
                             Background="Transparent"
                             VerticalContentAlignment="Stretch"
                             HorizontalContentAlignment="Stretch">

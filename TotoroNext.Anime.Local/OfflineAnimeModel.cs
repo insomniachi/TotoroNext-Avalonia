@@ -28,12 +28,14 @@ internal class LocalAnimeModel
     public IReadOnlyCollection<long> Related { get; set; } = [];
     public string Image { get; set; } = "";
     public string Thumbnail { get; set; } = "";
+    public IReadOnlyCollection<string> AlternateTitles { get; set; } = [];
 
     public bool HasChanged(LocalAnimeModel other)
     {
         return TotalEpisodes != other.TotalEpisodes ||
                Math.Abs(MeanScore - other.MeanScore) > 0 ||
-               AiringStatus != other.AiringStatus;
+               AiringStatus != other.AiringStatus ||
+               !AlternateTitles.SequenceEqual(other.AlternateTitles);
     }
 }
 

@@ -62,14 +62,21 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
 
         await Task.Run(() =>
         {
-            var prefix = term.Length >= 3 ? term[..3] : term;
-            var candidates = dbContext.Anime.Find(LiteDB.Query.Contains("Title", prefix)).Take(50);
-            var results = candidates
-                          .Select(a => new { Anime = a, Score = Fuzz.PartialRatio(a.Title, term) })
-                          .Where(x => x.Score >= 70)
-                          .OrderByDescending(x => x.Score)
-                          .Select(x => x.Anime)
-                          .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime)).ToList();
+            var results = dbContext.Anime.FindAll().Select(x =>
+                                   {
+                                       var titleScore = Fuzz.TokenSetRatio(term, x.Title.ToLower());
+                                       var altScore = x.AlternateTitles.Count != 0
+                                           ? x.AlternateTitles.Max(t => Fuzz.TokenSetRatio(term, t.ToLower()))
+                                           : 0;
+                                       var bestScore = Math.Max(titleScore, altScore);
+                                       return (Anime: x, Score: bestScore);
+                                   })
+                                   .Where(x => x.Score >= 85)
+                                   .OrderByDescending(x => x.Score)
+                                   .Select(x => x.Anime)
+                                   .Take(15)
+                                   .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
+                                   .ToList();
             tcs.SetResult(results);
         });
 
@@ -87,16 +94,23 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
 
         await Task.Run(() =>
         {
-            var term = request.Title;
-            var candidates = string.IsNullOrEmpty(term)
-                ? dbContext.Anime
-                           .FindAll()
-                : dbContext.Anime
-                           .Find(LiteDB.Query.Contains("Title", term.Length >= 3 ? term[..3] : term))
-                           .Select(a => new { Anime = a, Score = Fuzz.PartialRatio(a.Title, term) })
-                           .Where(x => x.Score >= 70)
-                           .OrderByDescending(x => x.Score)
-                           .Select(x => x.Anime);
+            var candidates = dbContext.Anime.FindAll();
+            var term = request.Title?.ToLower();
+            if (!string.IsNullOrEmpty(term))
+            {
+                candidates = candidates.Select(x =>
+                                       {
+                                           var titleScore = Fuzz.TokenSetRatio(term, x.Title.ToLower());
+                                           var altScore = x.AlternateTitles.Count != 0
+                                               ? x.AlternateTitles.Max(t => Fuzz.TokenSetRatio(term, t.ToLower()))
+                                               : 0;
+                                           var bestScore = Math.Max(titleScore, altScore);
+                                           return (Anime: x, Score: bestScore);
+                                       })
+                                       .Where(x => x.Score >= 85)
+                                       .OrderByDescending(x => x.Score)
+                                       .Select(x => x.Anime);
+            }
 
             if (request.MinYear.HasValue)
             {

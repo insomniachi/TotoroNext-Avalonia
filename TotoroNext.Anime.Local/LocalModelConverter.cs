@@ -1,4 +1,6 @@
-﻿using LiteDB;
+﻿using System.Text;
+using System.Text.Unicode;
+using LiteDB;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
@@ -19,7 +21,7 @@ internal static class LocalModelConverter
 
     public static AnimeModel ToAnimeModel(LocalAnimeModel anime)
     {
-        var model =  new AnimeModel
+        var model = new AnimeModel
         {
             Title = anime.Title,
             TotalEpisodes = anime.AiringStatus == AiringStatus.FinishedAiring ? anime.TotalEpisodes : null,
@@ -39,7 +41,7 @@ internal static class LocalModelConverter
                 MyAnimeList = anime.MyAnimeListId,
                 Kitsu = anime.KitsuId,
                 AniDb = anime.AniDbId,
-                Simkl = anime.SimklId,
+                Simkl = anime.SimklId
             },
             Episodes = anime.EpisodeInfo?.Info ?? [],
             Tracking = anime.Tracking?.Tracking,
@@ -76,7 +78,8 @@ internal static class LocalModelConverter
             MediaFormat = ConvertMediaFormat(anime.Type),
             Related = ConvertRelated(anime.RelatedAnime).ToList(),
             Image = anime.Picture,
-            Thumbnail = anime.Thumbnail
+            Thumbnail = anime.Thumbnail,
+            AlternateTitles = anime.Synonyms.Where(IsLatin).ToList()
         };
 
         UpdateIds(model, anime.Sources);
@@ -172,5 +175,33 @@ internal static class LocalModelConverter
                 model.SimklId = long.Parse(serviceId);
             }
         }
+    }
+
+    private static bool IsLatin(string input)
+    {
+        foreach (var rune in input.EnumerateRunes())
+        {
+            if (!Rune.IsLetter(rune))
+            {
+                continue;
+            }
+
+            var code = rune.Value;
+            var inLatin = InRange(code, UnicodeRanges.BasicLatin) || InRange(code, UnicodeRanges.Latin1Supplement) ||
+                          InRange(code, UnicodeRanges.LatinExtendedA) || InRange(code, UnicodeRanges.LatinExtendedB) ||
+                          InRange(code, UnicodeRanges.LatinExtendedAdditional);
+
+            if (!inLatin)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool InRange(int codePoint, UnicodeRange range)
+    {
+        return codePoint >= range.FirstCodePoint && codePoint < range.FirstCodePoint + range.Length;
     }
 }

@@ -34,6 +34,7 @@ public partial class AdvancedSearchViewModel(
     [ObservableProperty] public partial ObservableCollection<string> ExcludedGenres { get; set; } = [];
     [ObservableProperty] public partial List<string> AllGenres { get; set; } = [];
     [ObservableProperty] public partial Descriptor? SelectedService { get; set; }
+    [ObservableProperty] public partial bool IsLoading { get; set; }
 
     public List<Descriptor> MetadataServices { get; } =
         [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
@@ -103,11 +104,16 @@ public partial class AdvancedSearchViewModel(
                            MaximumScore = MaximumScore
                        })
                        .Where(x => !x.IsEmpty())
+                       .Do(_ => IsLoading = true)
                        .SelectMany(request => metadataService.SearchAnimeAsync(request));
             })
             .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe(list => Anime = list);
+            .Subscribe(list =>
+            {
+                Anime = list;
+                IsLoading = false;
+            });
     }
 
     [RelayCommand]
