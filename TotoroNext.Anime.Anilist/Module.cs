@@ -2,7 +2,6 @@ using System.Net.Http.Headers;
 using System.Threading.RateLimiting;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
-using IconPacks.Avalonia.ForkAwesome;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 using Polly;
@@ -37,7 +36,6 @@ public sealed class Module : IModule<Settings>
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>($"tracking/{nameof(AnimeId.Anilist)}");
-        services.AddMainNavigationItem<AiringScheduleView, AiringScheduleViewModel>("Schedule", PackIconForkAwesomeKind.Calendar);
 
         services.AddTransient<IAnilistMetadataService, AnilistMetadataService>();
         services.AddKeyedTransient<IMetadataService, AnilistMetadataService>(Descriptor.Id);
@@ -62,7 +60,7 @@ public sealed class Module : IModule<Settings>
             {
                 FailureRatio = 0.1,
                 SamplingDuration = TimeSpan.FromSeconds(30),
-                MinimumThroughput = 100, 
+                MinimumThroughput = 100,
                 BreakDuration = TimeSpan.FromSeconds(5)
             });
             pipeline.AddRateLimiter(new FixedWindowRateLimiter(new FixedWindowRateLimiterOptions
