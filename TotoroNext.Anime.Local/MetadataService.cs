@@ -9,11 +9,20 @@ using TotoroNext.Anime.Anilist;
 
 namespace TotoroNext.Anime.Local;
 
-internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient client) : IMetadataService
+internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient client) : ILocalMetadataService
 {
     public Guid Id => Guid.Empty;
 
     public string Name => "Local";
+
+    public Task<AnimeModel> GetAnimeWithoutAdditionalInfoAsync(long id)
+    {
+        return Task.Run(() =>
+        {
+            var anime = dbContext.Anime.FindById(id);
+            return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
+        });
+    }
 
     public Task<AnimeModel> GetAnimeAsync(long id)
     {
@@ -21,7 +30,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
         {
             var anime = dbContext.Anime.FindById(id);
 
-            if (anime.AdditionalInfo is not null)
+            if (anime.AdditionalInfo is not null || anime.AnilistId == 0)
             {
                 return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
             }

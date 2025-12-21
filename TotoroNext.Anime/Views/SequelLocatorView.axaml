@@ -1,0 +1,59 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:controls="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:am="clr-namespace:TotoroNext.Anime"
+             xmlns:mod="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:SequelLocatorViewModel"
+             x:Class="TotoroNext.Anime.Views.SequelLocatorView">
+    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+        <u:LoadingContainer
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Background="Transparent"
+            IsLoading="{Binding IsLoading}">
+            <ScrollViewer>
+                <ItemsRepeater
+                    Margin="16,0"
+                    ItemsSource="{Binding Anime}">
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <controls:AnimeCard
+                                Anime="{Binding}"
+                                DetailsCommand="{x:Static am:Commands.DetailsCommand}"
+                                SettingsCommand="{x:Static am:Commands.SettingsCommand}"
+                                WatchCommand="{x:Static am:Commands.WatchCommand}"
+                                SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
+                                HasDetailsPane="True">
+                                <Interaction.Behaviors>
+                                    <behaviors:UnwatchedEpisodesBehavior />
+                                    <behaviors:AiringStatusBehavior />
+                                </Interaction.Behaviors>
+                            </controls:AnimeCard>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout
+                            ItemsJustification="Start"
+                            ItemsStretch="Fill"
+                            MinColumnSpacing="32"
+                            MinItemHeight="400"
+                            MinItemWidth="250"
+                            MinRowSpacing="32" />
+                    </ItemsRepeater.Layout>
+                </ItemsRepeater>
+            </ScrollViewer>
+        </u:LoadingContainer>
+
+        <TransitioningContentControl Grid.Column="1"
+                                     mod:NavigationExtensions.IsAttached="True"
+                                     Background="{DynamicResource SemiColorTertiaryLightActive}" 
+                                     Padding="16 0"/>
+
+    </Grid>
+</UserControl>

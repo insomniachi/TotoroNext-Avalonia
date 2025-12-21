@@ -68,7 +68,7 @@ public sealed partial class UserListViewModel : ObservableObject, IAsyncInitiali
         _allItems = await _trackingService.GetUserList(_cts.Token);
         _animeCache.AddOrUpdate(_allItems);
         Filter.Refresh();
-
+        
         IsLoading = false;
     }
 

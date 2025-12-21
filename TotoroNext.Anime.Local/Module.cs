@@ -20,6 +20,8 @@ public class Module : IModule
         
         services.AddKeyedTransient<IMetadataService, MetadataService>(Guid.Empty);
         services.AddKeyedTransient<ITrackingService, TrackingService>(Guid.Empty);
+        services.AddTransient<ILocalTrackingService, TrackingService>();
+        services.AddTransient<ILocalMetadataService, MetadataService>();
         
         services.AddHostedService(sp => sp.GetRequiredService<ILiteDbContext>());
     }

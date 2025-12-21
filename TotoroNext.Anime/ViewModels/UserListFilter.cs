@@ -50,14 +50,9 @@ public partial class UserListFilter : ObservableObject
 
     public bool IsVisible(AnimeModel model)
     {
-        if (model.Tracking is null)
-        {
-            return true;
-        }
-
-        var listStatusCheck = Status == ListItemStatus.Watching
-            ? model.Tracking.Status is ListItemStatus.Watching or ListItemStatus.Rewatching
-            : model.Tracking.Status == Status;
+        var listStatusCheck = model.Tracking is null || (Status == ListItemStatus.Watching
+            ? model.Tracking?.Status is ListItemStatus.Watching or ListItemStatus.Rewatching
+            : model.Tracking?.Status == Status);
 
         var searchTextStatus = string.IsNullOrEmpty(Term) ||
                                model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
@@ -65,11 +60,12 @@ public partial class UserListFilter : ObservableObject
                                model.EngTitle.Contains(Term, StringComparison.InvariantCultureIgnoreCase);
         var formatCheck = Format == AnimeMediaFormat.Unknown || model.MediaFormat == Format;
         var genresCheck = Genres.All(x => model.Genres.Contains(x));
-        var userScoreCheck = ScoreFilter switch
+
+        var userScoreCheck = model.Tracking is null || ScoreFilter switch
         {
             UserScoreFilter.All => true,
-            UserScoreFilter.Scored => model.Tracking.Score > 0,
-            UserScoreFilter.Unscored => model.Tracking.Score is null or 0,
+            UserScoreFilter.Scored => model.Tracking?.Score > 0,
+            UserScoreFilter.Unscored => model.Tracking?.Score is null or 0,
             _ => true
         };
 

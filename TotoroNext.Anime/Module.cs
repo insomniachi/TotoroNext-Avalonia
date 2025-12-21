@@ -31,6 +31,7 @@ public class Module : IModule
         services.AddMainNavigationItem<HomeView, HomeViewModel>("Home", PackIconMaterialDesignKind.Home);
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", PackIconMaterialDesignKind.List);
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", PackIconMaterialDesignKind.Search);
+        services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Sequels", PackIconMaterialDesignKind.NewReleases);
         services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", PackIconMaterialDesignKind.Download,
                                                                           new NavMenuItemTag { IsFooterItem = true });
 

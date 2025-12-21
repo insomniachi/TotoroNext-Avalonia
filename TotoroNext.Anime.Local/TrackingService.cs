@@ -4,8 +4,11 @@ using TotoroNext.Anime.Abstractions;
 
 namespace TotoroNext.Anime.Local;
 
-internal class TrackingService(ILiteDbContext dbContext,
-                               IStorageProvider storageProvider) : ILocalTrackingService
+internal class TrackingService(
+    ILiteDbContext dbContext,
+    IStorageProvider storageProvider,
+    IAnimeMappingService mappingService,
+    ILocalMetadataService localMetadataService) : ILocalTrackingService
 {
     public Guid Id => Guid.Empty;
 
@@ -89,7 +92,7 @@ internal class TrackingService(ILiteDbContext dbContext,
 
     public async Task ExportList(List<AnimeModel> animeList)
     {
-        var folders = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+        var folders = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
         {
             AllowMultiple = false
         });
@@ -151,6 +154,7 @@ internal class TrackingService(ILiteDbContext dbContext,
 
             await writer.WriteEndElementAsync();
         }
+
         await writer.WriteEndElementAsync();
         await writer.WriteEndDocumentAsync();
         return;
@@ -166,6 +170,59 @@ internal class TrackingService(ILiteDbContext dbContext,
                 ListItemStatus.PlanToWatch => "Plan to Watch",
                 _ => throw new NotSupportedException()
             };
+        }
+    }
+
+    public async Task<List<AnimeModel>> GetPrequelsAndSequelsWithoutTracking(List<AnimeModel> animeList, CancellationToken ct)
+    {
+        if (animeList.Count == 0)
+        {
+            return [];
+        }
+
+        HashSet<long> visited = [];
+        List<AnimeModel> untracked = [];
+
+        foreach (var anime in animeList)
+        {
+            await UpdateUntrackedAnime(anime, visited, untracked, ct);
+        }
+
+        return untracked.OrderBy(x => x.Title).ToList();
+    }
+
+    private async Task UpdateUntrackedAnime(AnimeModel anime, HashSet<long> visited, List<AnimeModel> untracked, CancellationToken ct)
+    {
+        if (ct.IsCancellationRequested)
+        {
+            return;
+        }
+        
+        if (mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 } id)
+        {
+            return;
+        }
+
+        if (!visited.Add(id.MyAnimeList))
+        {
+            return;
+        }
+
+        if (anime.Tracking is null)
+        {
+            untracked.Add(anime);
+        }
+
+        var localAnime = await localMetadataService.GetAnimeWithoutAdditionalInfoAsync(id.MyAnimeList);
+
+        foreach (var relatedAnime in localAnime.Related)
+        {
+            if (relatedAnime.AiringStatus is AiringStatus.NotYetAired)
+            {
+                continue;
+            }
+            
+            await UpdateUntrackedAnime(relatedAnime, visited, untracked, ct);
         }
     }
 }
