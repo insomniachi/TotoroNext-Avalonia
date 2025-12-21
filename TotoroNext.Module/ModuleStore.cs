@@ -2,7 +2,6 @@ using System.IO.Compression;
 using System.Runtime.Loader;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using CommunityToolkit.Mvvm.Messaging;
 using TotoroNext.Module.Abstractions;
 using Path = System.IO.Path;
 
@@ -37,8 +36,6 @@ public class ModuleStore : IModuleStore
             {
                 continue;
             }
-
-            SendMessage(null, fileName);
 
             var context = new ModuleLoadContext(item);
             var modules = new List<IModule>();
@@ -112,10 +109,5 @@ public class ModuleStore : IModuleStore
         {
             yield return item;
         }
-    }
-
-    private static void SendMessage(string? primary, string? secondary)
-    {
-        WeakReferenceMessenger.Default.Send(new Tuple<string?, string?>(primary, secondary));
     }
 }

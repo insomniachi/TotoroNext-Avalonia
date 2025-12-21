@@ -5,7 +5,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
 using IconPacks.Avalonia.Lucide;
 using IconPacks.Avalonia.MaterialDesign;
 using IconPacks.Avalonia.Octicons;
@@ -29,16 +28,18 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 {
     [ObservableProperty] public partial string PrimaryText { get; set; } = "";
     [ObservableProperty] public partial string SecondaryText { get; set; } = "";
-    
-    public void Close() => Close(DialogResult.OK);
-    
+
+    public void Close()
+    {
+        Close(DialogResult.OK);
+    }
+
     public event EventHandler<object?>? RequestClose;
 
     public void InitializeAsync()
     {
         try
         {
-            WeakReferenceMessenger.Default.Register<Tuple<string, string>>(this, (_, message) => { UpdateStatus(message.Item1, message.Item2); });
             Task.Run(async () =>
             {
                 await BuildServiceProvider();
@@ -53,14 +54,11 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
             throw;
         }
     }
-    
+
     private void Close(DialogResult result)
     {
         UpdateStatus("Launching application...", "");
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            RequestClose?.Invoke(this, result);
-        });
+        Dispatcher.UIThread.Invoke(() => { RequestClose?.Invoke(this, result); });
     }
 
     private async Task BuildServiceProvider()
