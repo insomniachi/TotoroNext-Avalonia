@@ -1,4 +1,5 @@
 ﻿using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using Avalonia;
@@ -24,14 +25,23 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
     private static readonly Lazy<GraphQLHttpClient> ClientLazy =
         new(new GraphQLHttpClient("https://graphql.anilist.co/", new NewtonsoftJsonSerializer(), new HttpClient()));
 
+    private readonly CompositeDisposable _disposable = new();
+
     protected override void OnAttachedToVisualTree()
     {
         AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
+                        .WhereNotNull()
                         .SelectMany(x => x.WhenAnyValue(y => y.Tracking).WhereNotNull())
                         .ObserveOn(RxApp.MainThreadScheduler)
-                        .Subscribe(_ => Update(AssociatedObject));
+                        .Subscribe(_ => Update(AssociatedObject))
+                        .DisposeWith(_disposable);
     }
-    
+
+    protected override void OnDetachedFromLogicalTree()
+    {
+        _disposable.Dispose();
+    }
+
     private static void Update(AnimeCard card)
     {
         _ = UpdateAiringTime(card, card.Anime);

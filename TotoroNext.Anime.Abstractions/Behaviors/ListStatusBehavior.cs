@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
@@ -17,6 +18,7 @@ public class ListStatusBehavior : Behavior<AnimeCard>
     private static readonly SolidColorBrush OrangeColor = new(Colors.Orange);
     private static readonly SolidColorBrush RedColor = new(Colors.Red);
     private static readonly SolidColorBrush TransparentColor = new(Colors.Transparent);
+    private readonly CompositeDisposable _disposables = new();
 
     protected override void OnAttachedToVisualTree()
     {
@@ -38,8 +40,14 @@ public class ListStatusBehavior : Behavior<AnimeCard>
                             AssociatedObject.CompletedCheckMark.Background = GetBackgroundBrush(tracking);
                             AssociatedObject.IconControl.Kind = GetIcon(tracking);
                             AssociatedObject.CompletedCheckMark.IsVisible = true;
-                        });
+                        })
+                        .DisposeWith(_disposables);
         
+    }
+
+    protected override void OnDetachedFromLogicalTree()
+    {
+        _disposables.Dispose();
     }
 
     private static Enum? GetIcon(Tracking tracking)
