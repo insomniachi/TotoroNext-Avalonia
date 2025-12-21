@@ -1,17 +1,20 @@
 ﻿using System.Reactive;
+using System.Reactive.Linq;
 using System.Text;
+using Avalonia;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using Microsoft.Extensions.DependencyInjection;
+using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Controls;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
-public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehavior<AnimeCard>
+public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
 {
     private static readonly SolidColorBrush NotUploadedBrush = new(Colors.Orange);
     private static readonly SolidColorBrush UploadedBrush = new(Colors.Red);
@@ -21,20 +24,18 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>, IVirtualizingBehav
     private static readonly Lazy<GraphQLHttpClient> ClientLazy =
         new(new GraphQLHttpClient("https://graphql.anilist.co/", new NewtonsoftJsonSerializer(), new HttpClient()));
 
-    public void Update(AnimeCard card)
+    protected override void OnAttachedToVisualTree()
+    {
+        AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
+                        .SelectMany(x => x.WhenAnyValue(y => y.Tracking).WhereNotNull())
+                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .Subscribe(_ => Update(AssociatedObject));
+    }
+    
+    private static void Update(AnimeCard card)
     {
         _ = UpdateAiringTime(card, card.Anime);
         _ = UpdateBadge(card, card.Anime);
-    }
-
-    protected override void OnAttachedToVisualTree()
-    {
-        if (AssociatedObject is null)
-        {
-            return;
-        }
-
-        Update(AssociatedObject);
     }
 
     private static async Task<Unit> UpdateBadge(AnimeCard card, AnimeModel anime)

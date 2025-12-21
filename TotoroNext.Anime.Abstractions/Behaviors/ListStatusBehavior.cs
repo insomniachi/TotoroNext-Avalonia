@@ -1,9 +1,12 @@
-﻿using Avalonia.Media;
+﻿using System.Reactive.Linq;
+using Avalonia;
+using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using IconPacks.Avalonia.Codicons;
 using IconPacks.Avalonia.MaterialDesign;
 using IconPacks.Avalonia.MemoryIcons;
 using IconPacks.Avalonia.PhosphorIcons;
+using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Controls;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
@@ -17,24 +20,26 @@ public class ListStatusBehavior : Behavior<AnimeCard>
 
     protected override void OnAttachedToVisualTree()
     {
-        if (AssociatedObject?.ShowCompletedStatus == false)
+        if (AssociatedObject is null)
         {
             return;
         }
-
-        if (AssociatedObject?.Anime is not { } anime)
+        
+        if (!AssociatedObject.ShowCompletedStatus)
         {
             return;
         }
-
-        if (anime.Tracking is null)
-        {
-            return;
-        }
-
-        AssociatedObject.CompletedCheckMark.Background = GetBackgroundBrush(anime.Tracking);
-        AssociatedObject.IconControl.Kind = GetIcon(anime.Tracking);
-        AssociatedObject.CompletedCheckMark.IsVisible = true;
+        
+        AssociatedObject.GetObservable(AnimeCard.AnimeProperty)
+                        .SelectMany(x => x.WhenAnyValue(y => y.Tracking).WhereNotNull())
+                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .Subscribe(tracking =>
+                        {
+                            AssociatedObject.CompletedCheckMark.Background = GetBackgroundBrush(tracking);
+                            AssociatedObject.IconControl.Kind = GetIcon(tracking);
+                            AssociatedObject.CompletedCheckMark.IsVisible = true;
+                        });
+        
     }
 
     private static Enum? GetIcon(Tracking tracking)

@@ -1,29 +1,33 @@
-﻿using Avalonia.Media;
+﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using Avalonia;
+using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
+using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Controls;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
-public class AiringStatusBehavior : Behavior<AnimeCard>, IVirtualizingBehavior<AnimeCard>
+public class AiringStatusBehavior : Behavior<AnimeCard>
 {
+    private readonly CompositeDisposable _disposables = new();
     private static readonly SolidColorBrush AiringBrush = new(Colors.LimeGreen);
     private static readonly SolidColorBrush FinishedBrush = new(Colors.MediumSlateBlue);
     private static readonly SolidColorBrush NotYetBrush = new(Colors.LightSlateGray);
     private static readonly SolidColorBrush OtherBrush = new(Colors.Transparent);
-
-    public void Update(AnimeCard card)
-    {
-        card.StatusBorder.BorderBrush = ToBrush(card.Anime);
-    }
-
+    
     protected override void OnAttachedToVisualTree()
     {
-        if (AssociatedObject is null)
-        {
-            return;
-        }
+        AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
+                        .WhereNotNull()
+                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .Subscribe(_ => AssociatedObject.StatusBorder.BorderBrush = ToBrush(AssociatedObject.Anime))
+                        .DisposeWith(_disposables);
+    }
 
-        Update(AssociatedObject);
+    protected override void OnDetachedFromLogicalTree()
+    {
+        _disposables.Dispose();
     }
 
 

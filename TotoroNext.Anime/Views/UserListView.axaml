@@ -126,7 +126,6 @@
                 u:ScrollTo.ButtonTheme="{StaticResource ScrollToButtonStyle}">
                 <ItemsRepeater
                     Margin="16,0"
-                    ElementPrepared="ItemsGrid_OnElementPrepared"
                     ItemsSource="{Binding Anime}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate>

@@ -11,21 +11,4 @@ public partial class UserListView : UserControl
     {
         InitializeComponent();
     }
-
-    private void ItemsGrid_OnElementPrepared(object? sender, ItemsRepeaterElementPreparedEventArgs e)
-    {
-        if (e.Element is not AnimeCard card)
-        {
-            return;
-        }
-
-        var behaviors = Interaction.GetBehaviors(card);
-        foreach (var behavior in behaviors)
-        {
-            if (behavior is IVirtualizingBehavior<AnimeCard> virtualizingBehavior)
-            {
-                virtualizingBehavior.Update(card);
-            }
-        }
-    }
 }
