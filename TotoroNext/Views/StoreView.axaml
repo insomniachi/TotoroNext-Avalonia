@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:modulee="clr-namespace:TotoroNext.Module.Extensions;assembly=TotoroNext.Module"
+             xmlns:ext="totoro.next/extensions"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:viewModels="clr-namespace:TotoroNext.ViewModels"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
@@ -17,7 +17,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Grid RowDefinitions="Auto,Auto" Margin="16"
-                              modulee:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((viewModels:StoreViewModel)DataContext).DownloadModuleCommand, FallbackValue={x:Null}}">
+                              ext:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((viewModels:StoreViewModel)DataContext).DownloadModuleCommand, FallbackValue={x:Null}}">
                             <Image Height="200" ail:ImageLoader.Source="{Binding ImageUrl}" />
                             <StackPanel Grid.Row="1">
                                 <TextBlock Text="{Binding Name}" />

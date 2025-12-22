@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:controls="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:ctl="totoro.next/controls"
              xmlns:am="clr-namespace:TotoroNext.Anime"
-             xmlns:mod="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
-             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:bhvr="totoro.next/behaviors"
+             xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:SequelLocatorViewModel"
              x:Class="TotoroNext.Anime.Views.SequelLocatorView">
@@ -23,7 +23,7 @@
                     ItemsSource="{Binding Anime}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate>
-                            <controls:AnimeCard
+                            <ctl:AnimeCard
                                 Anime="{Binding}"
                                 DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                 SettingsCommand="{x:Static am:Commands.SettingsCommand}"
@@ -31,10 +31,10 @@
                                 SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
                                 HasDetailsPane="True">
                                 <Interaction.Behaviors>
-                                    <behaviors:UnwatchedEpisodesBehavior />
-                                    <behaviors:AiringStatusBehavior />
+                                    <bhvr:UnwatchedEpisodesBehavior />
+                                    <bhvr:AiringStatusBehavior />
                                 </Interaction.Behaviors>
-                            </controls:AnimeCard>
+                            </ctl:AnimeCard>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                     <ItemsRepeater.Layout>
@@ -51,9 +51,9 @@
         </u:LoadingContainer>
 
         <TransitioningContentControl Grid.Column="1"
-                                     mod:NavigationExtensions.IsAttached="True"
-                                     Background="{DynamicResource SemiColorTertiaryLightActive}" 
-                                     Padding="16 0"/>
+                                     ext:NavigationExtensions.IsAttached="True"
+                                     Background="{DynamicResource SemiColorTertiaryLightActive}"
+                                     Padding="16 0" />
 
     </Grid>
 </UserControl>

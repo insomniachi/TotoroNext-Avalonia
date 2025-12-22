@@ -3,25 +3,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
-             xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:ctl="totoro.next/controls"
              xmlns:ext="totoro.next/extensions"
-             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:bhvr="totoro.next/behaviors"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:mdl="totoro.next/models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeGridViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeGridView">
     <ScrollViewer>
         <ItemsControl ItemsSource="{Binding Items}">
             <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="aa:AnimeModel">
-                    <ac:AnimeCard Margin="8"
+                <DataTemplate x:DataType="mdl:AnimeModel">
+                    <ctl:AnimeCard Margin="8"
                                   Anime="{Binding}"
                                   ext:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AnimeGridViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}">
                         <Interaction.Behaviors>
-                            <behaviors:AiringStatusBehavior />
+                            <bhvr:AiringStatusBehavior />
                         </Interaction.Behaviors>
-                    </ac:AnimeCard>
+                    </ctl:AnimeCard>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>

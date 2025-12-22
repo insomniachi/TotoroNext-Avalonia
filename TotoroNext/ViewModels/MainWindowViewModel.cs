@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Module.Extensions;
 using Ursa.Common;
 using Ursa.Controls;
 using Ursa.Controls.Options;

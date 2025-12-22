@@ -2,12 +2,12 @@
 
 public interface ILocalTrackingService : ITrackingService
 {
-    void SyncList(List<AnimeModel> animeList);
-    Task ExportList(List<AnimeModel> animeList);
-    Task<List<AnimeModel>> GetPrequelsAndSequelsWithoutTracking(List<AnimeModel> animeList, CancellationToken ct);
+    void SyncList(List<Models.AnimeModel> animeList);
+    Task ExportList(List<Models.AnimeModel> animeList);
+    Task<List<Models.AnimeModel>> GetPrequelsAndSequelsWithoutTracking(List<Models.AnimeModel> animeList, CancellationToken ct);
 }
 
 public interface ILocalMetadataService : IMetadataService
 {
-    Task<AnimeModel> GetAnimeWithoutAdditionalInfoAsync(long id);
+    Task<Models.AnimeModel> GetAnimeWithoutAdditionalInfoAsync(long id);
 }

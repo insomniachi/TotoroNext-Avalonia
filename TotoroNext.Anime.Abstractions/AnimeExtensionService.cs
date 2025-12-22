@@ -42,7 +42,7 @@ public class AnimeExtensionService : IAnimeExtensionService
         return _extensions.GetValueOrDefault(id)?.IsNsfw ?? false;
     }
 
-    public async Task<SearchResult?> SearchOrSelectAsync(AnimeModel anime)
+    public async Task<SearchResult?> SearchOrSelectAsync(Models.AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
         var searchResult = GetSearchResult(anime.Id);
@@ -62,7 +62,7 @@ public class AnimeExtensionService : IAnimeExtensionService
         return await _selectAnimeDialog.GetValue(results);
     }
 
-    public async Task<SearchResult?> SearchAsync(AnimeModel anime)
+    public async Task<SearchResult?> SearchAsync(Models.AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
         var searchResult = GetSearchResult(anime.Id);
@@ -102,7 +102,7 @@ public class AnimeExtensionService : IAnimeExtensionService
         return extension?.ProviderResult;
     }
 
-    private static SearchResult? TryFindMatch(List<SearchResult> results, AnimeModel anime, string term)
+    private static SearchResult? TryFindMatch(List<SearchResult> results, Models.AnimeModel anime, string term)
     {
         switch (results.Count)
         {

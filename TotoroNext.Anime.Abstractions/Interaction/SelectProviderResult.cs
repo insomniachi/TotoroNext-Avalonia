@@ -25,9 +25,9 @@ public sealed class SelectProviderResult : SelectResult<SearchResult>
 }
 
 [UsedImplicitly]
-public sealed class SelectAnimeResult : SelectResult<AnimeModel>
+public sealed class SelectAnimeResult : SelectResult<Models.AnimeModel>
 {
-    protected override Control CreateElement(AnimeModel model)
+    protected override Control CreateElement(Models.AnimeModel model)
     {
         return new Grid { ColumnSpacing = 8 }
                .Margin(8)

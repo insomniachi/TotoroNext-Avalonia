@@ -5,7 +5,7 @@
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:ail="using:AsyncImageLoader"
-             xmlns:aam="using:TotoroNext.Anime.Abstractions.Models"
+             xmlns:mdl="totoro.next/models"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -25,7 +25,7 @@
                     </Style>
                 </ListBox.Styles>
                 <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="aam:EpisodeInfo">
+                    <DataTemplate x:DataType="mdl:EpisodeInfo">
                         <Grid ColumnDefinitions="*,1.8*" Height="160"
                               ext:ControlExtensions.DoubleTappedCommand="{Binding $parent[ListBox].((vm:AnimeEpisodesListViewModel)DataContext).WatchEpisodeCommand, FallbackValue={x:Null}}">
                             <Grid>

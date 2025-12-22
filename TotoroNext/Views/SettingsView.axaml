@@ -8,7 +8,7 @@
              xmlns:fac="using:FluentAvalonia.UI.Controls"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:semi="https://irihi.tech/semi"
-             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:mdl="totoro.next/models"
              x:DataType="vm:SettingsViewModel"
              x:Class="TotoroNext.Views.SettingsView">
     <UserControl.Styles>
@@ -150,7 +150,7 @@
                         <fac:PathIconSource Data="{StaticResource Opening}" />
                     </fac:SettingsExpander.IconSource>
                     <fac:SettingsExpander.Footer>
-                        <u:EnumSelector EnumType="models:SkipMethod"
+                        <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
                                         Width="300">
                             <u:EnumSelector.Styles>
@@ -165,7 +165,7 @@
                         <fac:PathIconSource Data="{StaticResource Ending}" />
                     </fac:SettingsExpander.IconSource>
                     <fac:SettingsExpander.Footer>
-                        <u:EnumSelector EnumType="models:SkipMethod"
+                        <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
                                         Width="300">
                             <u:EnumSelector.Styles>

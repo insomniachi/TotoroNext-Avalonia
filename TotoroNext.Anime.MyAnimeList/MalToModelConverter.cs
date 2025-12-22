@@ -2,7 +2,8 @@ using System.Diagnostics;
 using System.Globalization;
 using MalApi;
 using TotoroNext.Anime.Abstractions;
-using AiringStatus = TotoroNext.Anime.Abstractions.AiringStatus;
+using TotoroNext.Anime.Abstractions.Models;
+using AiringStatus = TotoroNext.Anime.Abstractions.Models.AiringStatus;
 using AnimeSeason = TotoroNext.Anime.Abstractions.Models.AnimeSeason;
 using Season = TotoroNext.Anime.Abstractions.Models.Season;
 

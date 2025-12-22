@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 
@@ -108,13 +109,13 @@ public sealed class TrackingUpdater(
             }
 
             message.Episode.IsCompleted = true;
-            
+
             message.Anime.Tracking ??= new Tracking
             {
                 Status = ListItemStatus.Watching,
                 StartDate = DateTime.Now
             };
-            
+
             var tracking = message.Anime.Tracking;
             tracking.WatchedEpisodes = (int)message.Episode.Number;
             if (tracking.WatchedEpisodes == 1)
@@ -131,7 +132,7 @@ public sealed class TrackingUpdater(
             {
                 tracking.Status = ListItemStatus.Watching;
             }
-            
+
             await UpdateTracking(message.Anime, tracking);
 
             messenger.Send(new TrackingUpdated

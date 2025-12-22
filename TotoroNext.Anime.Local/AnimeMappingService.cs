@@ -1,4 +1,5 @@
 ﻿using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Local;
 

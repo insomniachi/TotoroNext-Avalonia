@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
-             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:mdl="totoro.next/models"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -12,7 +12,7 @@
     <ScrollViewer>
         <ItemsControl ItemsSource="{Binding Characters}">
             <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="models:CharacterModel">
+                <DataTemplate x:DataType="mdl:CharacterModel">
                     <Grid RowDefinitions="*, Auto" Margin="8">
                         <Image ail:ImageLoader.Source="{Binding Image}" Stretch="UniformToFill" />
                         <Border Grid.Row="1">

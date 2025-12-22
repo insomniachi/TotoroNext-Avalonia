@@ -1,6 +1,7 @@
 using MalApi;
 using MalApi.Interfaces;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.MyAnimeList;

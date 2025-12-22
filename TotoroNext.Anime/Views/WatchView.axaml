@@ -4,15 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:aam="using:TotoroNext.Anime.Abstractions.Models"
-             xmlns:asyncImageLoader="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:mdl="totoro.next/models"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
+             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:views="clr-namespace:TotoroNext.Anime.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:WatchViewModel"
              x:Class="TotoroNext.Anime.Views.WatchView">
     <UserControl.Resources>
-        <DataTemplate x:Key="MinimalTemplate" x:DataType="aam:Episode">
+        <DataTemplate x:Key="MinimalTemplate" x:DataType="mdl:Episode">
             <Grid ColumnDefinitions="*,1.8*" Height="160">
                 <Border Background="Gray" />
                 <Border Grid.Column="1" Padding="8">
@@ -30,14 +30,14 @@
                                     Margin="0 0 0 8"
                                     Orientation="Horizontal"
                                     Spacing="5">
-                            <iconPacks:PackIconControl
-                                Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}"
+                            <ip:PackIconControl
+                                Kind="{x:Static ip:PackIconMaterialKind.CalendarClock}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock Text="??"
                                        Margin="0 0 16 0" />
-                            <iconPacks:PackIconControl
-                                Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
+                            <ip:PackIconControl
+                                Kind="{x:Static ip:PackIconMaterialKind.Alarm}"
                                 Height="20" Width="20" />
                             <TextBlock Text="??" />
                         </StackPanel>
@@ -45,10 +45,10 @@
                 </Border>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="DetailedTemplate" x:DataType="aam:Episode">
+        <DataTemplate x:Key="DetailedTemplate" x:DataType="mdl:Episode">
             <Grid ColumnDefinitions="*,1.8*" Height="160">
                 <Border>
-                    <asyncImageLoader:AdvancedImage
+                    <ail:AdvancedImage
                         Source="{Binding Info.Image, FallbackValue={x:Null}}"
                         Stretch="UniformToFill" />
                 </Border>
@@ -69,14 +69,14 @@
                                     Margin="0 0 0 8"
                                     Orientation="Horizontal"
                                     Spacing="5">
-                            <iconPacks:PackIconControl
-                                Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}"
+                            <ip:PackIconControl
+                                Kind="{x:Static ip:PackIconMaterialKind.CalendarClock}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock Text="{Binding Info.AirDate, FallbackValue={x:Null}}"
                                        Margin="0 0 16 0" />
-                            <iconPacks:PackIconControl
-                                Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
+                            <ip:PackIconControl
+                                Kind="{x:Static ip:PackIconMaterialKind.Alarm}"
                                 Height="20" Width="20" />
                             <TextBlock>
                                 <Run Text="{Binding Info.Runtime, FallbackValue={x:Null}}" />
@@ -99,10 +99,10 @@
     <Grid RowDefinitions="*,Auto"
           ColumnDefinitions="*,Auto"
           x:Name="MainGrid">
-        
+
         <Grid ZIndex="100" IsVisible="{Binding IsFetchingStream}">
             <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" Margin="50 0"
-                         VerticalAlignment="Center"/>
+                         VerticalAlignment="Center" />
         </Grid>
 
         <Grid Grid.Column="0" Grid.Row="1"

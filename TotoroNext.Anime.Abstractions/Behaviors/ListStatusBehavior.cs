@@ -9,6 +9,7 @@ using IconPacks.Avalonia.MemoryIcons;
 using IconPacks.Avalonia.PhosphorIcons;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Controls;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 

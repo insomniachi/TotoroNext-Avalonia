@@ -1,3 +1,5 @@
+using TotoroNext.Anime.Abstractions.Models;
+
 namespace TotoroNext.Anime.Abstractions;
 
 public interface ITrackingService
@@ -6,5 +8,5 @@ public interface ITrackingService
     public string Name { get; }
     Task<Tracking> Update(long id, Tracking tracking);
     Task<bool> Remove(long id);
-    Task<List<AnimeModel>> GetUserList(CancellationToken ct);
+    Task<List<Models.AnimeModel>> GetUserList(CancellationToken ct);
 }

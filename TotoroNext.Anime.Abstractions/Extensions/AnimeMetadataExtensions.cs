@@ -13,7 +13,7 @@ public static class AnimeMetadataExtensions
 {
     extension(IMetadataService provider)
     {
-        public async Task<AnimeModel?> SearchAndSelectAsync(SearchResult model)
+        public async Task<Models.AnimeModel?> SearchAndSelectAsync(SearchResult model)
         {
             var results = await provider.SearchAnimeAsync(model.Title);
 
@@ -30,11 +30,11 @@ public static class AnimeMetadataExtensions
                 return result;
             }
 
-            return await Container.Services.GetRequiredService<ISelectionUserInteraction<AnimeModel>>().GetValue(results);
+            return await Container.Services.GetRequiredService<ISelectionUserInteraction<Models.AnimeModel>>().GetValue(results);
         }
     }
 
-    extension(AnimeModel anime)
+    extension(Models.AnimeModel anime)
     {
         public async Task<List<EpisodeInfo>> GetEpisodes(CancellationToken ct = default)
         {

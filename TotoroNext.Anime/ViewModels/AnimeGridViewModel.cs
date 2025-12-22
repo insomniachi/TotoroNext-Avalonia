@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.ViewModels;

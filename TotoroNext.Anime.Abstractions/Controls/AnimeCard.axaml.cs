@@ -12,8 +12,8 @@ namespace TotoroNext.Anime.Abstractions.Controls;
 
 public partial class AnimeCard : UserControl
 {
-    public static readonly StyledProperty<AnimeModel> AnimeProperty =
-        AvaloniaProperty.Register<AnimeCard, AnimeModel>(nameof(Anime));
+    public static readonly StyledProperty<Models.AnimeModel> AnimeProperty =
+        AvaloniaProperty.Register<AnimeCard, Models.AnimeModel>(nameof(Anime));
 
     public static readonly StyledProperty<ICommand> WatchCommandProperty =
         AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(WatchCommand));
@@ -45,7 +45,7 @@ public partial class AnimeCard : UserControl
         InitializeComponent();
     }
 
-    public AnimeModel Anime
+    public Models.AnimeModel Anime
     {
         get => GetValue(AnimeProperty);
         set => SetValue(AnimeProperty, value);

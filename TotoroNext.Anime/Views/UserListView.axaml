@@ -2,13 +2,13 @@
     x:Class="TotoroNext.Anime.Views.UserListView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+    xmlns:ctl="totoro.next/controls"
     xmlns:am="using:TotoroNext.Anime"
-    xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+    xmlns:bhvr="totoro.next/behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:modcv="using:TotoroNext.Module.Converters"
+    xmlns:conv="totoro.next/converters"
     xmlns:u="https://irihi.tech/ursa"
     xmlns:vm="using:TotoroNext.Anime.ViewModels"
     d:DesignHeight="450"
@@ -16,7 +16,7 @@
     x:DataType="vm:UserListViewModel"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <modcv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
+        <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
         <ControlTheme x:Key="ScrollToButtonStyle" TargetType="u:ScrollToButton">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -129,7 +129,7 @@
                     ItemsSource="{Binding Anime}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate>
-                            <ac:AnimeCard
+                            <ctl:AnimeCard
                                 Anime="{Binding}"
                                 DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                 SettingsCommand="{x:Static am:Commands.SettingsCommand}"
@@ -137,10 +137,10 @@
                                 SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
                                 HasDetailsPane="True">
                                 <Interaction.Behaviors>
-                                    <behaviors:UnwatchedEpisodesBehavior />
-                                    <behaviors:AiringStatusBehavior />
+                                    <bhvr:UnwatchedEpisodesBehavior />
+                                    <bhvr:AiringStatusBehavior />
                                 </Interaction.Behaviors>
-                            </ac:AnimeCard>
+                            </ctl:AnimeCard>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
                     <ItemsRepeater.Layout>

@@ -5,6 +5,7 @@ using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Controls;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
@@ -31,7 +32,7 @@ public class AiringStatusBehavior : Behavior<AnimeCard>
     }
 
 
-    private static SolidColorBrush ToBrush(AnimeModel anime)
+    private static SolidColorBrush ToBrush(Models.AnimeModel anime)
     {
         return anime.AiringStatus switch
         {

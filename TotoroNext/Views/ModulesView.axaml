@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.ViewModels"
              xmlns:mod="using:TotoroNext.Module"
-             xmlns:mode="using:TotoroNext.Module.Extensions"
+             xmlns:ext="totoro.next/extensions"
              xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:ModulesViewModel"
@@ -17,7 +17,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="mod:Descriptor">
                         <Grid RowDefinitions="*,Auto" Margin="16"
-                              mode:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:ModulesViewModel)DataContext).NavigateToSettingsCommand, FallbackValue={x:Null}}">
+                              ext:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:ModulesViewModel)DataContext).NavigateToSettingsCommand, FallbackValue={x:Null}}">
                             <Image Source="{Binding HeroImage}" Stretch="UniformToFill" />
                             <Border Grid.Row="1" Padding="4"
                                     Background="{DynamicResource SemiColorTertiaryLightActive}">

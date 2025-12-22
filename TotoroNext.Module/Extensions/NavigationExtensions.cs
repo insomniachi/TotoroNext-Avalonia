@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 
-namespace TotoroNext.Module;
+namespace TotoroNext.Module.Extensions;
 
 public class NavigationExtensions
 {

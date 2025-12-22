@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using Avalonia.Platform.Storage;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Local;
 

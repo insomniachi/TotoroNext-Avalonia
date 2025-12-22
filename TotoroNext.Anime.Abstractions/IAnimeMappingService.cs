@@ -2,5 +2,5 @@
 
 public interface IAnimeMappingService
 {
-    AnimeId? GetId(AnimeModel anime);
+    AnimeId? GetId(Models.AnimeModel anime);
 }

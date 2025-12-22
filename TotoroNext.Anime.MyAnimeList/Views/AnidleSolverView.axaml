@@ -41,7 +41,7 @@
                             HorizontalContentAlignment="Stretch">
             <ScrollViewer>
                 <ItemsControl ItemsSource="{Binding PossibleAnswers, Mode=OneWay}"
-                              mod:Animations.ItemsReorderAnimationDuration="0:0:0.400">
+                              mode:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <u:ElasticWrapPanel

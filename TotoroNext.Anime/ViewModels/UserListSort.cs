@@ -4,6 +4,7 @@ using DynamicData.Binding;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.ViewModels;
 

@@ -5,10 +5,10 @@
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:am="using:TotoroNext.Anime"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:aa="using:TotoroNext.Anime.Abstractions.Models"
-             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
-             xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:mdl="totoro.next/models"
+             xmlns:ctl="totoro.next/controls"
+             xmlns:bhvr="totoro.next/behaviors"
+             xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="1920"
              x:DataType="vm:AdvancedSearchViewModel"
              x:Class="TotoroNext.Anime.Views.AdvancedSearchView">
@@ -43,7 +43,7 @@
                     </ItemsPanelTemplate>
                 </u:Form.ItemsPanel>
                 <u:FormItem Label="Season Name">
-                    <u:EnumSelector EnumType="{x:Type aa:AnimeSeason}"
+                    <u:EnumSelector EnumType="{x:Type mdl:AnimeSeason}"
                                     Value="{Binding Season, Mode=TwoWay}"
                                     DisplayDescription="True"
                                     HorizontalAlignment="Stretch" />
@@ -94,7 +94,7 @@
                             HorizontalContentAlignment="Stretch">
             <ScrollViewer>
                 <ItemsControl ItemsSource="{Binding Anime, Mode=OneWay}"
-                              module:Animations.ItemsReorderAnimationDuration="0:0:0.400">
+                              ext:Animations.ItemsReorderAnimationDuration="0:0:0.400">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <u:ElasticWrapPanel
@@ -105,7 +105,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <ac:AnimeCard Anime="{Binding}"
+                            <ctl:AnimeCard Anime="{Binding}"
                                           Margin="16"
                                           HasDetailsPane="True"
                                           DetailsCommand="{x:Static am:Commands.DetailsCommand}"
@@ -115,10 +115,10 @@
                                           AddToListCommand="{x:Static am:Commands.AddToListCommand}"
                                           ShowCompletedStatus="True">
                                 <Interaction.Behaviors>
-                                    <behaviors:AiringStatusBehavior />
-                                    <behaviors:ListStatusBehavior />
+                                    <bhvr:AiringStatusBehavior />
+                                    <bhvr:ListStatusBehavior />
                                 </Interaction.Behaviors>
-                            </ac:AnimeCard>
+                            </ctl:AnimeCard>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

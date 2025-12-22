@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using IconPacks.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Module.Extensions;
 using Ursa.Controls;
 
 namespace TotoroNext.Module;

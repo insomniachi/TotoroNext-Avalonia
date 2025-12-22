@@ -7,7 +7,7 @@ public class AnimeRelations : List<AnimeRelation>, IAnimeRelations
         Add(relation);
     }
 
-    public AnimeRelation? FindRelation(AnimeModel anime)
+    public AnimeRelation? FindRelation(Models.AnimeModel anime)
     {
         return this.FirstOrDefault(x => x.DestinationIds.GetIdForService(anime.ServiceName!) == anime.Id);
     }

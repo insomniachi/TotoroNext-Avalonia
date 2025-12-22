@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Rendering.Composition;
 using Avalonia.Rendering.Composition.Animations;
 
-namespace TotoroNext.Module;
+namespace TotoroNext.Module.Extensions;
 
 public class Animations
 {

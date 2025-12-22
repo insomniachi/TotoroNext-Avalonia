@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Controls;
 using TotoroNext.Anime.Abstractions.Extensions;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
@@ -48,7 +49,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         _ = UpdateBadge(card, card.Anime);
     }
 
-    private static async Task<Unit> UpdateBadge(AnimeCard card, AnimeModel anime)
+    private static async Task<Unit> UpdateBadge(AnimeCard card, Models.AnimeModel anime)
     {
         if (anime.AiringStatus is AiringStatus.NotYetAired ||
             anime.Tracking?.Status is not (ListItemStatus.Watching or ListItemStatus.PlanToWatch) ||
@@ -108,7 +109,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         return Unit.Default;
     }
 
-    private static async Task UpdateAiringTime(AnimeCard card, AnimeModel anime)
+    private static async Task UpdateAiringTime(AnimeCard card, Models.AnimeModel anime)
     {
         var time = await ToNextEpisodeAiringTime(anime);
         if (string.IsNullOrEmpty(time))
@@ -121,7 +122,7 @@ public class UnwatchedEpisodesBehavior : Behavior<AnimeCard>
         card.NextEpText.Text = time;
     }
 
-    private static async Task<string> ToNextEpisodeAiringTime(AnimeModel? anime)
+    private static async Task<string> ToNextEpisodeAiringTime(Models.AnimeModel? anime)
     {
         if (anime is null)
         {

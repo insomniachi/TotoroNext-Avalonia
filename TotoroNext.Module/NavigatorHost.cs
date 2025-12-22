@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Module.Extensions;
 
 namespace TotoroNext.Module;
 

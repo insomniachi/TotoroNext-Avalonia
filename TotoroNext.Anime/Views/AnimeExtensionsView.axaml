@@ -7,8 +7,8 @@
              xmlns:fac="using:FluentAvalonia.UI.Controls"
              xmlns:semi="https://irihi.tech/semi"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:controls="clr-namespace:TotoroNext.Module.Controls;assembly=TotoroNext.Module"
+             xmlns:mdl="totoro.next/models"
+             xmlns:ctl="totoro.next/controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              MinWidth="700"
              MaxWidth="700"
@@ -68,7 +68,7 @@
                                              MinimumPrefixLength="2"
                                              Width="200">
                                 <u:AutoCompleteBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:SearchResult">
+                                    <DataTemplate x:DataType="mdl:SearchResult">
                                         <TextBlock Text="{Binding Title}"
                                                    ToolTip.Tip="{Binding Title}"
                                                    TextTrimming="CharacterEllipsis"
@@ -79,13 +79,13 @@
                         </fac:SettingsExpanderItem.Footer>
                     </fac:SettingsExpanderItem>
                 </fac:SettingsExpander>
-                <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
+                <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
                 <fac:SettingsExpander Header="Opening Skip Method" Description="How to skip the opening of this anime">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource Opening}" />
                     </fac:SettingsExpander.IconSource>
                     <fac:SettingsExpander.Footer>
-                        <u:EnumSelector EnumType="models:SkipMethod"
+                        <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch">
                             <u:EnumSelector.Styles>
@@ -99,7 +99,7 @@
                         <fac:PathIconSource Data="{StaticResource Ending}" />
                     </fac:SettingsExpander.IconSource>
                     <fac:SettingsExpander.Footer>
-                        <u:EnumSelector EnumType="models:SkipMethod"
+                        <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding EndingSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch">
                             <u:EnumSelector.Styles>

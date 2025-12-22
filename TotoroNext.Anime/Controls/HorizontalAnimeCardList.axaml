@@ -2,11 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:TotoroNext.Anime.Abstractions.Controls;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:ctl="totoro.next/controls"
              xmlns:am="clr-namespace:TotoroNext.Anime"
-             xmlns:local1="clr-namespace:TotoroNext.Anime.Controls"
+             xmlns:local="clr-namespace:TotoroNext.Anime.Controls"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-             xmlns:behaviors="clr-namespace:TotoroNext.Anime.Abstractions.Behaviors;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:bhvr="totoro.next/behaviors"
              xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Controls.HorizontalAnimeCardList">
@@ -16,8 +16,8 @@
           ColumnSpacing="12">
 
         <TextBlock Grid.Column="1"
-                   Text="{Binding $parent[local1:HorizontalAnimeCardList].Title}"
-                   IsVisible="{Binding $parent[local1:HorizontalAnimeCardList].Anime.Count}"
+                   Text="{Binding $parent[local:HorizontalAnimeCardList].Title}"
+                   IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}"
                    FontSize="25" FontWeight="Bold"
                    VerticalAlignment="Center"
                    Margin="0 4" />
@@ -26,7 +26,7 @@
                 x:Name="ScrollLeftButton"
                 Height="40" Width="40"
                 CornerRadius="20"
-                IsVisible="{Binding $parent[local1:HorizontalAnimeCardList].Anime.Count}">
+                IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}">
             <Viewbox Height="18" Width="18">
                 <iconPacks:PackIconControl
                     Kind="{x:Static iconPacks:PackIconMaterialDesignKind.ChevronLeft}" />
@@ -39,12 +39,12 @@
                       ScrollChanged="Scroller_OnScrollChanged"
                       x:Name="Scroller">
             <u:LoadingContainer x:Name="LoadingContainer">
-                <ItemsControl ItemsSource="{Binding $parent[local1:HorizontalAnimeCardList].Anime}"
+                <ItemsControl ItemsSource="{Binding $parent[local:HorizontalAnimeCardList].Anime}"
                               x:Name="ItemsHost"
                               Height="300">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:AnimeCard Anime="{Binding}"
+                            <ctl:AnimeCard Anime="{Binding}"
                                                 HasDetailsPane="True"
                                                 DetailsCommand="{x:Static am:Commands.DetailsCommand}"
                                                 WatchCommand="{x:Static am:Commands.WatchCommand}"
@@ -55,9 +55,9 @@
                                                 Height="300"
                                                 Width="210">
                                 <Interaction.Behaviors>
-                                    <behaviors:ListStatusBehavior />
+                                    <bhvr:ListStatusBehavior />
                                 </Interaction.Behaviors>
-                            </controls:AnimeCard>
+                            </ctl:AnimeCard>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>
@@ -69,7 +69,7 @@
             </u:LoadingContainer>
         </ScrollViewer>
         <Button Grid.Row="1" Grid.Column="2" Click="ScrollRight" Height="40" Width="40" CornerRadius="20"
-                IsVisible="{Binding $parent[local1:HorizontalAnimeCardList].Anime.Count}"
+                IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}"
                 x:Name="ScrollRightButton">
             <Viewbox Height="18" Width="18">
                 <iconPacks:PackIconControl

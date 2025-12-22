@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 
@@ -7,10 +8,10 @@ namespace TotoroNext.Anime.Abstractions.ViewModels;
 
 [UsedImplicitly]
 public partial class UpdateTrackingViewModel(
-    AnimeModel anime,
+    Models.AnimeModel anime,
     ITrackingUpdater trackingUpdater) : ObservableObject, IDialogViewModel
 {
-    public AnimeModel Anime { get; } = anime;
+    public Models.AnimeModel Anime { get; } = anime;
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = anime.Tracking?.Status;
 

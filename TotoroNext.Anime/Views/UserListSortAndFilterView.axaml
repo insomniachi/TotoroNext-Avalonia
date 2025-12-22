@@ -4,14 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:converters="clr-namespace:TotoroNext.Module.Converters;assembly=TotoroNext.Module"
-             xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
+             xmlns:conv="totoro.next/converters"
+             xmlns:mdl="totoro.next/models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Views.UserListSortAndFilterView"
              x:DataType="vm:UserListSortAndFilterViewModel"
              Width="300">
     <UserControl.Resources>
-        <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
     </UserControl.Resources>
     <u:Form Margin="0">
         <u:FormGroup Header="Filters">
@@ -22,7 +22,7 @@
                      Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}"
                      HorizontalAlignment="Stretch" />
             <u:FormItem Label="Format">
-                <u:EnumSelector EnumType="aa:AnimeMediaFormat"
+                <u:EnumSelector EnumType="mdl:AnimeMediaFormat"
                                 Value="{Binding Filter.Format, Mode=TwoWay}"
                                 DisplayDescription="True"
                                 HorizontalAlignment="Stretch" />

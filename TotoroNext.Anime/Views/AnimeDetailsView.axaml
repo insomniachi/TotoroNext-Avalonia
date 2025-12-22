@@ -7,7 +7,8 @@
              xmlns:aa="using:TotoroNext.Anime.Abstractions"
              xmlns:a="using:TotoroNext.Anime"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:mdl="totoro.next/models"
+             xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Views.AnimeDetailsView"
              Width="750"
@@ -38,7 +39,7 @@
                         LabelWidth="*"
                         HorizontalAlignment="Stretch">
                     <u:FormItem Label="Status">
-                        <u:EnumSelector EnumType="{x:Type aa:ListItemStatus}"
+                        <u:EnumSelector EnumType="{x:Type mdl:ListItemStatus}"
                                         Value="{Binding Status, Mode=TwoWay}"
                                         DisplayDescription="True"
                                         HorizontalAlignment="Stretch" />
@@ -74,8 +75,9 @@
                         HorizontalAlignment="Stretch"
                         Margin="0 10 0 0" />
                 <ScrollViewer Grid.Row="2" Margin="0 8 0 0">
-                    <TextBlock Text="{Binding Anime.Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}" 
-                               TextWrapping="Wrap" />
+                    <TextBlock
+                        Text="{Binding Anime.Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}"
+                        TextWrapping="Wrap" />
                 </ScrollViewer>
             </Grid>
         </Grid>
@@ -97,7 +99,7 @@
         <TransitioningContentControl
             Grid.Row="2"
             Margin="0 4"
-            module:NavigationExtensions.IsAttached="True">
+            ext:NavigationExtensions.IsAttached="True">
             <TransitioningContentControl.PageTransition>
                 <PageSlide Duration="0:00:00.200" />
             </TransitioningContentControl.PageTransition>

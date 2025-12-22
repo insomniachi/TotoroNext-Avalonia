@@ -1,6 +1,7 @@
 using GraphQL;
 using GraphQL.Client.Http;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Anilist;
 
