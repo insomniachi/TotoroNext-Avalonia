@@ -295,6 +295,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IControlAtta
         return new Button()
                .CornerRadius(30)
                .Height(30).Width(30)
+               .IsVisible(anime.AiringStatus != AiringStatus.NotYetAired)
                .OnClick(_ =>
                {
                    WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage
