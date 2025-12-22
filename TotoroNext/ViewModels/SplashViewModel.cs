@@ -125,7 +125,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                           List<IModule> modules =
                           [
                               new Anime.Module(),
-                              new SongRecognition.Module(),
+                              // new SongRecognition.Module(),
                               new Anime.Local.Module(),
                               new Anime.Anilist.Module(),
                               new Anime.MyAnimeList.Module(),
@@ -221,8 +221,8 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                                                                         PackIconOcticonsKind.Beaker16,
                                                                                         new NavMenuItemTag { IsFooterItem = true });
 
-        services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
-                                             new NavMenuItemTag { Order = 3 });
+        // services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
+        //                                      new NavMenuItemTag { Order = 3 });
 
         services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
                                                                   PackIconLucideKind.Store,

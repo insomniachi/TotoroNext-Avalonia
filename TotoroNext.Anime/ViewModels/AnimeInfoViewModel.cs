@@ -28,8 +28,7 @@ public partial class AnimeInfoViewModel(
 
         Fields =
         [
-            new KeyValuePair<string, string>("English", Anime.EngTitle),
-            new KeyValuePair<string, string>("Romaji", Anime.RomajiTitle),
+            new KeyValuePair<string, string>("Titles", string.Join(Environment.NewLine, Anime.AlternateTitles)),
             new KeyValuePair<string, string>("Format", Anime.MediaFormat.ToString()),
             new KeyValuePair<string, string>("Episodes", Anime.TotalEpisodes?.ToString() ?? "??"),
             new KeyValuePair<string, string>("Season", $"{Anime.Season?.SeasonName} {Anime.Season?.Year}"),

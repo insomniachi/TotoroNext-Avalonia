@@ -27,7 +27,8 @@ public static class MalToModelConverter
             ServiceName = nameof(AnimeId.MyAnimeList),
             Description = jikanModel.Synopsis,
             Url = $"https://myanimelist.net/anime/{jikanModel.MalId}/",
-            MeanScore = (float?)jikanModel.Score
+            MeanScore = (float?)jikanModel.Score,
+            AlternateTitles = jikanModel.Titles.Select(x => x.Title).ToHashSet()
         };
 
         string GetTitle(JikanDotNet.Anime model, string type)
@@ -59,7 +60,8 @@ public static class MalToModelConverter
             MediaFormat = ConvertFormat(malModel.MediaType),
             Genres = malModel.Genres is not { } genres ? [] : [..genres.Select(x => x.Name)],
             Studios = malModel.Studios is not { } studios ? [] : [..studios.Select(x => x.Name)],
-            Trailers = MapTrailers(malModel.Videos)
+            Trailers = MapTrailers(malModel.Videos),
+            AlternateTitles = GetAlternateTitles(malModel)
         };
 
         try
@@ -100,15 +102,6 @@ public static class MalToModelConverter
                 }
             }
 
-
-            //if (malModel.AlternativeTitles is { } alt)
-            //{
-            //    var titles = alt.Aliases.ToList();
-            //    titles.Add(alt.English);
-            //    titles.Add(alt.Japanese);
-            //    model.AlternativeTitles = titles.Distinct();
-            //}
-
             if (malModel.StartSeason is { } season)
             {
                 model.Season = new Season(ConvertSeason(season.SeasonName), season.Year);
@@ -130,6 +123,19 @@ public static class MalToModelConverter
         }
 
         return model;
+    }
+
+    private static HashSet<string> GetAlternateTitles(MalApi.Anime malModel)
+    {
+        if (malModel.AlternativeTitles is not { } alt)
+        {
+            return [];
+        }
+
+        var titles = alt.Aliases.ToHashSet();
+        titles.Add(alt.English);
+        titles.Add(alt.Japanese);
+        return titles;
     }
 
     private static List<TrailerVideo> MapTrailers(Video[]? malModelVideos)

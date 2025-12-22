@@ -60,8 +60,51 @@ public static partial class AniListModelToAnimeModelConverter
             MediaFormat = ConvertMediaFormat(media.Format),
             Genres = [..media.Genres],
             Studios = [.. media.Studios?.Nodes.Where(x => x.IsAnimationStudio == true).Select(x => x.Name).Distinct() ?? []],
-            Trailers = ConvertTrailers(media.Trailer)
+            Trailers = ConvertTrailers(media.Trailer),
+            AlternateTitles = GetAlternateTitles(media)
         };
+    }
+
+    private static HashSet<string> GetAlternateTitles(Media? media)
+    {
+        var titles = new HashSet<string>();
+        
+        if(media?.Title is null)
+        {
+            return titles;
+        }
+
+        if (!string.IsNullOrEmpty(media.Title.English))
+        {
+            titles.Add(media.Title.English);
+        }
+
+        if (!string.IsNullOrEmpty(media.Title.Romaji))
+        {
+            titles.Add(media.Title.Romaji);
+        }
+
+        if (!string.IsNullOrEmpty(media.Title.Native))
+        {
+            titles.Add(media.Title.Native);
+        }
+
+        if (media.Synonyms is null)
+        {
+            return titles;
+        }
+
+        foreach (var synonym in media.Synonyms)
+        {
+            if (string.IsNullOrEmpty(synonym) || !TextHelpers.IsLatin(synonym))
+            {
+                continue;
+            }
+
+            titles.Add(synonym);
+        }
+
+        return titles;
     }
 
     private static IReadOnlyCollection<TrailerVideo> ConvertTrailers(MediaTrailer? mediaTrailer)

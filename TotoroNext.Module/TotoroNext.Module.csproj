@@ -13,23 +13,21 @@
         <PackageReference Include="Avalonia.Markup.Declarative"/>
         <PackageReference Include="Avalonia.ReactiveUI"/>
         <PackageReference Include="Avalonia.Controls.ItemsRepeater"/>
-        <PackageReference Include="FluentAvaloniaUI"/>
 
         <PackageReference Include="Flurl.Http"/>
-
         <PackageReference Include="FuzzySharp"/>
-
         <PackageReference Include="HtmlAgilityPack"/>
         <PackageReference Include="Humanizer"/>
-        <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
-        <PackageReference Include="Microsoft.Playwright"/>
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator"/>
         <PackageReference Include="JetBrains.Annotations"/>
+        <PackageReference Include="NTextCat"/>
 
         <!-- Microsoft -->
         <PackageReference Include="Microsoft.Extensions.Hosting"/>
         <PackageReference Include="Microsoft.Extensions.Http"/>
         <PackageReference Include="CommunityToolkit.Mvvm"/>
+        <PackageReference Include="Microsoft.Extensions.Http.Resilience"/>
+        <PackageReference Include="Microsoft.Playwright"/>
 
         <!-- Avalonia OSS-->
         <PackageReference Include="IconPacks.Avalonia"/>
@@ -39,7 +37,14 @@
         <PackageReference Include="Semi.Avalonia"/>
         <PackageReference Include="Semi.Avalonia.DataGrid"/>
         <PackageReference Include="Xaml.Behaviors.Avalonia"/>
+        <PackageReference Include="FluentAvaloniaUI"/>
+        
 
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Core14.profile.xml" />
+      <EmbeddedResource Include="Core14.profile.xml" />
     </ItemGroup>
 
 

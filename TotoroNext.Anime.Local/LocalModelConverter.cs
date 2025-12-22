@@ -1,8 +1,7 @@
-﻿using System.Text;
-using System.Text.Unicode;
-using LiteDB;
+﻿using LiteDB;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Local;
 
@@ -46,7 +45,8 @@ internal static class LocalModelConverter
             Episodes = anime.EpisodeInfo?.Info ?? [],
             Tracking = anime.Tracking?.Tracking,
             Url = $"https://myanimelist.net/anime/{anime.MyAnimeListId}/",
-            MediaFormat = anime.MediaFormat
+            MediaFormat = anime.MediaFormat,
+            AlternateTitles = anime.AlternateTitles
         };
 
         if (anime.AdditionalInfo is not { } info)
@@ -79,7 +79,7 @@ internal static class LocalModelConverter
             Related = ConvertRelated(anime.RelatedAnime).ToList(),
             Image = anime.Picture,
             Thumbnail = anime.Thumbnail,
-            AlternateTitles = anime.Synonyms.Where(IsLatin).ToList()
+            AlternateTitles = anime.Synonyms.Where(TextHelpers.IsEnglish).Distinct(StringComparer.InvariantCultureIgnoreCase).ToList()
         };
 
         UpdateIds(model, anime.Sources);
@@ -175,33 +175,5 @@ internal static class LocalModelConverter
                 model.SimklId = long.Parse(serviceId);
             }
         }
-    }
-
-    private static bool IsLatin(string input)
-    {
-        foreach (var rune in input.EnumerateRunes())
-        {
-            if (!Rune.IsLetter(rune))
-            {
-                continue;
-            }
-
-            var code = rune.Value;
-            var inLatin = InRange(code, UnicodeRanges.BasicLatin) || InRange(code, UnicodeRanges.Latin1Supplement) ||
-                          InRange(code, UnicodeRanges.LatinExtendedA) || InRange(code, UnicodeRanges.LatinExtendedB) ||
-                          InRange(code, UnicodeRanges.LatinExtendedAdditional);
-
-            if (!inLatin)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool InRange(int codePoint, UnicodeRange range)
-    {
-        return codePoint >= range.FirstCodePoint && codePoint < range.FirstCodePoint + range.Length;
     }
 }

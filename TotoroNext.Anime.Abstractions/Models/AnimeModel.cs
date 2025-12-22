@@ -32,4 +32,5 @@ public partial class AnimeModel : ObservableObject
     public IReadOnlyCollection<string> Genres { get; init; } = [];
     public IReadOnlyCollection<string> Studios { get; init; } = [];
     public IReadOnlyCollection<TrailerVideo> Trailers { get; set; } = [];
+    public IReadOnlyCollection<string> AlternateTitles { get; init; } = [];
 }
