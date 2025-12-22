@@ -33,17 +33,7 @@ public class ListStatusBehavior : Behavior<AnimeCard>, IControlAttachingBehavior
 
     protected override void OnAttachedToVisualTree()
     {
-        if (AssociatedObject is null)
-        {
-            return;
-        }
-
-        if (!AssociatedObject.ShowCompletedStatus)
-        {
-            return;
-        }
-
-        AssociatedObject.GetObservable(AnimeCard.AnimeProperty)
+        AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
                         .SelectMany(x => x.WhenAnyValue(y => y.Tracking).WhereNotNull())
                         .ObserveOn(RxApp.MainThreadScheduler)
                         .Subscribe(tracking =>
@@ -59,6 +49,7 @@ public class ListStatusBehavior : Behavior<AnimeCard>, IControlAttachingBehavior
         if (_container is not null)
         {
             AssociatedObject?.ImageContainer.Children.Remove(_container);
+            _container = null;
         }
 
         _disposables.Dispose();

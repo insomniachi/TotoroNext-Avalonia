@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
-             xmlns:am="using:TotoroNext.Anime"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:mdl="totoro.next/models"
              xmlns:ctl="totoro.next/controls"
@@ -106,15 +105,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <ctl:AnimeCard Anime="{Binding}"
-                                           Margin="16"
-                                           HasDetailsPane="True"
-                                           DetailsCommand="{x:Static am:Commands.DetailsCommand}"
-                                           WatchCommand="{x:Static am:Commands.WatchCommand}"
-                                           SettingsCommand="{x:Static am:Commands.SettingsCommand}"
-                                           SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
-                                           AddToListCommand="{x:Static am:Commands.AddToListCommand}"
-                                           ShowCompletedStatus="True">
+                                           Margin="16">
                                 <Interaction.Behaviors>
+                                    <bhvr:InteractiveCardControlsBehavior />
                                     <bhvr:MediaFormatBehavior />
                                     <bhvr:AiringStatusBehavior />
                                     <bhvr:ListStatusBehavior />

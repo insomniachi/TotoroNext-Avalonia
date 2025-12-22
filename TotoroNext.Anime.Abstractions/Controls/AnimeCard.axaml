@@ -18,7 +18,7 @@
             Background="Transparent"
             BorderThickness="1">
         <Grid RowDefinitions="*,Auto" x:Name="MainContent">
-            <Grid x:Name="ImageContainer" Grid.RowSpan="2">
+            <Grid x:Name="ImageContainer" x:FieldModifier="public" Grid.RowSpan="2">
                 <Grid.Effect>
                     <BlurEffect Radius="0">
                         <BlurEffect.Transitions>
@@ -33,7 +33,7 @@
                        ail:ImageLoader.Source="{Binding $parent[local:AnimeCard].Anime.Image}"
                        x:Name="ImageControl" />
 
-                <Border Background="#AA000000" x:Name="Tint" IsVisible="False" />
+                <Border Background="#AA000000" x:Name="Tint" x:FieldModifier="public" IsVisible="False" />
             </Grid>
             <Border
                 x:Name="StatusBorder"
@@ -44,10 +44,11 @@
                 Padding="6 3"
                 Background="#AA000000"
                 BorderThickness="0,4,0,0">
-                <Grid RowDefinitions="Auto, *">
-                    <Border x:Name="TitleBorder" Height="54" VerticalAlignment="Stretch">
+                <Grid RowDefinitions="Auto, *" x:Name="ContentGrid" x:FieldModifier="public">
+                    <Border x:Name="TitleBorder" x:FieldModifier="public" Height="54" VerticalAlignment="Stretch">
                         <TextBlock
                             x:Name="TitleTextBlock"
+                            x:FieldModifier="public"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             FontSize="15"
@@ -56,104 +57,6 @@
                             TextTrimming="CharacterEllipsis"
                             ToolTip.Tip="{Binding $parent[local:AnimeCard].Anime.Title, Mode=OneWay}" />
                     </Border>
-                    <Grid Grid.Row="1" RowDefinitions="*, Auto">
-                        <StackPanel Grid.Row="0" Spacing="4" HorizontalAlignment="Stretch" Margin="8">
-                            <TextBlock x:Name="NextEpText"
-                                       FontSize="13"
-                                       HorizontalAlignment="Center"
-                                       FontStyle="Italic"
-                                       Foreground="{DynamicResource SemiColorText3}"/>
-
-                            <Button HorizontalAlignment="Stretch"
-                                    Command="{Binding $parent[local:AnimeCard].WatchCommand}"
-                                    CommandParameter="{Binding $parent[local:AnimeCard].Anime}"
-                                    IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}">
-                                <StackPanel Spacing="8" Orientation="Horizontal">
-                                    <TextBlock Text="Watch" VerticalAlignment="Center" />
-                                    <iconPacks:PackIconControl
-                                        Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
-                                        Height="15" Width="11"
-                                        VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                            <Button Command="{Binding $parent[local:AnimeCard].SearchTorrentsCommand}"
-                                    CommandParameter="{Binding $parent[local:AnimeCard].Anime}"
-                                    IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}"
-                                    HorizontalAlignment="Stretch">
-                                <StackPanel Spacing="8" Orientation="Horizontal">
-                                    <TextBlock Text="Torrent" VerticalAlignment="Center" />
-                                    <iconPacks:PackIconControl
-                                        Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
-                                        Height="15" Width="11"
-                                        VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                            <Button Content="Details"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{Binding $parent[local:AnimeCard].DetailsCommand}"
-                                    CommandParameter="{Binding $parent[local:AnimeCard].Anime}" />
-                        </StackPanel>
-
-                        <Border Grid.Row="1" Padding="4">
-                            <Grid
-                                IsVisible="{Binding $parent[local:AnimeCard].Anime, Converter={x:Static converters:Converters.HasAiredConverter}}">
-                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="4" HorizontalAlignment="Left">
-                                    <Button CornerRadius="30" Height="30" Width="30" Click="OnEditClicked"
-                                            IsVisible="{Binding $parent[local:AnimeCard].Anime.Tracking, Converter={x:Static ObjectConverters.IsNotNull}}">
-                                        <Viewbox Height="12" Width="12">
-                                            <iconPacks:PackIconControl
-                                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Edit}" />
-                                        </Viewbox>
-                                    </Button>
-                                    <Button CornerRadius="30" Height="30" Width="30"
-                                            Command="{Binding $parent[local:AnimeCard].AddToListCommand}"
-                                            CommandParameter="{Binding $parent[local:AnimeCard].Anime}"
-                                            IsVisible="{Binding $parent[local:AnimeCard].Anime.Tracking, Converter={x:Static ObjectConverters.IsNull}}">
-                                        <Viewbox Height="12" Width="12">
-                                            <iconPacks:PackIconControl
-                                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Add}" />
-                                        </Viewbox>
-                                    </Button>
-
-                                    <Border BorderBrush="{DynamicResource ButtonDefaultBorderBrush}"
-                                            BorderThickness="{DynamicResource ButtonBorderThickness}"
-                                            CornerRadius="20"
-                                            Padding="8 4"
-                                            Background="{DynamicResource ButtonDefaultBackground}">
-                                        <StackPanel Spacing="4" Orientation="Horizontal">
-                                            <iconPacks:PackIconControl
-                                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Star}" Height="12"
-                                                Width="12"
-                                                Foreground="{DynamicResource ButtonDefaultPrimaryForeground}"
-                                                VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                            <TextBlock
-                                                Text="{Binding $parent[local:AnimeCard].Anime.MeanScore, Mode=OneWay}"
-                                                Foreground="{DynamicResource ButtonDefaultPrimaryForeground}"
-                                                VerticalAlignment="Center"
-                                                FontSize="13"
-                                                FontWeight="Bold" />
-                                        </StackPanel>
-                                    </Border>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="4">
-                                    <Button CornerRadius="30" Height="30" Width="30" Click="OnDownloadClicked">
-                                        <Viewbox Height="12" Width="12">
-                                            <iconPacks:PackIconControl
-                                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Download}" />
-                                        </Viewbox>
-                                    </Button>
-                                    <Button CornerRadius="30" Height="30" Width="30"
-                                            Command="{Binding $parent[local:AnimeCard].SettingsCommand}"
-                                            CommandParameter="{Binding $parent[local:AnimeCard].Anime}">
-                                        <Viewbox Height="12" Width="12">
-                                            <iconPacks:PackIconControl
-                                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Settings}" />
-                                        </Viewbox>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                    </Grid>
                 </Grid>
             </Border>
         </Grid>

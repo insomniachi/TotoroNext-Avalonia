@@ -1,6 +1,6 @@
 ﻿namespace TotoroNext.Anime.Abstractions.Behaviors;
 
-internal interface IControlAttachingBehavior
+public interface IControlAttachingBehavior
 {
     void OnHoverEntered();
     void OnHoverExited();

@@ -14,22 +14,29 @@ internal class Initializer(
 
     public async Task BackgroundInitializeAsync()
     {
-        var lastUpdated = localSettingsService.ReadSetting(OfflineDbUpdatedAtKey, default(DateTime));
-        var stream = await "https://api.github.com/repos/manami-project/anime-offline-database/releases/latest"
-                           .WithHeader(HeaderNames.UserAgent, Http.UserAgent)
-                           .GetStreamAsync();
-        using var doc = await JsonDocument.ParseAsync(stream);
-        var date = doc.RootElement.GetProperty("published_at").GetDateTime();
-
-        if (date > lastUpdated || !dbContext.HasData())
+        try
         {
-            localSettingsService.SaveSetting(OfflineDbUpdatedAtKey, date);
-            var asset = doc.RootElement.GetProperty("assets")
-                           .EnumerateArray()
-                           .FirstOrDefault(x => x.GetProperty("name").GetString() == @"anime-offline-database.jsonl.zst");
-            var url = asset.GetProperty("browser_download_url").GetString();
-            var dbStream = await url.GetStreamAsync();
-            Update(dbStream);
+            var lastUpdated = localSettingsService.ReadSetting(OfflineDbUpdatedAtKey, default(DateTime));
+            var stream = await "https://api.github.com/repos/manami-project/anime-offline-database/releases/latest"
+                               .WithHeader(HeaderNames.UserAgent, Http.UserAgent)
+                               .GetStreamAsync();
+            using var doc = await JsonDocument.ParseAsync(stream);
+            var date = doc.RootElement.GetProperty("published_at").GetDateTime();
+
+            if (date > lastUpdated || !dbContext.HasData())
+            {
+                localSettingsService.SaveSetting(OfflineDbUpdatedAtKey, date);
+                var asset = doc.RootElement.GetProperty("assets")
+                               .EnumerateArray()
+                               .FirstOrDefault(x => x.GetProperty("name").GetString() == @"anime-offline-database.jsonl.zst");
+                var url = asset.GetProperty("browser_download_url").GetString();
+                var dbStream = await url.GetStreamAsync();
+                Update(dbStream);
+            }
+        }
+        catch
+        {
+            // Ignore
         }
     }
 

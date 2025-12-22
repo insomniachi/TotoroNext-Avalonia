@@ -75,7 +75,7 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
         {
             Dispatcher.UIThread.Invoke(() =>
             {
-                card.NextEpText.IsVisible = false;
+                //card.NextEpText.IsVisible = false;
                 _control?.IsVisible = false;
             });
 
@@ -88,8 +88,8 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
         {
             var textBlock = (TextBlock)_control!.Child!;
             textBlock.Text = time;
-            card.NextEpText.Text = time;
-            card.NextEpText.IsVisible = true;
+            // card.NextEpText.Text = time;
+            // card.NextEpText.IsVisible = true;
         });
     }
 

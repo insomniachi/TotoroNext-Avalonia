@@ -3,7 +3,6 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ctl="totoro.next/controls"
-    xmlns:am="using:TotoroNext.Anime"
     xmlns:bhvr="totoro.next/behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
@@ -129,16 +128,11 @@
                     ItemsSource="{Binding Anime}">
                     <ItemsRepeater.ItemTemplate>
                         <DataTemplate>
-                            <ctl:AnimeCard
-                                Anime="{Binding}"
-                                DetailsCommand="{x:Static am:Commands.DetailsCommand}"
-                                SettingsCommand="{x:Static am:Commands.SettingsCommand}"
-                                WatchCommand="{x:Static am:Commands.WatchCommand}"
-                                SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
-                                HasDetailsPane="True">
+                            <ctl:AnimeCard Anime="{Binding}">
                                 <Interaction.Behaviors>
+                                    <bhvr:InteractiveCardControlsBehavior />
                                     <bhvr:NextEpisodeTimeBehavior />
-                                    <bhvr:UnwatchedEpisodesBadgeBehavior/>
+                                    <bhvr:UnwatchedEpisodesBadgeBehavior />
                                     <bhvr:AiringStatusBehavior />
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
