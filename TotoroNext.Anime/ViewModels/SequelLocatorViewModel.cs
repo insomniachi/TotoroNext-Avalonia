@@ -39,7 +39,9 @@ public sealed partial class SequelLocatorViewModel : ObservableObject, IAsyncIni
             .WhereNotNull()
             .Subscribe(navigator => navigator.NavigateToData(new UserListSortAndFilter(Sort, Filter)));
 
-        Filter.Format = AnimeMediaFormat.Tv;
+        Filter.IsUserScoreFilterVisible = false;
+        Sort.IsUserScoreSortVisible = false;
+        Sort.IsDateCompletedSortVisible = false;
     }
 
     public UserListFilter Filter { get; } = new();

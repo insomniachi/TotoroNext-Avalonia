@@ -20,6 +20,8 @@ public sealed partial class UserListSort : ObservableObject
 
     [ObservableProperty] public partial bool IsAscending { get; set; } = true;
     [ObservableProperty] public partial SortField Field { get; set; } = SortField.Title;
+    [ObservableProperty] public partial bool IsUserScoreSortVisible { get; set; } = true;
+    [ObservableProperty] public partial bool IsDateCompletedSortVisible { get; set; } = true;
     public IObservable<SortExpressionComparer<AnimeModel>> Comparer { get; }
 
     private static SortExpressionComparer<AnimeModel>? GetSortComparer(bool isAscending, SortField field)

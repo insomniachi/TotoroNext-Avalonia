@@ -31,8 +31,7 @@
                                 SearchTorrentsCommand="{x:Static am:Commands.SearchTorrentsCommand}"
                                 HasDetailsPane="True">
                                 <Interaction.Behaviors>
-                                    <bhvr:NextEpisodeTimeBehavior />
-                                    <bhvr:UnwatchedEpisodesBadgeBehavior />
+                                    <bhvr:MediaFormatBehavior />
                                     <bhvr:AiringStatusBehavior />
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>

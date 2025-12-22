@@ -57,7 +57,7 @@ public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttac
                         .DisposeWith(_disposable);
     }
 
-    protected override void OnDetachedFromLogicalTree()
+    protected override void OnDetachedFromVisualTree()
     {
         if (_control is not null)
         {

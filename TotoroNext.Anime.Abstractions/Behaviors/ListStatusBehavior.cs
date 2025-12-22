@@ -54,7 +54,7 @@ public class ListStatusBehavior : Behavior<AnimeCard>, IControlAttachingBehavior
                         .DisposeWith(_disposables);
     }
 
-    protected override void OnDetachedFromLogicalTree()
+    protected override void OnDetachedFromVisualTree()
     {
         if (_container is not null)
         {

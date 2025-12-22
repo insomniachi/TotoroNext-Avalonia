@@ -11,12 +11,12 @@ namespace TotoroNext.Anime.Abstractions.Behaviors;
 
 public class AiringStatusBehavior : Behavior<AnimeCard>
 {
-    private readonly CompositeDisposable _disposables = new();
     private static readonly SolidColorBrush AiringBrush = new(Colors.LimeGreen);
     private static readonly SolidColorBrush FinishedBrush = new(Colors.MediumSlateBlue);
     private static readonly SolidColorBrush NotYetBrush = new(Colors.LightSlateGray);
     private static readonly SolidColorBrush OtherBrush = new(Colors.Transparent);
-    
+    private readonly CompositeDisposable _disposables = new();
+
     protected override void OnAttachedToVisualTree()
     {
         AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
@@ -26,13 +26,12 @@ public class AiringStatusBehavior : Behavior<AnimeCard>
                         .DisposeWith(_disposables);
     }
 
-    protected override void OnDetachedFromLogicalTree()
+    protected override void OnDetachedFromVisualTree()
     {
         _disposables.Dispose();
     }
 
-
-    private static SolidColorBrush ToBrush(Models.AnimeModel anime)
+    private static SolidColorBrush ToBrush(AnimeModel anime)
     {
         return anime.AiringStatus switch
         {

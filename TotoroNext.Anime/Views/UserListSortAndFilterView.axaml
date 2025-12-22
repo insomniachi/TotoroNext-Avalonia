@@ -32,7 +32,7 @@
                                         ItemsSource="{Binding Genres, Mode=OneWay}"
                                         HorizontalAlignment="Stretch" />
             </u:FormItem>
-            <u:FormItem Label="User score">
+            <u:FormItem Label="User score" IsVisible="{Binding Filter.IsUserScoreFilterVisible}">
                 <u:EnumSelector EnumType="vm:UserScoreFilter"
                                 Value="{Binding Filter.ScoreFilter}"
                                 HorizontalAlignment="Stretch" />
@@ -45,22 +45,26 @@
                          Content="Descending" />
         </u:FormGroup>
         <u:FormGroup Header="Sort By">
-            <RadioButton
-                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Title}"
-                Content="Title"
-                GroupName="Field" />
-            <RadioButton
-                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=UserScore}"
-                Content="User Score"
-                GroupName="Field" />
-            <RadioButton
-                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=MeanScore}"
-                Content="Community Score"
-                GroupName="Field" />
-            <RadioButton
-                IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=DateCompleted}"
-                Content="Date Completed"
-                GroupName="Field" />
+            <StackPanel Spacing="20">
+                <RadioButton
+                    IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Title}"
+                    Content="Title"
+                    GroupName="Field" />
+                <RadioButton
+                    IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=UserScore}"
+                    Content="User Score"
+                    GroupName="Field"
+                    IsVisible="{Binding Sort.IsUserScoreSortVisible}" />
+                <RadioButton
+                    IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=MeanScore}"
+                    Content="Community Score"
+                    GroupName="Field" />
+                <RadioButton
+                    IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=DateCompleted}"
+                    Content="Date Completed"
+                    GroupName="Field" 
+                    IsVisible="{Binding Sort.IsDateCompletedSortVisible}"/>
+            </StackPanel>
         </u:FormGroup>
     </u:Form>
 </UserControl>
