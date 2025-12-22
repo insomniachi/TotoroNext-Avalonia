@@ -23,6 +23,7 @@
         <PackageReference Include="NTextCat"/>
 
         <!-- Microsoft -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
         <PackageReference Include="Microsoft.Extensions.Hosting"/>
         <PackageReference Include="Microsoft.Extensions.Http"/>
         <PackageReference Include="CommunityToolkit.Mvvm"/>

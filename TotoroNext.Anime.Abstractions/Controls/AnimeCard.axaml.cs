@@ -4,7 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Xaml.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
+using TotoroNext.Anime.Abstractions.Behaviors;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 
@@ -101,9 +103,15 @@ public partial class AnimeCard : UserControl
         }
 
         _exitDelayToken?.Cancel(); // Cancel any pending collapse
+        
+        foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IControlAttachingBehavior>())
+        {
+            behavior.OnHoverEntered();
+        }
+        
         StatusBorder.Height = 300;
         StatusBorder.Background = Brushes.Transparent;
-        BadgeContainer.Opacity = 0;
+        //BadgeContainer.Opacity = 0;
         TitleBorder.Height = double.NaN;
         TitleBorder.MaxHeight = 120;
         TitleTextBlock.FontWeight = FontWeight.Bold;
@@ -111,7 +119,7 @@ public partial class AnimeCard : UserControl
         TitleTextBlock.TextWrapping = TextWrapping.WrapWithOverflow;
         TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
         Tint.IsVisible = true;
-        CompletedCheckMark.Opacity = 0;
+        //CompletedCheckMark.Opacity = 0;
         if (ImageContainer.Effect is BlurEffect effect)
         {
             effect.Radius = 25;
@@ -137,15 +145,20 @@ public partial class AnimeCard : UserControl
                 return;
             }
 
+            foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IControlAttachingBehavior>())
+            {
+                behavior.OnHoverExited();
+            }
+
             StatusBorder.Height = 60;
             StatusBorder.Background = StatusBorderBrush;
-            BadgeContainer.Opacity = 1;
+            //BadgeContainer.Opacity = 1;
             TitleBorder.Height = 54;
             TitleTextBlock.FontWeight = FontWeight.Normal;
             TitleTextBlock.FontSize = 15;
             TitleTextBlock.TextWrapping = TextWrapping.NoWrap;
             TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
-            CompletedCheckMark.Opacity = 1;
+            //CompletedCheckMark.Opacity = 1;
             Tint.IsVisible = false;
             if (ImageContainer.Effect is BlurEffect effect)
             {

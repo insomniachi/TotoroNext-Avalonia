@@ -11,11 +11,7 @@
     xmlns:converters="clr-namespace:TotoroNext.Anime.Abstractions"
     PointerEntered="InputElement_OnPointerEntered"
     PointerExited="InputElement_OnPointerExited">
-
-    <UserControl.Resources>
-        <SolidColorBrush Color="Black" Opacity="0.35" x:Key="BackgroundOnImage" />
-    </UserControl.Resources>
-
+    
     <Border CornerRadius="8"
             BorderBrush="{DynamicResource SemiColorBorder}"
             ClipToBounds="True"
@@ -32,64 +28,12 @@
                         </BlurEffect.Transitions>
                     </BlurEffect>
                 </Grid.Effect>
+                
                 <Image Stretch="UniformToFill"
                        ail:ImageLoader.Source="{Binding $parent[local:AnimeCard].Anime.Image}"
                        x:Name="ImageControl" />
 
                 <Border Background="#AA000000" x:Name="Tint" IsVisible="False" />
-
-                <Grid VerticalAlignment="Top"
-                      ColumnDefinitions="*,Auto"
-                      Background="{StaticResource BackgroundOnImage}"
-                      x:Name="BadgeContainer"
-                      Height="33"
-                      IsVisible="{Binding #NextEpText.IsVisible, Mode=OneWay}">
-                    <TextBlock Grid.ColumnSpan="2"
-                               IsVisible="False"
-                               x:FieldModifier="public"
-                               x:Name="NextEpText"
-                               Foreground="White"
-                               Padding="2"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Center"
-                               FontSize="14"
-                               FontWeight="SemiBold"
-                               TextAlignment="Center"
-                               TextTrimming="CharacterEllipsis" />
-                    <Border CornerRadius="20"
-                            Background="Red"
-                            Padding="3"
-                            Grid.Column="1"
-                            Width="30"
-                            Margin="4"
-                            IsVisible="{Binding #BadgeText.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                            x:FieldModifier="public"
-                            x:Name="Badge">
-                        <TextBlock
-                            x:Name="BadgeText"
-                            x:FieldModifier="public"
-                            HorizontalAlignment="Center"
-                            FontWeight="Bold" />
-                    </Border>
-                </Grid>
-                <Border x:Name="CompletedCheckMark"
-                        Padding="5"
-                        Margin="0 3.5 5 0"
-                        Width="50"
-                        Background="LawnGreen"
-                        BorderBrush="Black"
-                        BorderThickness="1"
-                        CornerRadius="15"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        IsVisible="False">
-                    <iconPacks:PackIconControl x:Name="IconControl"
-                                               Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Check}"
-                                               Height="15"
-                                               Width="15"
-                                               HorizontalAlignment="Center"
-                                               Foreground="Black" />
-                </Border>
             </Grid>
             <Border
                 x:Name="StatusBorder"
@@ -114,12 +58,11 @@
                     </Border>
                     <Grid Grid.Row="1" RowDefinitions="*, Auto">
                         <StackPanel Grid.Row="0" Spacing="4" HorizontalAlignment="Stretch" Margin="8">
-                            <TextBlock Text="{Binding #NextEpText.Text}"
+                            <TextBlock x:Name="NextEpText"
                                        FontSize="13"
                                        HorizontalAlignment="Center"
                                        FontStyle="Italic"
-                                       Foreground="{DynamicResource SemiColorText3}"
-                                       IsVisible="{Binding #NextEpText.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                       Foreground="{DynamicResource SemiColorText3}"/>
 
                             <Button HorizontalAlignment="Stretch"
                                     Command="{Binding $parent[local:AnimeCard].WatchCommand}"
