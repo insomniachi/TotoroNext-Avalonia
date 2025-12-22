@@ -23,6 +23,13 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
 
     public Task InitializeAsync()
     {
+        PopulateAiringToday = async () =>
+        {
+            var airingToday = await _metadataService.GetAiringToday(_cts.Token);
+            return airingToday.OrderBy(x => x.Tracking == null ? 1 : 0)
+                              .ThenByDescending(x => x.MeanScore)
+                              .ToList();
+        };
         PopulatePopular = async () =>
         {
             var popular = await _metadataService.GetPopularAnimeAsync(_cts.Token);
@@ -33,15 +40,8 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
                                .ToList();
             return popular;
         };
-
         PopulateUpcoming = () => _metadataService.GetUpcomingAnimeAsync(_cts.Token);
-        PopulateAiringToday = async () =>
-        {
-            var airingToday = await _metadataService.GetAiringToday(_cts.Token);
-            return airingToday.OrderBy(x => x.Tracking == null ? 1 : 0)
-                              .ThenByDescending(x => x.MeanScore)
-                              .ToList();
-        };
+
 
         return Task.CompletedTask;
     }

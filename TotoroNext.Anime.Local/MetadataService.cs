@@ -221,11 +221,14 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
         var ids = await AnilistHelper.GetPopularAnimeAsync(client, ct);
         return await Task.Run(() =>
         {
-            return dbContext.Anime.FindAll()
-                            .Where(x => ids.Contains(x.AnilistId))
-                            .ToList()
-                            .Select(LocalModelConverter.ToAnimeModel)
-                            .ToList();
+            lock (dbContext)
+            {
+                return dbContext.Anime.FindAll()
+                                .Where(x => ids.Contains(x.AnilistId))
+                                .ToList()
+                                .Select(LocalModelConverter.ToAnimeModel)
+                                .ToList();
+            }
         }, ct);
     }
 
@@ -234,11 +237,14 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
         var ids = await AnilistHelper.GetUpcomingAnimeAsync(client, ct);
         return await Task.Run(() =>
         {
-            return dbContext.Anime.FindAll()
-                            .Where(x => ids.Contains(x.AnilistId))
-                            .ToList()
-                            .Select(LocalModelConverter.ToAnimeModel)
-                            .ToList();
+            lock (dbContext)
+            {
+                return dbContext.Anime.FindAll()
+                                .Where(x => ids.Contains(x.AnilistId))
+                                .ToList()
+                                .Select(LocalModelConverter.ToAnimeModel)
+                                .ToList();
+            }
         }, ct);
     }
 
@@ -247,11 +253,14 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
         var ids = await AnilistHelper.GetAiringToday(client, ct);
         return await Task.Run(() =>
         {
-            return dbContext.Anime.FindAll()
-                            .Where(x => ids.Contains(x.AnilistId))
-                            .ToList()
-                            .Select(LocalModelConverter.ToAnimeModel)
-                            .ToList();
+            lock (dbContext)
+            {
+                return dbContext.Anime.FindAll()
+                                .Where(x => ids.Contains(x.AnilistId))
+                                .ToList()
+                                .Select(LocalModelConverter.ToAnimeModel)
+                                .ToList();
+            }
         }, ct);
     }
 

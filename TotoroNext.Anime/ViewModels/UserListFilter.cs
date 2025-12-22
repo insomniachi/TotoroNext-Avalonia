@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using ReactiveUI;
-using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.ViewModels;
@@ -41,7 +40,7 @@ public partial class UserListFilter : ObservableObject
     [ObservableProperty] public partial ObservableCollection<string> Genres { get; set; } = [];
 
     [ObservableProperty] public partial UserScoreFilter ScoreFilter { get; set; }
-    
+
     [ObservableProperty] public partial bool IsUserScoreFilterVisible { get; set; } = true;
 
     public IObservable<Func<AnimeModel, bool>> Predicate { get; }

@@ -7,11 +7,9 @@
     mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="400"
     xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
     xmlns:local="using:TotoroNext.Anime.Abstractions.Controls"
-    xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-    xmlns:converters="clr-namespace:TotoroNext.Anime.Abstractions"
     PointerEntered="InputElement_OnPointerEntered"
     PointerExited="InputElement_OnPointerExited">
-    
+
     <Border CornerRadius="8"
             BorderBrush="{DynamicResource SemiColorBorder}"
             ClipToBounds="True"
@@ -28,7 +26,7 @@
                         </BlurEffect.Transitions>
                     </BlurEffect>
                 </Grid.Effect>
-                
+
                 <Image Stretch="UniformToFill"
                        ail:ImageLoader.Source="{Binding $parent[local:AnimeCard].Anime.Image}"
                        x:Name="ImageControl" />
