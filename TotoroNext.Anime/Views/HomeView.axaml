@@ -16,11 +16,11 @@
     <Grid RowDefinitions="*,2*" RowSpacing="16">
         <Grid>
             <Carousel ItemsSource="{Binding HeroItems}"
+                      Theme="{DynamicResource FullCarousel}"
                       ext:CarouselExtensions.ShuffleIntervalProperty="0:0:10"
+                      Classes.Line="True"
+                      Classes.Center="True"
                       Margin="40 0">
-                <Carousel.PageTransition>
-                    <PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
-                </Carousel.PageTransition>
                 <Carousel.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="*,*">
@@ -33,7 +33,7 @@
                             <Border Grid.Column="0" Grid.ColumnSpan="2" Background="#AA000000" />
                             <StackPanel Grid.Column="0" VerticalAlignment="Bottom"
                                         Spacing="12"
-                                        Margin="20">
+                                        Margin="60 20 20 20">
                                 <TextBlock Text="{Binding Title}" FontSize="40" FontWeight="Bold" />
                                 <TextBlock
                                     Text="{Binding Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}"
@@ -86,7 +86,8 @@
             <u:Skeleton HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         IsActive="True"
-                        IsLoading="{Binding IsLoading}"/>
+                        IsLoading="{Binding IsLoading}"
+                        IsHitTestVisible="False"/>
         </Grid>
         <ScrollViewer Grid.Row="1">
             <StackPanel Spacing="16" Margin="0 0 16 0">
