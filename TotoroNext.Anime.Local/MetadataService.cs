@@ -35,7 +35,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
                 return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
             }
 
-            var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderFull(), (int)anime.AnilistId,
+            var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderAdditionalInfo(), (int)anime.AnilistId,
                                                           type: MediaType.Anime).Build();
             var response = await client.SendQueryAsync<Query>(new GraphQLRequest
             {
@@ -57,7 +57,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
                 ExpiresAt = DateTimeOffset.UtcNow.AddMonths(1)
             };
 
-            dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
+            dbContext.AdditionalInfo.Insert(anime.AdditionalInfo);
             dbContext.Anime.Update(anime);
 
             return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
@@ -173,13 +173,15 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
             ExpiresAt = DateTimeOffset.Now.AddDays(6)
         };
 
-        if (anime.AiringStatus == AiringStatus.FinishedAiring && localAnime.EpisodeInfo.Info is { Count: > 0 })
+        if (anime.AiringStatus != AiringStatus.FinishedAiring || localAnime.EpisodeInfo.Info is not { Count: > 0 })
         {
-            lock (dbContext)
-            {
-                dbContext.Episodes.Upsert(localAnime.EpisodeInfo);
-                dbContext.Anime.Update(localAnime);
-            }
+            return localAnime.EpisodeInfo.Info;
+        }
+
+        lock (dbContext)
+        {
+            dbContext.Episodes.Insert(localAnime.EpisodeInfo);
+            dbContext.Anime.Update(localAnime);
         }
 
         return localAnime.EpisodeInfo.Info;
@@ -203,7 +205,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
 
         lock (dbContext)
         {
-            dbContext.Characters.Upsert(anime.CharacterInfo);
+            dbContext.Characters.Insert(anime.CharacterInfo);
             dbContext.Anime.Update(anime);
         }
 
@@ -273,7 +275,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
         }, ct);
     }
 
-    private static MediaQueryBuilder MediaQueryBuilderFull()
+    private static MediaQueryBuilder MediaQueryBuilderAdditionalInfo()
     {
         return new MediaQueryBuilder()
                .WithId()

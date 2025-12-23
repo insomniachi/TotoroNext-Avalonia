@@ -82,6 +82,9 @@ internal class Initializer(
             }
         }
 
-        dbContext.Anime.Upsert(toUpsert);
+        lock (dbContext)
+        {
+            dbContext.Anime.Upsert(toUpsert);
+        }
     }
 }
