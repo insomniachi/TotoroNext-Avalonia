@@ -21,6 +21,8 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
 
     [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulateAiringToday { get; set; }
 
+    [ObservableProperty] public partial bool IsLoading { get; set; } = true;
+
     public Task InitializeAsync()
     {
         PopulateAiringToday = async () =>
@@ -38,6 +40,7 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
                                .Where(x => x.Season == current)
                                .Take(5)
                                .ToList();
+            IsLoading = false;
             return popular;
         };
         PopulateUpcoming = () => _metadataService.GetUpcomingAnimeAsync(_cts.Token);

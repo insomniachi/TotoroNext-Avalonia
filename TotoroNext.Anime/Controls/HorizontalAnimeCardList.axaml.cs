@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System.Diagnostics;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
@@ -6,7 +7,6 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using ReactiveUI;
-using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Controls;
@@ -15,10 +15,10 @@ public partial class HorizontalAnimeCardList : UserControl
 {
     public static readonly StyledProperty<List<AnimeModel>> AnimeProperty =
         AvaloniaProperty.Register<HorizontalAnimeCardList, List<AnimeModel>>(nameof(Anime));
-    
+
     public static readonly StyledProperty<string> TitleProperty =
         AvaloniaProperty.Register<HorizontalAnimeCardList, string>(nameof(Title));
-    
+
     public static readonly StyledProperty<Func<Task<List<AnimeModel>>>?> AsyncPopulatorProperty =
         AvaloniaProperty.Register<HorizontalAnimeCardList, Func<Task<List<AnimeModel>>>?>(nameof(AsyncPopulator));
 
@@ -31,6 +31,8 @@ public partial class HorizontalAnimeCardList : UserControl
             .Switch()
             .Subscribe();
     }
+
+    public static IEnumerable<int> SkeletonItems => Enumerable.Range(0, 10);
 
     public List<AnimeModel> Anime
     {
@@ -56,9 +58,9 @@ public partial class HorizontalAnimeCardList : UserControl
         {
             return;
         }
-        
+
         const int viewPortLeft = 0;
-        
+
         for (var i = Anime.Count; i >= 0; i--)
         {
             if (ItemsHost.ContainerFromIndex(i) is not ContentPresenter container)
@@ -79,16 +81,15 @@ public partial class HorizontalAnimeCardList : UserControl
             {
                 continue;
             }
-            
+
             var offset = 0d;
             if (itemLeft < viewPortLeft && itemRight > viewPortLeft)
             {
                 offset = itemRight - viewPortLeft;
             }
-            
+
             _ = SmoothScrollToAsync(Scroller, Scroller.Offset.X - Scroller.Viewport.Width + offset);
             break;
-
         }
     }
 
@@ -98,9 +99,9 @@ public partial class HorizontalAnimeCardList : UserControl
         {
             return;
         }
-        
+
         var viewportRight = Scroller.Viewport.Width;
-        
+
         for (var i = 0; i < Anime.Count; i++)
         {
             if (ItemsHost.ContainerFromIndex(i) is not ContentPresenter container)
@@ -124,7 +125,6 @@ public partial class HorizontalAnimeCardList : UserControl
 
             _ = SmoothScrollToAsync(Scroller, Scroller.Offset.X + itemLeft);
             break;
-
         }
     }
 
@@ -137,14 +137,14 @@ public partial class HorizontalAnimeCardList : UserControl
         ScrollLeftButton.IsEnabled = offsetX > 1;
         ScrollRightButton.IsEnabled = offsetX < maxX - 1;
     }
-    
+
     private static async Task SmoothScrollToAsync(ScrollViewer scroller, double targetX)
     {
         var startX = scroller.Offset.X;
         var distance = targetX - startX;
         const int durationMs = 300; // adjust for speed
 
-        var stopwatch = new System.Diagnostics.Stopwatch();
+        var stopwatch = new Stopwatch();
         stopwatch.Start();
         var easing = new CubicEaseOut();
 
@@ -163,7 +163,7 @@ public partial class HorizontalAnimeCardList : UserControl
             scroller.Offset = scroller.Offset.WithX(targetX); // snap to final
         });
     }
-    
+
     private async Task TryPopulate()
     {
         if (AsyncPopulator is null)
@@ -173,15 +173,15 @@ public partial class HorizontalAnimeCardList : UserControl
 
         try
         {
-            Dispatcher.UIThread.Invoke(() => { LoadingContainer.IsLoading = true; });
+            Dispatcher.UIThread.Invoke(() => { ItemsHostSkeleton.IsVisible = true; });
 
             var list = await AsyncPopulator.Invoke();
-            
+
             if (list.Count == 0)
             {
                 return;
             }
-            
+
             Dispatcher.UIThread.Invoke(() => { Anime = list; });
         }
         catch (Exception e)
@@ -190,10 +190,7 @@ public partial class HorizontalAnimeCardList : UserControl
         }
         finally
         {
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                LoadingContainer.IsLoading = false;
-            });
+            Dispatcher.UIThread.Invoke(() => { ItemsHostSkeleton.IsVisible = false; });
         }
     }
 }

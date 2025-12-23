@@ -40,6 +40,7 @@ public sealed partial class SequelLocatorViewModel : ObservableObject, IAsyncIni
             .Subscribe(navigator => navigator.NavigateToData(new UserListSortAndFilter(Sort, Filter)));
 
         Filter.IsUserScoreFilterVisible = false;
+        Filter.AllowUntracked = true;
         Sort.IsUserScoreSortVisible = false;
         Sort.IsDateCompletedSortVisible = false;
     }

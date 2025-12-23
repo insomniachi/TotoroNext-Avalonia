@@ -1,17 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Irihi.Avalonia.Shared.Contracts;
 using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 
 namespace TotoroNext.Anime.Abstractions.ViewModels;
 
 [UsedImplicitly]
 public partial class UpdateTrackingViewModel(
-    Models.AnimeModel anime,
-    ITrackingUpdater trackingUpdater) : ObservableObject, IDialogViewModel
+    AnimeModel anime,
+    ITrackingUpdater trackingUpdater) : ObservableObject, IDialogContext
 {
-    public Models.AnimeModel Anime { get; } = anime;
+    public AnimeModel Anime { get; } = anime;
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = anime.Tracking?.Status;
 
@@ -25,15 +26,17 @@ public partial class UpdateTrackingViewModel(
     [ObservableProperty]
     public partial DateTime? FinishDate { get; set; } = anime.Tracking?.FinishDate == new DateTime() ? null : anime.Tracking?.FinishDate;
 
-    public Action? Close { get; set; }
-
-    public async Task Handle(DialogResult result)
+    [RelayCommand]
+    public void Close()
     {
-        if (result is not DialogResult.OK)
-        {
-            return;
-        }
+        RequestClose?.Invoke(this, DialogResult.OK);
+    }
 
+    public event EventHandler<object?>? RequestClose;
+
+    [RelayCommand]
+    private async Task UpdateTracking()
+    {
         var tracking = new Tracking
         {
             Status = Status,
@@ -49,6 +52,14 @@ public partial class UpdateTrackingViewModel(
         }
 
         await trackingUpdater.UpdateTracking(Anime, tracking);
+        Close();
+    }
+
+    [RelayCommand]
+    private async Task DeleteTracking()
+    {
+        await trackingUpdater.RemoveTracking(Anime);
+        Close();
     }
 
     private static bool AreEqual(Tracking? left, Tracking? right)

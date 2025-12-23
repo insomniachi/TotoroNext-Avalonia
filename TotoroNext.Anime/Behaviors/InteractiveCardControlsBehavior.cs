@@ -230,7 +230,6 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IControlAtta
                          {
                              Title = anime.Title,
                              Key = $"tracking/{anime.ServiceName}",
-                             Button = DialogButton.OKCancel,
                              Data = anime
                          });
                      })

@@ -37,7 +37,7 @@
                       VerticalScrollBarVisibility="Disabled"
                       ScrollChanged="Scroller_OnScrollChanged"
                       x:Name="Scroller">
-            <u:LoadingContainer x:Name="LoadingContainer">
+            <Grid>
                 <ItemsControl ItemsSource="{Binding $parent[local:HorizontalAnimeCardList].Anime}"
                               x:Name="ItemsHost"
                               Height="300">
@@ -47,7 +47,7 @@
                                            Height="300"
                                            Width="210">
                                 <Interaction.Behaviors>
-                                    <bhvr:InteractiveCardControlsBehavior/>
+                                    <bhvr:InteractiveCardControlsBehavior />
                                     <bhvr:ListStatusBehavior />
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
@@ -59,7 +59,24 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-            </u:LoadingContainer>
+                <ItemsControl ItemsSource="{x:Static local:HorizontalAnimeCardList.SkeletonItems}"
+                              x:Name="ItemsHostSkeleton"
+                              Height="300">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <u:Skeleton IsLoading="True"
+                                        IsActive="True"
+                                        Height="300"
+                                        Width="210" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="32" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
         </ScrollViewer>
         <Button Grid.Row="1" Grid.Column="2" Click="ScrollRight" Height="40" Width="40" CornerRadius="20"
                 IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}"

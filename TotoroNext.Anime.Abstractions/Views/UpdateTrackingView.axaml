@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.Abstractions.ViewModels"
              xmlns:models="clr-namespace:TotoroNext.Anime.Abstractions.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -11,34 +10,51 @@
              x:DataType="viewModels:UpdateTrackingViewModel"
              x:Class="TotoroNext.Anime.Abstractions.Views.UpdateTrackingView">
 
-    <u:Form LabelPosition="Left" LabelWidth="*" HorizontalAlignment="Stretch">
-        <u:FormItem Label="Status">
-            <u:EnumSelector EnumType="{x:Type models:ListItemStatus}"
-                            Value="{Binding Status, Mode=TwoWay}"
-                            DisplayDescription="True"
-                            HorizontalAlignment="Stretch" />
-        </u:FormItem>
-        <u:FormItem Label="Progress">
-            <u:NumericIntUpDown Minimum="0"
-                                Maximum="{Binding Anime.TotalEpisodes}"
-                                Value="{Binding Progress, Mode=TwoWay}" />
-        </u:FormItem>
-        <u:FormItem Label="Score">
-            <u:NumericIntUpDown Minimum="0"
-                                Maximum="10"
-                                Value="{Binding Score, Mode=TwoWay}" />
-        </u:FormItem>
-        <u:FormItem Label="Start Date">
-            <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
-                          HorizontalAlignment="Stretch"
-                          DisplayFormat="MMMM dd, yyyy"
-                          Classes="ClearButton" />
-        </u:FormItem>
-        <u:FormItem Label="Finish Date">
-            <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}"
-                          HorizontalAlignment="Stretch"
-                          DisplayFormat="MMMM dd, yyyy"
-                          Classes="ClearButton" />
-        </u:FormItem>
-    </u:Form>
+    <Grid RowDefinitions="*,Auto" RowSpacing="16">
+        <u:Form LabelPosition="Left" LabelWidth="*" HorizontalAlignment="Stretch">
+            <u:FormItem Label="Status">
+                <u:EnumSelector EnumType="{x:Type models:ListItemStatus}"
+                                Value="{Binding Status, Mode=TwoWay}"
+                                DisplayDescription="True"
+                                HorizontalAlignment="Stretch" />
+            </u:FormItem>
+            <u:FormItem Label="Progress">
+                <u:NumericIntUpDown Minimum="0"
+                                    Maximum="{Binding Anime.TotalEpisodes}"
+                                    Value="{Binding Progress, Mode=TwoWay}" />
+            </u:FormItem>
+            <u:FormItem Label="Score">
+                <u:NumericIntUpDown Minimum="0"
+                                    Maximum="10"
+                                    Value="{Binding Score, Mode=TwoWay}" />
+            </u:FormItem>
+            <u:FormItem Label="Start Date">
+                <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"
+                              DisplayFormat="MMMM dd, yyyy"
+                              Classes.ClearButton="True" />
+            </u:FormItem>
+            <u:FormItem Label="Finish Date">
+                <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"
+                              DisplayFormat="MMMM dd, yyyy"
+                              Classes.ClearButton="True" />
+            </u:FormItem>
+        </u:Form>
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8">
+            <Button Content="Cancel" Command="{Binding CloseCommand}"/>
+            <Button Content="Delete"
+                    Classes.Danger="True" 
+                    Command="{Binding DeleteTrackingCommand}"
+                    Theme="{DynamicResource SolidButton}" />
+            <Button Content="Update" 
+                    Classes.Primary="True"
+                    Command="{Binding UpdateTrackingCommand}"
+                    Theme="{DynamicResource SolidButton}" />
+        </StackPanel>
+    </Grid>
+
 </UserControl>

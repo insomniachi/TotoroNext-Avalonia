@@ -43,6 +43,8 @@ public partial class UserListFilter : ObservableObject
 
     [ObservableProperty] public partial bool IsUserScoreFilterVisible { get; set; } = true;
 
+    public bool AllowUntracked { get; set; }
+
     public IObservable<Func<AnimeModel, bool>> Predicate { get; }
 
     public void Refresh()
@@ -52,10 +54,18 @@ public partial class UserListFilter : ObservableObject
 
     public bool IsVisible(AnimeModel model)
     {
-        var listStatusCheck = model.Tracking is null || (Status == ListItemStatus.Watching
-            ? model.Tracking?.Status is ListItemStatus.Watching or ListItemStatus.Rewatching
-            : model.Tracking?.Status == Status);
-
+        bool listStatusCheck;
+        if (model.Tracking is null)
+        {
+            listStatusCheck = AllowUntracked;
+        }
+        else
+        {
+            listStatusCheck = Status == ListItemStatus.Watching
+                ? model.Tracking.Status is ListItemStatus.Watching or ListItemStatus.Rewatching
+                : model.Tracking.Status == Status;
+        }
+        
         var searchTextStatus = string.IsNullOrEmpty(Term) ||
                                model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
                                model.RomajiTitle.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
