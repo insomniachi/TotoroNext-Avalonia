@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using ReactiveUI;
-using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.ViewModels;
@@ -42,6 +41,10 @@ public partial class UserListFilter : ObservableObject
 
     [ObservableProperty] public partial UserScoreFilter ScoreFilter { get; set; }
 
+    [ObservableProperty] public partial bool IsUserScoreFilterVisible { get; set; } = true;
+
+    public bool AllowUntracked { get; set; }
+
     public IObservable<Func<AnimeModel, bool>> Predicate { get; }
 
     public void Refresh()
@@ -51,10 +54,18 @@ public partial class UserListFilter : ObservableObject
 
     public bool IsVisible(AnimeModel model)
     {
-        var listStatusCheck = model.Tracking is null || (Status == ListItemStatus.Watching
-            ? model.Tracking?.Status is ListItemStatus.Watching or ListItemStatus.Rewatching
-            : model.Tracking?.Status == Status);
-
+        bool listStatusCheck;
+        if (model.Tracking is null)
+        {
+            listStatusCheck = AllowUntracked;
+        }
+        else
+        {
+            listStatusCheck = Status == ListItemStatus.Watching
+                ? model.Tracking.Status is ListItemStatus.Watching or ListItemStatus.Rewatching
+                : model.Tracking.Status == Status;
+        }
+        
         var searchTextStatus = string.IsNullOrEmpty(Term) ||
                                model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
                                model.RomajiTitle.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||

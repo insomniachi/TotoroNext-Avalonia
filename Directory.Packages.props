@@ -43,6 +43,7 @@
     <PackageVersion Include="LiteDB" Version="5.0.21" />
     <PackageVersion Include="MalApi.V2" Version="2.0.8" />
     <PackageVersion Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.57.0" />

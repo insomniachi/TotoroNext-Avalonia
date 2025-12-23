@@ -69,6 +69,43 @@ public sealed class TrackingUpdater(
         }
     }
 
+    public async Task RemoveTracking(AnimeModel anime)
+    {
+        foreach (var trackingService in factory.CreateAll())
+        {
+            var id = anime.ExternalIds.GetIdForService(trackingService.Name);
+
+            if (id is not > 0)
+            {
+                id = animeMappingService.GetId(anime)?.GetIdForService(trackingService.Name);
+            }
+
+            if (id is not > 0)
+            {
+                id = await SearchId(anime, trackingService.Id);
+            }
+
+
+            if (id is null)
+            {
+                continue;
+            }
+
+            try
+            {
+                await trackingService.Remove(id.Value);
+                if (anime.ServiceName == trackingService.Name)
+                {
+                    anime.Tracking = null;
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Failed to delete tracking");
+            }
+        }
+    }
+
     private async Task<long?> SearchId(AnimeModel anime, Guid serviceId)
     {
         try

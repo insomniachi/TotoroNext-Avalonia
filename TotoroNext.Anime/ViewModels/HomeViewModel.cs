@@ -21,8 +21,17 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
 
     [ObservableProperty] public partial Func<Task<List<AnimeModel>>>? PopulateAiringToday { get; set; }
 
+    [ObservableProperty] public partial bool IsLoading { get; set; } = true;
+
     public Task InitializeAsync()
     {
+        PopulateAiringToday = async () =>
+        {
+            var airingToday = await _metadataService.GetAiringToday(_cts.Token);
+            return airingToday.OrderBy(x => x.Tracking == null ? 1 : 0)
+                              .ThenByDescending(x => x.MeanScore)
+                              .ToList();
+        };
         PopulatePopular = async () =>
         {
             var popular = await _metadataService.GetPopularAnimeAsync(_cts.Token);
@@ -31,17 +40,11 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
                                .Where(x => x.Season == current)
                                .Take(5)
                                .ToList();
+            IsLoading = false;
             return popular;
         };
-
         PopulateUpcoming = () => _metadataService.GetUpcomingAnimeAsync(_cts.Token);
-        PopulateAiringToday = async () =>
-        {
-            var airingToday = await _metadataService.GetAiringToday(_cts.Token);
-            return airingToday.OrderBy(x => x.Tracking == null ? 1 : 0)
-                              .ThenByDescending(x => x.MeanScore)
-                              .ToList();
-        };
+
 
         return Task.CompletedTask;
     }

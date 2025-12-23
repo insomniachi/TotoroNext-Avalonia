@@ -11,18 +11,18 @@ public class Module : IModule
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>($"tracking/Local");
-        
+        services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>("tracking/Local");
+
         services.AddSingleton<ILiteDbContext, LiteDbContext>();
-        
+
         services.AddTransient<IAnimeMappingService, AnimeMappingService>();
         services.AddTransient<IBackgroundInitializer, Initializer>();
-        
+
         services.AddKeyedTransient<IMetadataService, MetadataService>(Guid.Empty);
         services.AddKeyedTransient<ITrackingService, TrackingService>(Guid.Empty);
         services.AddTransient<ILocalTrackingService, TrackingService>();
         services.AddTransient<ILocalMetadataService, MetadataService>();
-        
+
         services.AddHostedService(sp => sp.GetRequiredService<ILiteDbContext>());
     }
 }

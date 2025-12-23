@@ -13,11 +13,11 @@ public class Commands(
     ITrackingUpdater trackingUpdater,
     IAnimeExtensionService extensionService) : IInitializer
 {
-    public static ICommand? WatchCommand { get; private set; }
-    public static ICommand? SettingsCommand { get; private set; }
-    public static ICommand? DetailsCommand { get; private set; }
-    public static ICommand? SearchTorrentsCommand { get; private set; }
-    public static ICommand? AddToListCommand { get; private set; }
+    public static ICommand WatchCommand { get; private set; } = null!;
+    public static ICommand SettingsCommand { get; private set; } = null!;
+    public static ICommand DetailsCommand { get; private set; } = null!;
+    public static ICommand SearchTorrentsCommand { get; private set; } = null!;
+    public static ICommand AddToListCommand { get; private set; } = null!;
 
     public void Initialize()
     {

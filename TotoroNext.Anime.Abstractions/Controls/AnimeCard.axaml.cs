@@ -1,42 +1,16 @@
-﻿using System.Windows.Input;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using CommunityToolkit.Mvvm.Messaging;
-using TotoroNext.Module.Abstractions;
-using Ursa.Controls;
+using Avalonia.Xaml.Interactivity;
+using TotoroNext.Anime.Abstractions.Behaviors;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Controls;
 
 public partial class AnimeCard : UserControl
 {
-    public static readonly StyledProperty<Models.AnimeModel> AnimeProperty =
-        AvaloniaProperty.Register<AnimeCard, Models.AnimeModel>(nameof(Anime));
-
-    public static readonly StyledProperty<ICommand> WatchCommandProperty =
-        AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(WatchCommand));
-
-    public static readonly StyledProperty<ICommand> DetailsCommandProperty =
-        AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(DetailsCommand));
-
-    public static readonly StyledProperty<ICommand> SearchTorrentsCommandProperty =
-        AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(SearchTorrentsCommand));
-
-    public static readonly StyledProperty<ICommand> AddToListCommandProperty =
-        AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(AddToListCommand));
-
-    public static readonly StyledProperty<bool> HasDetailsPaneProperty =
-        AvaloniaProperty.Register<AnimeCard, bool>(nameof(HasDetailsPane));
-
-    public static readonly StyledProperty<ICommand> SettingsCommandProperty =
-        AvaloniaProperty.Register<AnimeCard, ICommand>(nameof(SettingsCommand));
-
-    public static readonly StyledProperty<bool> ShowCompletedStatusProperty =
-        AvaloniaProperty.Register<AnimeCard, bool>(nameof(ShowCompletedStatus));
-
-    private static readonly SolidColorBrush StatusBorderBrush = new(Color.Parse("#AA000000"));
+    public static readonly StyledProperty<AnimeModel> AnimeProperty =
+        AvaloniaProperty.Register<AnimeCard, AnimeModel>(nameof(Anime));
 
     private CancellationTokenSource? _exitDelayToken;
 
@@ -45,76 +19,19 @@ public partial class AnimeCard : UserControl
         InitializeComponent();
     }
 
-    public Models.AnimeModel Anime
+    public AnimeModel Anime
     {
         get => GetValue(AnimeProperty);
         set => SetValue(AnimeProperty, value);
     }
 
-    public ICommand WatchCommand
-    {
-        get => GetValue(WatchCommandProperty);
-        set => SetValue(WatchCommandProperty, value);
-    }
-
-    public ICommand DetailsCommand
-    {
-        get => GetValue(DetailsCommandProperty);
-        set => SetValue(DetailsCommandProperty, value);
-    }
-
-    public ICommand SearchTorrentsCommand
-    {
-        get => GetValue(SearchTorrentsCommandProperty);
-        set => SetValue(SearchTorrentsCommandProperty, value);
-    }
-
-    public ICommand SettingsCommand
-    {
-        get => GetValue(SettingsCommandProperty);
-        set => SetValue(SettingsCommandProperty, value);
-    }
-
-    public ICommand AddToListCommand
-    {
-        get => GetValue(AddToListCommandProperty);
-        set => SetValue(AddToListCommandProperty, value);
-    }
-
-    public bool HasDetailsPane
-    {
-        get => GetValue(HasDetailsPaneProperty);
-        set => SetValue(HasDetailsPaneProperty, value);
-    }
-
-    public bool ShowCompletedStatus
-    {
-        get => GetValue(ShowCompletedStatusProperty);
-        set => SetValue(ShowCompletedStatusProperty, value);
-    }
-
     private void InputElement_OnPointerEntered(object? sender, PointerEventArgs e)
     {
-        if (!HasDetailsPane)
-        {
-            return;
-        }
-
         _exitDelayToken?.Cancel(); // Cancel any pending collapse
-        StatusBorder.Height = 300;
-        StatusBorder.Background = Brushes.Transparent;
-        BadgeContainer.Opacity = 0;
-        TitleBorder.Height = double.NaN;
-        TitleBorder.MaxHeight = 120;
-        TitleTextBlock.FontWeight = FontWeight.Bold;
-        TitleTextBlock.FontSize = 18;
-        TitleTextBlock.TextWrapping = TextWrapping.WrapWithOverflow;
-        TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
-        Tint.IsVisible = true;
-        CompletedCheckMark.Opacity = 0;
-        if (ImageContainer.Effect is BlurEffect effect)
+
+        foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IControlAttachingBehavior>())
         {
-            effect.Radius = 25;
+            behavior.OnHoverEntered();
         }
     }
 
@@ -132,51 +49,14 @@ public partial class AnimeCard : UserControl
 
             await Task.Delay(50, _exitDelayToken.Token); // Wait 300ms
 
-            if (!HasDetailsPane)
+            foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IControlAttachingBehavior>())
             {
-                return;
-            }
-
-            StatusBorder.Height = 60;
-            StatusBorder.Background = StatusBorderBrush;
-            BadgeContainer.Opacity = 1;
-            TitleBorder.Height = 54;
-            TitleTextBlock.FontWeight = FontWeight.Normal;
-            TitleTextBlock.FontSize = 15;
-            TitleTextBlock.TextWrapping = TextWrapping.NoWrap;
-            TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
-            CompletedCheckMark.Opacity = 1;
-            Tint.IsVisible = false;
-            if (ImageContainer.Effect is BlurEffect effect)
-            {
-                effect.Radius = 0;
+                behavior.OnHoverExited();
             }
         }
         catch (Exception)
         {
             // Exit was canceled due to re-entry
         }
-    }
-
-    private void OnEditClicked(object? sender, RoutedEventArgs e)
-    {
-        WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage
-        {
-            Title = Anime.Title,
-            Key = $"tracking/{Anime.ServiceName}",
-            Button = DialogButton.OKCancel,
-            Data = Anime
-        });
-    }
-
-    private void OnDownloadClicked(object? sender, RoutedEventArgs e)
-    {
-        WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage
-        {
-            Title = Anime.Title,
-            Data = Anime,
-            Key = "Download",
-            Button = DialogButton.OKCancel
-        });
     }
 }

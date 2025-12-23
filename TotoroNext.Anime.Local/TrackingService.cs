@@ -17,37 +17,43 @@ internal class TrackingService(
 
     public Task<Tracking> Update(long id, Tracking tracking)
     {
-        var anime = dbContext.Anime.FindById(id);
-        var localTracking = new LocalTracking { Id = id, Tracking = tracking };
-        anime.Tracking = localTracking;
-        dbContext.Tracking.Upsert(localTracking);
-        dbContext.Anime.Upsert(anime);
-        return Task.FromResult(tracking);
+        lock (dbContext)
+        {
+            var anime = dbContext.Anime.FindById(id);
+            var localTracking = new LocalTracking { Id = id, Tracking = tracking };
+            anime.Tracking = localTracking;
+            dbContext.Tracking.Upsert(localTracking);
+            dbContext.Anime.Upsert(anime);
+            return Task.FromResult(tracking);
+        }
     }
 
     public Task<bool> Remove(long id)
     {
-        var anime = dbContext.Anime.FindById(id);
-        anime.Tracking = null;
-        dbContext.Tracking.Delete(id);
-        dbContext.Anime.Upsert(anime);
-        return Task.FromResult(true);
+        lock (dbContext)
+        {
+            var anime = dbContext.Anime.FindById(id);
+            anime.Tracking = null;
+            dbContext.Tracking.Delete(id);
+            dbContext.Anime.Upsert(anime);
+            return Task.FromResult(true);
+        }
     }
 
-    public async Task<List<AnimeModel>> GetUserList(CancellationToken ct)
+    public Task<List<AnimeModel>> GetUserList(CancellationToken ct)
     {
-        var tcs = new TaskCompletionSource<List<AnimeModel>>();
-
-        await Task.Run(() =>
+        return Task.Run(() =>
         {
-            var trackedIds = dbContext.Tracking.FindAll().Select(t => t.Id).ToHashSet();
-            var list = dbContext.Anime.Find(a => trackedIds.Contains(a.MyAnimeListId))
-                                .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
-                                .ToList();
-            tcs.SetResult(list);
-        }, ct);
+            lock (dbContext)
+            {
+                var trackedIds = dbContext.Tracking.FindAll().Select(t => t.Id).ToHashSet();
+                var list = dbContext.Anime.Find(a => trackedIds.Contains(a.MyAnimeListId))
+                                    .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
+                                    .ToList();
+                return list;
+            }
 
-        return await tcs.Task;
+        }, ct);
     }
 
     public void SyncList(List<AnimeModel> animeList)
@@ -87,8 +93,11 @@ internal class TrackingService(
             trackings.Add(localTracking);
         }
 
-        dbContext.Tracking.Upsert(trackings);
-        dbContext.Anime.Upsert(toUpdate);
+        lock (dbContext)
+        {
+            dbContext.Tracking.Upsert(trackings);
+            dbContext.Anime.Upsert(toUpdate);
+        }
     }
 
     public async Task ExportList(List<AnimeModel> animeList)

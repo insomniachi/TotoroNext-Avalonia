@@ -8,7 +8,8 @@
              x:Class="TotoroNext.Views.DownloadUpdateView">
     <Grid>
         <StackPanel Spacing="10" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-            <ProgressBar Value="{Binding Progress, Mode=OneWay}">
+            <ProgressBar Value="{Binding Progress, Mode=OneWay}"
+                         ShowProgressText="True">
                 <ProgressBar.Transitions>
                     <Transitions>
                         <DoubleTransition Property="Value" Duration="0:0:0.3" />

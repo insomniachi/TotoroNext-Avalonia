@@ -14,6 +14,7 @@ public sealed partial class UserListSortAndFilterViewModel(
     public UserListFilter Filter { get; } = sortAndFilter.Filter;
     public UserListSort Sort { get; } = sortAndFilter.Sort;
     [ObservableProperty] public partial List<string> Genres { get; set; } = [];
+    
 
     public async Task InitializeAsync()
     {

@@ -1,5 +1,6 @@
 ﻿using GraphQL;
 using GraphQL.Client.Http;
+using Microsoft.Extensions.Caching.Memory;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Anime.Anilist;
 
@@ -7,8 +8,16 @@ namespace TotoroNext.Anime.Abstractions;
 
 public static class AnilistHelper
 {
-    public static async Task<int> GetTotalAiredEpisodes(GraphQLHttpClient client, long anilistId)
+    private static readonly IMemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
+    
+    public static async ValueTask<int> GetTotalAiredEpisodes(GraphQLHttpClient client, long anilistId, CancellationToken ct)
     {
+        var key = $"{anilistId}tae";
+        if (Cache.TryGetValue<int>(key, out var cachedValue))
+        {
+            return cachedValue;
+        }
+        
         var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
                                                       .WithStatus()
                                                       .WithEpisodes()
@@ -17,18 +26,26 @@ public static class AnilistHelper
         var response = await client.SendQueryAsync<Query>(new GraphQLRequest
         {
             Query = query
-        });
+        }, ct);
 
         if (response.Data.Media.Status == MediaStatus.Finished)
         {
             return response.Data.Media.Episodes ?? -1;
         }
 
-        return (response.Data.Media.NextAiringEpisode.Episode ?? 0) - 1;
+        var value = (response.Data.Media.NextAiringEpisode.Episode ?? 0) - 1;
+        Cache.Set(key, value, TimeSpan.FromMinutes(2));
+        return value;
     }
 
-    public static async Task<(int AiredEpisodes, DateTime? NextAiringAt)> GetNextEpisodeInfo(GraphQLHttpClient client, long anilistId)
+    public static async ValueTask<(int AiredEpisodes, DateTime? NextAiringAt)> GetNextEpisodeInfo(GraphQLHttpClient client, long anilistId, CancellationToken ct)
     {
+        var key = $"{anilistId}tae+at";
+        if (Cache.TryGetValue<(int, DateTime?)>(key, out var cachedValue))
+        {
+            return cachedValue;
+        }
+        
         var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
                                                           .WithNextAiringEpisode(new AiringScheduleQueryBuilder()
                                                                                  .WithTimeUntilAiring()
@@ -36,10 +53,12 @@ public static class AnilistHelper
         var response = await client.SendQueryAsync<Query>(new GraphQLRequest
         {
             Query = query
-        });
+        }, ct);
 
-        return new ValueTuple<int, DateTime?>(response.Data.Media.NextAiringEpisode.Episode ?? 0,
+        var value = new ValueTuple<int, DateTime?>(response.Data.Media.NextAiringEpisode.Episode ?? 0,
                                               ConvertToExactTime(response.Data.Media.NextAiringEpisode.TimeUntilAiring));
+        Cache.Set(key, value, TimeSpan.FromMinutes(2));
+        return value;
     }
 
     public static async Task<List<CharacterModel>> GetCharactersAsync(GraphQLHttpClient client, long anilistId)

@@ -5,5 +5,6 @@ namespace TotoroNext.Anime.Abstractions;
 
 public interface ITrackingUpdater : IHostedService
 {
-    Task UpdateTracking(Models.AnimeModel anime, Tracking tracking);
+    Task UpdateTracking(AnimeModel anime, Tracking tracking);
+    Task RemoveTracking(AnimeModel anime);
 }

@@ -9,80 +9,88 @@
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ext="totoro.next/extensions"
              xmlns:am="clr-namespace:TotoroNext.Anime"
+             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:HomeViewModel"
              x:Class="TotoroNext.Anime.Views.HomeView">
     <Grid RowDefinitions="*,2*" RowSpacing="16">
-        <Carousel ItemsSource="{Binding HeroItems}"
-                  ext:CarouselExtensions.ShuffleIntervalProperty="0:0:10"
-                  Margin="40 0">
-            <Carousel.PageTransition>
-                <PageSlide Duration="0:00:00.500" Orientation="Horizontal" />
-            </Carousel.PageTransition>
-            <Carousel.ItemTemplate>
-                <DataTemplate>
-                    <Grid ColumnDefinitions="*,*">
-                        <Image Grid.Column="0" Grid.ColumnSpan="2" ail:ImageLoader.Source="{Binding BannerImage}"
-                               Stretch="UniformToFill">
-                            <Image.Effect>
-                                <BlurEffect Radius="20" />
-                            </Image.Effect>
-                        </Image>
-                        <Border Grid.Column="0" Grid.ColumnSpan="2" Background="#AA000000" />
-                        <StackPanel Grid.Column="0" VerticalAlignment="Bottom"
-                                    Spacing="12"
-                                    Margin="20">
-                            <TextBlock Text="{Binding Title}" FontSize="40" FontWeight="Bold" />
-                            <TextBlock
-                                Text="{Binding Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}"
-                                TextWrapping="Wrap"
-                                FontSize="20"
-                                TextTrimming="CharacterEllipsis"
-                                MaxHeight="200" />
-                        </StackPanel>
+        <Grid>
+            <Carousel ItemsSource="{Binding HeroItems}"
+                      Theme="{DynamicResource FullCarousel}"
+                      ext:CarouselExtensions.ShuffleIntervalProperty="0:0:10"
+                      Classes.Line="True"
+                      Classes.Center="True"
+                      Margin="40 0">
+                <Carousel.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="*,*">
+                            <Image Grid.Column="0" Grid.ColumnSpan="2" ail:ImageLoader.Source="{Binding BannerImage}"
+                                   Stretch="UniformToFill">
+                                <Image.Effect>
+                                    <BlurEffect Radius="20" />
+                                </Image.Effect>
+                            </Image>
+                            <Border Grid.Column="0" Grid.ColumnSpan="2" Background="#AA000000" />
+                            <StackPanel Grid.Column="0" VerticalAlignment="Bottom"
+                                        Spacing="12"
+                                        Margin="60 20 20 20">
+                                <TextBlock Text="{Binding Title}" FontSize="40" FontWeight="Bold" />
+                                <TextBlock
+                                    Text="{Binding Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}"
+                                    TextWrapping="Wrap"
+                                    FontSize="20"
+                                    TextTrimming="CharacterEllipsis"
+                                    MaxHeight="200" />
+                            </StackPanel>
 
-                        <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal"
-                                    VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Right"
-                                    Margin="20 0 20 20"
-                                    Spacing="12">
-                            <Button HorizontalAlignment="Stretch"
-                                    Command="{x:Static am:Commands.WatchCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding Path=., Converter={x:Static aa:Converters.HasAiredConverter}}">
-                                <StackPanel Spacing="8" Orientation="Horizontal">
-                                    <TextBlock Text="Watch" VerticalAlignment="Center" />
-                                    <iconPacks:PackIconControl
-                                        Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
-                                        Height="15" Width="11"
-                                        VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                            <Button Command="{x:Static am:Commands.SearchTorrentsCommand}"
-                                    CommandParameter="{Binding}"
-                                    IsVisible="{Binding Path=., Converter={x:Static aa:Converters.HasAiredConverter}}"
-                                    HorizontalAlignment="Stretch">
-                                <StackPanel Spacing="8" Orientation="Horizontal">
-                                    <TextBlock Text="Torrent" VerticalAlignment="Center" />
-                                    <iconPacks:PackIconControl
-                                        Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
-                                        Height="15" Width="11"
-                                        VerticalAlignment="Center" />
-                                </StackPanel>
-                            </Button>
-                            <Button Content="Details"
-                                    HorizontalAlignment="Stretch"
-                                    Command="{x:Static am:Commands.DetailsCommand}"
-                                    CommandParameter="{Binding}" />
-                        </StackPanel>
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Bottom"
+                                        HorizontalAlignment="Right"
+                                        Margin="20 0 20 20"
+                                        Spacing="12">
+                                <Button HorizontalAlignment="Stretch"
+                                        Command="{x:Static am:Commands.WatchCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding Path=., Converter={x:Static aa:Converters.HasAiredConverter}}">
+                                    <StackPanel Spacing="8" Orientation="Horizontal">
+                                        <TextBlock Text="Watch" VerticalAlignment="Center" />
+                                        <iconPacks:PackIconControl
+                                            Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
+                                            Height="15" Width="11"
+                                            VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{x:Static am:Commands.SearchTorrentsCommand}"
+                                        CommandParameter="{Binding}"
+                                        IsVisible="{Binding Path=., Converter={x:Static aa:Converters.HasAiredConverter}}"
+                                        HorizontalAlignment="Stretch">
+                                    <StackPanel Spacing="8" Orientation="Horizontal">
+                                        <TextBlock Text="Torrent" VerticalAlignment="Center" />
+                                        <iconPacks:PackIconControl
+                                            Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
+                                            Height="15" Width="11"
+                                            VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Content="Details"
+                                        HorizontalAlignment="Stretch"
+                                        Command="{x:Static am:Commands.DetailsCommand}"
+                                        CommandParameter="{Binding}" />
+                            </StackPanel>
 
-                    </Grid>
-                </DataTemplate>
-            </Carousel.ItemTemplate>
-        </Carousel>
+                        </Grid>
+                    </DataTemplate>
+                </Carousel.ItemTemplate>
+            </Carousel>
+            <u:Skeleton HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        IsActive="True"
+                        IsLoading="{Binding IsLoading}"
+                        IsHitTestVisible="False"/>
+        </Grid>
         <ScrollViewer Grid.Row="1">
-            <StackPanel Spacing="16">
+            <StackPanel Spacing="16" Margin="0 0 16 0">
                 <c:HorizontalAnimeCardList AsyncPopulator="{Binding PopulateAiringToday}"
                                            Title="Airing Today" />
                 <c:HorizontalAnimeCardList AsyncPopulator="{Binding PopulatePopular}"
