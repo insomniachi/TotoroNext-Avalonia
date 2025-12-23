@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using FluentAvalonia.Core;
 using ReactiveUI;
 
@@ -23,12 +24,18 @@ public class CarouselExtensions
             return;
         }
 
-        var disposable = Observable.Timer(ts, ts)
-                                   .ObserveOn(RxApp.MainThreadScheduler)
-                                   .Select(_ => GetItemsCount(sender))
-                                   .WhereNotNull()
-                                   .Select(count => sender.SelectedIndex == count - 1 ? 0 : sender.SelectedIndex + 1)
-                                   .Subscribe(index => sender.SelectedIndex = index);
+        var disposable = sender.GetObservable(SelectingItemsControl.SelectedIndexProperty)
+                               .Skip(1)
+                               .StartWith(sender.SelectedIndex)
+                               .Select(_ => Observable.Timer(ts, ts)
+                                                      .ObserveOn(RxApp.MainThreadScheduler)
+                                                      .Select(_ => GetItemsCount(sender))
+                                                      .WhereNotNull()
+                                                      .Select(count => sender.SelectedIndex == count - 1 
+                                                                  ? 0 
+                                                                  : sender.SelectedIndex + 1))
+                               .Switch()
+                               .Subscribe(index => sender.SelectedIndex = index);
 
         sender.Unloaded += (_, _) => disposable.Dispose();
     }

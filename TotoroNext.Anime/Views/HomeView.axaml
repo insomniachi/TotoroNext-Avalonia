@@ -13,6 +13,26 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:HomeViewModel"
              x:Class="TotoroNext.Anime.Views.HomeView">
+    <UserControl.Styles>
+        <Style Selector="Carousel.Line /template/ ListBox#PART_ItemsPresenter2 ListBoxItem">
+            <Setter Property="Foreground" Value="#80FFFFFF" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Foreground" Value="#FFFFFFFF" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Foreground" Value="#FFFFFFFF" />
+            </Style>
+            <Style Selector="^:selected">
+                <Setter Property="Foreground" Value="#FFFFFFFF" />
+            </Style>
+        </Style>
+        <Style Selector="Carousel.Line /template/ Button">
+            <Setter Property="Foreground" Value="#80FFFFFF"/>
+            <Style Selector="^:pointerover /template/ PathIcon">
+                <Setter Property="Foreground" Value="#FFFFFFFF" />
+            </Style>
+        </Style>
+    </UserControl.Styles>
     <Grid RowDefinitions="*,2*" RowSpacing="16">
         <Grid>
             <Carousel ItemsSource="{Binding HeroItems}"
@@ -20,6 +40,7 @@
                       ext:CarouselExtensions.ShuffleIntervalProperty="0:0:10"
                       Classes.Line="True"
                       Classes.Center="True"
+                      Foreground="White"
                       Margin="40 0">
                 <Carousel.ItemTemplate>
                     <DataTemplate>
