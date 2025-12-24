@@ -4,6 +4,7 @@ using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
+using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.Xaml.Interactivity;
@@ -173,23 +174,19 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
 
     private static Border CreatControl()
     {
-        return new Border
-        {
-            Background = new SolidColorBrush { Color = Colors.Black, Opacity = 0.35 },
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Top,
-            Height = 33,
-            Child = new TextBlock
-            {
-                Foreground = Brushes.White,
-                Padding = new Thickness(2),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Center,
-                FontSize = 14,
-                FontWeight = FontWeight.SemiBold,
-                TextAlignment = TextAlignment.Center,
-                TextTrimming = TextTrimming.CharacterEllipsis
-            }
-        };
+        return new Border()
+               .Background(new SolidColorBrush(Colors.Black, 0.35))
+               .HorizontalAlignment(HorizontalAlignment.Stretch)
+               .VerticalAlignment(VerticalAlignment.Top)
+               .Height(33)
+               .Child(new TextBlock()
+                      .Foreground(Brushes.White)
+                      .Padding(2)
+                      .VerticalAlignment(VerticalAlignment.Stretch)
+                      .HorizontalAlignment(HorizontalAlignment.Center)
+                      .FontSize(14)
+                      .FontWeight(FontWeight.SemiBold)
+                      .TextAlignment(TextAlignment.Center)
+                      .TextTrimming(TextTrimming.CharacterEllipsis));
     }
 }

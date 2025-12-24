@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
+using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using GraphQL.Client.Http;
@@ -40,16 +41,12 @@ public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttac
                         .WhereNotNull()
                         .Select(anime =>
                         {
-                            if (_control is not null)
-                            {
-                                AssociatedObject?.ImageContainer.Children.Remove(_control);
-                                _control = null;
-                            }
+                            RemoveControl();
 
                             return anime.WhenAnyValue(x => x.Tracking)
                                         .WhereNotNull()
                                         .ObserveOn(RxApp.MainThreadScheduler)
-                                        .Select(_ => Observable.FromAsync(ct => UpdateBadge(AssociatedObject!.Anime, ct)))
+                                        .Select(_ => Observable.FromAsync(ct => UpdateBadge(anime, ct)))
                                         .Switch();
                         })
                         .Switch()
@@ -59,12 +56,7 @@ public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttac
 
     protected override void OnDetachedFromVisualTree()
     {
-        if (_control is not null)
-        {
-            AssociatedObject?.ImageContainer.Children.Remove(_control);
-            _control = null;
-        }
-
+        RemoveControl();
         _disposable.Dispose();
     }
 
@@ -140,22 +132,28 @@ public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttac
         AssociatedObject?.ImageContainer.Children.Add(_control);
     }
 
+    private void RemoveControl()
+    {
+        if (_control is null)
+        {
+            return;
+        }
+
+        AssociatedObject?.ImageContainer.Children.Remove(_control);
+        _control = null;
+    }
 
     private static Border CreateControl()
     {
-        return new Border
-        {
-            HorizontalAlignment = HorizontalAlignment.Right,
-            VerticalAlignment = VerticalAlignment.Top,
-            CornerRadius = new CornerRadius(20),
-            Padding = new Thickness(3),
-            Margin = new Thickness(4),
-            Width = 30,
-            Child = new TextBlock
-            {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                FontWeight = FontWeight.Bold
-            }
-        };
+        return new Border()
+               .HorizontalAlignment(HorizontalAlignment.Right)
+               .VerticalAlignment(VerticalAlignment.Top)
+               .CornerRadius(20)
+               .Padding(3)
+               .Margin(4)
+               .Width(30)
+               .Child(new TextBlock()
+                      .HorizontalAlignment(HorizontalAlignment.Center)
+                      .FontWeight(FontWeight.Bold));
     }
 }

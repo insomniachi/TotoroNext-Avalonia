@@ -11,10 +11,6 @@ namespace TotoroNext.Anime.Abstractions.Behaviors;
 
 public class AiringStatusBehavior : Behavior<AnimeCard>
 {
-    private static readonly SolidColorBrush AiringBrush = new(Colors.LimeGreen);
-    private static readonly SolidColorBrush FinishedBrush = new(Colors.MediumSlateBlue);
-    private static readonly SolidColorBrush NotYetBrush = new(Colors.LightSlateGray);
-    private static readonly SolidColorBrush OtherBrush = new(Colors.Transparent);
     private readonly CompositeDisposable _disposables = new();
 
     protected override void OnAttachedToVisualTree()
@@ -31,14 +27,14 @@ public class AiringStatusBehavior : Behavior<AnimeCard>
         _disposables.Dispose();
     }
 
-    private static SolidColorBrush ToBrush(AnimeModel anime)
+    private static IImmutableBrush ToBrush(AnimeModel anime)
     {
         return anime.AiringStatus switch
         {
-            AiringStatus.CurrentlyAiring => AiringBrush,
-            AiringStatus.FinishedAiring => FinishedBrush,
-            AiringStatus.NotYetAired => NotYetBrush,
-            _ => OtherBrush
+            AiringStatus.CurrentlyAiring => Brushes.LimeGreen,
+            AiringStatus.FinishedAiring => Brushes.MediumSlateBlue,
+            AiringStatus.NotYetAired => Brushes.LightSlateGray,
+            _ => Brushes.Transparent
         };
     }
 }

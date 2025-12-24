@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
+using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using IconPacks.Avalonia;
@@ -94,30 +95,19 @@ public class ListStatusBehavior : Behavior<AnimeCard>, IControlAttachingBehavior
 
     private static Border CreateControl()
     {
-        var icon = new PackIconControl
-        {
-            Name = "IconControl",
-            Width = 15,
-            Height = 15,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Foreground = Brushes.Black
-        };
-
-        var border = new Border
-        {
-            Name = "IconControlBorder",
-            Padding = new Thickness(5),
-            Margin = new Thickness(0, 3.5, 5, 0),
-            Width = 50,
-            BorderBrush = Brushes.Black,
-            BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(15),
-            HorizontalAlignment = HorizontalAlignment.Right,
-            VerticalAlignment = VerticalAlignment.Top,
-            Child = icon
-        };
-
-        return border;
+        return new Border()
+               .Padding(5)
+               .Margin(0, 3.5, 5)
+               .Width(50)
+               .BorderThickness(1)
+               .BorderBrush(Brushes.Black)
+               .HorizontalAlignment(HorizontalAlignment.Right)
+               .VerticalAlignment(VerticalAlignment.Top)
+               .Child(new PackIconControl()
+                      .Width(15)
+                      .Height(15)
+                      .HorizontalAlignment(HorizontalAlignment.Center)
+                      .Foreground(Brushes.Black));
     }
 
     private void Update(Tracking tracking)

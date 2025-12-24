@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
+using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using ReactiveUI;
@@ -69,23 +70,19 @@ public class MediaFormatBehavior : Behavior<AnimeCard>, IControlAttachingBehavio
 
     private static Border CreateControl()
     {
-        return new Border
-        {
-            Background = Brushes.GreenYellow,
-            BorderBrush = Brushes.Black,
-            BorderThickness =  new Thickness(1),
-            HorizontalAlignment = HorizontalAlignment.Left,
-            VerticalAlignment = VerticalAlignment.Top,
-            CornerRadius = new CornerRadius(20),
-            Padding = new Thickness(8),
-            Margin = new Thickness(8),
-            Child = new TextBlock
-            {
-                HorizontalAlignment = HorizontalAlignment.Center,
-                FontWeight = FontWeight.SemiBold,
-                Foreground = Brushes.Black,
-                FontSize = 13,
-            }
-        };
+        return new Border()
+               .Background(Brushes.GreenYellow)
+               .BorderBrush(Brushes.Black)
+               .BorderThickness(1)
+               .HorizontalAlignment(HorizontalAlignment.Center)
+               .VerticalAlignment(VerticalAlignment.Top)
+               .CornerRadius(20)
+               .Padding(8)
+               .Margin(8)
+               .Child(new TextBlock()
+                      .HorizontalAlignment(HorizontalAlignment.Center)
+                      .FontWeight(FontWeight.SemiBold)
+                      .Foreground(Brushes.Black)
+                      .FontSize(13));
     }
 }
