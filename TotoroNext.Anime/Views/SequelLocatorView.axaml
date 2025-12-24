@@ -16,7 +16,7 @@
             VerticalContentAlignment="Stretch"
             Background="Transparent"
             IsLoading="{Binding IsLoading}">
-            <ScrollViewer>
+            <ScrollViewer u:ScrollTo.Direction="Top" >
                 <ItemsRepeater
                     Margin="16,0"
                     ItemsSource="{Binding Anime}">

@@ -38,5 +38,52 @@
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Background" Value="Transparent" />
         </Style>
+        <Style Selector="u|ScrollToButton">
+            <Setter Property="Theme">
+                <Setter.Value>
+                    <ControlTheme TargetType="u:ScrollToButton">
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="VerticalAlignment" Value="Bottom" />
+                        <Setter Property="Cursor" Value="Hand" />
+                        <Setter Property="Margin" Value="0, 0, 16, 16" />
+                        <Setter Property="Template">
+                            <ControlTemplate TargetType="u:ScrollToButton">
+                                <Border
+                                    Name="PART_Background"
+                                    Background="{DynamicResource ButtonSolidPrimaryBackground}"
+                                    CornerRadius="20">
+                                    <PathIcon
+                                        Name="PART_Icon"
+                                        Margin="8"
+                                        Theme="{DynamicResource InnerPathIcon}"
+                                        Data="{DynamicResource ScrollToButtonIconGlyph}"
+                                        Foreground="{DynamicResource ButtonSolidForeground}" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter>
+                        <Style Selector="^:pointerover /template/ Border#PART_Background">
+                            <Setter Property="Background"
+                                    Value="{DynamicResource ButtonSolidPrimaryPointeroverBackground}" />
+                            <Setter Property="BorderBrush"
+                                    Value="{DynamicResource ButtonSolidPrimaryPointeroverBorderBrush}" />
+                        </Style>
+                        <Style Selector="^:pressed /template/ Border#PART_Background">
+                            <Setter Property="Background" Value="{DynamicResource ButtonSolidPrimaryPressedBackground}" />
+                            <Setter Property="BorderBrush"
+                                    Value="{DynamicResource ButtonSolidPrimaryPressedBorderBrush}" />
+                        </Style>
+                        <Style Selector="^[Direction=Right] /template/ PathIcon#PART_Icon">
+                            <Setter Property="RenderTransform" Value="rotate(90deg)" />
+                        </Style>
+                        <Style Selector="^[Direction=Bottom] /template/ PathIcon#PART_Icon">
+                            <Setter Property="RenderTransform" Value="rotate(180deg)" />
+                        </Style>
+                        <Style Selector="^[Direction=Left] /template/ PathIcon#PART_Icon">
+                            <Setter Property="RenderTransform" Value="rotate(270deg)" />
+                        </Style>
+                    </ControlTheme>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Styles>
 </Application>

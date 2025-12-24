@@ -36,10 +36,22 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
         {
             var popular = await _metadataService.GetPopularAnimeAsync(_cts.Token);
             var current = AnimeHelpers.CurrentSeason();
-            HeroItems = popular.OrderByDescending(x => x.MeanScore)
+            var items = popular.OrderByDescending(x => x.MeanScore)
                                .Where(x => x.Season == current)
                                .Take(5)
                                .ToList();
+
+            if (_metadataService is not ILocalMetadataService localMetadataService)
+            {
+                HeroItems = items;
+            }
+            else
+            {
+                // local database doesn't have description
+                // it's fetched and cached when requestion full data.
+                HeroItems = await PopulateData(items, localMetadataService).ToListAsync();
+            }
+            
             IsLoading = false;
             return popular;
         };
@@ -53,5 +65,13 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
     {
         _cts.Cancel();
         _cts.Dispose();
+    }
+
+    private static async IAsyncEnumerable<AnimeModel> PopulateData(IEnumerable<AnimeModel> partial, ILocalMetadataService metadataService)
+    {
+        foreach (var anime in partial)
+        {
+            yield return await metadataService.GetAnimeAsync(anime.Id);
+        }
     }
 }
