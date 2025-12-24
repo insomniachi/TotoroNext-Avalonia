@@ -22,13 +22,13 @@ using Ursa.Controls;
 
 namespace TotoroNext.Anime.Behaviors;
 
-public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IControlAttachingBehavior
+public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOverlayBehavior
 {
     private static readonly SolidColorBrush StatusBorderBrush = new(Color.Parse("#AA000000"));
     private readonly CompositeDisposable _disposables = new();
     private Grid? _control;
 
-    public void OnHoverEntered()
+    public void OnPointerEntered()
     {
         if (AssociatedObject is null)
         {
@@ -50,7 +50,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IControlAtta
         }
     }
 
-    public void OnHoverExited()
+    public void OnPointerExited()
     {
         if (AssociatedObject is null)
         {

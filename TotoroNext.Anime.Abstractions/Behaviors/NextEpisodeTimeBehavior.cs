@@ -7,7 +7,6 @@ using Avalonia.Layout;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using Avalonia.Threading;
-using Avalonia.Xaml.Interactivity;
 using GraphQL.Client.Http;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
@@ -17,22 +16,27 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
-public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBehavior
+public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
 {
     private static readonly IAnimeMappingService MappingService = Container.Services.GetRequiredService<IAnimeMappingService>();
     private static readonly GraphQLHttpClient Client = Container.Services.GetRequiredService<GraphQLHttpClient>();
-
-    private readonly CompositeDisposable _disposable = new();
-    private Border? _control;
-
-    public void OnHoverEntered()
+    
+    protected override Border CreateControl()
     {
-        _control?.IsVisible = false;
-    }
-
-    public void OnHoverExited()
-    {
-        _control?.IsVisible = true;
+        return new Border()
+               .Background(new SolidColorBrush(Colors.Black, 0.35))
+               .HorizontalAlignment(HorizontalAlignment.Stretch)
+               .VerticalAlignment(VerticalAlignment.Top)
+               .Height(33)
+               .Child(new TextBlock()
+                      .Foreground(Brushes.White)
+                      .Padding(2)
+                      .HorizontalAlignment(HorizontalAlignment.Stretch)
+                      .VerticalAlignment(VerticalAlignment.Center)
+                      .FontSize(14)
+                      .FontWeight(FontWeight.SemiBold)
+                      .TextAlignment(TextAlignment.Center)
+                      .TextTrimming(TextTrimming.CharacterEllipsis));
     }
 
     protected override void OnAttachedToVisualTree()
@@ -41,11 +45,7 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
                         .WhereNotNull()
                         .Select(anime =>
                         {
-                            if (_control is not null)
-                            {
-                                AssociatedObject?.ImageContainer.Children.Remove(_control);
-                                _control = null;
-                            }
+                            RemoveControl();
 
                             return anime.WhenAnyValue(x => x.Tracking)
                                         .WhereNotNull()
@@ -55,18 +55,7 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
                         })
                         .Switch()
                         .Subscribe()
-                        .DisposeWith(_disposable);
-    }
-
-    protected override void OnDetachedFromVisualTree()
-    {
-        if (_control is not null)
-        {
-            AssociatedObject?.ImageContainer.Children.Remove(_control);
-            _control = null;
-        }
-
-        _disposable.Dispose();
+                        .DisposeWith(Disposables);
     }
 
     private async Task UpdateAiringTime(AnimeCard card, AnimeModel anime, CancellationToken ct)
@@ -74,11 +63,7 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
         var time = await ToNextEpisodeAiringTime(anime, ct);
         if (string.IsNullOrEmpty(time))
         {
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                //card.NextEpText.IsVisible = false;
-                _control?.IsVisible = false;
-            });
+            Dispatcher.UIThread.Invoke(() => { Control?.IsVisible = false; });
 
             return;
         }
@@ -87,10 +72,8 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
 
         Dispatcher.UIThread.Invoke(() =>
         {
-            var textBlock = (TextBlock)_control!.Child!;
+            var textBlock = (TextBlock)Control!.Child!;
             textBlock.Text = time;
-            // card.NextEpText.Text = time;
-            // card.NextEpText.IsVisible = true;
         });
     }
 
@@ -156,37 +139,5 @@ public class NextEpisodeTimeBehavior : Behavior<AnimeCard>, IControlAttachingBeh
         }
 
         return sb.ToString().TrimEnd();
-    }
-
-    private void EnsureControl()
-    {
-        if (_control is not null && _control.Parent == AssociatedObject?.ImageContainer)
-        {
-            return;
-        }
-
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            _control = CreatControl();
-            AssociatedObject?.ImageContainer.Children.Add(_control);
-        });
-    }
-
-    private static Border CreatControl()
-    {
-        return new Border()
-               .Background(new SolidColorBrush(Colors.Black, 0.35))
-               .HorizontalAlignment(HorizontalAlignment.Stretch)
-               .VerticalAlignment(VerticalAlignment.Top)
-               .Height(33)
-               .Child(new TextBlock()
-                      .Foreground(Brushes.White)
-                      .Padding(2)
-                      .VerticalAlignment(VerticalAlignment.Stretch)
-                      .HorizontalAlignment(HorizontalAlignment.Center)
-                      .FontSize(14)
-                      .FontWeight(FontWeight.SemiBold)
-                      .TextAlignment(TextAlignment.Center)
-                      .TextTrimming(TextTrimming.CharacterEllipsis));
     }
 }

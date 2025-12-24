@@ -5,7 +5,6 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
-using Avalonia.Xaml.Interactivity;
 using GraphQL.Client.Http;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
@@ -16,24 +15,12 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
-public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttachingBehavior
+public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
 {
     private static readonly IAnimeExtensionService ExtensionService = Container.Services.GetRequiredService<IAnimeExtensionService>();
     private static readonly IAnimeRelations Relations = Container.Services.GetRequiredService<IAnimeRelations>();
     private static readonly IAnimeMappingService MappingService = Container.Services.GetRequiredService<IAnimeMappingService>();
-    private readonly CompositeDisposable _disposable = new();
-    private Border? _control;
     private static GraphQLHttpClient Client => Container.Services.GetRequiredService<GraphQLHttpClient>();
-
-    public void OnHoverEntered()
-    {
-        _control?.IsVisible = false;
-    }
-
-    public void OnHoverExited()
-    {
-        _control?.IsVisible = true;
-    }
 
     protected override void OnAttachedToVisualTree()
     {
@@ -51,15 +38,8 @@ public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttac
                         })
                         .Switch()
                         .Subscribe()
-                        .DisposeWith(_disposable);
+                        .DisposeWith(Disposables);
     }
-
-    protected override void OnDetachedFromVisualTree()
-    {
-        RemoveControl();
-        _disposable.Dispose();
-    }
-
 
     private async Task UpdateBadge(AnimeModel? anime, CancellationToken ct)
     {
@@ -82,14 +62,14 @@ public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttac
 
         if (diff <= 0)
         {
-            _control?.IsVisible = false;
+            Control?.IsVisible = false;
             return;
         }
 
         EnsureControl();
 
-        _control?.Background = Brushes.Orange;
-        (_control?.Child as TextBlock)?.Text = diff.ToString();
+        Control?.Background = Brushes.Orange;
+        (Control?.Child as TextBlock)?.Text = diff.ToString();
 
         var result = await ExtensionService.SearchAsync(anime);
 
@@ -117,33 +97,11 @@ public class UnwatchedEpisodesBadgeBehavior : Behavior<AnimeCard>, IControlAttac
             return;
         }
 
-        _control?.Background = Brushes.Red;
-        (_control?.Child as TextBlock)?.Text = actualDiff.ToString();
+        Control?.Background = Brushes.Red;
+        (Control?.Child as TextBlock)?.Text = actualDiff.ToString();
     }
 
-    public void EnsureControl()
-    {
-        if (_control is not null)
-        {
-            return;
-        }
-
-        _control = CreateControl();
-        AssociatedObject?.ImageContainer.Children.Add(_control);
-    }
-
-    private void RemoveControl()
-    {
-        if (_control is null)
-        {
-            return;
-        }
-
-        AssociatedObject?.ImageContainer.Children.Remove(_control);
-        _control = null;
-    }
-
-    private static Border CreateControl()
+    protected override Border CreateControl()
     {
         return new Border()
                .HorizontalAlignment(HorizontalAlignment.Right)

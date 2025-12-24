@@ -108,7 +108,6 @@
                                            Margin="16">
                                 <Interaction.Behaviors>
                                     <bhvr:InteractiveCardControlsBehavior />
-                                    <bhvr:MediaFormatBehavior />
                                     <bhvr:AiringStatusBehavior />
                                     <bhvr:ListStatusBehavior />
                                 </Interaction.Behaviors>

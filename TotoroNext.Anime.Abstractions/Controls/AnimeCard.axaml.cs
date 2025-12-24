@@ -29,9 +29,9 @@ public partial class AnimeCard : UserControl
     {
         _exitDelayToken?.Cancel(); // Cancel any pending collapse
 
-        foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IControlAttachingBehavior>())
+        foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IAnimeCardOverlayBehavior>())
         {
-            behavior.OnHoverEntered();
+            behavior.OnPointerEntered();
         }
     }
 
@@ -49,9 +49,9 @@ public partial class AnimeCard : UserControl
 
             await Task.Delay(50, _exitDelayToken.Token); // Wait 300ms
 
-            foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IControlAttachingBehavior>())
+            foreach (var behavior in AvaloniaObject.GetBehaviors(this).OfType<IAnimeCardOverlayBehavior>())
             {
-                behavior.OnHoverExited();
+                behavior.OnPointerExited();
             }
         }
         catch (Exception)
