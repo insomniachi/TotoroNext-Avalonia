@@ -117,13 +117,19 @@ public partial class HorizontalAnimeCardList : UserControl
 
             var itemLeft = transform.Value.X;
             var itemRight = itemLeft + container.Bounds.Width;
-
-            if (!(itemRight > viewportRight) || !(itemLeft < viewportRight))
+            
+            if(itemRight < viewportRight)
             {
                 continue;
             }
+            
+            var offset = 0d;
+            if (itemLeft < viewportRight && itemRight > viewportRight)
+            {
+                offset = itemRight - viewportRight;
+            }
 
-            _ = SmoothScrollToAsync(Scroller, Scroller.Offset.X + itemLeft);
+            _ = SmoothScrollToAsync(Scroller, Scroller.Offset.X + itemLeft + offset);
             break;
         }
     }
