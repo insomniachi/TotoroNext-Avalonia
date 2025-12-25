@@ -11,14 +11,26 @@ public abstract class AnimeCardOverlayBehavior<TOverlay> : Behavior<AnimeCard>, 
     protected TOverlay? Control;
     // ReSharper disable once CollectionNeverUpdated.Global
     protected readonly CompositeDisposable Disposables = new();
+    
+    public bool HideOnPointerOver { get; set; } = true;
 
     public void OnPointerEntered()
     {
+        if (!HideOnPointerOver)
+        {
+            return;
+        }
+        
         Control?.IsVisible = false;
     }
 
     public void OnPointerExited()
     {
+        if (!HideOnPointerOver)
+        {
+            return;
+        }
+        
         Control?.IsVisible = true;
     }
 

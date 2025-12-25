@@ -110,6 +110,7 @@
                                     <bhvr:InteractiveCardControlsBehavior />
                                     <bhvr:AiringStatusBehavior />
                                     <bhvr:ListStatusBehavior />
+                                    <bhvr:MediaFormatBehavior/>
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
                         </DataTemplate>

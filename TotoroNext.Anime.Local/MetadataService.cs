@@ -57,7 +57,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
                 ExpiresAt = DateTimeOffset.UtcNow.AddMonths(1)
             };
 
-            dbContext.AdditionalInfo.Insert(anime.AdditionalInfo);
+            dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
             dbContext.Anime.Update(anime);
 
             return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
@@ -180,7 +180,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
 
         lock (dbContext)
         {
-            dbContext.Episodes.Insert(localAnime.EpisodeInfo);
+            dbContext.Episodes.Upsert(localAnime.EpisodeInfo);
             dbContext.Anime.Update(localAnime);
         }
 
@@ -205,7 +205,7 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
 
         lock (dbContext)
         {
-            dbContext.Characters.Insert(anime.CharacterInfo);
+            dbContext.Characters.Upsert(anime.CharacterInfo);
             dbContext.Anime.Update(anime);
         }
 

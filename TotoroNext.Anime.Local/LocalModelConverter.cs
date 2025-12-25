@@ -1,7 +1,6 @@
 ﻿using LiteDB;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Local;
 
@@ -79,7 +78,7 @@ internal static class LocalModelConverter
             Related = ConvertRelated(anime.RelatedAnime).ToList(),
             Image = anime.Picture,
             Thumbnail = anime.Thumbnail,
-            AlternateTitles = anime.Synonyms.Where(TextHelpers.IsEnglish).Distinct(StringComparer.InvariantCultureIgnoreCase).ToList()
+            AlternateTitles = anime.Synonyms.Distinct(StringComparer.InvariantCultureIgnoreCase).ToList()
         };
 
         UpdateIds(model, anime.Sources);

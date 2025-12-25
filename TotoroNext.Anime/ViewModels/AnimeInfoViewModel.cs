@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -25,16 +26,68 @@ public partial class AnimeInfoViewModel(
         }
 
         Anime = await service.GetAnimeAsync(parameters.Anime.Id);
-
-        Fields =
-        [
-            new KeyValuePair<string, string>("Titles", string.Join(Environment.NewLine, Anime.AlternateTitles)),
-            new KeyValuePair<string, string>("Format", Anime.MediaFormat.ToString()),
-            new KeyValuePair<string, string>("Episodes", Anime.TotalEpisodes?.ToString() ?? "??"),
-            new KeyValuePair<string, string>("Season", $"{Anime.Season?.SeasonName} {Anime.Season?.Year}"),
-            new KeyValuePair<string, string>("Score", Anime.MeanScore?.ToString() ?? "??"),
-            new KeyValuePair<string, string>("Popularity", Anime.Popularity.ToString("N0")),
-            new KeyValuePair<string, string>("Studios", string.Join(",", Anime.Studios))
-        ];
+        Fields = GetFields(Anime, service is ILocalMetadataService).ToList();
     }
+
+    private static IEnumerable<KeyValuePair<string, string>> GetFields(AnimeModel anime, bool normalizeTitles)
+    {
+        if (normalizeTitles)
+        {
+            var entries = anime.AlternateTitles.Select(t => new
+            {
+                Original = t,
+                Normalized = Normalize(t)
+            }).ToList();
+            var groups = entries.GroupBy(e => e.Normalized);
+            var distinct = groups.Where(x => !string.IsNullOrEmpty(x.Key))
+                                 .Select(g => g.First().Original)
+                                 .ToList();
+            yield return new KeyValuePair<string, string>("Alternate Titles", string.Join(Environment.NewLine, distinct));
+        }
+        else
+        {
+            yield return new KeyValuePair<string, string>("Alternate Titles", string.Join(Environment.NewLine, anime.AlternateTitles));
+        }
+
+        yield return new KeyValuePair<string, string>("Format", anime.MediaFormat.ToString());
+        if (anime.MediaFormat != AnimeMediaFormat.Movie)
+        {
+            yield return new KeyValuePair<string, string>("Episodes", anime.TotalEpisodes?.ToString() ?? "??");
+        }
+
+        yield return new KeyValuePair<string, string>("Season", $"{anime.Season?.SeasonName} {anime.Season?.Year}");
+        yield return new KeyValuePair<string, string>("Score", anime.MeanScore?.ToString() ?? "??");
+        yield return new KeyValuePair<string, string>("Popularity", anime.Popularity.ToString("N0"));
+        yield return new KeyValuePair<string, string>("Studios", string.Join(",", anime.Studios));
+    }
+
+    private static string Normalize(string title)
+    {
+        if (TextHelpers.IsNotEnglishOrRomaji(title))
+        {
+            return string.Empty;
+        }
+        
+        title = title.ToLowerInvariant();
+
+        // remove foreign language season indicators
+        if (title.Contains("saison") || title.Contains("staffel") || title.Contains("temporada"))
+        {
+            return string.Empty;
+        }
+
+        title = NonAlphaNumeric().Replace(title, "");
+        title = MultipleSpaces().Replace(title, " ");
+        title = title.Replace("season", "s")
+                     .Replace("cour", "s")
+                     .Replace("chapter", "s")
+                     .Replace("part", "s");
+        return title.Trim();
+    }
+
+    [GeneratedRegex(@"[^a-z0-9\s]")]
+    private static partial Regex NonAlphaNumeric();
+
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex MultipleSpaces();
 }

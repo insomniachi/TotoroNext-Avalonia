@@ -28,6 +28,7 @@
                 </Grid.Effect>
 
                 <Image Stretch="UniformToFill"
+                       RenderOptions.BitmapInterpolationMode="HighQuality"
                        ail:ImageLoader.Source="{Binding $parent[local:AnimeCard].Anime.Image}"
                        x:Name="ImageControl" />
 

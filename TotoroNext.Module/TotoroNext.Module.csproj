@@ -18,9 +18,9 @@
         <PackageReference Include="FuzzySharp"/>
         <PackageReference Include="HtmlAgilityPack"/>
         <PackageReference Include="Humanizer"/>
+        <PackageReference Include="LanguageDetection.Ai" />
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator"/>
         <PackageReference Include="JetBrains.Annotations"/>
-        <PackageReference Include="NTextCat"/>
 
         <!-- Microsoft -->
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
@@ -45,7 +45,6 @@
 
     <ItemGroup>
       <None Remove="Core14.profile.xml" />
-      <EmbeddedResource Include="Core14.profile.xml" />
     </ItemGroup>
 
 

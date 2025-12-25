@@ -1,30 +1,30 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using System.Text.Unicode;
-using NTextCat;
+using LanguageDetection;
 
 namespace TotoroNext.Module;
 
 public static class TextHelpers
 {
-    private static RankedLanguageIdentifier? _identifier; 
-    
-    public static bool IsEnglish(string input)
+    private static LanguageDetector? _detector;
+    private static readonly string[] ForeignLanguages = 
+    [
+        "deu", "spa", "ita", "fra", "ron", "por", "tur", "pol",
+        "nor", "lav", "vie", "dan", "ces", "hun"
+    ];
+
+    public static bool IsNotEnglishOrRomaji(string input)
     {
-        if (_identifier is null)
+        if (_detector is null)
         {
-            var factory = new RankedLanguageIdentifierFactory();
-            var assembly = Assembly.GetExecutingAssembly();
-            const string resourceName = "TotoroNext.Module.Core14.profile.xml";
-            var stream = assembly.GetManifestResourceStream(resourceName);
-            _identifier = factory.Load(stream);
+            _detector = new LanguageDetector();
+            _detector.AddAllLanguages();
         }
-        
-        var languages = _identifier.Identify(input);
-        var mostLikelyLanguage = languages.FirstOrDefault();
-        return mostLikelyLanguage != null && mostLikelyLanguage.Item1.Iso639_3 == "eng";
+
+        var language = _detector.Detect(input);
+        return ForeignLanguages.Contains(language);
     }
-    
+
     public static bool IsLatin(string input)
     {
         foreach (var rune in input.EnumerateRunes())

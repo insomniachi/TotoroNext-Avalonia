@@ -17,13 +17,15 @@ public class MediaFormatBehavior : AnimeBoundCardOverlayBehavior<Border>
                .HorizontalAlignment(HorizontalAlignment.Left)
                .VerticalAlignment(VerticalAlignment.Top)
                .CornerRadius(20)
-               .Padding(8)
-               .Margin(8)
+               .Padding(12, 5)
+               .MinWidth(50)
+               .Margin(5, 3.5, 0)
                .Child(new TextBlock()
                       .HorizontalAlignment(HorizontalAlignment.Center)
-                      .FontWeight(FontWeight.SemiBold)
+                      .VerticalAlignment(VerticalAlignment.Center)
+                      .FontWeight(FontWeight.Bold)
                       .Foreground(Brushes.Black)
-                      .FontSize(13));
+                      .FontSize(12));
     }
 
     protected override void UpdateControl(AnimeModel anime)

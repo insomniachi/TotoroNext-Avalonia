@@ -19,7 +19,9 @@
                                   Anime="{Binding}"
                                   ext:ControlExtensions.TappedCommand="{Binding $parent[ItemsControl].((vm:AnimeGridViewModel)DataContext).OpenAnimeDetailsCommand, FallbackValue={x:Null}}">
                         <Interaction.Behaviors>
-                            <bhvr:AiringStatusBehavior />
+                            <bhvr:AiringStatusBehavior/>
+                            <bhvr:MediaFormatBehavior HideOnPointerOver="False"/>
+                            <bhvr:ListStatusBehavior HideOnPointerOver="False"/>
                         </Interaction.Behaviors>
                     </ctl:AnimeCard>
                 </DataTemplate>
