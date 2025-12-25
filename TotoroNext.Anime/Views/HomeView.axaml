@@ -3,12 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
-             xmlns:c="clr-namespace:TotoroNext.Anime.Controls"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ext="totoro.next/extensions"
              xmlns:am="clr-namespace:TotoroNext.Anime"
+             xmlns:ctl="totoro.next/controls"
              xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:HomeViewModel"
@@ -27,7 +27,7 @@
             </Style>
         </Style>
         <Style Selector="Carousel.Line /template/ Button">
-            <Setter Property="Foreground" Value="#80FFFFFF"/>
+            <Setter Property="Foreground" Value="#80FFFFFF" />
             <Style Selector="^:pointerover /template/ PathIcon">
                 <Setter Property="Foreground" Value="#FFFFFFFF" />
             </Style>
@@ -108,16 +108,16 @@
                         VerticalAlignment="Stretch"
                         IsActive="True"
                         IsLoading="{Binding IsLoading}"
-                        IsHitTestVisible="False"/>
+                        IsHitTestVisible="False" />
         </Grid>
         <ScrollViewer Grid.Row="1">
             <StackPanel Spacing="16" Margin="0 0 16 0">
-                <c:HorizontalAnimeCardList AsyncPopulator="{Binding PopulateAiringToday}"
-                                           Title="Airing Today" />
-                <c:HorizontalAnimeCardList AsyncPopulator="{Binding PopulatePopular}"
-                                           Title="Popular Airing" />
-                <c:HorizontalAnimeCardList AsyncPopulator="{Binding PopulateUpcoming}"
-                                           Title="Upcoming" />
+                <ctl:HorizontalAnimeCardList AsyncPopulator="{Binding PopulateAiringToday}"
+                                             Title="Airing Today" />
+                <ctl:HorizontalAnimeCardList AsyncPopulator="{Binding PopulatePopular}"
+                                             Title="Popular Airing" />
+                <ctl:HorizontalAnimeCardList AsyncPopulator="{Binding PopulateUpcoming}"
+                                             Title="Upcoming" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
