@@ -22,7 +22,7 @@ internal static class LocalModelConverter
         var model = new AnimeModel
         {
             Title = anime.Title,
-            TotalEpisodes = anime.AiringStatus == AiringStatus.FinishedAiring ? anime.TotalEpisodes : null,
+            TotalEpisodes = anime.TotalEpisodes,
             Genres = anime.Genres.ToList(),
             Season = anime.Season,
             MeanScore = anime.MeanScore,

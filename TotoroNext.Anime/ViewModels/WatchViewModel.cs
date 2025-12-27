@@ -452,26 +452,15 @@ public sealed partial class WatchViewModel(
     private void UpdateEpisodeMetadata(ValueTuple<List<Episode>, List<EpisodeInfo>, List<EpisodeInfo>> tuple)
     {
         var (episodes, infos, specials) = tuple;
-        var specialsQueue = new Queue<EpisodeInfo>(specials);
 
-        foreach (var ep in episodes)
+        if (Anime is null)
         {
-            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.AbsoluteEpisodeNumber - ep.Number) == 0);
+            return;
         }
-
-        foreach (var ep in episodes.Where(x => x.Number is <= 0))
-        {
-            if (!specialsQueue.TryDequeue(out var info))
-            {
-                continue;
-            }
-
-            ep.Info = info;
-        }
-
-        if (Anime is not null &&
-            episodes.Count > (Anime.TotalEpisodes ?? 0) &&
-            relations.FindRelation(Anime!) is { } relation)
+        
+        if (relations.FindRelation(Anime!) is { } relation &&
+            infos.Count > 0 &&
+            episodes.Count(x => x.Number > 0) != infos.Count)
         {
             var eps = episodes
                       .Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End)
@@ -482,14 +471,35 @@ public sealed partial class WatchViewModel(
                 ep.Number -= relation.SourceEpisodesRage.Start - 1;
             }
 
+            UpdateEpisodeInfo(eps, infos, specials);
             Episodes = eps.ToList();
         }
         else
         {
+            UpdateEpisodeInfo(episodes, infos, specials);
             Episodes = episodes;
         }
 
         IsEpisodesLoading = false;
+    }
+
+    private static void UpdateEpisodeInfo(List<Episode> episodes, List<EpisodeInfo> infos, List<EpisodeInfo> specials)
+    {
+        foreach (var ep in episodes)
+        {
+            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.AbsoluteEpisodeNumber - ep.Number) == 0);
+        }
+
+        var specialsQueue = new Queue<EpisodeInfo>(specials);
+        foreach (var ep in episodes.Where(x => x.Number is <= 0))
+        {
+            if (!specialsQueue.TryDequeue(out var info))
+            {
+                continue;
+            }
+
+            ep.Info = info;
+        }
     }
 
     private async Task HandleMediaSegment((MediaSegment Segment, MessageBoxResult Result) tuple)
