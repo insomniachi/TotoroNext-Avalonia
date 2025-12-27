@@ -47,26 +47,6 @@ public partial class WatchView : UserControl
             }
         };
     }
-
-    private void SelectingItemsControl_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
-    {
-        if (sender is not ListBox lb)
-        {
-            return;
-        }
-
-        if (e.AddedItems is not { Count: 1 })
-        {
-            return;
-        }
-
-        if (e.AddedItems[0] is not { } item)
-        {
-            return;
-        }
-
-        lb.ScrollIntoView(item);
-    }
 }
 
 public class EpisodeTemplateSelector : IDataTemplate

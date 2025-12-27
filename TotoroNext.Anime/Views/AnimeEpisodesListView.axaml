@@ -8,6 +8,7 @@
              xmlns:mdl="totoro.next/models"
              xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ext="totoro.next/extensions"
+             xmlns:bhvr="totoro.next/behaviors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeEpisodesListViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeEpisodesListView">
@@ -16,8 +17,10 @@
             <ListBox ItemsSource="{Binding Episodes}"
                      SelectedItem="{Binding SelectedEpisode}"
                      IsVisible="{Binding !NothingToSee}"
-                     SelectionChanged="SelectingItemsControl_OnSelectionChanged"
                      SelectionMode="Single">
+                <Interaction.Behaviors>
+                    <bhvr:BringSelectedItemIntoViewBehavior/>
+                </Interaction.Behaviors>
                 <ListBox.Styles>
                     <Style Selector="ListBoxItem">
                         <Setter Property="Padding" Value="0" />

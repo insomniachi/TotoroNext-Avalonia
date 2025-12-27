@@ -8,6 +8,7 @@
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:views="clr-namespace:TotoroNext.Anime.Views"
+             xmlns:bhvr="totoro.next/behaviors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:WatchViewModel"
              x:Class="TotoroNext.Anime.Views.WatchView">
@@ -150,8 +151,10 @@
                     MinHeight="200"
                     ItemsSource="{Binding Episodes}"
                     SelectedItem="{Binding SelectedEpisode}"
-                    SelectionChanged="SelectingItemsControl_OnSelectionChanged"
                     ItemTemplate="{StaticResource EpisodeTemplate}">
+                    <Interaction.Behaviors>
+                        <bhvr:BringSelectedItemIntoViewBehavior/>
+                    </Interaction.Behaviors>
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="0" />
