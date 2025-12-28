@@ -22,6 +22,12 @@ internal class TrackingService(
             var anime = dbContext.Anime.FindById(id);
             var localTracking = new LocalTracking { Id = id, Tracking = tracking };
             anime.Tracking = localTracking;
+
+            if (tracking.Status == ListItemStatus.Completed && anime.AiringStatus == AiringStatus.CurrentlyAiring)
+            {
+                anime.AiringStatus = AiringStatus.FinishedAiring;
+            }
+            
             dbContext.Tracking.Upsert(localTracking);
             dbContext.Anime.Upsert(anime);
             return Task.FromResult(tracking);
