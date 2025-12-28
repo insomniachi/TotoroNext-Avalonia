@@ -40,6 +40,20 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
                         .Subscribe()
                         .DisposeWith(Disposables);
     }
+    
+    protected override Border CreateControl(AnimeModel anime)
+    {
+        return new Border()
+               .HorizontalAlignment(HorizontalAlignment.Right)
+               .VerticalAlignment(VerticalAlignment.Top)
+               .CornerRadius(20)
+               .Padding(3)
+               .Margin(4)
+               .Width(30)
+               .Child(new TextBlock()
+                      .HorizontalAlignment(HorizontalAlignment.Center)
+                      .FontWeight(FontWeight.Bold));
+    }
 
     private async Task UpdateBadge(AnimeModel? anime, CancellationToken ct)
     {
@@ -66,7 +80,7 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
             return;
         }
 
-        EnsureControl();
+        EnsureControl(anime);
 
         Control?.Background = Brushes.Orange;
         (Control?.Child as TextBlock)?.Text = diff.ToString();
@@ -99,19 +113,5 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
 
         Control?.Background = Brushes.Red;
         (Control?.Child as TextBlock)?.Text = actualDiff.ToString();
-    }
-
-    protected override Border CreateControl()
-    {
-        return new Border()
-               .HorizontalAlignment(HorizontalAlignment.Right)
-               .VerticalAlignment(VerticalAlignment.Top)
-               .CornerRadius(20)
-               .Padding(3)
-               .Margin(4)
-               .Width(30)
-               .Child(new TextBlock()
-                      .HorizontalAlignment(HorizontalAlignment.Center)
-                      .FontWeight(FontWeight.Bold));
     }
 }

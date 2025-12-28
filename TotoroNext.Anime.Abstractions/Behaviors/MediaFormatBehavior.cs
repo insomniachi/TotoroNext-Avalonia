@@ -8,7 +8,7 @@ namespace TotoroNext.Anime.Abstractions.Behaviors;
 
 public class MediaFormatBehavior : AnimeBoundCardOverlayBehavior<Border>
 {
-    protected override Border CreateControl()
+    protected override Border CreateControl(AnimeModel anime)
     {
         return new Border()
                .Background(Brushes.GreenYellow)
@@ -25,11 +25,7 @@ public class MediaFormatBehavior : AnimeBoundCardOverlayBehavior<Border>
                       .VerticalAlignment(VerticalAlignment.Center)
                       .FontWeight(FontWeight.Bold)
                       .Foreground(Brushes.Black)
-                      .FontSize(12));
-    }
-
-    protected override void UpdateControl(AnimeModel anime)
-    {
-        (Control?.Child as TextBlock)!.Text = anime.MediaFormat.ToString().ToUpper();
+                      .FontSize(12)
+                      .Text(anime.MediaFormat.ToString().ToUpper()));
     }
 }

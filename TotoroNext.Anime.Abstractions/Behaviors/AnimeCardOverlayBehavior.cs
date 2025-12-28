@@ -1,7 +1,10 @@
 ﻿using System.Reactive.Disposables;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Xaml.Interactivity;
+using Microsoft.Playwright;
 using TotoroNext.Anime.Abstractions.Controls;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
@@ -40,14 +43,19 @@ public abstract class AnimeCardOverlayBehavior<TOverlay> : Behavior<AnimeCard>, 
         Disposables.Dispose();
     }
 
-    protected void EnsureControl()
+    protected void EnsureControl(AnimeModel anime)
     {
         if (Control is not null)
         {
             return;
         }
 
-        Control = CreateControl();
+        if (!CanCreate(anime))
+        {
+            return;
+        }
+
+        Control = CreateControl(anime);
         AssociatedObject?.ImageContainer.Children.Add(Control);
     }
 
@@ -62,5 +70,12 @@ public abstract class AnimeCardOverlayBehavior<TOverlay> : Behavior<AnimeCard>, 
         Control = null;
     }
 
-    protected abstract TOverlay CreateControl();
+    protected virtual bool CanCreate(AnimeModel anime) => true;
+
+    protected abstract TOverlay CreateControl(AnimeModel anime);
+
+    protected Thickness GetMarginForBottomPlacement(double extra)
+    {
+        return new Thickness(extra, 0, 0, (AssociatedObject?.StatusBorder.Height ?? 0) + extra);
+    }
 }

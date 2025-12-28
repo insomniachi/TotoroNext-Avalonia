@@ -19,11 +19,8 @@ public abstract class AnimeBoundCardOverlayBehavior<TOverlay> : AnimeCardOverlay
                         .Subscribe(anime =>
                         {
                             RemoveControl();
-                            EnsureControl();
-                            UpdateControl(anime);
+                            EnsureControl(anime);
                         })
                         .DisposeWith(Disposables);
     }
-
-    protected abstract void UpdateControl(AnimeModel anime);
 }

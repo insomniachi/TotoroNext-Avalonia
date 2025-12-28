@@ -17,7 +17,7 @@
     <UserControl.Resources>
         <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
     </UserControl.Resources>
-    
+
     <Grid RowDefinitions="Auto, *" RowSpacing="16">
         <StackPanel
             HorizontalAlignment="Center"
@@ -95,6 +95,7 @@
                                     <bhvr:NextEpisodeTimeBehavior />
                                     <bhvr:UnwatchedEpisodesBadgeBehavior />
                                     <bhvr:AiringStatusBehavior />
+                                    <bhvr:AnimeProgressBehavior />
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
                         </DataTemplate>

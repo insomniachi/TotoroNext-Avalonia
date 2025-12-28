@@ -18,11 +18,9 @@ public abstract class TrackingBoundAnimeCardOverlayBehavior<TOverlay> : AnimeCar
                         .ObserveOn(RxApp.MainThreadScheduler)
                         .Subscribe(tracking =>
                         {
-                            EnsureControl();
-                            UpdateControl(tracking);
+                            RemoveControl();
+                            EnsureControl(AssociatedObject.Anime);
                         })
                         .DisposeWith(Disposables);
     }
-
-    protected abstract void UpdateControl(Tracking tracking);
 }

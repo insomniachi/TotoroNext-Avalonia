@@ -21,7 +21,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
     private static readonly IAnimeMappingService MappingService = Container.Services.GetRequiredService<IAnimeMappingService>();
     private static readonly GraphQLHttpClient Client = Container.Services.GetRequiredService<GraphQLHttpClient>();
     
-    protected override Border CreateControl()
+    protected override Border CreateControl(AnimeModel anime)
     {
         return new Border()
                .Background(new SolidColorBrush(Colors.Black, 0.35))
@@ -58,6 +58,11 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
                         .DisposeWith(Disposables);
     }
 
+    protected override bool CanCreate(AnimeModel anime)
+    {
+        return anime.AiringStatus is not AiringStatus.FinishedAiring;
+    }
+
     private async Task UpdateAiringTime(AnimeCard card, AnimeModel anime, CancellationToken ct)
     {
         var time = await ToNextEpisodeAiringTime(anime, ct);
@@ -68,7 +73,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
             return;
         }
 
-        EnsureControl();
+        EnsureControl(anime);
 
         Dispatcher.UIThread.Invoke(() =>
         {

@@ -13,7 +13,7 @@ namespace TotoroNext.Anime.Abstractions.Behaviors;
 
 public class ListStatusBehavior : TrackingBoundAnimeCardOverlayBehavior<Border>
 {
-    protected override Border CreateControl()
+    protected override Border CreateControl(AnimeModel anime)
     {
         return new Border()
                .Padding(5)
@@ -24,28 +24,17 @@ public class ListStatusBehavior : TrackingBoundAnimeCardOverlayBehavior<Border>
                .BorderBrush(Brushes.Black)
                .HorizontalAlignment(HorizontalAlignment.Right)
                .VerticalAlignment(VerticalAlignment.Top)
-               .Child(new PackIconControl()
+               .Background(GetBackgroundBrush(anime.Tracking))
+               .Child(new PackIconControl { Kind = GetIcon(anime.Tracking) }
                       .Width(15)
                       .Height(15)
                       .HorizontalAlignment(HorizontalAlignment.Center)
                       .Foreground(Brushes.Black));
     }
 
-    protected override void UpdateControl(Tracking tracking)
+    private static Enum? GetIcon(Tracking? tracking)
     {
-        if (Control is null)
-        {
-            return;
-        }
-
-        Control.Background = GetBackgroundBrush(tracking);
-        ((PackIconControl)Control.Child!).Kind = GetIcon(tracking);
-    }
-
-
-    private static Enum? GetIcon(Tracking tracking)
-    {
-        return tracking.Status switch
+        return tracking?.Status switch
         {
             ListItemStatus.Completed => PackIconMaterialDesignKind.Check,
             ListItemStatus.Watching => PackIconPhosphorIconsKind.HourglassHighFill,
@@ -56,9 +45,9 @@ public class ListStatusBehavior : TrackingBoundAnimeCardOverlayBehavior<Border>
         };
     }
 
-    private static IImmutableSolidColorBrush GetBackgroundBrush(Tracking tracking)
+    private static IImmutableSolidColorBrush GetBackgroundBrush(Tracking? tracking)
     {
-        return tracking.Status switch
+        return tracking?.Status switch
         {
             ListItemStatus.Completed => Brushes.LawnGreen,
             ListItemStatus.Watching => Brushes.LawnGreen,
