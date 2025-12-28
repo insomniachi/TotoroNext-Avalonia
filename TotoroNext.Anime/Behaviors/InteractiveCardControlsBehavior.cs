@@ -141,7 +141,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                .Spacing(4)
                .HorizontalAlignment(HorizontalAlignment.Stretch)
                .Margin(8)
-               .Children(WatchButton(anime), TorrentButton(anime), DetailsButton(anime))
+               .Children(CreateContentButtons(anime).ToArray())
                .Row(0);
     }
 
@@ -159,16 +159,13 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                         .Spacing(8)
                         .Margin(4)
                         .HorizontalAlignment(HorizontalAlignment.Left)
-                        .Children(EditButton(anime),
-                                  AddToListButton(anime),
-                                  CreateMeanScoreBorder(anime)),
+                        .Children(GetFooterLeftContents(anime).ToArray()),
                     new StackPanel()
                         .Orientation(Orientation.Horizontal)
                         .HorizontalAlignment(HorizontalAlignment.Right)
                         .Spacing(8)
                         .Margin(4)
-                        .Children(DownloadButton(anime),
-                                  CreateSettingsButton(anime))
+                        .Children(GetFooterRightContents(anime).ToArray())
                 }
             }
         };
@@ -177,14 +174,24 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
 
         return border;
     }
-    
+
+    private static IEnumerable<Control> CreateContentButtons(AnimeModel anime)
+    {
+        if (anime.AiringStatus != AiringStatus.NotYetAired)
+        {
+            yield return WatchButton(anime);
+            yield return TorrentButton(anime);
+        }
+
+        yield return DetailsButton(anime);
+    }
+
     private static Button WatchButton(AnimeModel anime)
     {
         return new Button()
                .HorizontalAlignment(HorizontalAlignment.Stretch)
                .Command(Commands.WatchCommand)
                .CommandParameter(anime)
-               .IsVisible(anime.AiringStatus != AiringStatus.NotYetAired)
                .Content(new StackPanel()
                         .Spacing(8)
                         .Orientation(Orientation.Horizontal)
@@ -200,7 +207,6 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                .HorizontalAlignment(HorizontalAlignment.Stretch)
                .Command(Commands.SearchTorrentsCommand)
                .CommandParameter(anime)
-               .IsVisible(anime.AiringStatus != AiringStatus.NotYetAired)
                .Content(new StackPanel()
                         .Spacing(8)
                         .Orientation(Orientation.Horizontal)
@@ -217,6 +223,13 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                .Command(Commands.DetailsCommand)
                .CommandParameter(anime)
                .HorizontalAlignment(HorizontalAlignment.Stretch);
+    }
+
+    private static IEnumerable<Control> GetFooterLeftContents(AnimeModel anime)
+    {
+        yield return AddToListButton(anime);
+        yield return EditButton(anime);
+        yield return UserScoreBorder(anime);
     }
 
     private static Button EditButton(AnimeModel anime)
@@ -245,7 +258,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
 
         return button;
     }
-    
+
     private static Button AddToListButton(AnimeModel anime)
     {
         var button = new Button()
@@ -266,9 +279,26 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
         return button;
     }
 
-    private static Border CreateMeanScoreBorder(AnimeModel anime)
+    private static Border UserScoreBorder(AnimeModel anime)
     {
-        return new Border()
+        var icon = new PackIconControl { Kind = PackIconMaterialDesignKind.Star }
+                   .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
+                   .Height(12).Width(12)
+                   .VerticalAlignment(VerticalAlignment.Center).HorizontalAlignment(HorizontalAlignment.Center);
+
+        var text = new TextBlock()
+                   .Text($"{anime.Tracking?.Score}")
+                   .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
+                   .VerticalAlignment(VerticalAlignment.Center)
+                   .FontSize(13)
+                   .FontWeight(FontWeight.Bold);
+
+        text.Bind(TextBlock.TextProperty, new Binding("Tracking.Score")
+        {
+            Source = anime
+        });
+
+        var border = new Border()
                .Background(new DynamicResourceExtension("ButtonDefaultBackground"))
                .BorderBrush(new DynamicResourceExtension("ButtonDefaultBorderBrush"))
                .BorderThickness(new DynamicResourceExtension("ButtonBorderThickness"))
@@ -277,16 +307,26 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                .Child(new StackPanel()
                       .Spacing(4)
                       .Orientation(Orientation.Horizontal)
-                      .Children(new PackIconControl { Kind = PackIconMaterialDesignKind.Star }
-                                .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
-                                .Height(12).Width(12)
-                                .VerticalAlignment(VerticalAlignment.Center).HorizontalAlignment(HorizontalAlignment.Center),
-                                new TextBlock()
-                                    .Text($"{anime.MeanScore}")
-                                    .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
-                                    .VerticalAlignment(VerticalAlignment.Center)
-                                    .FontSize(13)
-                                    .FontWeight(FontWeight.Bold)));
+                      .Children(icon, text));
+
+        border.Bind(Visual.IsVisibleProperty, new Binding("Tracking.Score")
+        {
+            Source = anime,
+            Converter = ObjectConverters.IsNotNull,
+            FallbackValue = false,
+        });
+
+        return border;
+    }
+
+    private static IEnumerable<Control> GetFooterRightContents(AnimeModel anime)
+    {
+        if (anime.AiringStatus != AiringStatus.NotYetAired)
+        {
+            yield return DownloadButton(anime);
+        }
+
+        yield return SettingsButton(anime);
     }
 
     private static Button DownloadButton(AnimeModel anime)
@@ -310,7 +350,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                         .Child(new PackIconControl { Kind = PackIconMaterialDesignKind.Download }));
     }
 
-    private static Button CreateSettingsButton(AnimeModel anime)
+    private static Button SettingsButton(AnimeModel anime)
     {
         return new Button()
                .Command(Commands.SettingsCommand)

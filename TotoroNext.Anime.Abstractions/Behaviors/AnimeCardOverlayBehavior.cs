@@ -74,8 +74,13 @@ public abstract class AnimeCardOverlayBehavior<TOverlay> : Behavior<AnimeCard>, 
 
     protected abstract TOverlay CreateControl(AnimeModel anime);
 
-    protected Thickness GetMarginForBottomPlacement(double extra)
+    protected Thickness GetMarginForBottomLeftPlacement(double extra)
     {
         return new Thickness(extra, 0, 0, (AssociatedObject?.StatusBorder.Height ?? 0) + extra);
+    }
+    
+    protected Thickness GetMarginForBottomRightPlacement(double extra)
+    {
+        return new Thickness(0, 0, extra, (AssociatedObject?.StatusBorder.Height ?? 0) + extra);
     }
 }

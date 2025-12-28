@@ -96,6 +96,7 @@
                                     <bhvr:UnwatchedEpisodesBadgeBehavior />
                                     <bhvr:AiringStatusBehavior />
                                     <bhvr:AnimeProgressBehavior />
+                                    <bhvr:MeanScoreBehavior />
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
                         </DataTemplate>

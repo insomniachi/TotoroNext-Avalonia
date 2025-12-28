@@ -12,7 +12,7 @@ public class AnimeProgressBehavior : TrackingBoundAnimeCardOverlayBehavior<Borde
     {
         return new Border()
                .Padding(8)
-               .Margin(GetMarginForBottomPlacement(8))
+               .Margin(GetMarginForBottomLeftPlacement(8))
                .HorizontalAlignment(HorizontalAlignment.Left)
                .VerticalAlignment(VerticalAlignment.Bottom)
                .Background(new SolidColorBrush(Colors.Black, 0.7))
@@ -30,7 +30,7 @@ public class AnimeProgressBehavior : TrackingBoundAnimeCardOverlayBehavior<Borde
             TotalEpisodes: not null,
             Tracking:
             {
-                WatchedEpisodes: > 0, 
+                WatchedEpisodes: > 0,
                 Status: not ListItemStatus.Completed
             }
         };

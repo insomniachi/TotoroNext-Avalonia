@@ -16,7 +16,7 @@
             VerticalContentAlignment="Stretch"
             Background="Transparent"
             IsLoading="{Binding IsLoading}">
-            <ScrollViewer u:ScrollTo.Direction="Top" >
+            <ScrollViewer u:ScrollTo.Direction="Top">
                 <ItemsRepeater
                     Margin="16,0"
                     ItemsSource="{Binding Anime}">
@@ -28,6 +28,7 @@
                                     <bhvr:InteractiveCardControlsBehavior />
                                     <bhvr:MediaFormatBehavior />
                                     <bhvr:AiringStatusBehavior />
+                                    <bhvr:MeanScoreBehavior />
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
                         </DataTemplate>
