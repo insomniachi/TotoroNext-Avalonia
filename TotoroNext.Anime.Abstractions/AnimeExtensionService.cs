@@ -15,12 +15,15 @@ public class AnimeExtensionService : IAnimeExtensionService
 
     private readonly IFactory<IAnimeProvider, Guid> _providerFactory;
     private readonly ISelectionUserInteraction<SearchResult> _selectAnimeDialog;
+    private readonly IDialogService _dialogService;
 
     public AnimeExtensionService(IFactory<IAnimeProvider, Guid> providerFactory,
-                                 ISelectionUserInteraction<SearchResult> selectAnimeDialog)
+                                 ISelectionUserInteraction<SearchResult> selectAnimeDialog,
+                                 IDialogService dialogService)
     {
         _providerFactory = providerFactory;
         _selectAnimeDialog = selectAnimeDialog;
+        _dialogService = dialogService;
         if (File.Exists(_file))
         {
             _extensions = JsonSerializer.Deserialize<Dictionary<long, AnimeOverrides>>(File.ReadAllText(_file)) ?? [];
@@ -42,7 +45,7 @@ public class AnimeExtensionService : IAnimeExtensionService
         return _extensions.GetValueOrDefault(id)?.IsNsfw ?? false;
     }
 
-    public async Task<SearchResult?> SearchOrSelectAsync(Models.AnimeModel anime)
+    public async Task<SearchResult?> SearchOrSelectAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
         var searchResult = GetSearchResult(anime.Id);
@@ -51,7 +54,7 @@ public class AnimeExtensionService : IAnimeExtensionService
         {
             return new SearchResult(provider, searchResult.Id, searchResult.Title);
         }
-        
+
         var results = await provider.GetSearchResults(anime.Title, CancellationToken.None);
 
         if (TryFindMatch(results, anime, anime.Title) is { } result)
@@ -59,19 +62,25 @@ public class AnimeExtensionService : IAnimeExtensionService
             return result;
         }
 
-        return await _selectAnimeDialog.GetValue(results);
+        if (results.Count > 0)
+        {
+            return await _selectAnimeDialog.GetValue(results);
+        }
+
+        await _dialogService.Warning($"Unable to find streams for {anime.Title}");
+        return null;
     }
 
-    public async Task<SearchResult?> SearchAsync(Models.AnimeModel anime)
+    public async Task<SearchResult?> SearchAsync(AnimeModel anime)
     {
         var provider = GetProvider(anime.Id);
         var searchResult = GetSearchResult(anime.Id);
-        
+
         if (searchResult is not null)
         {
             return new SearchResult(provider, searchResult.Id, searchResult.Title);
         }
-        
+
         var results = await provider.GetSearchResults(anime.Title, CancellationToken.None);
         return TryFindMatch(results, anime, anime.Title);
     }
@@ -102,7 +111,7 @@ public class AnimeExtensionService : IAnimeExtensionService
         return extension?.ProviderResult;
     }
 
-    private static SearchResult? TryFindMatch(List<SearchResult> results, Models.AnimeModel anime, string term)
+    private static SearchResult? TryFindMatch(List<SearchResult> results, AnimeModel anime, string term)
     {
         switch (results.Count)
         {

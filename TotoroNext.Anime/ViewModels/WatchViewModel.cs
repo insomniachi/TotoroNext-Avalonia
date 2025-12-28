@@ -87,7 +87,7 @@ public sealed partial class WatchViewModel(
 
         this.WhenAnyValue(x => x.Anime)
             .WhereNotNull()
-            .Select(x => x is { MediaFormat: AnimeMediaFormat.Movie })
+            .Select(x => x is { MediaFormat: AnimeMediaFormat.Movie, TotalEpisodes: 1 })
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(isMovie => IsMovie = isMovie);
 

@@ -15,6 +15,4 @@ public enum ListItemStatus
     [Description("Dropped")] Dropped,
 
     [Description("Rewatching")] Rewatching,
-
-    [Description("Select status")] None
 }
