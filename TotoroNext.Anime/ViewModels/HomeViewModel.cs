@@ -35,9 +35,7 @@ public sealed partial class HomeViewModel(IFactory<IMetadataService, Guid> metad
         PopulatePopular = async () =>
         {
             var popular = await _metadataService.GetPopularAnimeAsync(_cts.Token);
-            var current = AnimeHelpers.CurrentSeason();
             var items = popular.OrderByDescending(x => x.MeanScore)
-                               .Where(x => x.Season == current)
                                .Take(5)
                                .ToList();
 

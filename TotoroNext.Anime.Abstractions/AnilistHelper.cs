@@ -101,6 +101,7 @@ public static class AnilistHelper
                                                                         sort: new List<MediaSort?>
                                                                             { MediaSort.TrendingDesc, MediaSort.PopularityDesc },
                                                                         status: MediaStatus.Releasing,
+                                                                        countryOfOrigin: "JP",
                                                                         type: MediaType.Anime), 1, 20)
                                                .Build()
             }, ct);

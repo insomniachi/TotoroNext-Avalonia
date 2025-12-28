@@ -129,6 +129,7 @@ internal class AnilistMetadataService(
                                                                         sort: new List<MediaSort?>
                                                                             { MediaSort.TrendingDesc, MediaSort.PopularityDesc },
                                                                         status: MediaStatus.Releasing,
+                                                                        countryOfOrigin: "JP",
                                                                         type: MediaType.Anime), 1,
                                                          (int)settings.Value.SearchLimit).Build()
             }, ct);

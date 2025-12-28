@@ -49,6 +49,7 @@
                                 <Interaction.Behaviors>
                                     <bhvr:InteractiveCardControlsBehavior />
                                     <bhvr:ListStatusBehavior />
+                                    <bhvr:MeanScoreBehavior/>
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
                         </DataTemplate>
