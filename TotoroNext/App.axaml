@@ -85,5 +85,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI, Arial, Noto Sans" />
+        </Style>
     </Application.Styles>
 </Application>

@@ -58,13 +58,13 @@
                         <u:DatePicker SelectedDate="{Binding StartDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
                                       DisplayFormat="MMMM dd, yyyy"
-                                      Classes="ClearButton" />
+                                      Classes.ClearButton="True"/>
                     </u:FormItem>
                     <u:FormItem Label="Finish Date">
                         <u:DatePicker SelectedDate="{Binding FinishDate, Mode=TwoWay}"
                                       HorizontalAlignment="Stretch"
                                       DisplayFormat="MMMM dd, yyyy"
-                                      Classes="ClearButton" />
+                                      Classes.ClearButton="True" />
                     </u:FormItem>
                 </u:Form>
                 <Button Grid.Row="1"
@@ -77,7 +77,8 @@
                 <ScrollViewer Grid.Row="2" Margin="0 8 0 0">
                     <TextBlock
                         Text="{Binding Anime.Description, Converter={x:Static aa:Converters.HtmlToTextConverter}}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"
+                        FontSize="15"/>
                 </ScrollViewer>
             </Grid>
         </Grid>
