@@ -28,13 +28,28 @@ public static class MalToModelConverter
             Description = jikanModel.Synopsis,
             Url = $"https://myanimelist.net/anime/{jikanModel.MalId}/",
             MeanScore = (float?)jikanModel.Score,
-            AlternateTitles = jikanModel.Titles.Select(x => x.Title).ToHashSet()
+            AlternateTitles = jikanModel.Titles.Select(x => x.Title).ToHashSet(),
+            MediaFormat = ConvertJikanMediaFormat(jikanModel.Type)
         };
 
         string GetTitle(JikanDotNet.Anime model, string type)
         {
             return model.Titles.FirstOrDefault(x => x.Type == type)?.Title ?? model.Titles.FirstOrDefault(x => x.Type == "Default")?.Title ?? "";
         }
+    }
+
+    private static AnimeMediaFormat ConvertJikanMediaFormat(string jikanModelType)
+    {
+        return jikanModelType switch
+        {
+            "TV" => AnimeMediaFormat.Tv,
+            "OVA" => AnimeMediaFormat.Ova,
+            "Movie" => AnimeMediaFormat.Movie,
+            "Special" => AnimeMediaFormat.Special,
+            "ONA" => AnimeMediaFormat.Ona,
+            "Music" => AnimeMediaFormat.Music,
+            _ => AnimeMediaFormat.Unknown
+        };
     }
 
     public static AnimeModel ConvertModel(MalApi.Anime malModel)

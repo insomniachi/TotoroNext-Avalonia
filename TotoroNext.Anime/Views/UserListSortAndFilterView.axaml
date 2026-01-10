@@ -27,6 +27,12 @@
                                 DisplayDescription="True"
                                 HorizontalAlignment="Stretch" />
             </u:FormItem>
+            <u:FormItem Label="Airing Status" IsVisible="{Binding Filter.IsAiringStatusFilterVisible^}">
+                <u:EnumSelector EnumType="mdl:AiringStatus"
+                                Value="{Binding Filter.AiringStatus}"
+                                DisplayDescription="True"
+                                HorizontalAlignment="Stretch"/>
+            </u:FormItem>
             <u:FormItem Label="Genres">
                 <u:MultiAutoCompleteBox SelectedItems="{Binding Filter.Genres, Mode=TwoWay}"
                                         ItemsSource="{Binding Genres, Mode=OneWay}"

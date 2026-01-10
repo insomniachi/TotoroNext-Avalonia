@@ -31,4 +31,9 @@ public class MeanScoreBehavior : AnimeBoundCardOverlayBehavior<Border>
                                     .FontWeight(FontWeight.Bold)
                                     .Text($"{anime.MeanScore}")));
     }
+
+    protected override bool CanCreate(AnimeModel anime)
+    {
+        return anime.MeanScore.HasValue;
+    }
 }

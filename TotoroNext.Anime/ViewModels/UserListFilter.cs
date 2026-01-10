@@ -16,17 +16,21 @@ public partial class UserListFilter : ObservableObject
         nameof(Status),
         nameof(Year),
         nameof(Format),
-        nameof(ScoreFilter)
+        nameof(ScoreFilter),
+        nameof(AiringStatus)
     ];
 
     public UserListFilter()
     {
+        Genres = [];
         var propertyChanged = this.WhenAnyPropertyChanged(Properties).Select(_ => Unit.Default);
         var titleChanged = this.WhenAnyValue(x => x.Term).Throttle(TimeSpan.FromMilliseconds(500)).Select(_ => Unit.Default);
         var genresChanged = Genres.ToObservableChangeSet().Select(_ => Unit.Default);
         Predicate = propertyChanged.Merge(titleChanged)
                                    .Merge(genresChanged)
                                    .Select(_ => (Func<AnimeModel, bool>)IsVisible);
+        IsAiringStatusFilterVisible = this.WhenAnyValue(x => x.Status)
+                                          .Select(x => x is not ListItemStatus.Completed);
     }
 
     [ObservableProperty] public partial ListItemStatus? Status { get; set; } = ListItemStatus.Watching;
@@ -37,11 +41,15 @@ public partial class UserListFilter : ObservableObject
 
     [ObservableProperty] public partial AnimeMediaFormat Format { get; set; } = AnimeMediaFormat.Unknown;
 
-    [ObservableProperty] public partial ObservableCollection<string> Genres { get; set; } = [];
+    [ObservableProperty] public partial ObservableCollection<string> Genres { get; set; }
 
     [ObservableProperty] public partial UserScoreFilter ScoreFilter { get; set; }
 
+    [ObservableProperty] public partial AiringStatus? AiringStatus { get; set; }
+
     [ObservableProperty] public partial bool IsUserScoreFilterVisible { get; set; } = true;
+
+    public IObservable<bool> IsAiringStatusFilterVisible { get; }
 
     public bool AllowUntracked { get; set; }
 
@@ -65,13 +73,14 @@ public partial class UserListFilter : ObservableObject
                 ? model.Tracking.Status is ListItemStatus.Watching or ListItemStatus.Rewatching
                 : model.Tracking.Status == Status;
         }
-        
+
         var searchTextStatus = string.IsNullOrEmpty(Term) ||
                                model.Title.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
                                model.RomajiTitle.Contains(Term, StringComparison.InvariantCultureIgnoreCase) ||
                                model.EngTitle.Contains(Term, StringComparison.InvariantCultureIgnoreCase);
         var formatCheck = Format == AnimeMediaFormat.Unknown || model.MediaFormat == Format;
         var genresCheck = Genres.All(x => model.Genres.Contains(x));
+        var airingStatusCheck = AiringStatus is null || model.AiringStatus == AiringStatus;
 
         var userScoreCheck = model.Tracking is null || ScoreFilter switch
         {
@@ -83,7 +92,7 @@ public partial class UserListFilter : ObservableObject
 
         var yearCheck = string.IsNullOrEmpty(Year) || !YearRegex().IsMatch(Year) || model.Season?.Year.ToString() == Year;
 
-        return listStatusCheck && searchTextStatus && yearCheck && formatCheck && genresCheck && userScoreCheck;
+        return listStatusCheck && searchTextStatus && yearCheck && formatCheck && genresCheck && userScoreCheck && airingStatusCheck;
     }
 
     public void Clear()
@@ -92,6 +101,7 @@ public partial class UserListFilter : ObservableObject
         Year = "";
         Format = AnimeMediaFormat.Unknown;
         ScoreFilter = UserScoreFilter.All;
+        AiringStatus = null;
         Genres.Clear();
     }
 
