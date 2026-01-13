@@ -379,6 +379,7 @@ internal class AnilistMetadataService(
                .WithCoverImage(new MediaCoverImageQueryBuilder()
                                    .WithLarge())
                .WithType()
+               .WithFormat()
                .WithMediaListEntry(new MediaListQueryBuilder()
                                    .WithScore()
                                    .WithStatus()

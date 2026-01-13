@@ -207,7 +207,8 @@ public static partial class AniListModelToAnimeModelConverter
                         Tracking = ConvertTracking(x.MediaListEntry),
                         AiringStatus = ConvertStatus(x.Status),
                         ServiceId = Module.Id,
-                        ServiceName = nameof(AnimeId.Anilist)
+                        ServiceName = nameof(AnimeId.Anilist),
+                        MediaFormat = ConvertMediaFormat(x.Format)
                     })
         ];
     }

@@ -219,7 +219,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
     private static Button DetailsButton(AnimeModel anime)
     {
         return new Button()
-               .Content("Details")
+               .Content(new TextBlock().Text("Details").VerticalAlignment(VerticalAlignment.Center))
                .Command(Commands.DetailsCommand)
                .CommandParameter(anime)
                .HorizontalAlignment(HorizontalAlignment.Stretch);
