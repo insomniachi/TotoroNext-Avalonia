@@ -11,9 +11,19 @@ namespace TotoroNext.Anime.Abstractions.Extensions;
 
 public static class AnimeMetadataExtensions
 {
+    extension(IFactory<IMetadataService, Guid> factory)
+    {
+        public IMetadataService? CreateFor(AnimeModel anime)
+        {
+            return anime.ServiceId is { } id
+                ? factory.Create(id)
+                : factory.CreateDefault();
+        }
+    }
+
     extension(IMetadataService provider)
     {
-        public async Task<Models.AnimeModel?> SearchAndSelectAsync(SearchResult model)
+        public async Task<AnimeModel?> SearchAndSelectAsync(SearchResult model)
         {
             var results = await provider.SearchAnimeAsync(model.Title);
 
@@ -30,11 +40,11 @@ public static class AnimeMetadataExtensions
                 return result;
             }
 
-            return await Container.Services.GetRequiredService<ISelectionUserInteraction<Models.AnimeModel>>().GetValue(results);
+            return await Container.Services.GetRequiredService<ISelectionUserInteraction<AnimeModel>>().GetValue(results);
         }
     }
 
-    extension(Models.AnimeModel anime)
+    extension(AnimeModel anime)
     {
         public async Task<List<EpisodeInfo>> GetEpisodes(CancellationToken ct = default)
         {

@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -91,7 +92,7 @@ public partial class AnimeEpisodesListViewModel(
 
     private async Task UpdateEpisodes()
     {
-        var metadataService = metadataFactory.CreateDefault();
+        var metadataService = metadataFactory.CreateFor(Anime);
         if (metadataService is null)
         {
             return;

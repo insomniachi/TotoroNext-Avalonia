@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -39,7 +40,8 @@ public sealed partial class AnimeDetailsViewModel(
 
     public async Task InitializeAsync()
     {
-        var service = metadataServiceFactory.CreateDefault();
+        var service = metadataServiceFactory.CreateFor(Anime);
+        
         if (service is null)
         {
             return;
