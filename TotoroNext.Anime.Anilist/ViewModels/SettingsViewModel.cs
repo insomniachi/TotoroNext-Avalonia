@@ -7,7 +7,7 @@ using Ursa.Controls;
 
 namespace TotoroNext.Anime.Anilist.ViewModels;
 
-public class SettingsViewModel : ModuleSettingsViewModel<Settings>
+public class SettingsViewModel : ModuleSettingsViewModel<Settings>, IInitializable
 {
     public SettingsViewModel(IModuleSettings<Settings> settings) : base(settings)
     {

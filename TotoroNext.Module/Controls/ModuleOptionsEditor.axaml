@@ -28,6 +28,17 @@
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
             </DataTemplate>
+            <DataTemplate DataType="module:ToggleModuleOptionItem">
+                <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <fac:SettingsExpander.Footer>
+                        <ToggleSwitch IsChecked="{Binding IsChecked}">
+                            <ToggleSwitch.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ToggleSwitch.Styles>
+                        </ToggleSwitch>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
+            </DataTemplate>
             <DataTemplate DataType="module:ModuleOptionItem">
                 <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
                     <fac:SettingsExpander.Footer>

@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Threading.RateLimiting;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
@@ -80,13 +82,20 @@ public sealed class Module : IModule<Settings>
     }
 }
 
-public sealed class Settings
+public sealed class Settings : OverridableConfig
 {
     public const int ClientId = 10588;
+    
+    [IgnoreDataMember]
     public string? Token { get; set; }
+    
+    [DisplayName("Include NSFW")]
     public bool IncludeNsfw { get; set; }
+    
+    [DisplayName("Search Limit")]
     public double SearchLimit { get; set; } = 15;
-    public TitleLanguage TitleLanguage { get; set; } = TitleLanguage.Romaji;
+    
+    [DisplayName("Title Language")]public TitleLanguage TitleLanguage { get; set; } = TitleLanguage.Romaji;
 }
 
 public enum TitleLanguage

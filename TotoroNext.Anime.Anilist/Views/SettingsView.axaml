@@ -4,22 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.Anilist.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:controls="totoro.next/controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:SettingsViewModel"
              x:Class="TotoroNext.Anime.Anilist.Views.SettingsView">
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
         <Image Source="avares://TotoroNext.Anime.Anilist/Assets/anilist.jpg" Stretch="UniformToFill" Width="600" />
-        <u:Form Grid.Row="1" LabelWidth="*" HorizontalAlignment="Stretch">
-            <u:FormItem Label="Include NSFW">
-                <ToggleSwitch IsChecked="{Binding IncludeNsfw}" />
-            </u:FormItem>
-            <u:FormItem Label="Search Limit">
-                <u:NumericIntUpDown Value="{Binding SearchLimit}" />
-            </u:FormItem>
+        <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
+            <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"
+                                          IsVisible="{Binding EditableSettings, Converter={x:Static ObjectConverters.IsNotNull}}" />
             <Button Content="Authenticate"
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"
                     HorizontalAlignment="Stretch" Click="Button_OnClick" />
         </u:Form>
+        <!-- <u:Form Grid.Row="1" LabelWidth="*" HorizontalAlignment="Stretch"> -->
+        <!--     <u:FormItem Label="Include NSFW"> -->
+        <!--         <ToggleSwitch IsChecked="{Binding IncludeNsfw}" /> -->
+        <!--     </u:FormItem> -->
+        <!--     <u:FormItem Label="Search Limit"> -->
+        <!--         <u:NumericIntUpDown Value="{Binding SearchLimit}" /> -->
+        <!--     </u:FormItem> -->
+        <!-- </u:Form> -->
     </Grid>
 </UserControl>

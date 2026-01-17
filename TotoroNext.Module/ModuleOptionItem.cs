@@ -11,6 +11,7 @@ namespace TotoroNext.Module;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "Type")]
 [JsonDerivedType(typeof(SelectableModuleOptionItem), "Selectable")]
+[JsonDerivedType(typeof(ToggleModuleOptionItem), "Toggle")]
 public partial class ModuleOptionItem : ObservableObject
 {
     public string Name { get; init; } = "";
@@ -33,6 +34,11 @@ public partial class ModuleOptionItem : ObservableObject
     public string GetString(string name, string defaultValue)
     {
         return Value;
+    }
+
+    public bool GetBool(string name, bool defaultValue)
+    {
+        return Value == bool.TrueString;
     }
 
     public int GetInt32(string name, int defaultValue)
@@ -61,6 +67,15 @@ public class SelectableModuleOptionItem : ModuleOptionItem
     public required IEnumerable<string> AllowedValues { get; init; }
 }
 
+public class ToggleModuleOptionItem : ModuleOptionItem
+{
+    public bool IsChecked
+    {
+        get => Value == bool.TrueString;
+        set => Value = value.ToString();
+    }
+}
+
 public class ModuleOptionBuilder
 {
     private IEnumerable<string> _allowedValues = [];
@@ -68,6 +83,7 @@ public class ModuleOptionBuilder
     private string? _displayName;
     private string _name = "";
     private string _value = "";
+    private Type? _valueType;
 
     public ModuleOptionBuilder WithName(string name)
     {
@@ -153,6 +169,17 @@ public class ModuleOptionBuilder
             AllowedValues = _allowedValues
         };
     }
+
+    public ToggleModuleOptionItem ToTogglePluginOption()
+    {
+        return new ToggleModuleOptionItem()
+        {
+            Name = _name,
+            DisplayName = _displayName,
+            Description = _description,
+            Value = _value,
+        };
+    }
 }
 
 [JsonConverter(typeof(ModuleOptionsConverter))]
@@ -231,10 +258,20 @@ public abstract class OverridableConfig
                 builder.WithAllowedValues(allowedValuesAttribute.Values);
             }
 
-            var option = builder.HasAllowedValues()
-                ? builder.ToSelectablePluginOption()
-                : builder.ToPluginOption();
-
+            ModuleOptionItem option;
+            if (propertyInfo.PropertyType == typeof(bool))
+            {
+                option = builder.ToTogglePluginOption();
+            }
+            else if (builder.HasAllowedValues())
+            {
+                option = builder.ToSelectablePluginOption();
+            }
+            else
+            {
+                option = builder.ToPluginOption();
+            }
+            
             options.Add(option);
         }
 
@@ -258,6 +295,11 @@ public abstract class OverridableConfig
             return options.GetString(name, (string)defaultValue!);
         }
 
+        if (t == typeof(bool))
+        {
+            return options.GetBool(name, (bool)defaultValue!);
+        }
+        
         return t.IsEnum ? options.GetEnum(t, name, defaultValue!) : null;
     }
 }
