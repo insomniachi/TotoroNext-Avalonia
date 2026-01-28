@@ -1,22 +1,26 @@
 ﻿using System.Text.Json.Serialization;
 using Flurl.Http;
 using JetBrains.Annotations;
+using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
 
 namespace TotoroNext.Torrents.TorBox;
 
-internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
+internal class TorBoxService(
+    IHttpClientFactory httpClientFactory,
+    IModuleSettings<Settings> settings) : IDebrid
 {
     private readonly FlurlClient _client = new(httpClientFactory.CreateClient("TorBox"));
 
-    public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet, CancellationToken ct)
+    public async Task<Uri?> TryGetDirectDownloadLink(Uri uri, CancellationToken ct)
     {
         try
         {
+            var magnet = await TorrentHelper.TorrentToMagnet(uri);
             var response = await _client.Request("torrents", "createtorrent")
                                         .PostUrlEncodedAsync(new
                                         {
-                                            magnet = magnet.ToString(),
+                                            magnet,
                                             add_only_if_cached = true
                                         }, cancellationToken: ct)
                                         .ReceiveJson<TorBoxResponse<CreateTorrentData>>();
@@ -26,16 +30,21 @@ internal class TorBoxService(IHttpClientFactory httpClientFactory) : IDebrid
                 return null;
             }
 
-            var token = _client.Headers.FirstOrDefault(x => x.Name == "Authorization") is { } authHeader
-                ? authHeader.Value.Replace("Bearer ", "")
-                : null;
-
             var dlResponse = await _client.Request("torrents", "requestdl")
-                                          .SetQueryParam("token", token)
+                                          .SetQueryParam("token", settings.Value.Token)
                                           .SetQueryParam("torrent_id", response.Data.TorrentId)
                                           .GetJsonAsync<TorBoxResponse<string>>(cancellationToken: ct);
 
-            return dlResponse is { Success: false } or { Data: null } ? null : new Uri(dlResponse.Data);
+            var result = dlResponse is { Success: false } or { Data: null } ? null : new Uri(dlResponse.Data);
+            
+            await _client.Request("torrents", "controltorrent")
+                         .PostJsonAsync(new
+                         {
+                             torrent_id = response.Data.TorrentId,
+                             operation = "delete"
+                         }, cancellationToken: ct);
+
+            return result;
         }
         catch (Exception e)
         {

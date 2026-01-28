@@ -30,6 +30,11 @@ public class TorrentModel
             return null;
         }
 
+        if (!int.TryParse(episode, out var episodeNumber))
+        {
+            return null;
+        }
+
         if (releaseGroup is not null &&
             animeTitle is not null &&
             Fuzz.PartialRatio(animeTitle, releaseGroup) > 50)
@@ -42,7 +47,7 @@ public class TorrentModel
             Torrent = torrent,
             Title = title,
             Season = string.IsNullOrEmpty(season) ? null : int.Parse(season),
-            Episode = string.IsNullOrEmpty(episode) ? null : int.Parse(episode),
+            Episode = episodeNumber,
             ReleaseGroup = releaseGroup
         };
     }
