@@ -83,7 +83,6 @@ public class ModuleOptionBuilder
     private string? _displayName;
     private string _name = "";
     private string _value = "";
-    private Type? _valueType;
 
     public ModuleOptionBuilder WithName(string name)
     {

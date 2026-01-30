@@ -72,7 +72,7 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
                 DestinationEpisodesRage = ParseEpisodes(dstParts[1])
             };
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return null;
         }

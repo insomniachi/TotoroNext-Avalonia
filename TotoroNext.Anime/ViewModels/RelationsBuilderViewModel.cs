@@ -93,6 +93,7 @@ public partial class RelationsBuilderViewModel(RelationsBuilderViewModelNavigati
         var sb = new StringBuilder();
         var first = Anime[0];
         var counter = first.TotalEpisodes ?? 0;
+        var hasNewRelation = false;
         foreach (var anime in Anime.Skip(1))
         {
             var absoluteEndEp = counter + (anime.TotalEpisodes ?? 0);
@@ -109,9 +110,15 @@ public partial class RelationsBuilderViewModel(RelationsBuilderViewModelNavigati
                 sb.AppendLine($"# {first.Title} -> {anime.Title.Replace(first.Title, "~")}");
                 sb.AppendLine(relation.ToString());
                 relations.AddRelation(relation);
+                hasNewRelation = true;
             }
             
             counter = absoluteEndEp;
+        }
+
+        if (!hasNewRelation)
+        {
+            return;
         }
 
         sb.AppendLine();

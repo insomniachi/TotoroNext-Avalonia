@@ -158,7 +158,7 @@
     "EntryPoint": "TotoroNext.Anime.Jellyfin.dll",
     "Versions": [
       {
-        "Version": "1.3.0",
+        "Version": "1.4.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Jellyfin.zip"
@@ -272,7 +272,7 @@
     "EntryPoint": "TotoroNext.Torrents.TorBox.dll",
     "Versions": [
       {
-        "Version": "1.1.0",
+        "Version": "1.2.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Torrents.TorBox.zip"
