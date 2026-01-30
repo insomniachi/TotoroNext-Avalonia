@@ -9,7 +9,9 @@ using TotoroNext.Anime.Anilist;
 
 namespace TotoroNext.Anime.Local;
 
-internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient client) : ILocalMetadataService
+internal class MetadataService(ILiteDbContext dbContext, 
+                               IAnimeMappingService mappingService,
+                               GraphQLHttpClient client) : ILocalMetadataService
 {
     public Guid Id => Guid.Empty;
 
@@ -273,6 +275,51 @@ internal class MetadataService(ILiteDbContext dbContext, GraphQLHttpClient clien
                                 .ToList();
             }
         }, ct);
+    }
+    
+    public async Task<List<AnimeModel>> BuilderRelationshipsAsync(long id, CancellationToken ct)
+    {
+        var anime = await GetAnimeWithoutAdditionalInfoAsync(id);
+        var ids = new HashSet<long>() { id };
+        var relations = new List<AnimeModel>() { anime };
+        await BuildRelationshipsInternalAsync(anime, ids, relations, ct);
+        return relations
+               .Where(x => x.Season is not null)
+               .OrderBy(x => x.Season!.Year).ThenBy(x => x.Season!.SeasonName)
+               .ToList();
+    }
+    
+    private async Task BuildRelationshipsInternalAsync(AnimeModel anime, HashSet<long> ids, List<AnimeModel> relations, CancellationToken ct)
+    {
+        
+        if (ct.IsCancellationRequested)
+        {
+            return;
+        }
+        
+        if (mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 } animeId)
+        {
+            return;
+        }
+
+        foreach (var related in anime.Related)
+        {
+            if (!ids.Add(related.Id))
+            {
+                continue;
+            }
+
+            var relatedFull = await GetAnimeWithoutAdditionalInfoAsync(related.Id);
+
+            if (relatedFull.MediaFormat is AnimeMediaFormat.Special or AnimeMediaFormat.Music or AnimeMediaFormat.Ona)
+            {
+                continue;
+            }
+            
+            relations.Add(relatedFull);
+            
+            await BuildRelationshipsInternalAsync(relatedFull, ids, relations, ct);
+        }
     }
 
     private static MediaQueryBuilder MediaQueryBuilderAdditionalInfo()

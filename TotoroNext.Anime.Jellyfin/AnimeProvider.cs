@@ -49,6 +49,11 @@ public class AnimeProvider(
 
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
+        if (!await authenticator.LoginIfNotAuthenticated())
+        {
+            yield break;
+        }
+        
         var id = Guid.Parse(animeId);
         var item = await client.Items[id].GetAsync(cancellationToken: ct);
 
@@ -87,7 +92,7 @@ public class AnimeProvider(
                     continue;
                 }
 
-                foreach (var ep in episodes.Items ?? [])
+                foreach (var ep in episodes.Items?.Where(x => x.ParentIndexNumber > 0) ?? [])
                 {
                     ct.ThrowIfCancellationRequested();
                     yield return new Episode(this, animeId, $"{ep.Id}", ++episodeNumber);

@@ -18,6 +18,8 @@ public partial class AnimeExtensionsViewModel(
     OverridesViewModelNavigationParameters parameters,
     IAnimeExtensionService animeExtensionService,
     IFactory<IAnimeProvider, Guid> providerFactory,
+    ILocalMetadataService localMetadataService,
+    IAnimeMappingService mappingService,
     IEnumerable<Descriptor> descriptors) : ObservableObject, IInitializable
 {
     private static readonly string[] ObservedProperties =
@@ -185,5 +187,16 @@ public partial class AnimeExtensionsViewModel(
         ProviderOptions = [];
 
         _isDeleting = false;
+    }
+    
+    [RelayCommand]
+    private async Task BuildRelationshipTree()
+    {
+        if (mappingService.GetId(parameters.Anime) is not { } id)
+        {
+            return;
+        }
+        
+        await localMetadataService.BuilderRelationshipsAsync(id.Local, CancellationToken.None);
     }
 }

@@ -23,7 +23,7 @@
         <StreamGeometry x:Key="Opening">M28.125 281.25A9.375 9.375 0 0 0 37.5 271.875V28.125A9.375 9.375 0 0 0 18.75 28.125V271.875A9.375 9.375 0 0 0 28.125 281.25M56.25 168.75A18.75 18.75 0 0 0 75 187.5H262.5A18.75 18.75 0 0 0 281.25 168.75V131.25A18.75 18.75 0 0 0 262.5 112.5H75A18.75 18.75 0 0 0 56.25 131.25z</StreamGeometry>
         <StreamGeometry x:Key="Ending">M271.875 281.25A9.375 9.375 0 0 1 262.5 271.875V28.125A9.375 9.375 0 0 1 281.25 28.125V271.875A9.375 9.375 0 0 1 271.875 281.25M243.75 168.75A18.75 18.75 0 0 1 225 187.5H37.5A18.75 18.75 0 0 1 18.75 168.75V131.25A18.75 18.75 0 0 1 37.5 112.5H225A18.75 18.75 0 0 1 243.75 131.25z</StreamGeometry>
     </UserControl.Resources>
-    <Grid RowDefinitions="*, Auto">
+    <Grid RowDefinitions="*, Auto, Auto">
         <ScrollViewer Grid.Row="0">
             <StackPanel>
                 <fac:SettingsExpander Header="Incognito" Description="Don't show discord rich presence for this anime">
@@ -59,14 +59,14 @@
                                               IsVisible="{Binding HasProvider}">
                         <fac:SettingsExpanderItem.Footer>
                             <u:AutoCompleteBox x:Name="AutoCompleteBox"
-                                             Text="{Binding SearchTerm}"
-                                             SelectedItem="{Binding ProviderResult}"
-                                             ValueMemberBinding="{ReflectionBinding Title}"
-                                             FilterMode="None"
-                                             MaxDropDownHeight="300"
-                                             MinimumPopulateDelay="0:0:0.500"
-                                             MinimumPrefixLength="2"
-                                             Width="200">
+                                               Text="{Binding SearchTerm}"
+                                               SelectedItem="{Binding ProviderResult}"
+                                               ValueMemberBinding="{ReflectionBinding Title}"
+                                               FilterMode="None"
+                                               MaxDropDownHeight="300"
+                                               MinimumPopulateDelay="0:0:0.500"
+                                               MinimumPrefixLength="2"
+                                               Width="200">
                                 <u:AutoCompleteBox.ItemTemplate>
                                     <DataTemplate x:DataType="mdl:SearchResult">
                                         <TextBlock Text="{Binding Title}"
@@ -111,7 +111,14 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Button Grid.Row="1" Content="Delete Overrides"
+        <Button Grid.Row="1" Content="Add relations" 
+                u:FormItem.NoLabel="True"
+                Command="{Binding BuildRelationshipTreeCommand}"
+                Theme="{DynamicResource SolidButton}"
+                Margin="0 24 0 0 "
+                HorizontalAlignment="Stretch" />
+
+        <Button Grid.Row="2" Content="Delete Overrides"
                 u:FormItem.NoLabel="True"
                 Command="{Binding DeleteCommand}"
                 Theme="{DynamicResource SolidButton}"

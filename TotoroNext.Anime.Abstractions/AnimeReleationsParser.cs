@@ -17,7 +17,7 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
         else
         {
             var fileInfo = new FileInfo(_path);
-            if (DateTime.Now - fileInfo.CreationTime > TimeSpan.FromDays(30))
+            if (DateTime.Now - fileInfo.LastWriteTime > TimeSpan.FromDays(30))
             {
                 await DownloadAndInitialize();
             }
