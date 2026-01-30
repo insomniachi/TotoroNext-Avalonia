@@ -49,6 +49,7 @@ public class Module : IModule
 
         // dialogs
         services.AddDataViewMap<TorrentsView, TorrentsViewModel, TorrentsViewModelNavigationParameters>()
+                .AddDataViewMap<RelationsBuilderView, RelationsBuilderViewModel, RelationsBuilderViewModelNavigationParameters>()
                 .AddKeyedViewMap<DownloadRequestView, DownloadRequestViewModel>("Download");
 
         services.AddSelectionUserInteraction<SelectProviderResult, SearchResult>()

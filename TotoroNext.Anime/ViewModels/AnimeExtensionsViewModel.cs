@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using DynamicData.Binding;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -10,6 +11,7 @@ using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using Ursa.Controls;
 
 namespace TotoroNext.Anime.ViewModels;
 
@@ -20,6 +22,7 @@ public partial class AnimeExtensionsViewModel(
     IFactory<IAnimeProvider, Guid> providerFactory,
     ILocalMetadataService localMetadataService,
     IAnimeMappingService mappingService,
+    IMessenger messenger,
     IEnumerable<Descriptor> descriptors) : ObservableObject, IInitializable
 {
     private static readonly string[] ObservedProperties =
@@ -197,6 +200,18 @@ public partial class AnimeExtensionsViewModel(
             return;
         }
         
-        await localMetadataService.BuilderRelationshipsAsync(id.Local, CancellationToken.None);
+        var relations = await localMetadataService.BuilderRelationshipsAsync(id.Local, CancellationToken.None);
+
+        if (relations.Count < 2)
+        {
+            return;
+        }
+
+        messenger.Send(new NavigateToDialogMessage
+        {
+            Data = new RelationsBuilderViewModelNavigationParameters(relations),
+            Title = "Relationship Builder",
+            Button = DialogButton.OKCancel
+        });
     }
 }

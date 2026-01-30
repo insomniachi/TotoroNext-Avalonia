@@ -23,6 +23,7 @@ public partial class MainWindowViewModel : ObservableObject,
                                            IRecipient<NavigateToDataMessage>,
                                            IRecipient<PaneNavigateToViewModelMessage>,
                                            IRecipient<PaneNavigateToDataMessage>,
+                                           IRecipient<NavigateToDialogMessage>,
                                            IRecipient<NavigateToViewModelDialogMessage>,
                                            IRecipient<NavigateToKeyDialogMessage>
 {
@@ -68,6 +69,23 @@ public partial class MainWindowViewModel : ObservableObject,
     public void Receive(NavigateToDataMessage message)
     {
         Navigator?.NavigateToData(message.Data);
+    }
+    
+    public void Receive(NavigateToDialogMessage message)
+    {
+        if (message.Data is null)
+        {
+            return;
+        }
+        
+        var map = _locator.FindByData(message.Data.GetType());
+
+        if (map is null)
+        {
+            return;
+        }
+
+        NavigateToDialog(map, message);
     }
 
     public void Receive(NavigateToKeyDialogMessage message)

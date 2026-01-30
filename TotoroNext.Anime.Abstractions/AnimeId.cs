@@ -1,6 +1,6 @@
 ﻿namespace TotoroNext.Anime.Abstractions;
 
-public class AnimeId
+public sealed class AnimeId
 {
     public long AniDb { get; set; }
     public long MyAnimeList { get; set; }
@@ -17,5 +17,12 @@ public class AnimeId
         }
 
         return (long?)property.GetValue(this);
+    }
+    
+    public static bool EqualsForAnimeRelations(AnimeId first, AnimeId second)
+    {
+        return first.MyAnimeList == second.MyAnimeList &&
+               first.Anilist == second.Anilist &&
+               first.Kitsu == second.Kitsu;
     }
 }

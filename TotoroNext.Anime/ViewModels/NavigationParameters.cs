@@ -21,3 +21,4 @@ public record InfoViewNavigationParameters(AnimeModel Anime);
 public record CharactersViewNavigationParameters(AnimeModel Anime);
 
 public record TorrentsViewModelNavigationParameters(AnimeModel Anime);
+public record RelationsBuilderViewModelNavigationParameters(List<AnimeModel> Anime);

@@ -3,6 +3,8 @@
 public interface IAnimeRelations : IReadOnlyList<AnimeRelation>
 {
     void AddRelation(AnimeRelation relation);
+    
+    bool Exists(AnimeRelation relation);
 
     AnimeRelation? FindRelation(Models.AnimeModel anime);
 }

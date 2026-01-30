@@ -7,6 +7,7 @@ namespace TotoroNext.Anime.Abstractions;
 public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBackgroundInitializer
 {
     private readonly string _path = FileHelper.GetPath("relations.txt");
+    private readonly string _localPath = FileHelper.GetPath("relations-local.txt");
 
     public async Task BackgroundInitializeAsync()
     {
@@ -26,7 +27,55 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
 
     public void Initialize()
     {
-        Parse();
+        Parse(_path);
+        Parse(_localPath);
+    }
+
+    public static AnimeRelation? ParseLine(string line)
+    {
+        var trimmed = line.Trim();
+        if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith('#'))
+        {
+            return null;
+        }
+
+        if (trimmed.StartsWith("- "))
+        {
+            trimmed = trimmed["- ".Length ..];
+        }
+
+        var arrowIndex = trimmed.IndexOf("->", StringComparison.Ordinal);
+        if (arrowIndex == -1)
+        {
+            return null;
+        }
+
+        var src = trimmed[..arrowIndex].Trim();
+        var dst = trimmed[(arrowIndex + 2)..].Trim();
+
+        var isSelfRedirect = dst.EndsWith('!');
+        if (isSelfRedirect)
+        {
+            dst = dst[..^1].Trim();
+        }
+
+        var srcParts = src.Split(':');
+        var dstParts = dst.Split(':');
+
+        try
+        {
+            return new AnimeRelation
+            {
+                SourceIds = ParseIds(srcParts[0]),
+                DestinationIds = ParseIds(dstParts[0]),
+                SourceEpisodesRage = ParseEpisodes(srcParts[1]),
+                DestinationEpisodesRage = ParseEpisodes(dstParts[1])
+            };
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
     }
 
     private async Task DownloadAndInitialize()
@@ -45,58 +94,21 @@ public class AnimeRelationsParser(IAnimeRelations relations) : IInitializer, IBa
         Initialize();
     }
 
-    private void Parse()
+    private void Parse(string path)
     {
-        if (!File.Exists(_path))
+        if (!File.Exists(path))
         {
             return;
         }
 
-        foreach (var line in File.ReadLines(_path))
+        foreach (var line in File.ReadLines(path))
         {
-            var trimmed = line.Trim();
-            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith('#'))
+            if(ParseLine(line) is not { } relation)
             {
                 continue;
             }
-
-            if (trimmed.StartsWith("- "))
-            {
-                trimmed = trimmed["- ".Length ..];
-            }
-
-            var arrowIndex = trimmed.IndexOf("->", StringComparison.Ordinal);
-            if (arrowIndex == -1)
-            {
-                continue;
-            }
-
-            var src = trimmed[..arrowIndex].Trim();
-            var dst = trimmed[(arrowIndex + 2)..].Trim();
-
-            var isSelfRedirect = dst.EndsWith('!');
-            if (isSelfRedirect)
-            {
-                dst = dst[..^1].Trim();
-            }
-
-            var srcParts = src.Split(':');
-            var dstParts = dst.Split(':');
-
-            try
-            {
-                relations.AddRelation(new AnimeRelation
-                {
-                    SourceIds = ParseIds(srcParts[0]),
-                    DestinationIds = ParseIds(dstParts[0]),
-                    SourceEpisodesRage = ParseEpisodes(srcParts[1]),
-                    DestinationEpisodesRage = ParseEpisodes(dstParts[1])
-                });
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            
+            relations.AddRelation(relation);
         }
     }
 
@@ -137,11 +149,29 @@ public class AnimeRelation
     public AnimeId DestinationIds { get; init; } = new();
     public EpisodeRange SourceEpisodesRage { get; init; } = new(0, 0);
     public EpisodeRange DestinationEpisodesRage { get; init; } = new(0, 0);
+    
+    public static bool AreEqual(AnimeRelation first, AnimeRelation second)
+    {
+        return AnimeId.EqualsForAnimeRelations(first.DestinationIds, second.DestinationIds) &&
+               AnimeId.EqualsForAnimeRelations(first.SourceIds, second.SourceIds) &&
+               first.DestinationEpisodesRage == second.DestinationEpisodesRage &&
+               first.SourceEpisodesRage == second.SourceEpisodesRage;
+    }
+
+    public override string ToString()
+    {
+        return $"- {ConvertIds(SourceIds)}:{SourceEpisodesRage.Start}-{SourceEpisodesRage.End} -> {ConvertIds(DestinationIds)}:{DestinationEpisodesRage.Start}-{DestinationEpisodesRage.End}!";
+    }
+    
+    private static string ConvertIds(AnimeId id)
+    {
+        var malId = id.MyAnimeList > 0 ? id.MyAnimeList.ToString() : "?";
+        var kitsuId = id.Kitsu > 0 ? id.Kitsu.ToString() : "?";
+        var anilistId = id.Anilist > 0 ? id.Anilist.ToString() : "?";
+        
+        return $"{malId}|{kitsuId}|{anilistId}";
+    }
 }
 
 [Serializable]
-public class EpisodeRange(int start, int end)
-{
-    public int Start { get; set; } = start;
-    public int End { get; set; } = end;
-}
+public record EpisodeRange(int Start, int End);
