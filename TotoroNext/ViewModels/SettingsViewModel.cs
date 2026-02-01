@@ -87,6 +87,12 @@ public class SettingsModel : ObservableObject
         set => SetAndSaveProperty(ref field, value);
     } = true;
 
+    public string? HomeView
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value);
+    } = "Home";
+
     protected void SetAndSaveProperty<TProperty>(ref TProperty field, TProperty value, [CallerMemberName] string propertyName = "")
     {
         if (EqualityComparer<TProperty>.Default.Equals(field, value))
@@ -109,12 +115,10 @@ public class SettingsModel : ObservableObject
         {
             var propertyType = prop.PropertyType;
 
-            var fallback = propertyType.IsValueType
-                ? Activator.CreateInstance(propertyType)
-                : null;
-
+            var fallback = prop.GetValue(this);
             var genericMethod = readSettingMethod.MakeGenericMethod(propertyType);
             var value = genericMethod.Invoke(_localSettingsService, [prop.Name, fallback]);
+            
             prop.SetValue(this, value);
         }
     }
@@ -158,6 +162,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
     public List<Descriptor> TrackingServices { get; }
     public List<Descriptor> SegmentProviders { get; }
     public List<Descriptor> DebridServices { get; }
+    public List<string> HomeViews { get; } = ["Home", "Anime List"];
     public Version? CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version;
 
     public ObservableCollection<string> Themes { get; } =

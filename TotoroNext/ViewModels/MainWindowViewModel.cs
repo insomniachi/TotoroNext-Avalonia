@@ -38,6 +38,7 @@ public partial class MainWindowViewModel : ObservableObject,
                                IMessenger messenger,
                                IDialogService dialogService,
                                ILogger<MainWindowViewModel> logger,
+                               SettingsModel settings,
                                UpdateManager updateManager)
     {
         _locator = locator;
@@ -56,7 +57,7 @@ public partial class MainWindowViewModel : ObservableObject,
             .Subscribe(navigator =>
             {
                 navigator.Navigated += (_, args) => { UpdateSelection(args); };
-                navigator.NavigateToRoute("Home");
+                navigator.NavigateToRoute(settings.HomeView ?? "Home");
             });
 
         messenger.RegisterAll(this);
