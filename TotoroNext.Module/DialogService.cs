@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -96,10 +95,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
         var tcs = new TaskCompletionSource<MessageBoxResult>();
         messageWindow.Closed += (_, _) =>
         {
-            var field = typeof(Window).GetField("_dialogResult",
-                                                BindingFlags.Instance | BindingFlags.NonPublic);
-            var value = field?.GetValue(messageWindow);
-            if (value is MessageBoxResult result)
+            if (UnsafeAccessors.DialogResult(messageWindow) is MessageBoxResult result)
             {
                 tcs.TrySetResult(result);
             }
@@ -130,8 +126,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
             }
             catch (ObjectDisposedException) { }
 
-            var field = typeof(Window).GetField("_dialogResult", BindingFlags.Instance | BindingFlags.NonPublic);
-            field?.SetValue(messageWindow, defaultResult);
+            UnsafeAccessors.DialogResult(messageWindow) = defaultResult;
             messageWindow.Close();
         };
 
