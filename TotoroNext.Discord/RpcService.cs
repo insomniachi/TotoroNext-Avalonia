@@ -88,6 +88,10 @@ internal class RpcService(
                     ? $"Episode {message.Episode.Number} (paused)"
                     : $"Episode {message.Episode.Number}";
             }
+            else
+            {
+                p.State = "";
+            }
 
             p.Assets ??= new Assets();
             p.Assets.LargeImageKey = message.Anime.Image;
