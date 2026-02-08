@@ -32,6 +32,16 @@ internal class MetadataService(ILiteDbContext dbContext,
         {
             var anime = dbContext.Anime.FindById(id);
 
+            if (anime.Tracking?.Tracking.WatchedEpisodes == anime.TotalEpisodes &&
+                anime is { AiringStatus: AiringStatus.CurrentlyAiring, AnilistId: > 0 })
+            {
+                var totalEpisodes = await AnilistHelper.GetTotalAiredEpisodes(client, anime.AnilistId, CancellationToken.None);
+                if (totalEpisodes > 0)
+                {
+                    anime.TotalEpisodes = totalEpisodes;
+                } 
+            }
+
             if (anime.AdditionalInfo is not null || anime.AnilistId == 0)
             {
                 return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
