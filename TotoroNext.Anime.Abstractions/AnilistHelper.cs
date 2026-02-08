@@ -177,6 +177,18 @@ public static class AnilistHelper
             return [];
         }
     }
+    
+    public static async Task<int> TotalEpisodes(long anilistId, GraphQLHttpClient client, CancellationToken ct)
+    {
+        var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
+                                                          .WithEpisodes(), (int)anilistId).Build();
+        var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+        {
+            Query = query
+        }, ct);
+
+        return response.Data.Media.Episodes ?? -1;
+    }
 
     private static Uri? TryConvertUri(string? url)
     {

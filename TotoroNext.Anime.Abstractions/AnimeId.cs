@@ -1,5 +1,6 @@
 ﻿namespace TotoroNext.Anime.Abstractions;
 
+[Serializable]
 public sealed class AnimeId
 {
     public long AniDb { get; set; }

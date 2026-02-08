@@ -1,5 +1,6 @@
 ﻿using System.Xml;
 using Avalonia.Platform.Storage;
+using GraphQL.Client.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
@@ -9,7 +10,8 @@ internal class TrackingService(
     ILiteDbContext dbContext,
     IStorageProvider storageProvider,
     IAnimeMappingService mappingService,
-    ILocalMetadataService localMetadataService) : ILocalTrackingService
+    ILocalMetadataService localMetadataService,
+    GraphQLHttpClient client) : ILocalTrackingService
 {
     public Guid Id => Guid.Empty;
 
@@ -48,16 +50,37 @@ internal class TrackingService(
 
     public Task<List<AnimeModel>> GetUserList(CancellationToken ct)
     {
-        return Task.Run(() =>
+        return Task.Run(async () =>
         {
+            List<AnimeModel> list;
             lock (dbContext)
             {
                 var trackedIds = dbContext.Tracking.FindAll().Select(t => t.Id).ToHashSet();
-                var list = dbContext.Anime.Find(a => trackedIds.Contains(a.MyAnimeListId))
+                list = dbContext.Anime.Find(a => trackedIds.Contains(a.MyAnimeListId))
                                     .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
                                     .ToList();
-                return list;
             }
+            
+            foreach (var anime in list.Where(x => x.AiringStatus == AiringStatus.CurrentlyAiring))
+            {
+                if (anime.Tracking?.WatchedEpisodes != anime.TotalEpisodes)
+                {
+                    continue;
+                }
+
+                if (anime.ExternalIds.Anilist == 0)
+                {
+                    continue;
+                }
+                    
+                var totalEpisodes = await AnilistHelper.GetTotalAiredEpisodes(client, anime.ExternalIds.Anilist, CancellationToken.None);
+                if (totalEpisodes > 0)
+                {
+                    anime.TotalEpisodes = totalEpisodes;
+                }
+            }
+            
+            return list;
 
         }, ct);
     }

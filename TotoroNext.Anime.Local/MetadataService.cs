@@ -297,7 +297,7 @@ internal class MetadataService(ILiteDbContext dbContext,
             return;
         }
         
-        if (mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 } animeId)
+        if (mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 })
         {
             return;
         }
