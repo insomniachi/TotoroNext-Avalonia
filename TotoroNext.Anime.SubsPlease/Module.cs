@@ -29,5 +29,6 @@ public class Module : IModule
         services.AddTransient<IBackgroundInitializer, Initializer>();
         services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
+        services.AddKeyedTransient<IAnimeScheduleProvider, AnimeScheduleProvider>(Descriptor.Id);
     }
 }

@@ -8,6 +8,7 @@ public interface IAnimeExtensionService
     void CreateOrUpdateExtension(long id, AnimeOverrides overrides);
     void RemoveExtension(long id);
     bool IsInIncognitoMode(long id);
-    Task<SearchResult?> SearchOrSelectAsync(Models.AnimeModel anime);
-    Task<SearchResult?> SearchAsync(Models.AnimeModel anime);
+    Task<SearchResult?> SearchOrSelectAsync(AnimeModel anime);
+    Task<SearchResult?> SearchAsync(AnimeModel anime);
+    Task<DateTimeOffset?> GetNextEpisodeAiringTimeAsync(AnimeModel anime, CancellationToken ct);
 }

@@ -19,8 +19,9 @@ namespace TotoroNext.Anime.Abstractions.Behaviors;
 public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
 {
     private static readonly IAnimeMappingService MappingService = Container.Services.GetRequiredService<IAnimeMappingService>();
+    private static readonly IAnimeExtensionService ExtensionService = Container.Services.GetRequiredService<IAnimeExtensionService>();
     private static readonly GraphQLHttpClient Client = Container.Services.GetRequiredService<GraphQLHttpClient>();
-    
+
     protected override Border CreateControl(AnimeModel anime)
     {
         return new Border()
@@ -50,7 +51,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
                             return anime.WhenAnyValue(x => x.Tracking)
                                         .WhereNotNull()
                                         .ObserveOn(RxApp.MainThreadScheduler)
-                                        .Select(_ => Observable.FromAsync(ct => UpdateAiringTime(AssociatedObject!, AssociatedObject!.Anime, ct)))
+                                        .Select(_ => Observable.FromAsync(ct => UpdateAiringTime(AssociatedObject!.Anime, ct)))
                                         .Switch();
                         })
                         .Switch()
@@ -63,7 +64,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
         return anime.AiringStatus is not AiringStatus.FinishedAiring;
     }
 
-    private async Task UpdateAiringTime(AnimeCard card, AnimeModel anime, CancellationToken ct)
+    private async Task UpdateAiringTime(AnimeModel anime, CancellationToken ct)
     {
         var time = await ToNextEpisodeAiringTime(anime, ct);
         if (string.IsNullOrEmpty(time))
@@ -89,21 +90,27 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
             return string.Empty;
         }
 
-        var airingAt = anime.NextEpisodeAt;
-        var current = anime.AiredEpisodes;
+        DateTime? airingAt = null;
+        var current = 0;
 
-        if (airingAt is null &&
-            anime.AiringStatus is AiringStatus.CurrentlyAiring &&
-            anime.ServiceName != nameof(AnimeId.Anilist))
+        if (anime.AiringStatus is AiringStatus.CurrentlyAiring)
         {
             var id = MappingService.GetId(anime);
             if (id is null)
             {
                 return string.Empty;
             }
-
-            (current, airingAt) = await AnilistHelper.GetNextEpisodeInfo(Client, id.Anilist, ct);
-            current--;
+            
+            if (await ExtensionService.GetNextEpisodeAiringTimeAsync(anime, ct) is { } extAiringAt)
+            {
+                airingAt = extAiringAt.DateTime;
+            }
+            else
+            {
+                (_, airingAt) = await AnilistHelper.GetNextEpisodeInfo(Client, id.Anilist, ct);
+            }
+            
+            current = (await AnilistHelper.GetTotalAiredEpisodes(Client, id.Anilist, ct));
         }
 
         if (airingAt is null)

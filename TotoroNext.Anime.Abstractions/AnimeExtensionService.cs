@@ -14,14 +14,17 @@ public class AnimeExtensionService : IAnimeExtensionService
                      "extensions.json");
 
     private readonly IFactory<IAnimeProvider, Guid> _providerFactory;
+    private readonly IFactory<IAnimeScheduleProvider, Guid> _scheduleProviderFactory;
     private readonly ISelectionUserInteraction<SearchResult> _selectAnimeDialog;
     private readonly IDialogService _dialogService;
 
     public AnimeExtensionService(IFactory<IAnimeProvider, Guid> providerFactory,
+                                 IFactory<IAnimeScheduleProvider, Guid> scheduleProviderFactory,
                                  ISelectionUserInteraction<SearchResult> selectAnimeDialog,
                                  IDialogService dialogService)
     {
         _providerFactory = providerFactory;
+        _scheduleProviderFactory = scheduleProviderFactory;
         _selectAnimeDialog = selectAnimeDialog;
         _dialogService = dialogService;
         if (File.Exists(_file))
@@ -84,6 +87,18 @@ public class AnimeExtensionService : IAnimeExtensionService
         var results = await provider.GetSearchResults(anime.Title, CancellationToken.None);
         return TryFindMatch(results, anime, anime.Title);
     }
+    
+    public async Task<DateTimeOffset?> GetNextEpisodeAiringTimeAsync(AnimeModel anime, CancellationToken ct)
+    {
+        var searchResult = GetSearchResult(anime.Id);
+        var provider = GetScheduleProvider(anime.Id);
+        if (provider is null || searchResult is null)
+        {
+            return null;
+        }
+        
+        return await provider.GetNextEpisodeAiringTime(searchResult.Id, ct);
+    }
 
     public void CreateOrUpdateExtension(long id, AnimeOverrides overrides)
     {
@@ -102,6 +117,19 @@ public class AnimeExtensionService : IAnimeExtensionService
 
         var provider = _providerFactory.Create(extension.Provider.Value);
         provider.UpdateOptions(extension.AnimeProviderOptions);
+        return provider;
+    }
+
+    private IAnimeScheduleProvider? GetScheduleProvider(long id)
+    {
+        var extension = _extensions.GetValueOrDefault(id);
+
+        if (extension is null or { Provider: null })
+        {
+            return null;
+        }
+
+        var provider = _scheduleProviderFactory.Create(extension.Provider.Value);
         return provider;
     }
 

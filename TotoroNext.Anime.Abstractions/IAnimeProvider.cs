@@ -12,3 +12,8 @@ public interface IAnimeProvider
     List<ModuleOptionItem> GetOptions() => [];
     void UpdateOptions(List<ModuleOptionItem> options) { }
 }
+
+public interface IAnimeScheduleProvider
+{
+    Task<DateTimeOffset?> GetNextEpisodeAiringTime(string animeId, CancellationToken ct);
+}

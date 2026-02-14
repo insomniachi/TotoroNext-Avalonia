@@ -59,6 +59,7 @@
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
                                    FontSize="{DynamicResource SemiFontSizeHeader4}"
+                                   ToolTip.Tip="{Binding Info.Titles.English, FallbackValue={x:Null}}"
                                    FontWeight="Bold">
                             <Run Text="Episode" Foreground="{DynamicResource TextBlockQuaternaryForeground}" />
                             <Run Text="{Binding Number}"
