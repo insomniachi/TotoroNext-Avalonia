@@ -46,6 +46,9 @@
         <Project Path="TotoroNext.Anime.Jellyfin/TotoroNext.Anime.Jellyfin.csproj">
             <Platform Project="x64" />
         </Project>
+        <Project Path="TotoroNext.Anime.Senshi/TotoroNext.Anime.Senshi.csproj">
+            <Platform Project="x64" />
+        </Project>
         <Project Path="TotoroNext.Anime.SubsPlease/TotoroNext.Anime.SubsPlease.csproj">
             <Platform Project="x64" />
         </Project>
