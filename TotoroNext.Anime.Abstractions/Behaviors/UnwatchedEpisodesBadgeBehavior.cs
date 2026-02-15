@@ -45,6 +45,7 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
     {
         return new Border()
                .HorizontalAlignment(HorizontalAlignment.Right)
+               .ZIndex(10)
                .VerticalAlignment(VerticalAlignment.Top)
                .CornerRadius(20)
                .Padding(3)
