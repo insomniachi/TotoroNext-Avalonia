@@ -140,7 +140,7 @@
     "EntryPoint": "TotoroNext.Anime.SubsPlease.dll",
     "Versions": [
       {
-        "Version": "1.4.0",
+        "Version": "1.5.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.SubsPlease.zip"
@@ -181,6 +181,25 @@
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.TokyoInsider.zip"
+      }
+    ]
+  },
+  {
+    "Id": "c6066fda-8e30-4545-9599-8e6c3e917312",
+    "Name": "Senshi",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider",
+      "Anime Downloader"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Senshi/Assets/senshi.jpg",
+    "EntryPoint": "TotoroNext.Anime.Senshi.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Senshi.zip"
       }
     ]
   },
