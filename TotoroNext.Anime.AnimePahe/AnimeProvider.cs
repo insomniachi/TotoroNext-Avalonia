@@ -64,6 +64,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
 
         var releaseId = IdRegex().Match(doc.Text).Groups[1].Value;
         var page = await GetSessionPage(client, releaseId, 1, ct);
+        var first = page.Data.FirstOrDefault()?.Episode ?? 0;
 
         for (var pageNumber = 1; pageNumber <= page.LastPage; pageNumber++)
         {
@@ -75,7 +76,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
             foreach (var ep in page.Data)
             {
                 ct.ThrowIfCancellationRequested();
-                yield return new Episode(this, releaseId, ep.Session, (float)ep.Episode);
+                yield return new Episode(this, releaseId, ep.Session, (float)(ep.Episode - first + 1));
             }
         }
     }
