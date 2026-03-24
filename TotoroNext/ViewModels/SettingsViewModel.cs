@@ -248,6 +248,11 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         }
 
         var service = _trackingServiceFactory.Create(_settings.SelectedTrackingService);
+        if (service is null)
+        {
+            return;
+        }
+
         var userlist = await service.GetUserList(CancellationToken.None);
         await Task.Run(() => lts.SyncList(userlist));
     }

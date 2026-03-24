@@ -22,6 +22,9 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
     private static readonly IAnimeExtensionService ExtensionService = Container.Services.GetRequiredService<IAnimeExtensionService>();
     private static readonly GraphQLHttpClient Client = Container.Services.GetRequiredService<GraphQLHttpClient>();
 
+    private DateTime? _cachedAiringAt;
+    private int _cachedCurrentEpisode;
+
     protected override Border CreateControl(AnimeModel anime)
     {
         return new Border()
@@ -47,11 +50,13 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
                         .Select(anime =>
                         {
                             RemoveControl();
+                            _cachedAiringAt = null;
+                            _cachedCurrentEpisode = 0;
 
                             return anime.WhenAnyValue(x => x.Tracking)
                                         .WhereNotNull()
                                         .ObserveOn(RxApp.MainThreadScheduler)
-                                        .Select(_ => Observable.FromAsync(ct => UpdateAiringTime(AssociatedObject!.Anime, ct)))
+                                        .Select(_ => Observable.FromAsync(ct => FetchAndDisplayAiringTime(AssociatedObject!.Anime, ct)))
                                         .Switch();
                         })
                         .Switch()
@@ -64,65 +69,70 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
         return anime.AiringStatus is not AiringStatus.FinishedAiring;
     }
 
-    private async Task UpdateAiringTime(AnimeModel anime, CancellationToken ct)
+    private async Task FetchAndDisplayAiringTime(AnimeModel anime, CancellationToken ct)
     {
-        var time = await ToNextEpisodeAiringTime(anime, ct);
-        if (string.IsNullOrEmpty(time))
+        // Fetch the airing time once
+        await FetchAiringTime(anime, ct);
+        
+        if (_cachedAiringAt is null)
         {
             Dispatcher.UIThread.Invoke(() => { Control?.IsVisible = false; });
-
             return;
         }
 
         EnsureControl(anime);
+        UpdateDisplayText();
+
+        // Set up a timer to refresh the UI every minute
+        Observable.Interval(TimeSpan.FromMinutes(1), RxApp.MainThreadScheduler)
+                  .Subscribe(_ => UpdateDisplayText())
+                  .DisposeWith(Disposables);
+    }
+
+    private async Task FetchAiringTime(AnimeModel anime, CancellationToken ct)
+    {
+        if (anime.AiringStatus is not AiringStatus.CurrentlyAiring)
+        {
+            return;
+        }
+
+        var id = MappingService.GetId(anime);
+        if (id is null)
+        {
+            return;
+        }
+
+        if (await ExtensionService.GetNextEpisodeAiringTimeAsync(anime, ct) is { } extAiringAt)
+        {
+            _cachedAiringAt = extAiringAt.DateTime;
+        }
+        else
+        {
+            (_, _cachedAiringAt) = await AnilistHelper.GetNextEpisodeInfo(Client, id.Anilist, ct);
+        }
+
+        _cachedCurrentEpisode = await AnilistHelper.GetTotalAiredEpisodes(Client, id.Anilist, ct);
+    }
+
+    private void UpdateDisplayText()
+    {
+        if (_cachedAiringAt is null)
+        {
+            return;
+        }
+
+        var remaining = _cachedAiringAt.Value - DateTime.Now;
+        var time = remaining < TimeSpan.Zero
+            ? "Aired"
+            : $"EP{_cachedCurrentEpisode + 1}: {HumanizeTimeSpan(remaining)}";
 
         Dispatcher.UIThread.Invoke(() =>
         {
-            var textBlock = (TextBlock)Control!.Child!;
-            textBlock.Text = time;
+            if (Control?.Child is TextBlock textBlock)
+            {
+                textBlock.Text = time;
+            }
         });
-    }
-
-    private static async Task<string> ToNextEpisodeAiringTime(AnimeModel? anime, CancellationToken ct)
-    {
-        if (anime is null)
-        {
-            return string.Empty;
-        }
-
-        DateTime? airingAt = null;
-        var current = 0;
-
-        if (anime.AiringStatus is AiringStatus.CurrentlyAiring)
-        {
-            var id = MappingService.GetId(anime);
-            if (id is null)
-            {
-                return string.Empty;
-            }
-            
-            if (await ExtensionService.GetNextEpisodeAiringTimeAsync(anime, ct) is { } extAiringAt)
-            {
-                airingAt = extAiringAt.DateTime;
-            }
-            else
-            {
-                (_, airingAt) = await AnilistHelper.GetNextEpisodeInfo(Client, id.Anilist, ct);
-            }
-            
-            current = (await AnilistHelper.GetTotalAiredEpisodes(Client, id.Anilist, ct));
-        }
-
-        if (airingAt is null)
-        {
-            return string.Empty;
-        }
-
-        var remaining = airingAt.Value - DateTime.Now;
-
-        return remaining < TimeSpan.Zero
-            ? "Aired"
-            : $"EP{current + 1}: {HumanizeTimeSpan(remaining)}";
     }
 
     private static string HumanizeTimeSpan(TimeSpan ts)

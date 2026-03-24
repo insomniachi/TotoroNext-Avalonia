@@ -116,6 +116,11 @@ public class AnimeExtensionService : IAnimeExtensionService
         }
 
         var provider = _providerFactory.Create(extension.Provider.Value);
+        if (provider is null)
+        {
+            return _providerFactory.CreateDefault()!;
+        }
+
         provider.UpdateOptions(extension.AnimeProviderOptions);
         return provider;
     }
@@ -129,8 +134,7 @@ public class AnimeExtensionService : IAnimeExtensionService
             return null;
         }
 
-        var provider = _scheduleProviderFactory.Create(extension.Provider.Value);
-        return provider;
+        return _scheduleProviderFactory.Create(extension.Provider.Value);
     }
 
     private ProviderItemResult? GetSearchResult(long id)

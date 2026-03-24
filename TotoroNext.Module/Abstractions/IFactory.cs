@@ -3,7 +3,7 @@ namespace TotoroNext.Module.Abstractions;
 public interface IFactory<out TService, in TId>
     where TService : notnull
 {
-    TService Create(TId id);
+    TService? Create(TId? id);
 
     TService? CreateDefault();
 

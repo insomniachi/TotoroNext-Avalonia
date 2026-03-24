@@ -9,16 +9,25 @@ public class Factory<TService, TId>(
     string defaultKey) : IFactory<TService, TId>
     where TService : notnull
 {
-    public TService Create(TId? id)
+    public TService? Create(TId? id)
     {
         if (id is null)
         {
-            ArgumentNullException.ThrowIfNull(id);
+            return default;
         }
 
         using var scope = serviceScopeFactory.CreateScope();
-        return scope.ServiceProvider.GetKeyedService<TService>(id) ?? scope.ServiceProvider.GetRequiredKeyedService<TService>(Guid.Empty);
+        
+        var service = scope.ServiceProvider.GetKeyedService<TService>(id);
+        if (service is not null)
+        {
+            return service;
+        }
+
+        var defaultService = scope.ServiceProvider.GetKeyedService<TService>(default(TId)!);
+        return defaultService;
     }
+
 
     public TService? CreateDefault()
     {

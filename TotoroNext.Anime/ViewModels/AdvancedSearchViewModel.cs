@@ -55,6 +55,7 @@ public partial class AdvancedSearchViewModel(
         var serviceChanged = this.WhenAnyValue(x => x.SelectedService)
                                  .WhereNotNull()
                                  .Select(s => metadataFactory.Create(s.Id))
+                                 .WhereNotNull()
                                  .Replay(1)
                                  .RefCount();
 
@@ -90,6 +91,11 @@ public partial class AdvancedSearchViewModel(
             {
                 ClearSearchFilters();
                 var metadataService = metadataFactory.Create(service.Id);
+                if (metadataService is null)
+                {
+                    return Observable.Empty<List<AnimeModel>>();
+                }
+
                 return trigger
                        .Where(_ => _isChangeNotificationsEnabled)
                        .Select(_ => new AdvancedSearchRequest
