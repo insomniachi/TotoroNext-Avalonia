@@ -43,7 +43,9 @@
                 <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
                     <fac:SettingsExpander.Footer>
                         <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
-                                 MaxWidth="350" TextWrapping="WrapWithOverflow">
+                                 MaxWidth="350" 
+                                 MinWidth="200"
+                                 TextWrapping="WrapWithOverflow">
                             <TextBox.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </TextBox.Styles>
