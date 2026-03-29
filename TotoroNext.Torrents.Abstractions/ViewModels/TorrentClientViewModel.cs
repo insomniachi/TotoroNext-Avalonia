@@ -9,9 +9,10 @@ using TotoroNext.Module.Abstractions;
 namespace TotoroNext.Torrents.Abstractions.ViewModels;
 
 [UsedImplicitly]
-public class TorrentClientViewModel(IFactory<ITorrentClient, Guid> factory) : ObservableObject, IAsyncInitializable
+public sealed class TorrentClientViewModel(IFactory<ITorrentClient, Guid> factory) : ObservableObject, IAsyncInitializable, IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
+    private readonly Lock _torrentLock = new();
 
     public ObservableCollection<TorrentViewModel> Torrents { get; } = [];
     
@@ -27,16 +28,36 @@ public class TorrentClientViewModel(IFactory<ITorrentClient, Guid> factory) : Ob
         {
             await foreach (var torrent in client.GetTorrents(_cts.Token))
             {
-                if(Torrents.FirstOrDefault(x => x.Hash == torrent.Hash) is { } existing)
+                var tcs = new TaskCompletionSource();
+                
+                lock (_torrentLock)
                 {
-                    existing.Update(torrent);
+                    if(Torrents.FirstOrDefault(x => x.Hash == torrent.Hash) is { } existing)
+                    {
+                        RxApp.MainThreadScheduler.Schedule(() => 
+                        {
+                            existing.Update(torrent);
+                            tcs.SetResult();
+                        });
+                    }
+                    else
+                    {
+                        RxApp.MainThreadScheduler.Schedule(() => 
+                        {
+                            Torrents.Add(torrent);
+                            tcs.SetResult();
+                        });
+                    }
                 }
-                else
-                {
-                    RxApp.MainThreadScheduler.Schedule(() => Torrents.Add(torrent));
-                }
+                
+                await tcs.Task;
             }
 
         }, _cts.Token);
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
     }
 }

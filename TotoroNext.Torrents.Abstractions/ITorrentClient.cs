@@ -1,6 +1,4 @@
-﻿using System.Reactive.Concurrency;
-using CommunityToolkit.Mvvm.ComponentModel;
-using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TotoroNext.Torrents.Abstractions;
 
@@ -34,12 +32,9 @@ public partial class TorrentViewModel : ObservableObject
 
     public void Update(TorrentViewModel updated)
     {
-        RxApp.MainThreadScheduler.Schedule(() =>
-        {
-            Seeders = updated.Seeders;
-            Leechers = updated.Leechers;
-            Progress = updated.Progress;
-            DownloadSpeed = updated.DownloadSpeed;
-        });
+        Seeders = updated.Seeders;
+        Leechers = updated.Leechers;
+        Progress = updated.Progress;
+        DownloadSpeed = updated.DownloadSpeed;
     }
 }

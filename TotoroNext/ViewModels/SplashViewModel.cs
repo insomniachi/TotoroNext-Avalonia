@@ -235,7 +235,11 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                                                   });
 #endif
 
-        services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", PackIconMaterialDesignKind.Downloading);
+        services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", PackIconMaterialDesignKind.Downloading,
+                                                                                  new NavMenuItemTag()
+                                                                                  {
+                                                                                      Order = 4
+                                                                                  });
         services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                                                                       PackIconMaterialDesignKind.ShoppingCart,
                                                                       new NavMenuItemTag

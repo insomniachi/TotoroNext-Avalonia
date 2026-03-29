@@ -76,12 +76,11 @@
         <StackPanel Grid.Row="2"
                     Margin="0 10 0 0"
                     Orientation="Horizontal"
-                    HorizontalAlignment="Right"
+                    HorizontalAlignment="Right" 
                     VerticalAlignment="Center"
                     Spacing="8">
             <Button Content="Download"
-                    Command="{Binding DownloadCommand}"
-                    IsVisible="False" />
+                    Command="{Binding DownloadCommand}"/>
             <Button Content="Stream"
                     Command="{Binding StreamCommand}" />
         </StackPanel>

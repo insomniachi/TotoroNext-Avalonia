@@ -46,7 +46,14 @@ public class Client(IModuleSettings<Settings> settings) : ITorrentClient
             }
 
             rid = current?.Rid ?? 0;
-            await Task.Delay(TimeSpan.FromSeconds(2), ct);
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2), ct);
+            }
+            catch (TaskCanceledException)
+            {
+                break;
+            }
         }
     }
     

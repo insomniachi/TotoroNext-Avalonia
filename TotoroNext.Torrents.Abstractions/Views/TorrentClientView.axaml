@@ -15,16 +15,16 @@
     <Grid>
         <DataGrid ItemsSource="{Binding Torrents}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
                 <DataGridTextColumn Header="Progress"
-                                    Binding="{Binding Progress, Converter={x:Static c:TorrentConverters.PercentageConverter}}"
+                                    Binding="{Binding Progress, Mode=OneWay, Converter={x:Static c:TorrentConverters.PercentageConverter}}"
                                     CellStyleClasses="centered-cell" />
-                <DataGridTextColumn Header="Seeders" Binding="{Binding Seeders}"
+                <DataGridTextColumn Header="Seeders" Binding="{Binding Seeders, Mode=OneWay}"
                                     CellStyleClasses="centered-cell" />
-                <DataGridTextColumn Header="Leechers" Binding="{Binding Leechers}"
+                <DataGridTextColumn Header="Leechers" Binding="{Binding Leechers, Mode=OneWay}"
                                     CellStyleClasses="centered-cell" />
                 <DataGridTextColumn Header="Speed"
-                                    Binding="{Binding DownloadSpeed, Converter={x:Static c:Converters.DownloadSpeedConverter}}"
+                                    Binding="{Binding DownloadSpeed, Mode=OneWay, Converter={x:Static c:Converters.DownloadSpeedConverter}}"
                                     CellStyleClasses="centered-cell" />
             </DataGrid.Columns>
         </DataGrid>

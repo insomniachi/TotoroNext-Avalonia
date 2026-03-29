@@ -20,6 +20,7 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     private readonly AnimeModel _anime;
     private readonly ITorrentIndexer _indexer;
     private readonly IMessenger _messenger;
+    private readonly ITorrentClient _torrentClient;
     private readonly ITorrentExtractor _torrentExtractor;
     private readonly ReadOnlyObservableCollection<Selectable<TorrentModel>> _torrents;
     private readonly SourceCache<Selectable<TorrentModel>, Uri> _torrentsCache = new(x => x.Value.Torrent);
@@ -28,11 +29,13 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     public TorrentsViewModel(TorrentsViewModelNavigationParameters param,
                              IMessenger messenger,
                              ITorrentExtractor torrentExtractor,
-                             IFactory<ITorrentIndexer, Guid> indexerFactory)
+                             IFactory<ITorrentIndexer, Guid> indexerFactory,
+                             IFactory<ITorrentClient, Guid> torrentClientFactory)
     {
         _messenger = messenger;
         _torrentExtractor = torrentExtractor;
         _indexer = indexerFactory.CreateDefault()!;
+        _torrentClient = torrentClientFactory.CreateDefault()!;
         _anime = param.Anime;
         Title = param.Anime.Title;
 
@@ -93,12 +96,20 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     }
 
     [RelayCommand]
-    private void Download()
+    private async Task Download()
     {
         if (!Torrents.Any(x => x.IsSelected))
         {
             return;
         }
+
+        var dir = FileHelper.GetPath(Path.Combine("Downloads", _anime.Title));
+        await _torrentClient.AddTorrent(new AddTorrentRequest
+        {
+            Torrents = [.. Torrents.Where(x => x.IsSelected).Select(x => x.Value.Torrent.ToString())],
+            SaveDirectory = dir,
+            Tags = "totoro"
+        });
 
         Close();
     }
