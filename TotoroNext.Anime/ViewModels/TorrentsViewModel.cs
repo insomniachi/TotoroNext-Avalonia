@@ -11,6 +11,7 @@ using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
+using TotoroNext.Torrents.Abstractions.Models;
 
 namespace TotoroNext.Anime.ViewModels;
 
@@ -22,8 +23,8 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     private readonly IMessenger _messenger;
     private readonly ITorrentClient _torrentClient;
     private readonly ITorrentExtractor _torrentExtractor;
-    private readonly ReadOnlyObservableCollection<Selectable<TorrentModel>> _torrents;
-    private readonly SourceCache<Selectable<TorrentModel>, Uri> _torrentsCache = new(x => x.Value.Torrent);
+    private readonly ReadOnlyObservableCollection<Selectable<AnimeTorrentModel>> _torrents;
+    private readonly SourceCache<Selectable<AnimeTorrentModel>, Uri> _torrentsCache = new(x => x.Value.Torrent);
     private bool _isAllSelected;
 
     public TorrentsViewModel(TorrentsViewModelNavigationParameters param,
@@ -51,7 +52,7 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     [ObservableProperty] public partial string Quality { get; set; } = "1080p";
     [ObservableProperty] public partial string Title { get; set; }
 
-    public ReadOnlyObservableCollection<Selectable<TorrentModel>> Torrents => _torrents;
+    public ReadOnlyObservableCollection<Selectable<AnimeTorrentModel>> Torrents => _torrents;
     public List<string> Qualities { get; } = ["720p", "1080p"];
 
     public List<string> ReleaseGroups { get; } =
@@ -79,11 +80,11 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
             .Subscribe(list =>
             {
                 _torrentsCache.Clear();
-                _torrentsCache.AddOrUpdate(list.Select(x => new Selectable<TorrentModel>(x)));
+                _torrentsCache.AddOrUpdate(list.Select(x => new Selectable<AnimeTorrentModel>(x)));
             });
     }
 
-    private async Task<List<TorrentModel>> SearchTorrentsAsync(string title, string releaseGroup, string quality)
+    private async Task<List<AnimeTorrentModel>> SearchTorrentsAsync(string title, string releaseGroup, string quality)
     {
         try
         {

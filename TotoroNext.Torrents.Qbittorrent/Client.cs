@@ -4,6 +4,7 @@ using Banned.Qbittorrent.Models.Sync;
 using Banned.Qbittorrent.Models.Torrent;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
+using TotoroNext.Torrents.Abstractions.ViewModels;
 using AddTorrentRequest = TotoroNext.Torrents.Abstractions.AddTorrentRequest;
 using QbAddTorrentRequest = Banned.Qbittorrent.Models.Requests.AddTorrentRequest;
 

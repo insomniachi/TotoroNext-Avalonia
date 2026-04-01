@@ -1,10 +1,11 @@
 ﻿using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Torrents.Abstractions;
+using TotoroNext.Torrents.Abstractions.Models;
 
 namespace TotoroNext.Anime;
 
-public class TorrentAnimeProvider(IEnumerable<TorrentModel> torrents, ITorrentExtractor torrentExtractor) : IAnimeProvider
+public class TorrentAnimeProvider(IEnumerable<AnimeTorrentModel> torrents, ITorrentExtractor torrentExtractor) : IAnimeProvider
 {
     public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
