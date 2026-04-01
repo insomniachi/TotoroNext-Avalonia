@@ -161,6 +161,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         TrackingServices = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.Tracking))];
         SegmentProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaSegments))];
         DebridServices = [Descriptor.None, .. allModules.Where(x => x.Components.Contains(ComponentTypes.Debrid))];
+        TorrentClients = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.TorrentClient))];
     }
 
     public List<Descriptor> MediaEngines { get; }
@@ -168,6 +169,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
     public List<Descriptor> TrackingServices { get; }
     public List<Descriptor> SegmentProviders { get; }
     public List<Descriptor> DebridServices { get; }
+    public List<Descriptor> TorrentClients { get; }
     public List<string> HomeViews { get; } = ["Home", "Anime List"];
     public Version? CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version;
 

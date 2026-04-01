@@ -20,7 +20,7 @@ public class Module : IModule<Settings>
     public Descriptor Descriptor { get; } = new()
     {
         Id = new Guid("305acd2c-0b08-4bf4-ad2d-de5e24ecc43f"),
-        Name = "Qbittorent Client",
+        Name = "Qbittorent",
         HeroImage = ResourceHelper.GetResource("qbittorrent.jpg"),
         SettingViewModel = typeof(SettingsViewModel),
         Components = [ComponentTypes.TorrentClient]

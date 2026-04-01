@@ -154,6 +154,23 @@
                         </ComboBox>
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
+                <fac:SettingsExpander Header="Torrent Client"
+                                      Description="Default client to download torrents">
+                    <fac:SettingsExpander.IconSource>
+                        <fac:PathIconSource Data="{StaticResource Torrent}" />
+                    </fac:SettingsExpander.IconSource>
+                    <fac:SettingsExpander.Footer>
+                        <ComboBox ItemsSource="{Binding TorrentClients}"
+                                  SelectedValue="{Binding Settings.SelectedTorrentClient, FallbackValue={x:Null}}"
+                                  SelectedValueBinding="{Binding Id}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300">
+                            <ComboBox.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </ComboBox.Styles>
+                        </ComboBox>
+                    </fac:SettingsExpander.Footer>
+                </fac:SettingsExpander>
             </StackPanel>
 
             <StackPanel>
