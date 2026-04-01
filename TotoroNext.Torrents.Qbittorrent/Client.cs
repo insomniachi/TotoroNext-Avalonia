@@ -49,7 +49,7 @@ public class Client(IModuleSettings<Settings> settings) : ITorrentClient
             rid = current?.Rid ?? 0;
             try
             {
-                await Task.Delay(TimeSpan.FromSeconds(2), ct);
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
             }
             catch (TaskCanceledException)
             {
