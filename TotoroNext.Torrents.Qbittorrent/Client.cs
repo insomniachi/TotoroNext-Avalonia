@@ -41,7 +41,7 @@ public class Client(IModuleSettings<Settings> settings) : ITorrentClient
         while (!ct.IsCancellationRequested)
         {
             var current = await client.Sync.GetMainData(rid);
-            foreach (var torrent in ConvertData(mainData))
+            foreach (var torrent in ConvertData(current))
             {
                 yield return torrent;
             }
@@ -77,10 +77,10 @@ public class Client(IModuleSettings<Settings> settings) : ITorrentClient
         return new TorrentViewModel
         {
             Name = info.Value.Name ?? string.Empty,
-            Seeders = info.Value.NumSeeds ?? 0,
-            Leechers = info.Value.NumLeechs ?? 0,
-            Progress = info.Value.Progress ?? 0,
-            DownloadSpeed = info.Value.DownloadSpeed ?? 0,
+            Seeders = info.Value.NumSeeds,
+            Leechers = info.Value.NumLeechs,
+            Progress = info.Value.Progress,
+            DownloadSpeed = info.Value.DownloadSpeed,
             Hash = info.Key
         };
     }

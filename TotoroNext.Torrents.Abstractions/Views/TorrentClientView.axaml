@@ -24,7 +24,7 @@
                 <DataGridTextColumn Header="Leechers" Binding="{Binding Leechers, Mode=OneWay}"
                                     CellStyleClasses="centered-cell" />
                 <DataGridTextColumn Header="Speed"
-                                    Binding="{Binding DownloadSpeed, Mode=OneWay, Converter={x:Static c:Converters.DownloadSpeedConverter}}"
+                                    Binding="{Binding DownloadSpeed, Mode=OneWay, Converter={x:Static c:Converters.DownloadSpeedConverterLong}}"
                                     CellStyleClasses="centered-cell" />
             </DataGrid.Columns>
         </DataGrid>

@@ -8,20 +8,35 @@ public partial class TorrentViewModel : ObservableObject
 
     public required string Hash { get; init; }
 
-    [ObservableProperty] public partial int Seeders { get; set; }
+    [ObservableProperty] public partial int? Seeders { get; set; }
 
-    [ObservableProperty] public partial int Leechers { get; set; }
+    [ObservableProperty] public partial int? Leechers { get; set; }
 
-    [ObservableProperty] public partial double Progress { get; set; }
+    [ObservableProperty] public partial double? Progress { get; set; }
 
-    [ObservableProperty] public partial long DownloadSpeed { get; set; }
+    [ObservableProperty] public partial long? DownloadSpeed { get; set; }
 
 
     public void Update(TorrentViewModel updated)
     {
-        Seeders = updated.Seeders;
-        Leechers = updated.Leechers;
-        Progress = updated.Progress;
-        DownloadSpeed = updated.DownloadSpeed;
+        if (updated.Seeders is { } seeders)
+        {
+            Seeders = seeders;
+        }
+
+        if (updated.Leechers is { } leechers)
+        {
+            Leechers = leechers;
+        }
+
+        if (updated.Progress is { } progress)
+        {
+            Progress = progress;
+        }
+
+        if (updated.DownloadSpeed is { } downloadSpeed)
+        {
+            DownloadSpeed = downloadSpeed;
+        }
     }
 }

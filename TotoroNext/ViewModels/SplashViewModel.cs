@@ -121,7 +121,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                   .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService))
                                   .RegisterFactory<ITorrentIndexer>(nameof(SettingsModel.SelectedTorrentIndexer))
                                   .RegisterFactory<IAnimeScheduleProvider>("")
-                                  .RegisterFactory<ITorrentClient>("");
+                                  .RegisterFactory<ITorrentClient>(nameof(SettingsModel.SelectedTorrentClient));
 
                           RegisterNavigationViewItems(services);
 

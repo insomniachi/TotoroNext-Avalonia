@@ -104,12 +104,12 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
             return;
         }
 
-        var dir = FileHelper.GetPath(Path.Combine("Downloads", _anime.Title));
+        var sanitizedTitle = RemoveIllegalPathCharacters(_anime.Title);
+        var dir = FileHelper.GetPath(Path.Combine("Downloads", sanitizedTitle));
         await _torrentClient.AddTorrent(new AddTorrentRequest
         {
             Torrents = [.. Torrents.Where(x => x.IsSelected).Select(x => x.Value.Torrent.ToString())],
             SaveDirectory = dir,
-            Tags = "totoro"
         });
 
         Close();
@@ -143,5 +143,11 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
         }
 
         _isAllSelected = !_isAllSelected;
+    }
+
+    private static string RemoveIllegalPathCharacters(string path)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        return new string(path.Where(c => !invalidChars.Contains(c)).ToArray());
     }
 }
