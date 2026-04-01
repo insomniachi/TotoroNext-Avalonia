@@ -9,5 +9,6 @@ public partial class SettingsViewModel : ObservableObject
     private static async Task UpdateCatalog()
     {
         await Catalog.DownloadCatalog();
+        await Schedule.DownloadSchedule();
     }
 }
