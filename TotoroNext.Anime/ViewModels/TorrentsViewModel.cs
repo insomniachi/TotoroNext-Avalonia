@@ -11,6 +11,7 @@ using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
+using TotoroNext.Torrents.Abstractions.Models;
 
 namespace TotoroNext.Anime.ViewModels;
 
@@ -20,19 +21,22 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     private readonly AnimeModel _anime;
     private readonly ITorrentIndexer _indexer;
     private readonly IMessenger _messenger;
+    private readonly ITorrentClient _torrentClient;
     private readonly ITorrentExtractor _torrentExtractor;
-    private readonly ReadOnlyObservableCollection<Selectable<TorrentModel>> _torrents;
-    private readonly SourceCache<Selectable<TorrentModel>, Uri> _torrentsCache = new(x => x.Value.Torrent);
+    private readonly ReadOnlyObservableCollection<Selectable<AnimeTorrentModel>> _torrents;
+    private readonly SourceCache<Selectable<AnimeTorrentModel>, Uri> _torrentsCache = new(x => x.Value.Torrent);
     private bool _isAllSelected;
 
     public TorrentsViewModel(TorrentsViewModelNavigationParameters param,
                              IMessenger messenger,
                              ITorrentExtractor torrentExtractor,
-                             IFactory<ITorrentIndexer, Guid> indexerFactory)
+                             IFactory<ITorrentIndexer, Guid> indexerFactory,
+                             IFactory<ITorrentClient, Guid> torrentClientFactory)
     {
         _messenger = messenger;
         _torrentExtractor = torrentExtractor;
         _indexer = indexerFactory.CreateDefault()!;
+        _torrentClient = torrentClientFactory.CreateDefault()!;
         _anime = param.Anime;
         Title = param.Anime.Title;
 
@@ -48,7 +52,7 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     [ObservableProperty] public partial string Quality { get; set; } = "1080p";
     [ObservableProperty] public partial string Title { get; set; }
 
-    public ReadOnlyObservableCollection<Selectable<TorrentModel>> Torrents => _torrents;
+    public ReadOnlyObservableCollection<Selectable<AnimeTorrentModel>> Torrents => _torrents;
     public List<string> Qualities { get; } = ["720p", "1080p"];
 
     public List<string> ReleaseGroups { get; } =
@@ -76,11 +80,11 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
             .Subscribe(list =>
             {
                 _torrentsCache.Clear();
-                _torrentsCache.AddOrUpdate(list.Select(x => new Selectable<TorrentModel>(x)));
+                _torrentsCache.AddOrUpdate(list.Select(x => new Selectable<AnimeTorrentModel>(x)));
             });
     }
 
-    private async Task<List<TorrentModel>> SearchTorrentsAsync(string title, string releaseGroup, string quality)
+    private async Task<List<AnimeTorrentModel>> SearchTorrentsAsync(string title, string releaseGroup, string quality)
     {
         try
         {
@@ -93,12 +97,20 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     }
 
     [RelayCommand]
-    private void Download()
+    private async Task Download()
     {
         if (!Torrents.Any(x => x.IsSelected))
         {
             return;
         }
+
+        var sanitizedTitle = RemoveIllegalPathCharacters(_anime.Title);
+        var dir = FileHelper.GetPath(Path.Combine("Downloads", sanitizedTitle));
+        await _torrentClient.AddTorrent(new AddTorrentRequest
+        {
+            Torrents = [.. Torrents.Where(x => x.IsSelected).Select(x => x.Value.Torrent.ToString())],
+            SaveDirectory = dir,
+        });
 
         Close();
     }
@@ -131,5 +143,11 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
         }
 
         _isAllSelected = !_isAllSelected;
+    }
+
+    private static string RemoveIllegalPathCharacters(string path)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        return new string(path.Where(c => !invalidChars.Contains(c)).ToArray());
     }
 }

@@ -1,11 +1,11 @@
 ﻿using AnitomySharp;
 using FuzzySharp;
 
-namespace TotoroNext.Torrents.Abstractions;
+namespace TotoroNext.Torrents.Abstractions.Models;
 
-public class TorrentModel
+public class AnimeTorrentModel
 {
-    public required Uri Torrent { get; set; }
+    public required Uri Torrent { get; init; }
     public required string Title { get; init; }
     public int Seeders { get; set; }
     public int Leechers { get; set; }
@@ -14,9 +14,9 @@ public class TorrentModel
     public string Size { get; set; } = "";
     public string? ReleaseGroup { get; set; }
     public int? Season { get; set; }
-    public int? Episode { get; set; }
+    public int? Episode { get; init; }
 
-    public static TorrentModel? Create(Uri torrent, string title)
+    public static AnimeTorrentModel? Create(Uri torrent, string title)
     {
         var parsedResults = AnitomySharp.AnitomySharp.Parse(title).ToList();
         var animeTitle = parsedResults.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementAnimeTitle)?.Value;
@@ -42,7 +42,7 @@ public class TorrentModel
             releaseGroup = "";
         }
 
-        return new TorrentModel
+        return new AnimeTorrentModel
         {
             Torrent = torrent,
             Title = title,

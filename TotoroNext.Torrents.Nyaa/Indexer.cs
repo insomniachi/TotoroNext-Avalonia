@@ -4,12 +4,13 @@ using System.Xml;
 using Flurl;
 using Flurl.Http;
 using TotoroNext.Torrents.Abstractions;
+using TotoroNext.Torrents.Abstractions.Models;
 
 namespace TotoroNext.Torrents.Nyaa;
 
 public class Indexer : ITorrentIndexer
 {
-    public async IAsyncEnumerable<TorrentModel> SearchAsync(string term, string group, string quality)
+    public async IAsyncEnumerable<AnimeTorrentModel> SearchAsync(string term, string group, string quality)
     {
         var sb = new StringBuilder(term);
         if (!string.IsNullOrEmpty(group))
@@ -35,7 +36,7 @@ public class Indexer : ITorrentIndexer
 
         foreach (var item in feed.Items)
         {
-            if (TorrentModel.Create(item.Links[0].Uri, item.Title.Text) is not { } torrent)
+            if (AnimeTorrentModel.Create(item.Links[0].Uri, item.Title.Text) is not { } torrent)
             {
                 continue;
             }

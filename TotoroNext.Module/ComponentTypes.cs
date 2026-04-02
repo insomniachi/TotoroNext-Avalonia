@@ -10,6 +10,7 @@ public static class ComponentTypes
     public const string AnimeDownloader = "Anime Downloader";
     public const string Debrid = "Debrid";
     public const string Miscellaneous = "Miscellaneous";
+    public const string TorrentClient = "Torrent Client";
 }
 
 public interface IComponentRegistry

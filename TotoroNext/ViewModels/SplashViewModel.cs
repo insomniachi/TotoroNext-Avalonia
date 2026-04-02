@@ -17,6 +17,8 @@ using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
+using TotoroNext.Torrents.Abstractions.ViewModels;
+using TotoroNext.Torrents.Abstractions.Views;
 using TotoroNext.Views;
 using Ursa.Controls;
 using Velopack;
@@ -118,7 +120,8 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider))
                                   .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService))
                                   .RegisterFactory<ITorrentIndexer>(nameof(SettingsModel.SelectedTorrentIndexer))
-                                  .RegisterFactory<IAnimeScheduleProvider>("");
+                                  .RegisterFactory<IAnimeScheduleProvider>("")
+                                  .RegisterFactory<ITorrentClient>(nameof(SettingsModel.SelectedTorrentClient));
 
                           RegisterNavigationViewItems(services);
 
@@ -232,6 +235,11 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                                                   });
 #endif
 
+        services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", PackIconMaterialDesignKind.Downloading,
+                                                                                  new NavMenuItemTag()
+                                                                                  {
+                                                                                      Order = 4
+                                                                                  });
         services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                                                                       PackIconMaterialDesignKind.ShoppingCart,
                                                                       new NavMenuItemTag
@@ -302,6 +310,9 @@ public class DebugModuleStore : IModuleStore
         // Debrid
         yield return new Torrents.TorBox.Module();
         yield return new Torrents.RealDebrid.Module();
+
+        // Torrent Client
+        yield return new Torrents.Qbittorrent.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)

@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Torrents.Abstractions.ViewModels"
+             xmlns:c="totoro.next/converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:TorrentClientViewModel"
+             x:Class="TotoroNext.Torrents.Abstractions.Views.TorrentClientView">
+    <UserControl.Styles>
+        <Style Selector="DataGridCell.centered-cell">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+    </UserControl.Styles>
+    <Grid>
+        <DataGrid ItemsSource="{Binding Torrents}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
+                <DataGridTextColumn Header="Progress"
+                                    Binding="{Binding Progress, Mode=OneWay, Converter={x:Static c:TorrentConverters.PercentageConverter}}"
+                                    CellStyleClasses="centered-cell" />
+                <DataGridTextColumn Header="Seeders" Binding="{Binding Seeders, Mode=OneWay}"
+                                    CellStyleClasses="centered-cell" />
+                <DataGridTextColumn Header="Leechers" Binding="{Binding Leechers, Mode=OneWay}"
+                                    CellStyleClasses="centered-cell" />
+                <DataGridTextColumn Header="Speed"
+                                    Binding="{Binding DownloadSpeed, Mode=OneWay, Converter={x:Static c:Converters.DownloadSpeedConverterLong}}"
+                                    CellStyleClasses="centered-cell" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

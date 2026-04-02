@@ -11,6 +11,9 @@ public static class Converters
 
     public static readonly IValueConverter DownloadSpeedConverter =
         new FuncValueConverter<double, string>(b => ByteSize.FromBytes(b).Per(OneSecond).Humanize());
+    
+    public static readonly IValueConverter DownloadSpeedConverterLong = 
+        new FuncValueConverter<long?, string>(b => ByteSize.FromBytes(b ?? 0).Per(OneSecond).Humanize());
 
     public static readonly IValueConverter TimeSpanConverter = new FuncValueConverter<TimeSpan, string>(ts => ts.Hours > 0
              ? ts.ToString(@"hh\:mm\:ss")
