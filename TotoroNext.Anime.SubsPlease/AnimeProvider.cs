@@ -17,7 +17,7 @@ public partial class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
     public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
         return Catalog.Items
-                      .Select(show => new { Show = show, Score = Fuzz.Ratio(query, show.Title) })
+                      .Select(show => new { Show = show, Score = Fuzz.TokenSetRatio(query.ToLower(), show.Title.ToLower()) })
                       .Where(x => x.Score > 70)
                       .OrderByDescending(x => x.Score)
                       .Select(x => new SearchResult(this, x.Show.Id, x.Show.Title))
