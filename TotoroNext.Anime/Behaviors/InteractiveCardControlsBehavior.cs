@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Layout;
@@ -282,26 +283,24 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
     private static Border UserScoreBorder(AnimeModel anime)
     {
         var icon = new PackIconControl { Kind = PackIconMaterialDesignKind.Star }
-                   .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
                    .Height(12).Width(12)
                    .VerticalAlignment(VerticalAlignment.Center).HorizontalAlignment(HorizontalAlignment.Center);
 
+        icon.Bind(TextElement.ForegroundProperty, new DynamicResourceExtension("ButtonDefaultPrimaryForeground"));
+
         var text = new TextBlock()
                    .Text($"{anime.Tracking?.Score}")
-                   .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
                    .VerticalAlignment(VerticalAlignment.Center)
                    .FontSize(13)
                    .FontWeight(FontWeight.Bold);
 
+        text.Bind(TextElement.ForegroundProperty, new DynamicResourceExtension("ButtonDefaultPrimaryForeground"));
         text.Bind(TextBlock.TextProperty, new Binding("Tracking.Score")
         {
             Source = anime
         });
 
         var border = new Border()
-               .Background(new DynamicResourceExtension("ButtonDefaultBackground"))
-               .BorderBrush(new DynamicResourceExtension("ButtonDefaultBorderBrush"))
-               .BorderThickness(new DynamicResourceExtension("ButtonBorderThickness"))
                .CornerRadius(20)
                .Padding(8, 5)
                .Child(new StackPanel()
@@ -309,6 +308,9 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                       .Orientation(Orientation.Horizontal)
                       .Children(icon, text));
 
+        border.Bind(Border.BackgroundProperty, new DynamicResourceExtension("ButtonDefaultBackground"));
+        border.Bind(Border.BorderBrushProperty, new DynamicResourceExtension("ButtonDefaultBorderBrush"));
+        border.Bind(Border.BorderThicknessProperty, new DynamicResourceExtension("ButtonBorderThickness"));
         border.Bind(Visual.IsVisibleProperty, new Binding("Tracking.Score")
         {
             Source = anime,

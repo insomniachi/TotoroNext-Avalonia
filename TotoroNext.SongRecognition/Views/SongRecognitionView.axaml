@@ -23,7 +23,7 @@
             <TextBlock Text="Anime" Grid.Row="0" Grid.Column="1" Classes="H4" Theme="{DynamicResource TitleTextBlock}"
                        Margin="13 0 0 0 " />
             <TextBox Grid.Row="0" Grid.Column="2"
-                     Watermark="Search Song"
+                     PlaceholderText="Search Song"
                      Text="{Binding SearchText, Mode=TwoWay}"
                      HorizontalAlignment="Stretch" />
 

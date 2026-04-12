@@ -42,7 +42,6 @@
         <u:Descriptions Grid.Row="2"
                         Classes.Small="true"
                         ItemsSource="{Binding Fields}"
-                        LabelMemberBinding="{Binding Key}"
                         DisplayMemberBinding="{Binding Value}"
                         LabelPosition="Top"
                         ItemAlignment="Center"

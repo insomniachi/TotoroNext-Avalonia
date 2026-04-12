@@ -17,7 +17,7 @@ public class ListStatusBehavior : TrackingBoundAnimeCardOverlayBehavior<Border>
     {
         return new Border()
                .Padding(5)
-               .Margin(0, 3.5, 5)
+               .Margin(0, 3.5, 5, 0)
                .CornerRadius(15)
                .Width(50)
                .BorderThickness(1)

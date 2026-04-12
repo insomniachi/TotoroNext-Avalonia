@@ -19,7 +19,7 @@ public class MediaFormatBehavior : AnimeBoundCardOverlayBehavior<Border>
                .CornerRadius(20)
                .Padding(12, 5)
                .MinWidth(50)
-               .Margin(5, 3.5, 0)
+               .Margin(5, 3.5, 0, 0)
                .Child(new TextBlock()
                       .HorizontalAlignment(HorizontalAlignment.Center)
                       .VerticalAlignment(VerticalAlignment.Center)

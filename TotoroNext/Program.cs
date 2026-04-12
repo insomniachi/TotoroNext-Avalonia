@@ -35,7 +35,6 @@ internal sealed class Program
                          .UsePlatformDetect()
                          .WithInterFont()
                          .UseReactiveUI()
-                         .UseRiderHotReload()
                          .LogToTrace();
     }
 }
