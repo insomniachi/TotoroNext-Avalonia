@@ -2,8 +2,8 @@
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Microsoft.Extensions.Hosting;
+using Semi.Avalonia;
 using TotoroNext.ViewModels;
-using Ursa.Themes.Semi;
 
 namespace TotoroNext;
 
@@ -57,9 +57,6 @@ public class ThemeService(SettingsModel settings) : IHostedService
             return;
         }
 
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            application.RequestedThemeVariant = Themes[settingsSelectedTheme];
-        });
+        Dispatcher.UIThread.Invoke(() => { application.RequestedThemeVariant = Themes[settingsSelectedTheme]; });
     }
 }

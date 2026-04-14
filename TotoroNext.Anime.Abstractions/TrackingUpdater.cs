@@ -111,6 +111,10 @@ public sealed class TrackingUpdater(
         try
         {
             var metaDataService = metadataFactory.Create(serviceId);
+            if (metaDataService is null)
+            {
+                return null;
+            }
             return metaDataService.Id == anime.ServiceId ? null : (await metaDataService.FindAnimeAsync(anime))?.Id;
         }
         catch

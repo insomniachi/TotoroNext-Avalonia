@@ -145,7 +145,7 @@ public partial class MainWindowViewModel : ObservableObject,
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
 
-        Drawer.ShowModal(viewObj, vmObj, options: options);
+        OverlayDrawer.ShowStandard(viewObj, vmObj, options: options);
     }
 
     public void Receive(PaneNavigateToViewModelMessage message)
@@ -174,7 +174,7 @@ public partial class MainWindowViewModel : ObservableObject,
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
 
-        Drawer.ShowModal(viewObj, vmObj, options: options);
+        OverlayDrawer.ShowStandard(viewObj, vmObj, options: options);
     }
 
     [UsedImplicitly]
@@ -284,7 +284,7 @@ public partial class MainWindowViewModel : ObservableObject,
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
 
-        Dialog.ShowModal(viewObj, vmObj, options: options)
+        Dialog.ShowStandardAsync(viewObj, vmObj, options: options)
               .ContinueWith(x =>
               {
                   if (vmObj is IDialogViewModel vm)

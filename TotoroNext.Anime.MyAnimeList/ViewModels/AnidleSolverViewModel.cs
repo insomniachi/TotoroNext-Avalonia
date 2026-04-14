@@ -18,7 +18,7 @@ namespace TotoroNext.Anime.MyAnimeList.ViewModels;
 [UsedImplicitly]
 public partial class AnidleSolverViewModel(IFactory<IMetadataService, Guid> metadataFactory) : ObservableObject, IAsyncInitializable
 {
-    private readonly IMetadataService _metadataService = metadataFactory.Create(Module.Id);
+    private readonly IMetadataService _metadataService = metadataFactory.Create(Module.Id)!;
 
     [ObservableProperty] public partial string Query { get; set; } = "";
     [ObservableProperty] public partial string SelectedSuggestion { get; set; } = "";
