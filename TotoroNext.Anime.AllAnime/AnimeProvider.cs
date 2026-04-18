@@ -1,4 +1,6 @@
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Flurl.Http;
@@ -12,6 +14,10 @@ namespace TotoroNext.Anime.AllAnime;
 
 internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
+    private const string DecryptSecret = "P7K2RGbFgauVtmiS";
+    private const int DecryptIvLength = 12;   // typical IV length for AES-GCM
+    private const int DecryptTagLength = 128; // bits
+    
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         var jObject = await GraphQl.Api
@@ -95,11 +101,14 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
                                     .PostGraphQLQueryAsync(ct)
                                     .ReceiveGraphQLRawSystemTextJsonResponse();
 
-        if (jsonNode?["errors"] is not null)
+        var encrypted = jsonNode?["tobeparsed"]?.GetValue<string>();
+        if (encrypted is null)
         {
             yield break;
         }
-
+        
+        var decrypted = DecryptToBeParsed(encrypted);
+        jsonNode = JsonNode.Parse(decrypted)?.AsObject();
         var sourceArray = jsonNode?["episode"]?["sourceUrls"];
         var sourceObjs = sourceArray?.Deserialize<List<SourceUrlObj>>() ?? [];
         sourceObjs.Sort((x, y) => y.Priority.CompareTo(x.Priority));
@@ -210,4 +219,35 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
             _ => "sub"
         };
     }
+    
+    public static string DecryptToBeParsed(string base64Payload)
+    {
+        var secretBytes = Encoding.UTF8.GetBytes(ReverseString(DecryptSecret));
+        var keyBytes = SHA256.HashData(secretBytes);
+
+        var decodedBytes = Convert.FromBase64String(base64Payload);
+
+        var iv = new byte[DecryptIvLength];
+        Array.Copy(decodedBytes, 0, iv, 0, DecryptIvLength);
+
+        var encryptedData = new byte[decodedBytes.Length - DecryptIvLength];
+        Array.Copy(decodedBytes, DecryptIvLength, encryptedData, 0, encryptedData.Length);
+
+        var plaintext = new byte[encryptedData.Length - (DecryptTagLength / 8)];
+        var tag = new byte[DecryptTagLength / 8];
+        Array.Copy(encryptedData, encryptedData.Length - tag.Length, tag, 0, tag.Length);
+        var ciphertext = new byte[encryptedData.Length - tag.Length];
+        Array.Copy(encryptedData, 0, ciphertext, 0, ciphertext.Length);
+
+        using (var aesGcm = new AesGcm(keyBytes, tag.Length))
+        {
+            aesGcm.Decrypt(iv, ciphertext, tag, plaintext);
+        }
+
+        // 5. Convert back to a JSON string
+        return Encoding.UTF8.GetString(plaintext);
+    }
+
+    private static string ReverseString(string s) => new(s.Reverse().ToArray());
+
 }
