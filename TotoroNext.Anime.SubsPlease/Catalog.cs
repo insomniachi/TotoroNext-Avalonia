@@ -1,40 +1,97 @@
-﻿using System.Text.Json;
-using Flurl.Http;
+﻿using Flurl.Http;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
+using Infidex;
+using Infidex.Api;
+using Infidex.Core;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.SubsPlease;
 
 internal static class Catalog
 {
-    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
-    internal static List<SubsPleaseItem> Items { get; set; } = [];
+    private static SearchEngine? _engine;
+
+    internal static IEnumerable<SubsPleaseItem> Search(string query)
+    {
+        if (_engine is null)
+        {
+            yield break;
+        }
+        
+        var q = new Query()
+        {
+            Text = query,
+            MaxNumberOfRecordsToReturn = 10
+        };
+        
+        var result = _engine.Search(q);
+        var documents = result.Records
+                              .Where(r => r.Score >= result.TruncationScore * 0.8f)
+                              .Select(r => _engine.GetDocument(r.DocumentId));
+
+        foreach (var document in documents)
+        {
+            if (document is null or {Fields: null})
+            {
+                continue;
+            }
+            
+            var id = document.Fields.GetField("Id")!.Value as string ;
+            var title = document.Fields.GetField("Title")!.Value as string;
+            yield return new SubsPleaseItem(id ?? "", title ?? "");
+        }   
+    }
+
+    internal static void LoadEngine(string file)
+    {
+        try
+        {
+            _engine = SearchEngine.Load(file, [400], wordMatcherSetup: new WordMatcherSetup());
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
 
     internal static async Task DownloadCatalog()
     {
+        _engine = SearchEngine.CreateDefault();
+        var documents = new List<Document>();
+        
         var stream = await "https://subsplease.org/shows/".GetStreamAsync();
         var doc = new HtmlDocument();
         doc.Load(stream);
 
-        var catalog = new List<SubsPleaseItem>();
+        var counter = 0;
         foreach (var link in doc.QuerySelectorAll(".all-shows-link a"))
         {
             var id = link.GetAttributeValue("href", "").Replace("/shows/", "");
             var title = link.GetAttributeValue("title", "");
 
-            catalog.Add(new SubsPleaseItem(id, title));
+            var fields = new DocumentFields();
+            fields.AddField("Id", id, Weight.Low);
+            fields.AddField("Title", title, Weight.High);
+            documents.Add(new Document(counter++, fields));
         }
 
-        var file = FileHelper.GetModulePath(Module.Descriptor, "catalog.json");
+        var file = FileHelper.GetModulePath(Module.Descriptor, "catalog.bin");
         var directory = Path.GetDirectoryName(file);
         if (!string.IsNullOrEmpty(directory))
         {
             Directory.CreateDirectory(directory);
         }
 
-        Items = catalog;
-        await File.WriteAllTextAsync(file, JsonSerializer.Serialize(catalog, Options));
+        await _engine.IndexDocumentsAsync(documents);
+        try
+        {
+            _engine.Save(file);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     [Serializable]

@@ -20,7 +20,7 @@ public class Initializer : IInitializer, IBackgroundInitializer
     
     private static async Task EnsureCatalogAsync()
     {
-        var filePath = FileHelper.GetModulePath(Module.Descriptor, "catalog.json");
+        var filePath = FileHelper.GetModulePath(Module.Descriptor, "catalog.bin");
         if (File.Exists(filePath))
         {
             return;
@@ -42,14 +42,13 @@ public class Initializer : IInitializer, IBackgroundInitializer
 
     private static void TryLoadCatalog()
     {
-        var filePath = FileHelper.GetModulePath(Module.Descriptor, "catalog.json");
+        var filePath = FileHelper.GetModulePath(Module.Descriptor, "catalog.bin");
         if (!File.Exists(filePath))
         {
             return;
         }
 
-        var contents = File.ReadAllText(filePath);
-        Catalog.Items = JsonSerializer.Deserialize<List<Catalog.SubsPleaseItem>>(contents) ?? [];
+        Catalog.LoadEngine(filePath);
     }
     
     private static void TryLoadSchedule()

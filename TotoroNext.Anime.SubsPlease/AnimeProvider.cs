@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Flurl;
 using Flurl.Http;
-using FuzzySharp;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using TotoroNext.Anime.Abstractions;
@@ -16,12 +15,9 @@ public partial class AnimeProvider(ITorrentExtractor extractor) : IAnimeProvider
 {
     public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
-        return Catalog.Items
-                      .Select(show => new { Show = show, Score = Fuzz.Ratio(query, show.Title) })
-                      .Where(x => x.Score > 70)
-                      .OrderByDescending(x => x.Score)
-                      .Select(x => new SearchResult(this, x.Show.Id, x.Show.Title))
-                      .ToAsyncEnumerable();
+        return Catalog.Search(query)
+               .Select(x => new SearchResult(this, x.Id, x.Title))
+               .ToAsyncEnumerable();
     }
     
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)

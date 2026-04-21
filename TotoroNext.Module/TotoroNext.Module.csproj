@@ -18,6 +18,7 @@
         <PackageReference Include="FuzzySharp"/>
         <PackageReference Include="HtmlAgilityPack"/>
         <PackageReference Include="Humanizer"/>
+        <PackageReference Include="Infidex" />
         <PackageReference Include="LanguageDetection.Ai" />
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator"/>
         <PackageReference Include="JetBrains.Annotations"/>
