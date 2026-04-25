@@ -18,7 +18,7 @@ public class ModuleStore : IModuleStore
     private readonly string _modulesPath =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
 
-    public IEnumerable<IModule> LoadModules()
+    public IEnumerable<IModule>  LoadModules()
     {
         if (!Directory.Exists(_modulesPath))
         {

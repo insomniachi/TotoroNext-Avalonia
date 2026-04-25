@@ -14,9 +14,21 @@ namespace TotoroNext.Anime.AllAnime;
 
 internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
-    private const string DecryptSecret = "P7K2RGbFgauVtmiS";
-    private const int DecryptIvLength = 12;   // typical IV length for AES-GCM
+    private const string DecryptSecret = "Xot36i3lK3";
     private const int DecryptTagLength = 128; // bits
+    private static readonly string[] XorKeys =
+    [
+        "allanimenews",
+        "1234567890123456789",
+        "1234567890123456789012345",
+        "s5feqxw21",
+        "feqx1"
+    ];
+
+    // Pre-compute cumulative XOR mask for each key (XOR of all char codes)
+    private static readonly int[] XorMasks = XorKeys
+                                              .Select(key => key.Aggregate(0, (mask, ch) => mask ^ ch))
+                                              .ToArray();
     
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -102,13 +114,12 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
                                     .ReceiveGraphQLRawSystemTextJsonResponse();
 
         var encrypted = jsonNode?["tobeparsed"]?.GetValue<string>();
-        if (encrypted is null)
+        if (encrypted  is not null)
         {
-            yield break;
+            var decrypted = DecryptToBeParsed(encrypted);
+            jsonNode = JsonNode.Parse(decrypted)?.AsObject();
         }
         
-        var decrypted = DecryptToBeParsed(encrypted);
-        jsonNode = JsonNode.Parse(decrypted)?.AsObject();
         var sourceArray = jsonNode?["episode"]?["sourceUrls"];
         var sourceObjs = sourceArray?.Deserialize<List<SourceUrlObj>>() ?? [];
         sourceObjs.Sort((x, y) => y.Priority.CompareTo(x.Priority));
@@ -147,7 +158,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
             JsonObject? jObject;
             try
             {
-                var response = await $"https://allanime.day{item.SourceUrl.Replace("clock", "clock.json")}".GetStringAsync();
+                var response = await $"https://allanime.day{item.SourceUrl.Replace("clock", "clock.json")}".GetStringAsync(cancellationToken:ct);
                 jObject = JsonNode.Parse(response)!.AsObject();
             }
             catch
@@ -182,17 +193,57 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
     {
         settings.Value.UpdateValues(options);
     }
-
-    private static string Decrypt(string target)
+    
+    private static string DecryptSourceUrl(string input)
     {
-        return string.Join("", Convert.FromHexString(target).Select(x => (char)(x ^ 56)));
-    }
+        string hexPayload;
+        int keyType;
 
-    private static string DecryptSourceUrl(string sourceUrl)
-    {
-        var index = sourceUrl.LastIndexOf('-') + 1;
-        var encrypted = sourceUrl[index..];
-        return Decrypt(encrypted);
+        if (input.StartsWith("--"))
+        {
+            hexPayload = input[2..];
+            keyType = 3;
+        }
+        else if (input.StartsWith("#-"))
+        {
+            hexPayload = input[2..];
+            keyType = 2;
+        }
+        else if (input.StartsWith("##"))
+        {
+            hexPayload = input[2..];
+            keyType = 1;
+        }
+        else if (input.StartsWith("-#"))
+        {
+            hexPayload = input[2..];
+            keyType = 4;
+        }
+        else if (input.StartsWith('#'))
+        {
+            hexPayload = input[1..];
+            keyType = 0;
+        }
+        else
+        {
+            return input;
+        }
+
+        var mask = XorMasks[keyType];
+
+        // Process hex string two characters at a time
+        var result = string.Concat(
+                                   Enumerable.Range(0, hexPayload.Length / 2)
+                                             .Select(i =>
+                                             {
+                                                 var hexByte = hexPayload.Substring(i * 2, 2);
+                                                 var value = Convert.ToInt32(hexByte, 16);
+                                                 var decoded = (value ^ mask) & 0xFF;
+                                                 return (char)decoded;
+                                             })
+                                  );
+
+        return result;
     }
 
     private static List<string> GetEpisodeDetails(EpisodeDetails? details, TranslationType type)
@@ -222,32 +273,37 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
     
     public static string DecryptToBeParsed(string base64Payload)
     {
-        var secretBytes = Encoding.UTF8.GetBytes(ReverseString(DecryptSecret));
-        var keyBytes = SHA256.HashData(secretBytes);
+        // 1. Decode the Base64 payload
+        var blob = Convert.FromBase64String(base64Payload);
 
-        var decodedBytes = Convert.FromBase64String(base64Payload);
+        // 2. Extract version byte, IV, and ciphertext
+        if (blob.Length < 13) return string.Empty;
+        var versionByte = blob[0] & 0xFF;
+        var iv = new byte[12];
+        Array.Copy(blob, 1, iv, 0, 12);
+        var encryptedData = new byte[blob.Length - 13];
+        Array.Copy(blob, 13, encryptedData, 0, encryptedData.Length);
 
-        var iv = new byte[DecryptIvLength];
-        Array.Copy(decodedBytes, 0, iv, 0, DecryptIvLength);
+        // 3. Derive the AES-GCM key: SHA-256($"{DECRYPT_SECRET}:v{versionByte}")
+        var keyMaterial = $"{DecryptSecret}:v{versionByte}";
+        var keyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(keyMaterial));
 
-        var encryptedData = new byte[decodedBytes.Length - DecryptIvLength];
-        Array.Copy(decodedBytes, DecryptIvLength, encryptedData, 0, encryptedData.Length);
-
+        // 4. Initialize AES-GCM Cipher
         var plaintext = new byte[encryptedData.Length - (DecryptTagLength / 8)];
+        var ciphertext = new byte[encryptedData.Length - (DecryptTagLength / 8)];
         var tag = new byte[DecryptTagLength / 8];
-        Array.Copy(encryptedData, encryptedData.Length - tag.Length, tag, 0, tag.Length);
-        var ciphertext = new byte[encryptedData.Length - tag.Length];
+
+        // Split ciphertext and tag (last 16 bytes for 128-bit tag)
         Array.Copy(encryptedData, 0, ciphertext, 0, ciphertext.Length);
+        Array.Copy(encryptedData, ciphertext.Length, tag, 0, tag.Length);
 
         using (var aesGcm = new AesGcm(keyBytes, tag.Length))
         {
             aesGcm.Decrypt(iv, ciphertext, tag, plaintext);
         }
 
-        // 5. Convert back to a JSON string
+        // 5. Return JSON string
         return Encoding.UTF8.GetString(plaintext);
     }
-
-    private static string ReverseString(string s) => new(s.Reverse().ToArray());
 
 }
