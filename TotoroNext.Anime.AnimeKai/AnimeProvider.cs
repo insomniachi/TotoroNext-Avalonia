@@ -44,7 +44,7 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
         var response = await client.Request("ajax/episodes/list")
                                    .AppendQueryParam("ani_id", animeId)
                                    .AppendQueryParam("_", enc.Result)
-                                   .GetJsonAsync<ResultResponse<string>>(cancellationToken: ct);
+                                   .GetJsonAsync<ResultResponse<string,string>>(cancellationToken: ct);
 
         var doc = new HtmlDocument();
         doc.LoadHtml(response.Result!);
@@ -78,7 +78,7 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
         var response = await client.Request("ajax/links/list")
                                    .AppendQueryParam("token", episodeId)
                                    .AppendQueryParam("_", enc.Result)
-                                   .GetJsonAsync<ResultResponse<string>>(cancellationToken: ct);
+                                   .GetJsonAsync<ResultResponse<string,string>>(cancellationToken: ct);
 
 
         var doc = new HtmlDocument();
@@ -114,14 +114,14 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
         var encodedLink = await client.Request("ajax/links/view")
                                       .AppendQueryParam("id", id)
                                       .AppendQueryParam("_", enc.Result)
-                                      .GetJsonAsync<ResultResponse<string>>(cancellationToken: ct);
+                                      .GetJsonAsync<ResultResponse<string,string>>(cancellationToken: ct);
 
         var response = await "https://enc-dec.app/api/dec-kai"
                              .PostJsonAsync(new
                              {
                                  text = encodedLink.Result
                              }, cancellationToken: ct)
-                             .ReceiveJson<ResultResponse<IFrameResponse>>();
+                             .ReceiveJson<ResultResponse<int,IFrameResponse>>();
 
         return response.Result;
     }
@@ -131,9 +131,9 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
         return new FlurlClient(httpClientFactory.CreateClient(typeof(Module).FullName!));
     }
 
-    private static Task<ResultResponse<string>> EncodeDecodeEndpoint(string encoded, CancellationToken ct)
+    private static Task<ResultResponse<int,string>> EncodeDecodeEndpoint(string encoded, CancellationToken ct)
     {
-        return $"https://enc-dec.app/api/enc-kai?text={encoded}".GetJsonAsync<ResultResponse<string>>(cancellationToken: ct);
+        return $"https://enc-dec.app/api/enc-kai?text={encoded}".GetJsonAsync<ResultResponse<int,string>>(cancellationToken: ct);
     }
 
     private static Abstractions.Models.SkipData? ConvertSkipData(SkipData? skipData)
@@ -164,10 +164,10 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
 }
 
 [Serializable]
-internal class ResultResponse<T>
+internal class ResultResponse<TStatus,TResult>
 {
-    [JsonPropertyName("status")] public int Status { get; set; }
-    [JsonPropertyName("result")] public T? Result { get; set; }
+    [JsonPropertyName("status")] public TStatus? Status { get; set; }
+    [JsonPropertyName("result")] public TResult? Result { get; set; }
 }
 
 [Serializable]

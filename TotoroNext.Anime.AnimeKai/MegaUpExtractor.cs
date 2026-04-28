@@ -23,7 +23,7 @@ public class MegaUpExtractor : IVideoExtractor
                                       .AppendPathSegment(token)
                                       .WithHeader(HeaderNames.UserAgent, Http.UserAgent)
                                       .WithHeader(HeaderNames.Referer, url)
-                                      .GetJsonAsync<ResultResponse<string>>(cancellationToken: ct);
+                                      .GetJsonAsync<ResultResponse<int,string>>(cancellationToken: ct);
 
         var megaResult = await "https://enc-dec.app/api/dec-mega"
                                .PostJsonAsync(new
@@ -31,7 +31,7 @@ public class MegaUpExtractor : IVideoExtractor
                                    text = megaTokenResponse.Result,
                                    agent = Http.UserAgent
                                }, cancellationToken: ct)
-                               .ReceiveJson<ResultResponse<MegaUpResult>>();
+                               .ReceiveJson<ResultResponse<int,MegaUpResult>>();
 
         if (megaResult.Result is not { Sources.Capacity: > 0 })
         {
