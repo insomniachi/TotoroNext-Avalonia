@@ -122,7 +122,7 @@ public class NavigationExtensions
 
         closeable.Closed += (_, _) =>
         {
-            if (FindLogicalParentOfType<DefaultDrawerControl>(view) is not { } drawer)
+            if (FindLogicalParentOfType<DrawerControlBase>(view) is not { } drawer)
             {
                 return;
             }
