@@ -128,10 +128,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         {
             ct.ThrowIfCancellationRequested();
             
-            if (item.SourceUrl.StartsWith("--"))
-            {
-                item.SourceUrl = DecryptSourceUrl(item.SourceUrl);
-            }
+            item.SourceUrl = DecryptSourceUrl(item.SourceUrl);
 
             switch (item.SourceName)
             {
