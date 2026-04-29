@@ -36,10 +36,29 @@ internal static class Catalog
             {
                 continue;
             }
+
+            var id = "";
+            var title = "";
+            if (document.Fields.GetField("content") is { } contentField)
+            {
+                var content = contentField.Value as string;
+                var parts = content!.Split('§');
+                title = parts[0];
+                id = parts[1];
+            }
+            else if(document.Fields.GetField("Id") is {} idField && 
+                    document.Fields.GetField("Title") is { } titleField)
+            {
+                id = idField.Value as string;
+                title = titleField.Value as string;
+            }
+
+            if (id == null ||  title == null)
+            {
+                continue;
+            }
             
-            var id = document.Fields.GetField("Id")!.Value as string ;
-            var title = document.Fields.GetField("Title")!.Value as string;
-            yield return new SubsPleaseItem(id ?? "", title ?? "");
+            yield return new SubsPleaseItem(id, title);
         }   
     }
 
