@@ -25,6 +25,8 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         "feqx1"
     ];
 
+    private const string GraphQlReferer = @"https://youtu-chan.com";
+
     // Pre-compute cumulative XOR mask for each key (XOR of all char codes)
     private static readonly int[] XorMasks = XorKeys
                                               .Select(key => key.Aggregate(0, (mask, ch) => mask ^ ch))
@@ -110,6 +112,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
                                         translationType = GetTranslationType(settings.Value.TranslationType),
                                         episodeString = episodeId
                                     })
+                                    .WithHeader(HeaderNames.Referer, GraphQlReferer)
                                     .PostGraphQLQueryAsync(ct)
                                     .ReceiveGraphQLRawSystemTextJsonResponse();
 
