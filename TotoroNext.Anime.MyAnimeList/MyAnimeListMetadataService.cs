@@ -90,48 +90,55 @@ internal class MyAnimeListMetadataService : IMetadataService
     
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
-        var uri = new Url("https://api.jikan.moe/v4/anime");
-        if (!string.IsNullOrEmpty(request.Title))
+        try
         {
-            uri.AppendQueryParam("q", request.Title);
-        }
+            var uri = new Url("https://api.jikan.moe/v4/anime");
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                uri.AppendQueryParam("q", request.Title);
+            }
 
-        if (request.MaximumScore is { } maxScore)
+            if (request.MaximumScore is { } maxScore)
+            {
+                uri.AppendQueryParam("max_score", maxScore);
+            }
+
+            if (request.MinimumScore is { } minScore)
+            {
+                uri.AppendQueryParam("min_score", minScore);
+            }
+
+            if (request.MinYear is { } minYear)
+            {
+                uri.AppendQueryParam("start_date", $"{minYear}-01-01");
+            }
+
+            if (request.MaxYear is { } maxYear)
+            {
+                uri.AppendQueryParam("end_date", $"{maxYear}-12-31");
+            }
+
+            if (request.IncludedGenres is { Count: > 0 } includedGenres)
+            {
+                var includedGenreIds = includedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
+                uri.AppendQueryParam("genres", string.Join(",", includedGenreIds));
+            }
+
+            if (request.ExcludedGenres is { Count: > 0 } excludedGenres)
+            {
+                var excludedGenreIds = excludedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
+                uri.AppendQueryParam("genres_exclude", string.Join(",", excludedGenreIds));
+            }
+
+            var response = await uri.GetJsonAsync<PaginatedJikanResponse<ICollection<JikanDotNet.Anime>>>();
+            var items = response.Data
+                                .Select(MalToModelConverter.ConvertJikanModel);
+            return [..items];
+        }
+        catch
         {
-            uri.AppendQueryParam("max_score", maxScore);
+            return [];
         }
-
-        if (request.MinimumScore is { } minScore)
-        {
-            uri.AppendQueryParam("min_score", minScore);
-        }
-
-        if (request.MinYear is { } minYear)
-        {
-            uri.AppendQueryParam("start_date", $"{minYear}-01-01");
-        }
-
-        if (request.MaxYear is { } maxYear)
-        {
-            uri.AppendQueryParam("end_date", $"{maxYear}-12-31");
-        }
-
-        if (request.IncludedGenres is { Count: > 0 } includedGenres)
-        {
-            var includedGenreIds = includedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
-            uri.AppendQueryParam("genres", string.Join(",", includedGenreIds));
-        }
-
-        if (request.ExcludedGenres is { Count: > 0 } excludedGenres)
-        {
-            var excludedGenreIds = excludedGenres.Select(x => _genres.FirstOrDefault(g => g.Name == x)?.MalId).Where(x => x is not null);
-            uri.AppendQueryParam("genres_exclude", string.Join(",", excludedGenreIds));
-        }
-
-        var response = await uri.GetJsonAsync<PaginatedJikanResponse<ICollection<JikanDotNet.Anime>>>();
-        var items = response.Data
-                            .Select(MalToModelConverter.ConvertJikanModel);
-        return [..items];
     }
 
     public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)

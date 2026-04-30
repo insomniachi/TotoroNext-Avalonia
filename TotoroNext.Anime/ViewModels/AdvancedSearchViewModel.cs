@@ -111,7 +111,7 @@ public partial class AdvancedSearchViewModel(
                        })
                        .Where(x => !x.IsEmpty())
                        .Do(_ => IsLoading = true)
-                       .SelectMany(request => metadataService.SearchAnimeAsync(request));
+                       .SelectMany(metadataService.SearchAnimeAsync);
             })
             .Switch()
             .ObserveOn(RxApp.MainThreadScheduler)
