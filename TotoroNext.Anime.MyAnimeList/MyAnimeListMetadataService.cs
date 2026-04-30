@@ -152,6 +152,11 @@ internal class MyAnimeListMetadataService : IMetadataService
     public async Task<List<string>> GetGenresAsync()
     {
         var response = await _jikanClient.GetAnimeGenresAsync();
+        if (response.Data is null)
+        {
+            return [];
+        }
+        
         _genres = response.Data.ToList();
         return [.._genres.Select(x => x.Name).Order()];
     }
