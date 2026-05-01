@@ -61,26 +61,24 @@ internal class AnilistMetadataService(
     {
         try
         {
+            var (startDate, endDate, seasonYear) = GetDateFilters(request);
+            
             var response = await client.SendQueryAsync<Query>(new GraphQLRequest
             {
                 Query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
-                                                             .WithMedia(MediaQueryBuilder(),
-                                                                        search: request.Title,
-                                                                        season: AniListModelToAnimeModelConverter.ConvertSeason(request.SeasonName),
-                                                                        startDateGreater: request.MinYear is { } minYear and > 1950
-                                                                            ? int.Parse($"{minYear}0000")
-                                                                            : null,
-                                                                        endDateLesser: request.MaxYear is { } maxYear and > 1950
-                                                                            ? int.Parse($"{maxYear + 1}0000")
-                                                                            : null,
-                                                                        source: AniListModelToAnimeModelConverter.ConvertSource(request.Source),
-                                                                        genreIn: request.IncludedGenres,
-                                                                        genreNotIn: request.ExcludedGenres,
-                                                                        averageScoreGreater: (int?)(request.MinimumScore * 100),
-                                                                        averageScoreLesser: (int?)(request.MaximumScore * 100),
-                                                                        sort: new List<MediaSort?> { MediaSort.PopularityDesc, MediaSort.ScoreDesc },
-                                                                        type: MediaType.Anime), 1,
-                                                         50).Build()
+                    .WithMedia(MediaQueryBuilder(),
+                        search: string.IsNullOrWhiteSpace(request.Title) ? null : request.Title,
+                        season: AniListModelToAnimeModelConverter.ConvertSeason(request.SeasonName),
+                        seasonYear: seasonYear,
+                        startDateGreater: startDate,
+                        endDateLesser: endDate,
+                        source: AniListModelToAnimeModelConverter.ConvertSource(request.Source),
+                        genreIn: request.IncludedGenres,
+                        genreNotIn: request.ExcludedGenres,
+                        averageScoreGreater: (int?)(request.MinimumScore * 100),
+                        averageScoreLesser: (int?)(request.MaximumScore * 100),
+                        sort: new List<MediaSort?> { MediaSort.PopularityDesc, MediaSort.ScoreDesc },
+                        type: MediaType.Anime), 1, 50).Build()
             });
 
             if (response.Errors?.Length > 0)
@@ -94,6 +92,28 @@ internal class AnilistMetadataService(
         {
             return [];
         }
+    }
+
+    private static (int?, int?, int?) GetDateFilters(AdvancedSearchRequest request)
+    {
+        if (request.MinYear is not ({ } minYear and > 1950))
+        {
+            return (null, null, null);
+        }
+
+        if (request.MaxYear is { } maxYear && minYear == maxYear)
+        {
+            return (null, null, minYear);
+        }
+
+        var startDate = (int?)int.Parse($"{minYear}0000");
+        int? endDate = null;
+        if (request.MaxYear is { } mx and > 1950)
+        {
+            endDate = int.Parse($"{mx + 1}0000");
+        }
+
+        return (startDate, endDate, null);
     }
 
     public async Task<List<string>> GetGenresAsync()

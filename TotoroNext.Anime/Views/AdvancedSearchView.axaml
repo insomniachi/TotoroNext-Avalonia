@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:mdl="totoro.next/models"
              xmlns:ctl="totoro.next/controls"
              xmlns:bhvr="totoro.next/behaviors"
              xmlns:ext="totoro.next/extensions"
@@ -23,7 +22,7 @@
                     <Style Selector="u|Form > u|FormItem:nth-child(1)">
                         <Setter Property="Margin" Value="16 16 16 0" />
                     </Style>
-                    <Style Selector="u|Form > u|FormItem:nth-last-child(1)">
+                    <Style Selector="u|Form > u|FormItem:nth-last-child(2)">
                         <Setter Property="Margin" Value="16 32 16 0" />
                     </Style>
                 </u:Form.Styles>
@@ -42,10 +41,9 @@
                     </ItemsPanelTemplate>
                 </u:Form.ItemsPanel>
                 <u:FormItem Label="Season Name">
-                    <u:EnumSelector EnumType="{x:Type mdl:AnimeSeason}"
-                                    Value="{Binding Season, Mode=TwoWay}"
-                                    DisplayDescription="True"
-                                    HorizontalAlignment="Stretch" />
+                    <ComboBox ItemsSource="{Binding Seasons}"
+                              SelectedItem="{Binding Season, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch" />
                 </u:FormItem>
                 <u:FormItem Label="Released On Or After Year">
                     <u:NumericIntUpDown Value="{Binding MinimumYear, Mode=TwoWay}"
@@ -79,6 +77,10 @@
                                           Minimum="0" />
                 </u:FormItem>
 
+                <Button Content="Current Season"
+                        Command="{Binding CurrentSeasonCommand}"
+                        Theme="{DynamicResource SolidButton}"
+                        u:FormItem.NoLabel="True" HorizontalAlignment="Stretch" />
                 <Button Content="Clear"
                         Command="{Binding ClearSearchFiltersCommand}"
                         Theme="{DynamicResource SolidButton}"
@@ -111,6 +113,7 @@
                                     <bhvr:AiringStatusBehavior />
                                     <bhvr:ListStatusBehavior />
                                     <bhvr:MediaFormatBehavior/>
+                                    <bhvr:MeanScoreBehavior/>
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
                         </DataTemplate>

@@ -25,7 +25,7 @@ public partial class AdvancedSearchViewModel(
 
     [ObservableProperty] public partial AnimeSeason? Season { get; set; }
     [ObservableProperty] public partial int? MinimumYear { get; set; }
-    [ObservableProperty] public partial int? MaximumYear { get; set; }
+    [ObservableProperty] public partial int? MaximumYear { get; set; } 
     [ObservableProperty] public partial float? MinimumScore { get; set; }
     [ObservableProperty] public partial float? MaximumScore { get; set; }
     [ObservableProperty] public partial string? Title { get; set; }
@@ -38,6 +38,15 @@ public partial class AdvancedSearchViewModel(
 
     public List<Descriptor> MetadataServices { get; } =
         [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
+    
+    public List<AnimeSeason?> Seasons { get; set; } =
+    [
+        null, // Allow clearing the selection
+        AnimeSeason.Winter,
+        AnimeSeason.Spring,
+        AnimeSeason.Summer,
+        AnimeSeason.Fall
+    ];
 
     public int CurrentYear { get; } = DateTime.Now.Year;
 
@@ -138,5 +147,14 @@ public partial class AdvancedSearchViewModel(
         Anime = [];
 
         _isChangeNotificationsEnabled = true;
+    }
+
+    [RelayCommand]
+    private void CurrentSeason()
+    {
+        _isChangeNotificationsEnabled = false;
+        MinimumYear = MaximumYear = DateTime.Now.Year;
+        _isChangeNotificationsEnabled = true;
+        Season = AnimeHelpers.CurrentSeason().SeasonName;
     }
 }
