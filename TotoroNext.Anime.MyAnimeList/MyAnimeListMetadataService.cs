@@ -1,5 +1,6 @@
 using Flurl;
 using Flurl.Http;
+using GraphQL.Client.Http;
 using JikanDotNet;
 using MalApi;
 using MalApi.Interfaces;
@@ -14,6 +15,7 @@ namespace TotoroNext.Anime.MyAnimeList;
 internal class MyAnimeListMetadataService : IMetadataService
 {
     private const string RecursiveAnimeProperties = $"my_list_status,status,{AnimeFieldNames.TotalEpisodes},{AnimeFieldNames.Mean}";
+    private readonly GraphQLHttpClient _anilistClient;
 
     private readonly IMalClient _client;
 
@@ -41,7 +43,7 @@ internal class MyAnimeListMetadataService : IMetadataService
     private readonly Settings _settings;
     private List<Genre> _genres = [];
 
-    public MyAnimeListMetadataService(IMalClient client, IModuleSettings<Settings> settings)
+    public MyAnimeListMetadataService(IMalClient client, GraphQLHttpClient anilistClient, IModuleSettings<Settings> settings)
     {
         client.SetClientId(Settings.ClientId);
 
@@ -51,13 +53,14 @@ internal class MyAnimeListMetadataService : IMetadataService
         }
 
         _client = client;
+        _anilistClient = anilistClient;
         _settings = settings.Value;
     }
-    
+
     public Guid Id => Module.Id;
 
     public string Name => nameof(AnimeId.MyAnimeList);
-    
+
     public async Task<AnimeModel> GetAnimeAsync(long id)
     {
         var malModel = await _client.Anime().WithId(id)
@@ -69,7 +72,7 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         return MalToModelConverter.ConvertModel(malModel);
     }
-    
+
     public async Task<List<AnimeModel>> SearchAnimeAsync(string term)
     {
         var request = _client
@@ -87,7 +90,7 @@ internal class MyAnimeListMetadataService : IMetadataService
 
         return [.. result.Data.Select(MalToModelConverter.ConvertModel)];
     }
-    
+
     public async Task<List<AnimeModel>> SearchAnimeAsync(AdvancedSearchRequest request)
     {
         try
@@ -148,12 +151,7 @@ internal class MyAnimeListMetadataService : IMetadataService
 
     public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
     {
-        var jikanResponse = await _jikanClient.GetAnimeCharactersAsync(animeId);
-        return jikanResponse.Data.Select(x => new CharacterModel
-        {
-            Name = x.Character.Name,
-            Image = TryConvertUri(x.Character.Images?.JPG?.ImageUrl)
-        }).ToList();
+        return await AnilistHelper.GetCharactersFromMalIdAsync(_anilistClient, animeId);
     }
 
     public async Task<List<string>> GetGenresAsync()
@@ -163,22 +161,22 @@ internal class MyAnimeListMetadataService : IMetadataService
         {
             return [];
         }
-        
+
         _genres = response.Data.ToList();
         return [.._genres.Select(x => x.Name).Order()];
     }
-    
+
     public async Task<List<AnimeModel>> GetPopularAnimeAsync(CancellationToken ct)
     {
         var result = await _client.Anime().Top(AnimeRankingType.Airing)
-                            .WithFields(_commonFields)
-                            .Find();
-        
+                                  .WithFields(_commonFields)
+                                  .Find();
+
         ct.ThrowIfCancellationRequested();
-        
+
         return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
     }
-    
+
     public async Task<List<AnimeModel>> GetUpcomingAnimeAsync(CancellationToken ct)
     {
         var result = await _client.Anime().Top(AnimeRankingType.Upcoming)
@@ -186,7 +184,7 @@ internal class MyAnimeListMetadataService : IMetadataService
                                   .Find();
 
         ct.ThrowIfCancellationRequested();
-        
+
         return result.Data.Select(x => MalToModelConverter.ConvertModel(x.Anime)).ToList();
     }
 
@@ -195,12 +193,7 @@ internal class MyAnimeListMetadataService : IMetadataService
         var response = await _jikanClient.GetScheduleAsync(ConvertDay(DateTime.UtcNow.DayOfWeek), ct);
         return response.Data.Select(MalToModelConverter.ConvertJikanModel).ToList();
     }
-
-    private static Uri? TryConvertUri(string? url)
-    {
-        return Uri.TryCreate(url, UriKind.Absolute, out var uri) ? uri : null;
-    }
-
+    
     private static ScheduledDay ConvertDay(DayOfWeek dayOfWeek)
     {
         return dayOfWeek switch

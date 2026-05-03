@@ -31,7 +31,7 @@ public sealed partial class AnimeSongsViewModel(
 
     [ObservableProperty] public partial bool IsPlayingOrPaused { get; set; }
 
-    public IEmbeddedVlcMediaPlayer EmbeddedVlcMediaPlayer { get; } = (IEmbeddedVlcMediaPlayer)mediaPlayerFactory.Create(Guid.Empty);
+    public IEmbeddedVlcMediaPlayer EmbeddedVlcMediaPlayer { get; } = (IEmbeddedVlcMediaPlayer)mediaPlayerFactory.Create(Guid.Empty)!;
 
     public async Task InitializeAsync()
     {

@@ -40,6 +40,7 @@
         <PackageReference Include="Semi.Avalonia.DataGrid"/>
         <PackageReference Include="Xaml.Behaviors.Avalonia"/>
         <PackageReference Include="FluentAvaloniaUI"/>
+        <PackageReference Include="Markdown.Avalonia" />
         
 
     </ItemGroup>

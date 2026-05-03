@@ -121,6 +121,12 @@ public partial class AnimeExtensionsViewModel(
             {
                 Unsubscribe(ProviderOptions);
                 _animeProvider = providerFactory.Create(id!.Value);
+                
+                if (_animeProvider is null)
+                {
+                    return;
+                }
+                
                 ProviderOptions = _animeProvider.GetOptions();
                 Subscribe(ProviderOptions);
             });

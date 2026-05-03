@@ -1,4 +1,5 @@
-﻿using GraphQL;
+﻿using System.Text.RegularExpressions;
+using GraphQL;
 using GraphQL.Client.Http;
 using Microsoft.Extensions.Caching.Memory;
 using TotoroNext.Anime.Abstractions.Models;
@@ -6,7 +7,7 @@ using TotoroNext.Anime.Anilist;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public static class AnilistHelper
+public static partial class AnilistHelper
 {
     private static readonly IMemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
     
@@ -61,6 +62,23 @@ public static class AnilistHelper
         return value;
     }
 
+    public static async Task<List<CharacterModel>> GetCharactersFromMalIdAsync(GraphQLHttpClient client, long malId)
+    {
+        var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
+                                                          .WithCharacters(new CharacterConnectionQueryBuilder()
+                                                                              .WithNodes(new CharacterQueryBuilder()
+                                                                                         .WithName(new CharacterNameQueryBuilder()
+                                                                                                       .WithFull())
+                                                                                         .WithImage(new CharacterImageQueryBuilder()
+                                                                                                        .WithLarge())
+                                                                                         .WithDescription()
+                                                                                         .WithGender())),
+                                                      idMal: (int)malId,
+                                                      type: MediaType.Anime).Build();
+        
+        return await GetCharactersInternalAsync(client, query);
+    }
+    
     public static async Task<List<CharacterModel>> GetCharactersAsync(GraphQLHttpClient client, long anilistId)
     {
         var query = new QueryQueryBuilder().WithMedia(new MediaQueryBuilder()
@@ -69,9 +87,17 @@ public static class AnilistHelper
                                                                                          .WithName(new CharacterNameQueryBuilder()
                                                                                                        .WithFull())
                                                                                          .WithImage(new CharacterImageQueryBuilder()
-                                                                                                        .WithLarge()))), (int)anilistId,
+                                                                                                        .WithLarge())
+                                                                                         .WithDescription()
+                                                                                         .WithGender())),
+                                                      id: (int)anilistId,
                                                       type: MediaType.Anime).Build();
+        
+        return await GetCharactersInternalAsync(client, query);
+    }
 
+    private static async Task<List<CharacterModel>> GetCharactersInternalAsync(GraphQLHttpClient client, string query)
+    {
         var response = await client.SendQueryAsync<Query>(new GraphQLRequest
         {
             Query = query
@@ -85,8 +111,17 @@ public static class AnilistHelper
         return response.Data.Media.Characters.Nodes.Select(x => new CharacterModel
         {
             Name = x.Name.Full,
-            Image = TryConvertUri(x.Image.Large)
+            Image = TryConvertUri(x.Image.Large),
+            Description = RemoveMarkdownLinks(x.Description),
+            Gender = x.Gender,
         }).ToList();
+    }
+
+    private static string RemoveMarkdownLinks(string text)
+    {
+        return string.IsNullOrEmpty(text) 
+            ? text 
+            : MarkDownLinkRegex().Replace(text, "$1"); // Replace [text](url) with just text
     }
 
     public static async Task<List<long>> GetPopularAnimeAsync(GraphQLHttpClient client, CancellationToken ct)
@@ -204,4 +239,7 @@ public static class AnilistHelper
 
         return DateTime.Now + TimeSpan.FromSeconds(secondsTillAiring.Value);
     }
+
+    [GeneratedRegex(@"\[([^\]]+)\]\([^\)]+\)")]
+    private static partial Regex MarkDownLinkRegex();
 }

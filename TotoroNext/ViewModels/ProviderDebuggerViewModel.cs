@@ -117,6 +117,6 @@ public partial class ProviderDebuggerViewModel(
         var metadata = new MediaMetadata(title, source.Headers, Subtitle: source.Subtitle);
         var media = new Media(source.Url, metadata);
         var player = playerFactory.Create(MediaPlayerId.Value);
-        player.Play(media, SelectedEpisode.StartPosition);
+        player?.Play(media, SelectedEpisode.StartPosition);
     }
 }
