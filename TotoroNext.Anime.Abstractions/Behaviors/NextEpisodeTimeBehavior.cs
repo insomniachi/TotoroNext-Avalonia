@@ -152,12 +152,12 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
 
         if (ts.Hours > 0)
         {
-            sb.Append($"{ts.Hours.ToString().PadLeft(2, '0')}h ");
+            sb.Append($"{ts.Hours.ToString()}h ");
         }
 
         if (ts.Minutes > 0)
         {
-            sb.Append($"{ts.Minutes.ToString().PadLeft(2, '0')}m ");
+            sb.Append($"{ts.Minutes.ToString()}m ");
         }
 
         return sb.ToString().TrimEnd();

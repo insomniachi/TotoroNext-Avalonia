@@ -10,6 +10,10 @@ public class AnimeProgressBehavior : TrackingBoundAnimeCardOverlayBehavior<Borde
 {
     protected override Border CreateControl(AnimeModel anime)
     {
+        var totalEpisodes = anime.TotalEpisodes is null 
+            ? "??" 
+            :  anime.TotalEpisodes.ToString(); 
+        
         return new Border()
                .Padding(8)
                .Margin(GetMarginForBottomLeftPlacement(8))
@@ -20,18 +24,17 @@ public class AnimeProgressBehavior : TrackingBoundAnimeCardOverlayBehavior<Borde
                .Child(new TextBlock()
                       .Foreground(Brushes.AntiqueWhite)
                       .FontWeight(FontWeight.Bold)
-                      .Text($"{anime.Tracking?.WatchedEpisodes}/{anime.TotalEpisodes}"));
+                      .Text($"{anime.Tracking?.WatchedEpisodes}/{totalEpisodes}"));
     }
 
     protected override bool CanCreate(AnimeModel anime)
     {
         return anime is
         {
-            TotalEpisodes: not null,
             Tracking:
             {
                 WatchedEpisodes: > 0,
-                Status: not ListItemStatus.Completed
+                Status: not (ListItemStatus.Completed or ListItemStatus.PlanToWatch)
             }
         };
     }
