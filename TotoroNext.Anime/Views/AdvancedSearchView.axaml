@@ -7,15 +7,22 @@
              xmlns:ctl="totoro.next/controls"
              xmlns:bhvr="totoro.next/behaviors"
              xmlns:ext="totoro.next/extensions"
+             xmlns:conv="totoro.next/converters"
              mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="1920"
              x:DataType="vm:AdvancedSearchViewModel"
              x:Class="TotoroNext.Anime.Views.AdvancedSearchView">
+    <UserControl.Resources>
+        <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+    </UserControl.Resources>
     <Grid ColumnDefinitions="*,300"
           ColumnSpacing="16">
         <ScrollViewer Grid.Column="1">
             <u:Form
                 HorizontalAlignment="Stretch">
                 <u:Form.Styles>
+                    <Style Selector="u|FormGroup">
+                        <Setter Property="Margin" Value="16 16 16 0 " />
+                    </Style>
                     <Style Selector="u|FormItem">
                         <Setter Property="Margin" Value="16 16 16 0 " />
                     </Style>
@@ -45,15 +52,22 @@
                               SelectedItem="{Binding Season, Mode=TwoWay}"
                               HorizontalAlignment="Stretch" />
                 </u:FormItem>
-                <u:FormItem Label="Released On Or After Year">
-                    <u:NumericIntUpDown Value="{Binding MinimumYear, Mode=TwoWay}"
-                                        Maximum="{Binding CurrentYear, Mode=OneTime}"
-                                        HorizontalAlignment="Stretch" />
-                </u:FormItem>
-                <u:FormItem Label="Released On Or Before Year">
-                    <u:NumericIntUpDown Value="{Binding MaximumYear, Mode=TwoWay}"
-                                        Maximum="{Binding CurrentYear, Mode=OneTime}"
-                                        HorizontalAlignment="Stretch" />
+                <u:FormItem Label="Released Between">
+                    <Grid ColumnDefinitions="*,30,*">
+                        <u:NumericIntUpDown Value="{Binding MinimumYear, Mode=TwoWay}"
+                                            Maximum="{Binding CurrentYear, Mode=OneTime}"
+                                            HorizontalAlignment="Stretch"
+                                            Grid.Column="0"/>
+                        <TextBlock Text="-"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Center"
+                                   FontWeight="Bold"/>
+                        <u:NumericIntUpDown Value="{Binding MaximumYear, Mode=TwoWay}"
+                                            Maximum="{Binding CurrentYear, Mode=OneTime}"
+                                            HorizontalAlignment="Stretch" 
+                                            Grid.Column="2"/>
+                    </Grid>
                 </u:FormItem>
                 <u:FormItem Label="Include">
                     <u:MultiAutoCompleteBox HorizontalAlignment="Stretch"
@@ -76,6 +90,28 @@
                                           Maximum="10"
                                           Minimum="0" />
                 </u:FormItem>
+                <u:FormGroup Header="Sort Direction">
+                    <RadioButton IsChecked="{Binding Sort.IsAscending, Mode=TwoWay}" GroupName="Direction"
+                                 Content="Ascending" />
+                    <RadioButton IsChecked="{Binding !Sort.IsAscending}" GroupName="Direction"
+                                 Content="Descending" />
+                </u:FormGroup>
+                <u:FormGroup Header="Sort By">
+                    <StackPanel Spacing="20">
+                        <RadioButton
+                            IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=MeanScore}"
+                            Content="Community Score"
+                            GroupName="Field" />
+                        <RadioButton
+                            IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Popularity}"
+                            Content="Popularity"
+                            GroupName="Field" />
+                        <RadioButton
+                            IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Title}"
+                            Content="Title"
+                            GroupName="Field" />
+                    </StackPanel>
+                </u:FormGroup>
 
                 <Button Content="Current Season"
                         Command="{Binding CurrentSeasonCommand}"

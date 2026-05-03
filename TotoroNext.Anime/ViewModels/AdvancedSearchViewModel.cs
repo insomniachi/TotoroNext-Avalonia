@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DynamicData;
 using DynamicData.Binding;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -15,13 +16,35 @@ using TotoroNext.Module.Abstractions;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public partial class AdvancedSearchViewModel(
-    IFactory<IMetadataService, Guid> metadataFactory,
-    IEnumerable<Descriptor> descriptors,
-    ILocalSettingsService localSettingsService,
-    IDialogService dialogService) : ObservableObject, IAsyncInitializable
+public partial class AdvancedSearchViewModel : ObservableObject, IAsyncInitializable
 {
     private bool _isChangeNotificationsEnabled = true;
+    private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
+    private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
+    private readonly IFactory<IMetadataService, Guid> _metadataFactory;
+    private readonly ILocalSettingsService _localSettingsService;
+    private readonly IDialogService _dialogService;
+
+    public AdvancedSearchViewModel(IFactory<IMetadataService, Guid> metadataFactory,
+                                   IEnumerable<Descriptor> descriptors,
+                                   ILocalSettingsService localSettingsService,
+                                   IDialogService dialogService)
+    {
+        _metadataFactory = metadataFactory;
+        _localSettingsService = localSettingsService;
+        _dialogService = dialogService;
+        
+        _animeCache
+            .Connect()
+            .RefCount()
+            .AutoRefresh()
+            .Sort(Sort.Comparer)
+            .Bind(out _anime)
+            .DisposeMany()
+            .Subscribe();
+        
+        MetadataServices = [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
+    }
 
     [ObservableProperty] public partial AnimeSeason? Season { get; set; }
     [ObservableProperty] public partial int? MinimumYear { get; set; }
@@ -29,15 +52,20 @@ public partial class AdvancedSearchViewModel(
     [ObservableProperty] public partial float? MinimumScore { get; set; }
     [ObservableProperty] public partial float? MaximumScore { get; set; }
     [ObservableProperty] public partial string? Title { get; set; }
-    [ObservableProperty] public partial List<AnimeModel> Anime { get; set; } = [];
     [ObservableProperty] public partial ObservableCollection<string> IncludedGenres { get; set; } = [];
     [ObservableProperty] public partial ObservableCollection<string> ExcludedGenres { get; set; } = [];
     [ObservableProperty] public partial List<string> AllGenres { get; set; } = [];
     [ObservableProperty] public partial Descriptor? SelectedService { get; set; }
     [ObservableProperty] public partial bool IsLoading { get; set; }
+    public ReadOnlyObservableCollection<AnimeModel> Anime => _anime;
+    
+    public UserListSort Sort { get; } = new()
+    {
+        Field = SortField.MeanScore,
+        IsAscending = false,
+    };
 
-    public List<Descriptor> MetadataServices { get; } =
-        [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
+    public List<Descriptor> MetadataServices { get; }
     
     public List<AnimeSeason?> Seasons { get; set; } =
     [
@@ -54,16 +82,16 @@ public partial class AdvancedSearchViewModel(
     {
         if (MetadataServices is { Count: 0 })
         {
-            await dialogService.Warning("No metadata services found. Please install at least one metadata service module.");
+            await _dialogService.Warning("No metadata services found. Please install at least one metadata service module.");
             return;
         }
 
-        var defaultServiceId = localSettingsService.ReadSetting<Guid?>("SelectedTrackingService");
+        var defaultServiceId = _localSettingsService.ReadSetting<Guid?>("SelectedTrackingService");
         SelectedService = MetadataServices.FirstOrDefault(x => x.Id == defaultServiceId);
 
         var serviceChanged = this.WhenAnyValue(x => x.SelectedService)
                                  .WhereNotNull()
-                                 .Select(s => metadataFactory.Create(s.Id))
+                                 .Select(s => _metadataFactory.Create(s.Id))
                                  .WhereNotNull()
                                  .Replay(1)
                                  .RefCount();
@@ -99,7 +127,7 @@ public partial class AdvancedSearchViewModel(
             .Select(service =>
             {
                 ClearSearchFilters();
-                var metadataService = metadataFactory.Create(service.Id);
+                var metadataService = _metadataFactory.Create(service.Id);
                 if (metadataService is null)
                 {
                     return Observable.Empty<List<AnimeModel>>();
@@ -126,7 +154,8 @@ public partial class AdvancedSearchViewModel(
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(list =>
             {
-                Anime = list;
+                _animeCache.Clear();
+                _animeCache.AddOrUpdate(list);
                 IsLoading = false;
             });
     }
@@ -144,7 +173,7 @@ public partial class AdvancedSearchViewModel(
         ExcludedGenres = [];
         MinimumScore = null;
         MaximumScore = null;
-        Anime = [];
+        _animeCache.Clear();
 
         _isChangeNotificationsEnabled = true;
     }

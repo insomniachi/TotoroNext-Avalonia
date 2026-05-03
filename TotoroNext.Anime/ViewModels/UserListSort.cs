@@ -32,6 +32,7 @@ public sealed partial class UserListSort : ObservableObject
             SortField.MeanScore => CreateComparer(x => x.MeanScore ?? 0, isAscending),
             SortField.UserScore => CreateComparer(x => x.Tracking?.Score ?? 0, isAscending),
             SortField.DateCompleted => CreateComparer(x => x.Tracking?.FinishDate ?? DateTime.MinValue, isAscending),
+            SortField.Popularity => CreateComparer(x => x.Popularity, isAscending),
             _ => null
         };
     }
@@ -47,5 +48,6 @@ public enum SortField
     Title,
     MeanScore,
     UserScore,
-    DateCompleted
+    DateCompleted,
+    Popularity
 }
