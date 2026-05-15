@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Flurl;
 using Flurl.Http;
 using FlurlGraphQL;
 using TotoroNext.Anime.Abstractions;
@@ -104,19 +105,32 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
-        var jsonNode = await GraphQl.Api
-                                    .WithGraphQLQuery(GraphQl.EpisodeQuery)
-                                    .SetGraphQLVariables(new
-                                    {
-                                        showId = animeId,
-                                        translationType = GetTranslationType(settings.Value.TranslationType),
-                                        episodeString = episodeId
-                                    })
-                                    .WithHeader(HeaderNames.Referer, GraphQlReferer)
-                                    .PostGraphQLQueryAsync(ct)
-                                    .ReceiveGraphQLRawSystemTextJsonResponse();
+        var variables = JsonSerializer.Serialize(new
+        {
+            showId = animeId,
+            translationType = GetTranslationType(settings.Value.TranslationType),
+            episodeString = episodeId
+        });
 
-        var encrypted = jsonNode?["tobeparsed"]?.GetValue<string>();
+        var extensions = JsonSerializer.Serialize(new
+        {
+            persistedQuery = new
+            {
+                version = 1,
+                sha256Hash = "d405d0edd690624b66baba3068e0edc3ac90f1597d898a1ec8db4e5c43c00fec"
+            }
+        });
+
+        var stream = await GraphQl.Api
+                               .AppendQueryParam("variables", variables)
+                               .AppendQueryParam("extensions", extensions)
+                               .WithHeader(HeaderNames.Referer, GraphQlReferer)
+                               .GetStreamAsync(cancellationToken:ct);
+        
+        var jsonNode = await JsonNode.ParseAsync(stream, cancellationToken:ct);
+        
+
+        var encrypted = jsonNode?["data"]?["tobeparsed"]?.GetValue<string>();
         if (encrypted  is not null)
         {
             var decrypted = DecryptToBeParsed(encrypted);

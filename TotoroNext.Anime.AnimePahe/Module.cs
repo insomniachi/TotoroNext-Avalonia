@@ -24,8 +24,8 @@ public class Module : IModule
 
         services.AddHttpClient(Descriptor.Id.ToString(), client =>
         {
-            client.BaseAddress = new Uri("https://animepahe.si/");
-            client.DefaultRequestHeaders.Referrer = new Uri("https://animepahe.si/");
+            client.BaseAddress = new Uri("https://animepahe.pw/");
+            client.DefaultRequestHeaders.Referrer = new Uri("https://animepahe.pw/");
             client.DefaultRequestHeaders.Add(HeaderNames.Cookie, "__ddg2_=YW5pbWRsX3NheXNfaGkNCg.;");
         });
 
