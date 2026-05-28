@@ -1,18 +1,18 @@
 using System.Text;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions;
 
 public interface IAnimeThemes
 {
-    Task<List<AnimeTheme>> FindById(long id, string serviceName);
+    Task<List<AnimeTheme>> FindAll(AnimeModel anime);
 }
 
 public class AnimeTheme
 {
     public Uri? Video { get; init; }
     public Uri? Audio { get; init; }
-    public AnimeThemeType Type { get; init; }
-    public string Slug { get; init; } = "";
+    public string? Type { get; init; }
     public string SongName { get; init; } = "";
     public string Artist { get; init; } = "";
 
@@ -21,7 +21,7 @@ public class AnimeTheme
         get
         {
             var sb = new StringBuilder();
-            sb.Append($"({Slug}) - {SongName}");
+            sb.Append($"({Type}) - {SongName}");
             if (!string.IsNullOrEmpty(Artist))
             {
                 sb.Append($" by {Artist}");
@@ -30,10 +30,4 @@ public class AnimeTheme
             return sb.ToString();
         }
     }
-}
-
-public enum AnimeThemeType
-{
-    OP,
-    ED
 }

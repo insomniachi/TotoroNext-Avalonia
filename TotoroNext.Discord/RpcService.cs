@@ -143,7 +143,7 @@ internal class RpcService(
         {
             p.Type = ActivityType.Listening;
             p.Details = message.Song.SongName;
-            p.State = $"{message.Anime.Title} - {message.Song.Slug}";
+            p.State = $"{message.Anime.Title} - {message.Song.Type}";
             p.Assets ??= new Assets();
             p.Assets.LargeImageKey = message.Anime.Image;
             p.Timestamps = new Timestamps

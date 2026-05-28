@@ -42,9 +42,7 @@ public sealed partial class AnimeSongsViewModel(
         SubscriptionsForRpc(EmbeddedVlcMediaPlayer);
 
         IsLoading = true;
-
-        Themes = await animeThemes.FindById(@params.Anime.Id, @params.Anime.ServiceName ?? nameof(AnimeId.MyAnimeList));
-
+        Themes = await animeThemes.FindAll(@params.Anime);
         IsLoading = false;
     }
 
