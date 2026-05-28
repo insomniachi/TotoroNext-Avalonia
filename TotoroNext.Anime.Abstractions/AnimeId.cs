@@ -8,6 +8,7 @@ public sealed class AnimeId
     public long Anilist { get; set; }
     public long Kitsu { get; set; }
     public long Simkl { get; set; }
+    public long AnimeNewsNetwork { get; set; }
     public long Local => MyAnimeList;
 
     public long? GetIdForService(string serviceType)

@@ -19,6 +19,7 @@ internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingServ
             "AniDb" => dbContext.Anime.FindOne(x => x.AniDbId == anime.Id),
             "Kitsu" => dbContext.Anime.FindOne(x => x.KitsuId == anime.Id),
             "Simkl" => dbContext.Anime.FindOne(x => x.SimklId == anime.Id),
+            "AnimeNewsNetwork" => dbContext.Anime.FindOne(x => x.AnnId == anime.Id),
             _ => throw new ArgumentException("Invalid service name")
         };
 
@@ -34,6 +35,7 @@ internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingServ
             AniDb = localAnime.AniDbId,
             Kitsu = localAnime.KitsuId,
             Simkl = localAnime.SimklId,
+            AnimeNewsNetwork = localAnime.AnnId,
         };
     }
 }

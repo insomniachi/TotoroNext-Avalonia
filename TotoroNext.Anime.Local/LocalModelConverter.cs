@@ -39,7 +39,8 @@ internal static class LocalModelConverter
                 MyAnimeList = anime.MyAnimeListId,
                 Kitsu = anime.KitsuId,
                 AniDb = anime.AniDbId,
-                Simkl = anime.SimklId
+                Simkl = anime.SimklId,
+                AnimeNewsNetwork = anime.AnnId
             },
             Episodes = anime.EpisodeInfo?.Info ?? [],
             Tracking = anime.Tracking?.Tracking,
@@ -172,6 +173,14 @@ internal static class LocalModelConverter
             else if (source.StartsWith("https://simkl.com/"))
             {
                 model.SimklId = long.Parse(serviceId);
+            }
+            else if (source.StartsWith("https://animenewsnetwork.com/"))
+            {
+                var id = serviceId.Split('=').LastOrDefault();
+                if(long.TryParse(id, out var annId))
+                {
+                    model.AnnId = annId;
+                }
             }
         }
     }

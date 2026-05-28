@@ -17,6 +17,7 @@ internal class LocalAnimeModel
     public long KitsuId { get; set; }
     public long AniDbId { get; set; }
     public long SimklId { get; set; }
+    public long AnnId { get; set; }
     public string Title { get; set; } = "";
     public int TotalEpisodes { get; set; }
     public IReadOnlyCollection<string> Genres { get; set; } = [];
@@ -35,7 +36,18 @@ internal class LocalAnimeModel
         return TotalEpisodes != other.TotalEpisodes ||
                Math.Abs(MeanScore - other.MeanScore) > 0 ||
                AiringStatus != other.AiringStatus ||
-               !AlternateTitles.SequenceEqual(other.AlternateTitles);
+               !AlternateTitles.SequenceEqual(other.AlternateTitles) ||
+               IdsChanged(this, other);
+    }
+
+    private static bool IdsChanged(LocalAnimeModel left, LocalAnimeModel right)
+    {
+        return left.AnnId != right.AnnId ||
+               left.AnilistId != right.AnilistId ||
+               left.AniDbId != right.AniDbId ||
+               left.KitsuId != right.KitsuId ||
+               left.MyAnimeListId != right.MyAnimeListId ||
+               left.SimklId != right.SimklId;
     }
 }
 

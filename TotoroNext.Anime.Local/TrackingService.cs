@@ -103,6 +103,7 @@ internal class TrackingService(
                 nameof(AnimeId.AniDb) => dbContext.Anime.FindOne(x => x.AniDbId == anime.Id),
                 nameof(AnimeId.Kitsu) => dbContext.Anime.FindOne(x => x.KitsuId == anime.Id),
                 nameof(AnimeId.Simkl) => dbContext.Anime.FindOne(x => x.SimklId == anime.Id),
+                nameof(AnimeId.AnimeNewsNetwork) => dbContext.Anime.FindOne(x => x.AnnId == anime.Id),
                 _ => throw new NotSupportedException()
             };
 
