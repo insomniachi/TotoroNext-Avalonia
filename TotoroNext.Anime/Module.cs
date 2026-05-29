@@ -17,7 +17,7 @@ public class Module : IModule
     {
         services.AddSingleton<IPlaybackProgressService, PlaybackProgressTrackingService>()
                 .AddSingleton<ITrackingUpdater, TrackingUpdater>()
-                .AddTransient<IAnimeThemes, AnimeThemes>()
+                .AddTransient<IAnimeMusicService, AnimeMusicService>()
                 .AddSingleton<IAnimeRelations, AnimeRelations>()
                 .AddSingleton<IDownloadManager, DownloadManager>()
                 .AddDebrid();

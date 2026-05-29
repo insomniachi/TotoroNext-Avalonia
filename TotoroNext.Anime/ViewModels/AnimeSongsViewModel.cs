@@ -16,14 +16,14 @@ namespace TotoroNext.Anime.ViewModels;
 [UsedImplicitly]
 public sealed partial class AnimeSongsViewModel(
     SongsViewModelNavigationParameters @params,
-    IAnimeThemes animeThemes,
+    IAnimeMusicService animeMusicService,
     IFactory<IMediaPlayer, Guid> mediaPlayerFactory,
     IMessenger messenger) : ObservableObject, IAsyncInitializable
 {
     private TimeSpan _duration;
-    private Abstractions.AnimeTheme? _selectedThemeObject;
+    private AnimeMusic? _selectedThemeObject;
 
-    [ObservableProperty] public partial List<Abstractions.AnimeTheme> Themes { get; set; } = [];
+    [ObservableProperty] public partial List<AnimeMusic> Themes { get; set; } = [];
 
     [ObservableProperty] public partial Uri? SelectedTheme { get; set; }
 
@@ -42,39 +42,39 @@ public sealed partial class AnimeSongsViewModel(
         SubscriptionsForRpc(EmbeddedVlcMediaPlayer);
 
         IsLoading = true;
-        Themes = await animeThemes.FindAll(@params.Anime);
+        Themes = await animeMusicService.FindAll(@params.Anime);
         IsLoading = false;
     }
 
     [RelayCommand]
-    private void Play(Abstractions.AnimeTheme theme)
+    private void Play(AnimeMusic music)
     {
-        _selectedThemeObject = theme;
-        SelectedTheme = theme.Video;
+        _selectedThemeObject = music;
+        SelectedTheme = music.Video;
     }
 
     [RelayCommand]
-    private void PlayAudio(Abstractions.AnimeTheme theme)
+    private void PlayAudio(AnimeMusic music)
     {
-        if (theme.Audio is not { } uri)
+        if (music.Audio is not { } uri)
         {
             return;
         }
 
-        _selectedThemeObject = theme;
-        var media = new Media(uri, new MediaMetadata(theme.SongName));
+        _selectedThemeObject = music;
+        var media = new Media(uri, new MediaMetadata(music.SongName));
         EmbeddedVlcMediaPlayer.Play(media, TimeSpan.Zero);
     }
 
     [RelayCommand]
-    private void OpenInMediaPlayer(Abstractions.AnimeTheme theme)
+    private void OpenInMediaPlayer(AnimeMusic music)
     {
-        if (theme.Video is not { } uri)
+        if (music.Video is not { } uri)
         {
             return;
         }
 
-        _selectedThemeObject = theme;
+        _selectedThemeObject = music;
         var player = mediaPlayerFactory.CreateDefault();
         if (player is null)
         {
@@ -82,7 +82,7 @@ public sealed partial class AnimeSongsViewModel(
         }
 
         SubscriptionsForRpc(player);
-        player.Play(new Media(uri, new MediaMetadata(theme.DisplayName)), TimeSpan.Zero);
+        player.Play(new Media(uri, new MediaMetadata(music.DisplayName)), TimeSpan.Zero);
     }
 
     private void SubscriptionsForRpc(IMediaPlayer player)

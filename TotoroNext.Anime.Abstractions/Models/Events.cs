@@ -14,7 +14,7 @@ public class SongPlaybackState
     public required AnimeModel Anime { get; init; }
     public required TimeSpan Duration { get; init; }
     public required TimeSpan Position { get; init; }
-    public required AnimeTheme Song { get; init; }
+    public required AnimeMusic Song { get; init; }
 }
 
 public class PlaybackEnded

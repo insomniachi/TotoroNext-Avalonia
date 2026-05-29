@@ -22,7 +22,7 @@
 
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Themes}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="aa:AnimeTheme">
+                        <DataTemplate x:DataType="aa:AnimeMusic">
                             <Grid Margin="0 4"
                                   ColumnSpacing="8"
                                   ColumnDefinitions="*,Auto,Auto,*">

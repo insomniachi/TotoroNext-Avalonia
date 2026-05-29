@@ -3,12 +3,12 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public interface IAnimeThemes
+public interface IAnimeMusicService
 {
-    Task<List<AnimeTheme>> FindAll(AnimeModel anime);
+    Task<List<AnimeMusic>> FindAll(AnimeModel anime);
 }
 
-public class AnimeTheme
+public class AnimeMusic
 {
     public Uri? Video { get; init; }
     public Uri? Audio { get; init; }
