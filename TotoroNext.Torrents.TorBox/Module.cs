@@ -31,7 +31,7 @@ public class Module : IModule<Settings>
             client.BaseAddress = new Uri("https://api.torbox.app/v1/api/");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         });
-        services.AddKeyedTransient<IDebrid, TorBoxService>(Descriptor.Id);
+        services.AddKeyedTransient<ITorrentStream, TorBoxService>(Descriptor.Id);
         services.AddTransient<TorBoxService>();
     }
 }

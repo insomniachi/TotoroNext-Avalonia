@@ -31,7 +31,7 @@ public class Module : IModule<Settings>
             client.BaseAddress = new Uri("https://api.real-debrid.com/rest/1.0/");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         });
-        services.AddKeyedTransient<IDebrid, RealDebridService>(Descriptor.Id);
+        services.AddKeyedTransient<ITorrentStream, RealTorrentStreamService>(Descriptor.Id);
     }
 }
 

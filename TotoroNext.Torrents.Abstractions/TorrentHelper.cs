@@ -14,9 +14,10 @@ public static class TorrentHelper
         {
             await stream.CopyToAsync(fileStream);
         }
+
         var torrent = await Torrent.LoadAsync(path);
         File.Delete(path);
-        
+
         var sb = new StringBuilder();
         sb.Append("magnet:?xt=urn:btih:");
         sb.Append(torrent.InfoHashes.V1OrV2.ToHex());

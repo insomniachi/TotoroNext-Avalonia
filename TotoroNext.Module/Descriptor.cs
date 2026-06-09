@@ -25,4 +25,9 @@ public class Descriptor
 
     public static Descriptor None => new() { Name = @"None", Id = Guid.Empty };
     public static Descriptor Default => new() { Name = @"Default", Id = Guid.Empty };
+
+    public static Descriptor New(string name, Guid id)
+    {
+        return new Descriptor { Name = name, Id = id };
+    }
 }

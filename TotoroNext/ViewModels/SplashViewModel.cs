@@ -104,6 +104,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                           services.AddSingleton<SettingsModel>();
                           services.AddTransient<IInitializer, SettingsViewModel>();
                           services.AddLogging(builder => builder.AddSerilog(dispose: true));
+                          services.AddWebTorrent();
 
 #if REFER_PLUGINS
                           services.AddSingleton<IModuleStore, DebugModuleStore>();
@@ -118,7 +119,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                   .RegisterFactory<IMetadataService>(nameof(SettingsModel.SelectedTrackingService))
                                   .RegisterFactory<IAnimeProvider>(nameof(SettingsModel.SelectedAnimeProvider))
                                   .RegisterFactory<IMediaSegmentsProvider>(nameof(SettingsModel.SelectedSegmentsProvider))
-                                  .RegisterFactory<IDebrid>(nameof(SettingsModel.SelectedDebridService))
+                                  .RegisterFactory<ITorrentStream>(nameof(SettingsModel.SelectedTorrentService))
                                   .RegisterFactory<ITorrentIndexer>(nameof(SettingsModel.SelectedTorrentIndexer))
                                   .RegisterFactory<IAnimeScheduleProvider>("")
                                   .RegisterFactory<ITorrentClient>(nameof(SettingsModel.SelectedTorrentClient));
@@ -186,7 +187,6 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
     private Task StartBackgroundServicesAsync()
     {
         UpdateStatus("Initializing services...", "");
-
         if (App.AppHost.Services.GetService<IEnumerable<IInitializer>>() is { } initializers)
         {
             foreach (var initializer in initializers)
@@ -236,7 +236,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 #endif
 
         services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", PackIconMaterialDesignKind.Downloading,
-                                                                                  new NavMenuItemTag()
+                                                                                  new NavMenuItemTag
                                                                                   {
                                                                                       Order = 4
                                                                                   });

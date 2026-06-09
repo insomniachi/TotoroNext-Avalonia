@@ -138,14 +138,14 @@
                         </ComboBox>
                     </fac:SettingsExpander.Footer>
                 </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Debrid"
-                                      Description="Default debrid service">
+                <fac:SettingsExpander Header="Torrent Stream"
+                                      Description="Default torrent stream service">
                     <fac:SettingsExpander.IconSource>
                         <fac:PathIconSource Data="{StaticResource Torrent}" />
                     </fac:SettingsExpander.IconSource>
                     <fac:SettingsExpander.Footer>
-                        <ComboBox ItemsSource="{Binding DebridServices}"
-                                  SelectedValue="{Binding Settings.SelectedDebridService, FallbackValue={x:Null}}"
+                        <ComboBox ItemsSource="{Binding TorrentStreamServices}"
+                                  SelectedValue="{Binding Settings.SelectedTorrentService, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300">

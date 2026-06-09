@@ -4,9 +4,9 @@ using TotoroNext.Torrents.Abstractions;
 
 namespace TotoroNext.Torrents.RealDebrid;
 
-public class RealDebridService(IHttpClientFactory httpClientFactory) : IDebrid
+public class RealTorrentStreamService(IHttpClientFactory httpClientFactory) : ITorrentStream
 {
-    public async Task<Uri?> TryGetDirectDownloadLink(Uri magnet, CancellationToken ct)
+    public async Task<Uri?> TryGetStreamUrl(Uri magnet, CancellationToken ct)
     {
         try
         {

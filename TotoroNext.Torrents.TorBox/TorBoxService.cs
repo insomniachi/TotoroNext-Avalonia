@@ -8,11 +8,11 @@ namespace TotoroNext.Torrents.TorBox;
 
 internal class TorBoxService(
     IHttpClientFactory httpClientFactory,
-    IModuleSettings<Settings> settings) : IDebrid
+    IModuleSettings<Settings> settings) : ITorrentStream
 {
     private readonly FlurlClient _client = new(httpClientFactory.CreateClient("TorBox"));
 
-    public async Task<Uri?> TryGetDirectDownloadLink(Uri uri, CancellationToken ct)
+    public async Task<Uri?> TryGetStreamUrl(Uri uri, CancellationToken ct)
     {
         try
         {
