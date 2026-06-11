@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:DownloadsViewModel"
              x:Class="TotoroNext.Anime.Views.DownloadsView">
-    <UserControl.Styles>
+    <ContentPage.Styles>
         <Style Selector="Button.downloading">
             <Setter Property="Content" Value="Pause" />
         </Style>
@@ -17,7 +17,7 @@
         <Style Selector="TextBlock.cancelled">
             <Setter Property="TextDecorations" Value="Strikethrough" />
         </Style>
-    </UserControl.Styles>
+    </ContentPage.Styles>
     <ScrollViewer>
         <ItemsControl ItemsSource="{Binding Downloads}">
             <ItemsControl.ItemTemplate>
@@ -66,4 +66,4 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
     </ScrollViewer>
-</UserControl>
+</ContentPage>

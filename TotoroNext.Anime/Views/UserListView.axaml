@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<ContentPage
     x:Class="TotoroNext.Anime.Views.UserListView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,9 +14,9 @@
     d:DesignWidth="800"
     x:DataType="vm:UserListViewModel"
     mc:Ignorable="d">
-    <UserControl.Resources>
+    <ContentPage.Resources>
         <conv:EnumDescriptionConverter x:Key="EnumDescriptionConverter" />
-    </UserControl.Resources>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto, *" RowSpacing="16">
         <StackPanel
@@ -129,4 +129,4 @@
         </StackPanel>
     </Grid>
 
-</UserControl>
+</ContentPage>

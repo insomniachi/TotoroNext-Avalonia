@@ -7,7 +7,7 @@ using TotoroNext.Anime.ViewModels;
 
 namespace TotoroNext.Anime.Views;
 
-public partial class AnimeDetailsView : UserControl
+public partial class AnimeDetailsView : ContentPage
 {
     public AnimeDetailsView()
     {

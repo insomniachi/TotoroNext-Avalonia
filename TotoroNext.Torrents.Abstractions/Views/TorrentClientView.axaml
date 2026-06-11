@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,11 +7,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:TorrentClientViewModel"
              x:Class="TotoroNext.Torrents.Abstractions.Views.TorrentClientView">
-    <UserControl.Styles>
+    <ContentPage.Styles>
         <Style Selector="DataGridCell.centered-cell">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
-    </UserControl.Styles>
+    </ContentPage.Styles>
     <Grid>
         <DataGrid ItemsSource="{Binding Torrents}">
             <DataGrid.Columns>
@@ -29,4 +29,4 @@
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
-</UserControl>
+</ContentPage>

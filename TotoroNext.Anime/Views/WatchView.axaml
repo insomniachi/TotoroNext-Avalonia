@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -12,7 +12,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:WatchViewModel"
              x:Class="TotoroNext.Anime.Views.WatchView">
-    <UserControl.Resources>
+    <ContentPage.Resources>
         <DataTemplate x:Key="MinimalTemplate" x:DataType="mdl:Episode">
             <Grid ColumnDefinitions="*,1.8*" Height="160">
                 <Border Background="Gray" />
@@ -98,7 +98,7 @@
         <views:EpisodeTemplateSelector x:Key="EpisodeTemplate"
                                        MinimalTemplate="{StaticResource MinimalTemplate}"
                                        DetailedTemplate="{StaticResource DetailedTemplate}" />
-    </UserControl.Resources>
+    </ContentPage.Resources>
 
     <Grid RowDefinitions="*,Auto"
           ColumnDefinitions="*,Auto"
@@ -173,4 +173,4 @@
             </u:LoadingContainer>
         </Grid>
     </Grid>
-</UserControl>
+</ContentPage>

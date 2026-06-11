@@ -127,7 +127,7 @@ public partial class MainWindowViewModel : ObservableObject,
             return;
         }
 
-        var viewObj = (Control)Activator.CreateInstance(viewType)!;
+        var viewObj = (Page)Activator.CreateInstance(viewType)!;
         var vmObj = ActivatorUtilities.CreateInstance(Container.Services, vmType, message.Data);
 
         var options = new DrawerOptions
@@ -156,7 +156,7 @@ public partial class MainWindowViewModel : ObservableObject,
             return;
         }
 
-        var viewObj = (Control)Activator.CreateInstance(viewType)!;
+        var viewObj = (Page)Activator.CreateInstance(viewType)!;
         var vmObj = ActivatorUtilities.CreateInstance(Container.Services, vmType);
 
         var options = new DrawerOptions
@@ -268,7 +268,7 @@ public partial class MainWindowViewModel : ObservableObject,
 
     private static void NavigateToDialog(ViewMap map, NavigateToDialogMessage message)
     {
-        var viewObj = (Control)Activator.CreateInstance(map.View)!;
+        var viewObj = (Page)Activator.CreateInstance(map.View)!;
         var vmObj = message.Data is null
             ? ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel)
             : ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel, message.Data);

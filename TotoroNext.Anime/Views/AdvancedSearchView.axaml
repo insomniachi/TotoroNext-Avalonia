@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,9 +11,9 @@
              mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="1920"
              x:DataType="vm:AdvancedSearchViewModel"
              x:Class="TotoroNext.Anime.Views.AdvancedSearchView">
-    <UserControl.Resources>
+    <ContentPage.Resources>
         <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
-    </UserControl.Resources>
+    </ContentPage.Resources>
     <Grid ColumnDefinitions="*,300"
           ColumnSpacing="16">
         <ScrollViewer Grid.Column="1">
@@ -158,4 +158,4 @@
             </ScrollViewer>
         </u:LoadingContainer>
     </Grid>
-</UserControl>
+</ContentPage>

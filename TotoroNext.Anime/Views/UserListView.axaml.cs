@@ -5,7 +5,7 @@ using TotoroNext.Anime.Abstractions.Controls;
 
 namespace TotoroNext.Anime.Views;
 
-public partial class UserListView : UserControl
+public partial class UserListView : ContentPage
 {
     public UserListView()
     {

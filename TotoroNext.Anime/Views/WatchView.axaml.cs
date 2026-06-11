@@ -11,7 +11,7 @@ using TotoroNext.MediaEngine.Abstractions.Controls;
 
 namespace TotoroNext.Anime.Views;
 
-public partial class WatchView : UserControl
+public partial class WatchView : ContentPage
 {
     public WatchView()
     {

@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TotoroNext.Module.Abstractions;
@@ -18,12 +17,12 @@ public interface IAsyncInitializable
 }
 
 public class NavigatorHost(
-    TransitioningContentControl host,
+    NavigationPage host,
     IViewRegistry locator,
     ILogger<NavigatorHost> logger,
     IServiceScopeFactory serviceScopeFactory) : INavigator
 {
-    private TransitioningContentControl Control { get; } = host;
+    private NavigationPage Control { get; } = host;
     public event EventHandler<NavigationResult>? Navigated;
 
     public bool NavigateToData(object data)
@@ -37,7 +36,7 @@ public class NavigatorHost(
                 return false;
             }
 
-            var view = (StyledElement)Activator.CreateInstance(viewType)!;
+            var view = (Page)Activator.CreateInstance(viewType)!;
             using var scope = serviceScopeFactory.CreateScope();
             var vmObj = ActivatorUtilities.CreateInstance(scope.ServiceProvider, vmType, data);
 
@@ -64,7 +63,7 @@ public class NavigatorHost(
                 return false;
             }
 
-            var view = (StyledElement)Activator.CreateInstance(viewType)!;
+            var view = (Page)Activator.CreateInstance(viewType)!;
             using var scope = serviceScopeFactory.CreateScope();
             var vmObj = ActivatorUtilities.CreateInstance(scope.ServiceProvider, vmType);
 
@@ -92,7 +91,7 @@ public class NavigatorHost(
                 return false;
             }
 
-            var view = (StyledElement)Activator.CreateInstance(viewType)!;
+            var view = (ContentPage)Activator.CreateInstance(viewType)!;
             using var scope = serviceScopeFactory.CreateScope();
             var vmObj = ActivatorUtilities.CreateInstance(scope.ServiceProvider, vmType);
 
@@ -109,8 +108,8 @@ public class NavigatorHost(
         }
     }
 
-    private void Navigate(StyledElement page)
+    private void Navigate(Page page)
     {
-        Control.Content = page;
+        Control.PushAsync(page);
     }
 }

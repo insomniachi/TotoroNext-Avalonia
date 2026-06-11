@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class AnimeCharactersView : UserControl
+public partial class AnimeCharactersView : ContentPage
 {
     public AnimeCharactersView()
     {

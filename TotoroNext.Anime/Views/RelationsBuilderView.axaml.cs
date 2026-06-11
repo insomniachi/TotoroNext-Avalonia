@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class RelationsBuilderView : UserControl
+public partial class RelationsBuilderView : ContentPage
 {
     public RelationsBuilderView()
     {
