@@ -5,9 +5,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using IconPacks.Avalonia.Lucide;
-using IconPacks.Avalonia.MaterialDesign;
-using IconPacks.Avalonia.Octicons;
 using Irihi.Avalonia.Shared.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -187,9 +184,11 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
     private Task StartBackgroundServicesAsync()
     {
         UpdateStatus("Initializing services...", "");
-        if (App.AppHost.Services.GetService<IEnumerable<IInitializer>>() is { } initializers)
+        try
         {
-            foreach (var initializer in initializers)
+            var initializers = App.AppHost.Services.GetService<IEnumerable<IInitializer>>();
+
+            foreach (var initializer in initializers ?? [])
             {
                 UpdateStatus(null, initializer.GetType().Name);
                 try
@@ -201,9 +200,14 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                     Log.Logger.Error(e, "Unable to initialize service");
                 }
             }
-        }
 
-        UpdateStatus("Starting background services...", "");
+            UpdateStatus("Starting background services...", "");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
 
         return App.AppHost.StartAsync();
     }
@@ -221,33 +225,34 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
     {
 #if DEBUG
         services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
-                                                                                        PackIconOcticonsKind.Beaker16,
+                                                                                        CommonIcons.Test,
                                                                                         new NavMenuItemTag { IsFooterItem = true });
 
         // services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
         //                                      new NavMenuItemTag { Order = 3 });
 
         services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
-                                                                  PackIconLucideKind.Store,
+                                                                  CommonIcons.Store,
                                                                   new NavMenuItemTag
                                                                   {
                                                                       IsFooterItem = true
                                                                   });
 #endif
 
-        services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", PackIconMaterialDesignKind.Downloading,
+        services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", 
+                                                                                  CommonIcons.Downloads,
                                                                                   new NavMenuItemTag
                                                                                   {
                                                                                       Order = 4
                                                                                   });
         services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
-                                                                      PackIconMaterialDesignKind.ShoppingCart,
+                                                                      CommonIcons.ShoppingCart,
                                                                       new NavMenuItemTag
                                                                       {
                                                                           IsFooterItem = true
                                                                       });
         services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
-                                                                        PackIconMaterialDesignKind.Settings,
+                                                                        CommonIcons.Settings,
                                                                         new NavMenuItemTag
                                                                         {
                                                                             IsFooterItem = true,

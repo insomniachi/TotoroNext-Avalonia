@@ -32,7 +32,6 @@
         <PackageReference Include="Microsoft.Playwright"/>
 
         <!-- Avalonia OSS-->
-        <PackageReference Include="IconPacks.Avalonia"/>
         <PackageReference Include="Irihi.Ursa"/>
         <PackageReference Include="Irihi.Ursa.Themes.Semi"/>
         <PackageReference Include="AsyncImageLoader.Avalonia"/>

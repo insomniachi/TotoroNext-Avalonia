@@ -3,8 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
-using IconPacks.Avalonia.MaterialDesign;
 using ReactiveUI;
+using TotoroNext.Module;
 
 namespace TotoroNext.MediaEngine.Abstractions.Controls;
 
@@ -14,8 +14,11 @@ public partial class TransportControls : UserControl
     {
         InitializeComponent();
 
-        WeakReferenceMessenger.Default.Register<EnterFullScreen>(this, (_, _) => FullScreenIcon.Kind = PackIconMaterialDesignKind.FullscreenExit);
-        WeakReferenceMessenger.Default.Register<ExitFullScreen>(this, (_, _) => FullScreenIcon.Kind = PackIconMaterialDesignKind.Fullscreen);
+        WeakReferenceMessenger.Default.Register<EnterFullScreen>(this,
+                                                                 (_, _) => FullscreenViewBox.Child =
+                                                                     IconRegistry.GetPathIcon(CommonIcons.FullscreenExit));
+        WeakReferenceMessenger.Default.Register<ExitFullScreen>(this,
+                                                                (_, _) => FullscreenViewBox.Child = IconRegistry.GetPathIcon(CommonIcons.Fullscreen));
 
         PositionSlider.AddHandler(PointerPressedEvent,
                                   OnSliderPressed, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);

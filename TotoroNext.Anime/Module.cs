@@ -1,4 +1,3 @@
-using IconPacks.Avalonia.MaterialDesign;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
@@ -28,11 +27,11 @@ public class Module : IModule
                 .AddTransient<IBackgroundInitializer, AnimeRelationsParser>();
 
         // main navigation
-        services.AddMainNavigationItem<HomeView, HomeViewModel>("Home", PackIconMaterialDesignKind.Home);
-        services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", PackIconMaterialDesignKind.List);
-        services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", PackIconMaterialDesignKind.Search);
-        services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Unseen Arcs", PackIconMaterialDesignKind.NewReleases);
-        services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", PackIconMaterialDesignKind.Download,
+        services.AddMainNavigationItem<HomeView, HomeViewModel>("Home", CommonIcons.Home);
+        services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", CommonIcons.List);
+        services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", CommonIcons.Search);
+        services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Unseen Arcs", CommonIcons.NewReleases);
+        services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", CommonIcons.Downloads,
                                                                           new NavMenuItemTag { IsFooterItem = true });
 
         // Pane navigation

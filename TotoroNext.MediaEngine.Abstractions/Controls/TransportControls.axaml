@@ -7,6 +7,7 @@
              xmlns:controls="clr-namespace:TotoroNext.MediaEngine.Abstractions.Controls"
              xmlns:conv="using:TotoroNext.Module.Converters"
              xmlns:mconv="using:TotoroNext.MediaEngine.Abstractions"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="controls:TransportControlsViewModel"
              x:Class="TotoroNext.MediaEngine.Abstractions.Controls.TransportControls"
@@ -50,10 +51,8 @@
                   ColumnDefinitions="Auto,*,Auto">
                 <u:ToolBar Grid.Column="1" HorizontalAlignment="Center">
                     <Button x:Name="SeekBackwardButton" Command="{Binding SeekBackwardCommand}">
-                        <Viewbox Height="20" Width="20">
-                            <iconPacks:PackIconControl
-                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.SkipPrevious}" />
-                        </Viewbox>
+                        <Viewbox Height="20" Width="20"
+                                 Child="{module:PathIcon Key={x:Static module:CommonIcons.SkipPrevious}}" />
                     </Button>
                     <Button x:Name="PlayPauseButton" Command="{Binding TogglePlayPauseCommand}"
                             Height="50"
@@ -62,25 +61,19 @@
                             Width="50"
                             CornerRadius="25">
                         <Viewbox Height="30" Width="30"
-                                 Margin="{Binding PlayPauseButtonMargin, Mode=OneWay}">
-                            <iconPacks:PackIconControl
-                                Kind="{Binding CurrentState, Converter={x:Static mconv:Converters.MediaPlayerStateToIconConverter}}" />
-                        </Viewbox>
+                                 Margin="{Binding PlayPauseButtonMargin, Mode=OneWay}"
+                                 Child="{Binding CurrentState, Converter={x:Static mconv:Converters.MediaPlayerStateToIconConverter}}" />
                     </Button>
                     <Button x:Name="SeekForwardButton" Command="{Binding SeekForwardCommand}">
-                        <Viewbox Height="20" Width="20">
-                            <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialDesignKind.SkipNext}" />
-                        </Viewbox>
+                        <Viewbox Height="20" Width="20"
+                                 Child="{module:PathIcon Key={x:Static module:CommonIcons.SkipNext}}" />
                     </Button>
                 </u:ToolBar>
 
                 <u:ToolBar Grid.Column="2" VerticalAlignment="Center">
                     <Button Command="{Binding ToggleFullscreenCommand}">
-                        <Viewbox Height="20" Width="20">
-                            <iconPacks:PackIconControl
-                                Kind="{x:Static iconPacks:PackIconMaterialDesignKind.Fullscreen}"
-                                x:Name="FullScreenIcon" />
-                        </Viewbox>
+                        <Viewbox Height="20" Width="20" Child="{module:PathIcon Key={x:Static module:CommonIcons.Fullscreen}}" 
+                                 x:Name="FullscreenViewBox"/>
                     </Button>
                 </u:ToolBar>
 

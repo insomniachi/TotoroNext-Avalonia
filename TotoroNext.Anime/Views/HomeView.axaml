@@ -5,11 +5,11 @@
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              xmlns:aa="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ext="totoro.next/extensions"
              xmlns:am="clr-namespace:TotoroNext.Anime"
              xmlns:ctl="totoro.next/controls"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:HomeViewModel"
              x:Class="TotoroNext.Anime.Views.HomeView">
@@ -75,10 +75,9 @@
                                         IsVisible="{Binding Path=., Converter={x:Static aa:Converters.HasAiredConverter}}">
                                     <StackPanel Spacing="8" Orientation="Horizontal">
                                         <TextBlock Text="Watch" VerticalAlignment="Center" />
-                                        <iconPacks:PackIconControl
-                                            Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
-                                            Height="15" Width="11"
-                                            VerticalAlignment="Center" />
+                                        <ContentControl Height="15" Width="11"
+                                                        VerticalAlignment="Center"
+                                                        Content="{module:PathIcon Key={x:Static module:CommonIcons.Play}}" />
                                     </StackPanel>
                                 </Button>
                                 <Button Command="{x:Static am:Commands.SearchTorrentsCommand}"
@@ -87,10 +86,9 @@
                                         HorizontalAlignment="Stretch">
                                     <StackPanel Spacing="8" Orientation="Horizontal">
                                         <TextBlock Text="Torrent" VerticalAlignment="Center" />
-                                        <iconPacks:PackIconControl
-                                            Kind="{x:Static iconPacks:PackIconBootstrapIconsKind.Play}"
-                                            Height="15" Width="11"
-                                            VerticalAlignment="Center" />
+                                        <ContentControl Height="15" Width="11"
+                                                        VerticalAlignment="Center"
+                                                        Content="{module:PathIcon Key={x:Static module:CommonIcons.Play}}" />
                                     </StackPanel>
                                 </Button>
                                 <Button Content="Details"

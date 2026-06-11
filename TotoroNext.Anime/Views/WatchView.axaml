@@ -6,9 +6,9 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:mdl="totoro.next/models"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:views="clr-namespace:TotoroNext.Anime.Views"
              xmlns:bhvr="totoro.next/behaviors"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:WatchViewModel"
              x:Class="TotoroNext.Anime.Views.WatchView">
@@ -31,15 +31,16 @@
                                     Margin="0 0 0 8"
                                     Orientation="Horizontal"
                                     Spacing="5">
-                            <ip:PackIconControl
-                                Kind="{x:Static ip:PackIconMaterialKind.CalendarClock}"
+                            <ContentControl
+                                Content="{module:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock Text="??"
                                        Margin="0 0 16 0" />
-                            <ip:PackIconControl
-                                Kind="{x:Static ip:PackIconMaterialKind.Alarm}"
-                                Height="20" Width="20" />
+                            <ContentControl
+                                Content="{module:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
+                                Height="20"
+                                Width="20" />
                             <TextBlock Text="??" />
                         </StackPanel>
                     </Grid>
@@ -71,15 +72,16 @@
                                     Margin="0 0 0 8"
                                     Orientation="Horizontal"
                                     Spacing="5">
-                            <ip:PackIconControl
-                                Kind="{x:Static ip:PackIconMaterialKind.CalendarClock}"
+                            <ContentControl
+                                Content="{module:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock Text="{Binding Info.AirDate, FallbackValue={x:Null}}"
                                        Margin="0 0 16 0" />
-                            <ip:PackIconControl
-                                Kind="{x:Static ip:PackIconMaterialKind.Alarm}"
-                                Height="20" Width="20" />
+                            <ContentControl
+                                Content="{module:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
+                                Height="20"
+                                Width="20" />
                             <TextBlock>
                                 <Run Text="{Binding Info.Runtime, FallbackValue={x:Null}}" />
                                 <Run Text="Min" />
@@ -154,7 +156,7 @@
                     SelectedItem="{Binding SelectedEpisode}"
                     ItemTemplate="{StaticResource EpisodeTemplate}">
                     <Interaction.Behaviors>
-                        <bhvr:BringSelectedItemIntoViewBehavior/>
+                        <bhvr:BringSelectedItemIntoViewBehavior />
                     </Interaction.Behaviors>
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">

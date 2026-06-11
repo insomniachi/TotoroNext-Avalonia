@@ -6,7 +6,7 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:aa="using:TotoroNext.Anime.Abstractions"
              xmlns:mac="using:TotoroNext.MediaEngine.Abstractions.Controls"
-             xmlns:icon="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeSongsViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeSongsView">
@@ -33,20 +33,16 @@
                                         Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).OpenInMediaPlayerCommand, FallbackValue={x:Null}}"
                                         CommandParameter="{Binding}"
                                         ToolTip.Tip="Play Video">
-                                    <Viewbox Height="20" Width="20">
-                                        <icon:PackIconControl
-                                            Kind="{x:Static icon:PackIconPhosphorIconsKind.MonitorPlayFill}" />
-                                    </Viewbox>
+                                    <Viewbox Height="20" Width="20"
+                                             Child="{module:PathIcon Key={x:Static module:CommonIcons.MonitorPlayFill}}" />
                                 </Button>
                                 <Button Grid.Column="2"
                                         Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).PlayAudioCommand, FallbackValue={x:Null}}"
                                         CommandParameter="{Binding}"
                                         ToolTip.Tip="Play Audio"
                                         Height="20">
-                                    <Viewbox Height="20" Width="20">
-                                        <icon:PackIconControl
-                                            Kind="{x:Static icon:PackIconMaterialDesignKind.MusicNote}" />
-                                    </Viewbox>
+                                    <Viewbox Height="20" Width="20"
+                                             Child="{module:PathIcon Key={x:Static module:CommonIcons.MusicNote}}" />
                                 </Button>
                             </Grid>
                         </DataTemplate>

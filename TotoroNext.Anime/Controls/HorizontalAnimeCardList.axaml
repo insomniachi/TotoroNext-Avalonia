@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ctl="totoro.next/controls"
              xmlns:local="clr-namespace:TotoroNext.Anime.Controls"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:bhvr="totoro.next/behaviors"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Controls.HorizontalAnimeCardList">
 
@@ -26,10 +26,7 @@
                 Height="40" Width="40"
                 CornerRadius="20"
                 IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}">
-            <Viewbox Height="18" Width="18">
-                <iconPacks:PackIconControl
-                    Kind="{x:Static iconPacks:PackIconMaterialDesignKind.ChevronLeft}" />
-            </Viewbox>
+            <Viewbox Height="18" Width="18" Child="{module:PathIcon Key={x:Static module:CommonIcons.ChevronLeft}}" />
         </Button>
 
         <ScrollViewer Grid.Row="1" Grid.Column="1"
@@ -49,7 +46,7 @@
                                 <Interaction.Behaviors>
                                     <bhvr:InteractiveCardControlsBehavior />
                                     <bhvr:ListStatusBehavior />
-                                    <bhvr:MeanScoreBehavior/>
+                                    <bhvr:MeanScoreBehavior />
                                 </Interaction.Behaviors>
                             </ctl:AnimeCard>
                         </DataTemplate>
@@ -82,10 +79,7 @@
         <Button Grid.Row="1" Grid.Column="2" Click="ScrollRight" Height="40" Width="40" CornerRadius="20"
                 IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}"
                 x:Name="ScrollRightButton">
-            <Viewbox Height="18" Width="18">
-                <iconPacks:PackIconControl
-                    Kind="{x:Static iconPacks:PackIconMaterialDesignKind.ChevronRight}" />
-            </Viewbox>
+            <Viewbox Height="18" Width="18" Child="{module:PathIcon Key={x:Static module:CommonIcons.ChevronRight}}" />
         </Button>
     </Grid>
 </UserControl>

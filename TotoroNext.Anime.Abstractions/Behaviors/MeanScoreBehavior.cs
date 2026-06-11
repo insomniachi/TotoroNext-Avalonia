@@ -2,9 +2,8 @@
 using Avalonia.Layout;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
-using IconPacks.Avalonia;
-using IconPacks.Avalonia.MaterialDesign;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
@@ -22,10 +21,11 @@ public class MeanScoreBehavior : AnimeBoundCardOverlayBehavior<Border>
                .Child(new StackPanel()
                       .Spacing(4)
                       .Orientation(Orientation.Horizontal)
-                      .Children(new PackIconControl { Kind = PackIconMaterialDesignKind.Star }
-                                    .Height(12)
-                                    .Width(12)
-                                    .VerticalAlignment(VerticalAlignment.Center),
+                      .Children(new Viewbox()
+                                .Child(IconRegistry.GetPathIcon(CommonIcons.Star))
+                                .Height(12)
+                                .Width(12)
+                                .VerticalAlignment(VerticalAlignment.Center),
                                 new TextBlock()
                                     .Foreground(Brushes.AntiqueWhite)
                                     .FontWeight(FontWeight.Bold)

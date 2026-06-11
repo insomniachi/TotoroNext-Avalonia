@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
-using IconPacks.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Module.Extensions;
@@ -31,7 +30,7 @@ public static class ServiceCollectionExtensions
             return services.AddSingleton<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
         }
 
-        public IServiceCollection AddMainNavigationItem<TView, TViewModel>(string header, Enum icon,
+        public IServiceCollection AddMainNavigationItem<TView, TViewModel>(string header, string iconKey,
                                                                            NavMenuItemTag? tag = null)
             where TView : class, new()
             where TViewModel : class
@@ -49,10 +48,7 @@ public static class ServiceCollectionExtensions
                     {
                         Height = 20,
                         Width = 20,
-                        Child = new PackIconControl
-                        {
-                            Kind = icon
-                        }
+                        Child = IconRegistry.GetPathIcon(iconKey)
                     },
                     Tag = tag
                 };
@@ -65,7 +61,7 @@ public static class ServiceCollectionExtensions
         }
 
         public IServiceCollection AddChildNavigationViewItem<TView, TViewModel>(string parent, string header,
-                                                                                Enum icon)
+                                                                                string iconKey)
             where TView : class, new()
             where TViewModel : class
         {
@@ -74,10 +70,10 @@ public static class ServiceCollectionExtensions
                 Parent = parent
             };
 
-            return services.AddMainNavigationItem<TView, TViewModel>(header, icon, tag);
+            return services.AddMainNavigationItem<TView, TViewModel>(header, iconKey, tag);
         }
 
-        public IServiceCollection AddParentNavigationViewItem(string header, Enum icon,
+        public IServiceCollection AddParentNavigationViewItem(string header, string iconKey,
                                                               NavMenuItemTag? tag = null)
         {
             tag ??= new NavMenuItemTag();
@@ -90,10 +86,7 @@ public static class ServiceCollectionExtensions
                     {
                         Height = 20,
                         Width = 20,
-                        Child = new PackIconControl
-                        {
-                            Kind = icon
-                        }
+                        Child = IconRegistry.GetPathIcon(iconKey)
                     },
                     Tag = tag
                 };

@@ -60,7 +60,7 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>, IInitializab
         };
 
         var vm = new GetAnilistTokenDialogViewModel();
-        var result = await Dialog.ShowModal<GetAnilistTokenDialog, GetAnilistTokenDialogViewModel>(vm, options: options);
+        var result = await Dialog.ShowStandardAsync<GetAnilistTokenDialog, GetAnilistTokenDialogViewModel>(vm, options: options);
 
         if (result == DialogResult.OK)
         {
