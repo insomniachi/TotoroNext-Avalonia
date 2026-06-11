@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Views;
 
-public partial class StoreView : UserControl
+public partial class StoreView : ContentPage
 {
     public StoreView()
     {

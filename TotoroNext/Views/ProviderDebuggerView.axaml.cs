@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Views;
 
-public partial class ProviderDebuggerView : UserControl
+public partial class ProviderDebuggerView : ContentPage
 {
     public ProviderDebuggerView()
     {
