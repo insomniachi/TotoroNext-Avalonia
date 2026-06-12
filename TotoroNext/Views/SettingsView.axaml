@@ -31,41 +31,41 @@
         <StackPanel Spacing="24">
             <StackPanel>
                 <TextBlock Text="Appearance" FontSize="20" Margin="0 0 0 8" />
-                <fac:SettingsExpander Header="Theme">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Theme}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                <fac:FASettingsExpander Header="Theme">
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Theme}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding Themes}"
                                   SelectedItem="{Binding Settings.SelectedTheme, FallbackValue={x:Null}}">
                             <ComboBox.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Startup Screen">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Home}"/>
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Startup Screen">
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Home}"/>
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding HomeViews}"
                                   SelectedItem="{Binding Settings.HomeView, FallbackValue={x:Null}}">
                             <ComboBox.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
-                <fac:SettingsExpander Header="Anime Provider"
+                <fac:FASettingsExpander Header="Anime Provider"
                                       Description="Default anime provider">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource VideoLibrary}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding AnimeProviders}"
                                   SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
@@ -75,14 +75,14 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Media Player"
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Media Player"
                                       Description="Default media player">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource VideoPlayer}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource VideoPlayer}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding MediaEngines}"
                                   SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
@@ -92,14 +92,14 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Tracking"
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Tracking"
                                       Description="Default tracking service">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Tracking}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Tracking}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding TrackingServices}"
                                   SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
@@ -109,24 +109,24 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                    <fac:SettingsExpanderItem>
-                        <fac:SettingsExpanderItem.Footer>
+                    </fac:FASettingsExpander.Footer>
+                    <fac:FASettingsExpanderItem>
+                        <fac:FASettingsExpanderItem.Footer>
                             <Button Content="Sync"
                                     Command="{Binding SyncListCommand}">
                                 <Button.Styles>
                                     <semi:SemiTheme Locale="en-US"/>
                                 </Button.Styles>
                             </Button>
-                        </fac:SettingsExpanderItem.Footer>
-                    </fac:SettingsExpanderItem>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Media Segments"
+                        </fac:FASettingsExpanderItem.Footer>
+                    </fac:FASettingsExpanderItem>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Media Segments"
                                       Description="Default media segments provider">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource SkipSegments}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource SkipSegments}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding SegmentProviders}"
                                   SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
@@ -136,14 +136,14 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Torrent Stream"
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Torrent Stream"
                                       Description="Default torrent stream service">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Torrent}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Torrent}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding TorrentStreamServices}"
                                   SelectedValue="{Binding Settings.SelectedTorrentService, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
@@ -153,14 +153,14 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Torrent Client"
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Torrent Client"
                                       Description="Default client to download torrents">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource TorrentClient}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource TorrentClient}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding TorrentClients}"
                                   SelectedValue="{Binding Settings.SelectedTorrentClient, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
@@ -170,18 +170,18 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </StackPanel>
 
             <StackPanel>
                 <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
-                <fac:SettingsExpander Header="Openings"
+                <fac:FASettingsExpander Header="Openings"
                                       Description="How to handle openings">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Opening}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Opening}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
                                         Width="300">
@@ -189,14 +189,14 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </u:EnumSelector.Styles>
                         </u:EnumSelector>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Endings"
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Endings"
                                       Description="How to handle endings">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Ending}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Ending}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
                                         Width="300">
@@ -204,25 +204,25 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </u:EnumSelector.Styles>
                         </u:EnumSelector>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </StackPanel>
 
             <StackPanel>
                 <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
-                <fac:SettingsExpander Header="Check of updates"
+                <fac:FASettingsExpander Header="Check of updates"
                                       Description="{Binding CurrentVersion}">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Update}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Update}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <Button Content="Check" Command="{Binding CheckForUpdatesCommand}">
                             <Button.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </Button.Styles>
                         </Button>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </StackPanel>
 
         </StackPanel>

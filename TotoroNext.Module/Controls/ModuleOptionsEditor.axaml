@@ -16,8 +16,8 @@
         ItemsSource="{Binding $parent[controls:ModuleOptionsEditor].Options}">
         <ItemsControl.DataTemplates>
             <DataTemplate DataType="module:SelectableModuleOptionItem">
-                <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <fac:SettingsExpander.Footer>
+                <fac:FASettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding AllowedValues}"
                                   SelectedItem="{Binding Value, Mode=TwoWay}"
                                   HorizontalAlignment="Stretch">
@@ -25,23 +25,23 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </DataTemplate>
             <DataTemplate DataType="module:ToggleModuleOptionItem">
-                <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <fac:SettingsExpander.Footer>
+                <fac:FASettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <fac:FASettingsExpander.Footer>
                         <ToggleSwitch IsChecked="{Binding IsChecked}">
                             <ToggleSwitch.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </ToggleSwitch.Styles>
                         </ToggleSwitch>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </DataTemplate>
             <DataTemplate DataType="module:ModuleOptionItem">
-                <fac:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <fac:SettingsExpander.Footer>
+                <fac:FASettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <fac:FASettingsExpander.Footer>
                         <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
                                  MaxWidth="350" 
                                  MinWidth="200"
@@ -50,8 +50,8 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </TextBox.Styles>
                         </TextBox>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </DataTemplate>
         </ItemsControl.DataTemplates>
     </ItemsControl>

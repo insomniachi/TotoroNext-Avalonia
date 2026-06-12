@@ -24,7 +24,7 @@ public abstract class SelectResult<T> : ISelectionUserInteraction<T>
             Title = GetTitle()
         };
 
-        var result = await OverlayDialog.ShowModal(lb, null, null, options);
+        var result = await OverlayDialog.ShowStandardAsync(lb, null, null, options);
 
         return result == DialogResult.OK
             ? lb.SelectedItem as T

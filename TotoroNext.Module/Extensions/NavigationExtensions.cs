@@ -77,6 +77,7 @@ public class NavigationExtensions
 
     public static void ConfigureView(Page view, object vm)
     {
+        NavigationPage.SetHasNavigationBar(view, false);
         view.DataContext = vm;
         view.NavigatedTo += (_, _) =>
         {

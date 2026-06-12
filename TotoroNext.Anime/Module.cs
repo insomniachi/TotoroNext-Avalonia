@@ -32,7 +32,7 @@ public class Module : IModule
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", CommonIcons.Search);
         services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Unseen Arcs", CommonIcons.NewReleases);
         services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", CommonIcons.Downloads,
-                                                                          new NavMenuItemTag { IsFooterItem = true });
+                                                                          new NavigationDrawerItemTag { IsFooterItem = true });
 
         // Pane navigation
         services.AddDataViewMap<UserListSortAndFilterView, UserListSortAndFilterViewModel, UserListSortAndFilter>()

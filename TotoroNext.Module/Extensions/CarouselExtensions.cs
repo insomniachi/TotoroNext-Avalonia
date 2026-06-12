@@ -1,8 +1,8 @@
-﻿using System.Reactive.Linq;
+﻿using System.Collections;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using FluentAvalonia.Core;
 using ReactiveUI;
 
 namespace TotoroNext.Module.Extensions;
@@ -31,8 +31,8 @@ public class CarouselExtensions
                                                       .ObserveOn(RxApp.MainThreadScheduler)
                                                       .Select(_ => GetItemsCount(sender))
                                                       .WhereNotNull()
-                                                      .Select(count => sender.SelectedIndex == count - 1 
-                                                                  ? 0 
+                                                      .Select(count => sender.SelectedIndex == count - 1
+                                                                  ? 0
                                                                   : sender.SelectedIndex + 1))
                                .Switch()
                                .Subscribe(index => sender.SelectedIndex = index);
@@ -52,6 +52,11 @@ public class CarouselExtensions
 
     private static int? GetItemsCount(Carousel control)
     {
-        return control.ItemsSource?.Count();
+        if (control.ItemsSource is IList l)
+        {
+            return l.Count;
+        }
+
+        return null;
     }
 }

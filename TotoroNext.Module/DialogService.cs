@@ -18,7 +18,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
             logger.LogDebug("Question asked {question}", question);
         }
 
-        var result = await MessageBox.ShowOverlayAsync(question, title, icon: MessageBoxIcon.Question, button: MessageBoxButton.YesNo);
+        var result = await OverlayMessageBox.ShowAsync(question, title, icon: MessageBoxIcon.Question, button: MessageBoxButton.YesNo);
 
         if (logger.IsEnabled(LogLevel.Debug))
         {
@@ -35,7 +35,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
             logger.LogDebug("Warning : {warning}", warning);
         }
 
-        await MessageBox.ShowOverlayAsync(warning, "Warning", icon: MessageBoxIcon.Warning, button: MessageBoxButton.OK);
+        await OverlayMessageBox.ShowAsync(warning, "Warning", icon: MessageBoxIcon.Warning, button: MessageBoxButton.OK);
     }
 
     public async Task Information(string info)
@@ -45,7 +45,7 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
             logger.LogDebug("Information : {info}", info);
         }
 
-        await MessageBox.ShowOverlayAsync(info, "Info", icon: MessageBoxIcon.Information, button: MessageBoxButton.OK);
+        await OverlayMessageBox.ShowAsync(info, "Info", icon: MessageBoxIcon.Information, button: MessageBoxButton.OK);
     }
 
     public async Task<MessageBoxResult> AskSkip(string type, MessageBoxResult defaultResult = MessageBoxResult.No)

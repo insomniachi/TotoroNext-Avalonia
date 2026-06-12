@@ -226,14 +226,14 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 #if DEBUG
         services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
                                                                                         CommonIcons.Test,
-                                                                                        new NavMenuItemTag { IsFooterItem = true });
+                                                                                        new NavigationDrawerItemTag { IsFooterItem = true });
 
         // services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
         //                                      new NavMenuItemTag { Order = 3 });
 
         services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
                                                                   CommonIcons.Store,
-                                                                  new NavMenuItemTag
+                                                                  new NavigationDrawerItemTag
                                                                   {
                                                                       IsFooterItem = true
                                                                   });
@@ -241,19 +241,19 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
 
         services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", 
                                                                                   CommonIcons.Downloads,
-                                                                                  new NavMenuItemTag
+                                                                                  new NavigationDrawerItemTag
                                                                                   {
                                                                                       Order = 4
                                                                                   });
         services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
                                                                       CommonIcons.ShoppingCart,
-                                                                      new NavMenuItemTag
+                                                                      new NavigationDrawerItemTag
                                                                       {
                                                                           IsFooterItem = true
                                                                       });
         services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
                                                                         CommonIcons.Settings,
-                                                                        new NavMenuItemTag
+                                                                        new NavigationDrawerItemTag
                                                                         {
                                                                             IsFooterItem = true,
                                                                             Order = int.MaxValue

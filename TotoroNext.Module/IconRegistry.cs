@@ -80,10 +80,10 @@ public static class IconRegistry
             : throw new ArgumentException("Icon not found", nameof(key));
     }
 
-    public static PathIconSource GetPathIconSource(string key)
+    public static FAPathIconSource GetPathIconSource(string key)
     {
         return Icons.TryGetValue(key, out var geometry)
-            ? new PathIconSource { Data = geometry.Value }
+            ? new FAPathIconSource { Data = geometry.Value }
             : throw new ArgumentException("Icon not found", nameof(key));
     }
 }

@@ -26,25 +26,25 @@
     <Grid RowDefinitions="*, Auto, Auto">
         <ScrollViewer Grid.Row="0">
             <StackPanel>
-                <fac:SettingsExpander Header="Incognito" Description="Don't show discord rich presence for this anime">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Incognito}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                <fac:FASettingsExpander Header="Incognito" Description="Don't show discord rich presence for this anime">
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Incognito}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ToggleSwitch IsChecked="{Binding IsNsfw}">
                             <ToggleSwitch.Styles>
                                 <semi:SemiTheme Locale="en-US" />
                             </ToggleSwitch.Styles>
                         </ToggleSwitch>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Provider"
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Provider"
                                       Description="The provider to use for this anime"
                                       IsExpanded="True">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource VideoLibrary}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource VideoLibrary}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding Providers}"
                                   SelectedValue="{Binding ProviderId}"
                                   SelectedValueBinding="{Binding Id}"
@@ -54,10 +54,10 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </ComboBox.Styles>
                         </ComboBox>
-                    </fac:SettingsExpander.Footer>
-                    <fac:SettingsExpanderItem Content="Provider Item" Description="Media item inside the provider"
+                    </fac:FASettingsExpander.Footer>
+                    <fac:FASettingsExpanderItem Content="Provider Item" Description="Media item inside the provider"
                                               IsVisible="{Binding HasProvider}">
-                        <fac:SettingsExpanderItem.Footer>
+                        <fac:FASettingsExpanderItem.Footer>
                             <u:AutoCompleteBox x:Name="AutoCompleteBox"
                                                Text="{Binding SearchTerm}"
                                                SelectedItem="{Binding ProviderResult}"
@@ -76,15 +76,15 @@
                                     </DataTemplate>
                                 </u:AutoCompleteBox.ItemTemplate>
                             </u:AutoCompleteBox>
-                        </fac:SettingsExpanderItem.Footer>
-                    </fac:SettingsExpanderItem>
-                </fac:SettingsExpander>
+                        </fac:FASettingsExpanderItem.Footer>
+                    </fac:FASettingsExpanderItem>
+                </fac:FASettingsExpander>
                 <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
-                <fac:SettingsExpander Header="Opening Skip Method" Description="How to skip the opening of this anime">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Opening}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                <fac:FASettingsExpander Header="Opening Skip Method" Description="How to skip the opening of this anime">
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Opening}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch">
@@ -92,13 +92,13 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </u:EnumSelector.Styles>
                         </u:EnumSelector>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
-                <fac:SettingsExpander Header="Ending Skip Method" Description="How to skip the ending of this anime">
-                    <fac:SettingsExpander.IconSource>
-                        <fac:PathIconSource Data="{StaticResource Ending}" />
-                    </fac:SettingsExpander.IconSource>
-                    <fac:SettingsExpander.Footer>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Ending Skip Method" Description="How to skip the ending of this anime">
+                    <fac:FASettingsExpander.IconSource>
+                        <fac:FAPathIconSource Data="{StaticResource Ending}" />
+                    </fac:FASettingsExpander.IconSource>
+                    <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding EndingSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch">
@@ -106,8 +106,8 @@
                                 <semi:SemiTheme Locale="en-US" />
                             </u:EnumSelector.Styles>
                         </u:EnumSelector>
-                    </fac:SettingsExpander.Footer>
-                </fac:SettingsExpander>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
             </StackPanel>
         </ScrollViewer>
 
