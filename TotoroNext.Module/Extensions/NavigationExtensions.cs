@@ -79,7 +79,7 @@ public class NavigationExtensions
     {
         NavigationPage.SetHasNavigationBar(view, false);
         view.DataContext = vm;
-        view.NavigatedTo += (_, _) =>
+        view.AttachedToVisualTree += (_, _) =>
         {
             HandleClosable(view, vm);
             HandleInitializable(vm);
@@ -87,7 +87,7 @@ public class NavigationExtensions
             _ = HandleIAsyncInitializable(vm);
         };
 
-        view.NavigatedFrom += (_, _) =>
+        view.DetachedFromLogicalTree += (_, _) =>
         {
             HandleDisposable(vm);
             HandleKeyBindings(vm, true);
@@ -165,7 +165,14 @@ public class NavigationExtensions
             return;
         }
 
-        disposable.Dispose();
+        try
+        {
+            disposable.Dispose();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private static async Task HandleAsyncDisposable(object vm)
@@ -175,7 +182,14 @@ public class NavigationExtensions
             return;
         }
 
-        await asyncDisposable.DisposeAsync();
+        try
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private static T? FindLogicalParentOfType<T>(ILogical? control) where T : class

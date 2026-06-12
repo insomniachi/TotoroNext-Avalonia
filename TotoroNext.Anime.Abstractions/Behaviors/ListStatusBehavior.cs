@@ -23,23 +23,24 @@ public class ListStatusBehavior : TrackingBoundAnimeCardOverlayBehavior<Border>
                .VerticalAlignment(VerticalAlignment.Top)
                .Background(GetBackgroundBrush(anime.Tracking))
                .Child(new Viewbox()
-                          .Child(GetIcon(anime.Tracking)))
-               .Width(15)
-               .Height(15)
-               .HorizontalAlignment(HorizontalAlignment.Center);
+                      .Width(15)
+                      .Height(15)
+                      .Child(GetIcon(anime.Tracking)));
     }
 
     private static PathIcon GetIcon(Tracking? tracking)
     {
-        return tracking?.Status switch
+        var icon = tracking?.Status switch
         {
             ListItemStatus.Completed => IconRegistry.GetPathIcon(CommonIcons.Check),
             ListItemStatus.Watching => IconRegistry.GetPathIcon(CommonIcons.HourglassFill),
             ListItemStatus.OnHold => IconRegistry.GetPathIcon(CommonIcons.DebugPause),
             ListItemStatus.Dropped => IconRegistry.GetPathIcon(CommonIcons.MemoryTrash),
-            ListItemStatus.PlanToWatch => IconRegistry.GetPathIcon(CommonIcons.HourglassFill),
+            ListItemStatus.PlanToWatch => IconRegistry.GetPathIcon(CommonIcons.Bookmark),
             _ => new PathIcon()
         };
+        icon.Foreground = Brushes.Black;
+        return icon;
     }
 
     private static IImmutableSolidColorBrush GetBackgroundBrush(Tracking? tracking)

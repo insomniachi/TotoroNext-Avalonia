@@ -7,6 +7,7 @@ public static class CommonIcons
     public const string ArrowDown = nameof(ArrowDown);
     public const string ArrowUp = nameof(ArrowUp);
     public const string ArrowUpDown = nameof(ArrowUpDown);
+    public const string Bookmark = nameof(Bookmark);
     public const string CalendarClock = nameof(CalendarClock);
     public const string Check = nameof(Check);
     public const string ChevronLeft = nameof(ChevronLeft);
