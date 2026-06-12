@@ -89,5 +89,8 @@
         <Style Selector="TextBox">
             <Setter Property="FontFamily" Value="Segoe UI, Arial, Noto Sans" />
         </Style>
+        <Style Selector="ContentPage">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
     </Application.Styles>
 </Application>

@@ -44,15 +44,11 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                 stream,
                 $"--title={media.Metadata.Title}",
                 $"--force-media-title={media.Metadata.Title}",
-                $"--input-ipc-server={pipePath}"
+                $"--input-ipc-server={pipePath}",
+                $"--start={startPosition.TotalSeconds}"
             }
         };
-
-        if (startPosition.TotalSeconds > 0)
-        {
-            startInfo.ArgumentList.Add($"--start={startPosition.TotalSeconds}");
-        }
-
+        
         if (_settings.LaunchFullScreen)
         {
             startInfo.ArgumentList.Add("--fullscreen");

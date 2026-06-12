@@ -9,27 +9,22 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:mdl="totoro.next/models"
              xmlns:ctl="totoro.next/controls"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              MinWidth="700"
              MaxWidth="700"
              x:DataType="vm:AnimeExtensionsViewModel"
+             Background="{DynamicResource SemiColorBackground2}"
              x:Class="TotoroNext.Anime.Views.AnimeExtensionsView">
     <ContentPage.Styles>
         <sty:FluentAvaloniaTheme />
     </ContentPage.Styles>
-    <ContentPage.Resources>
-        <StreamGeometry x:Key="Incognito">M17.06 13C15.2 13 13.64 14.33 13.24 16.1C12.29 15.69 11.42 15.8 10.76 16.09C10.35 14.31 8.79 13 6.94 13C4.77 13 3 14.79 3 17C3 19.21 4.77 21 6.94 21C9 21 10.68 19.38 10.84 17.32C11.18 17.08 12.07 16.63 13.16 17.34C13.34 19.39 15 21 17.06 21C19.23 21 21 19.21 21 17C21 14.79 19.23 13 17.06 13M6.94 19.86C5.38 19.86 4.13 18.58 4.13 17S5.39 14.14 6.94 14.14C8.5 14.14 9.75 15.42 9.75 17S8.5 19.86 6.94 19.86M17.06 19.86C15.5 19.86 14.25 18.58 14.25 17S15.5 14.14 17.06 14.14C18.62 14.14 19.88 15.42 19.88 17S18.61 19.86 17.06 19.86M22 10.5H2V12H22V10.5M15.53 2.63C15.31 2.14 14.75 1.88 14.22 2.05L12 2.79L9.77 2.05L9.72 2.04C9.19 1.89 8.63 2.17 8.43 2.68L6 9H18L15.56 2.68L15.53 2.63Z</StreamGeometry>
-        <StreamGeometry x:Key="VideoLibrary">M 4,6 H 2 v 14 c 0,1.1 0.9,2 2,2 H 18 V 20 H 4 Z M 20,2 H 8 C 6.9,2 6,2.9 6,4 v 12 c 0,1.1 0.9,2 2,2 h 12 c 1.1,0 2,-0.9 2,-2 V 4 C 22,2.9 21.1,2 20,2 Z m -8,12.5 v -9 l 6,4.5 z</StreamGeometry>
-        <StreamGeometry x:Key="Opening">M28.125 281.25A9.375 9.375 0 0 0 37.5 271.875V28.125A9.375 9.375 0 0 0 18.75 28.125V271.875A9.375 9.375 0 0 0 28.125 281.25M56.25 168.75A18.75 18.75 0 0 0 75 187.5H262.5A18.75 18.75 0 0 0 281.25 168.75V131.25A18.75 18.75 0 0 0 262.5 112.5H75A18.75 18.75 0 0 0 56.25 131.25z</StreamGeometry>
-        <StreamGeometry x:Key="Ending">M271.875 281.25A9.375 9.375 0 0 1 262.5 271.875V28.125A9.375 9.375 0 0 1 281.25 28.125V271.875A9.375 9.375 0 0 1 271.875 281.25M243.75 168.75A18.75 18.75 0 0 1 225 187.5H37.5A18.75 18.75 0 0 1 18.75 168.75V131.25A18.75 18.75 0 0 1 37.5 112.5H225A18.75 18.75 0 0 1 243.75 131.25z</StreamGeometry>
-    </ContentPage.Resources>
     <Grid RowDefinitions="*, Auto, Auto">
         <ScrollViewer Grid.Row="0">
             <StackPanel>
-                <fac:FASettingsExpander Header="Incognito" Description="Don't show discord rich presence for this anime">
-                    <fac:FASettingsExpander.IconSource>
-                        <fac:FAPathIconSource Data="{StaticResource Incognito}" />
-                    </fac:FASettingsExpander.IconSource>
+                <fac:FASettingsExpander Header="Incognito"
+                                        Description="Don't show discord rich presence for this anime"
+                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.Incognito}}">
                     <fac:FASettingsExpander.Footer>
                         <ToggleSwitch IsChecked="{Binding IsNsfw}">
                             <ToggleSwitch.Styles>
@@ -39,11 +34,9 @@
                     </fac:FASettingsExpander.Footer>
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Provider"
-                                      Description="The provider to use for this anime"
-                                      IsExpanded="True">
-                    <fac:FASettingsExpander.IconSource>
-                        <fac:FAPathIconSource Data="{StaticResource VideoLibrary}" />
-                    </fac:FASettingsExpander.IconSource>
+                                        Description="The provider to use for this anime"
+                                        IsExpanded="True"
+                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.VideoLibrary}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding Providers}"
                                   SelectedValue="{Binding ProviderId}"
@@ -56,7 +49,7 @@
                         </ComboBox>
                     </fac:FASettingsExpander.Footer>
                     <fac:FASettingsExpanderItem Content="Provider Item" Description="Media item inside the provider"
-                                              IsVisible="{Binding HasProvider}">
+                                                IsVisible="{Binding HasProvider}">
                         <fac:FASettingsExpanderItem.Footer>
                             <u:AutoCompleteBox x:Name="AutoCompleteBox"
                                                Text="{Binding SearchTerm}"
@@ -80,10 +73,9 @@
                     </fac:FASettingsExpanderItem>
                 </fac:FASettingsExpander>
                 <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
-                <fac:FASettingsExpander Header="Opening Skip Method" Description="How to skip the opening of this anime">
-                    <fac:FASettingsExpander.IconSource>
-                        <fac:FAPathIconSource Data="{StaticResource Opening}" />
-                    </fac:FASettingsExpander.IconSource>
+                <fac:FASettingsExpander Header="Opening Skip Method"
+                                        Description="How to skip the opening of this anime"
+                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.Opening}}">
                     <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
@@ -94,10 +86,8 @@
                         </u:EnumSelector>
                     </fac:FASettingsExpander.Footer>
                 </fac:FASettingsExpander>
-                <fac:FASettingsExpander Header="Ending Skip Method" Description="How to skip the ending of this anime">
-                    <fac:FASettingsExpander.IconSource>
-                        <fac:FAPathIconSource Data="{StaticResource Ending}" />
-                    </fac:FASettingsExpander.IconSource>
+                <fac:FASettingsExpander Header="Ending Skip Method" Description="How to skip the ending of this anime"
+                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.Ending}}">
                     <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding EndingSkipMethod, Mode=TwoWay }"
@@ -111,7 +101,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Button Grid.Row="1" Content="Add relations" 
+        <Button Grid.Row="1" Content="Add relations"
                 u:FormItem.NoLabel="True"
                 Command="{Binding BuildRelationshipTreeCommand}"
                 Theme="{DynamicResource SolidButton}"

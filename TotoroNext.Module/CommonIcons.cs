@@ -16,16 +16,19 @@ public static class CommonIcons
     public const string Delete = nameof(Delete);
     public const string Downloads = nameof(Downloads);
     public const string Edit = nameof(Edit);
+    public const string Ending = nameof(Ending);
     public const string Filter = nameof(Filter);
     public const string Fullscreen = nameof(Fullscreen);
     public const string FullscreenExit = nameof(FullscreenExit);
     public const string Home = nameof(Home);
     public const string HourglassFill = nameof(HourglassFill);
+    public const string Incognito = nameof(Incognito);
     public const string List = nameof(List);
     public const string MemoryTrash = nameof(MemoryTrash);
     public const string MonitorPlayFill = nameof(MonitorPlayFill);
     public const string MusicNote = nameof(MusicNote);
     public const string NewReleases  = nameof(NewReleases);
+    public const string Opening = nameof(Opening);
     public const string Pause = nameof(Pause);
     public const string Play = nameof(Play);
     public const string Search = nameof(Search);
@@ -33,7 +36,15 @@ public static class CommonIcons
     public const string ShoppingCart = nameof(ShoppingCart);
     public const string SkipNext = nameof(SkipNext);
     public const string SkipPrevious = nameof(SkipPrevious);
+    public const string SkipSegments = nameof(SkipSegments);
     public const string Star =  nameof(Star);
     public const string Store = nameof(Store);
     public const string Test = nameof(Test);
+    public const string Theme = nameof(Theme);
+    public const string Torrent = nameof(Torrent);
+    public const string TorrentClient = nameof(TorrentClient);
+    public const string Tracking = nameof(Tracking);
+    public const string Update = nameof(Update);
+    public const string VideoLibrary = nameof(VideoLibrary);
+    public const string VideoPlayer = nameof(VideoPlayer);
 }
