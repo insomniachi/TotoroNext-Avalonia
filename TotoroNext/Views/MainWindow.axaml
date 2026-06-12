@@ -61,17 +61,17 @@
                         <Rectangle Grid.Row="1" Fill="White" Height="1"
                                    Width="70"
                                    HorizontalAlignment="Center"
-                                   Margin="0 8 0 8"/>
+                                   Margin="0 8 0 8" />
                         <ListBox Grid.Row="2"
                                  x:Name="Menu"
                                  ItemsSource="{Binding MenuItems}"
                                  SelectedItem="{Binding SelectedMenuItem}"
                                  SelectionMode="Single"
-                                 VerticalAlignment="Top"/>
+                                 VerticalAlignment="Top" />
                         <ListBox Grid.Row="3" VerticalAlignment="Bottom"
                                  ItemsSource="{Binding FooterMenuItems}"
                                  SelectedItem="{Binding SelectedFooterMenuItem}"
-                                 SelectionMode="Single"/>
+                                 SelectionMode="Single" />
                     </Grid>
                 </Border>
             </ContentPage>
