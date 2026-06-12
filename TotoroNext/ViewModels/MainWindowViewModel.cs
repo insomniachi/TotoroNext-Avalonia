@@ -317,6 +317,10 @@ public partial class MainWindowViewModel : ObservableObject,
             _isProgarmaticNavigation = false;
             return;
         }
+
+        SelectedMenuItem = null;
+        SelectedFooterMenuItem = null;
+        _isProgarmaticNavigation = false;
     }
 
     private static bool IsTopLevelNavItem(NavigationDrawerItem item)
