@@ -14,6 +14,7 @@ public static class CommonIcons
     public const string ClearAll = nameof(ClearAll);
     public const string DebugPause = nameof(DebugPause);
     public const string Delete = nameof(Delete);
+    public const string Download = nameof(Download);
     public const string Downloads = nameof(Downloads);
     public const string Edit = nameof(Edit);
     public const string Ending = nameof(Ending);
@@ -33,7 +34,7 @@ public static class CommonIcons
     public const string Play = nameof(Play);
     public const string Search = nameof(Search);
     public const string Settings = nameof(Settings);
-    public const string ShoppingCart = nameof(ShoppingCart);
+    public const string Extensions = nameof(Extensions);
     public const string SkipNext = nameof(SkipNext);
     public const string SkipPrevious = nameof(SkipPrevious);
     public const string SkipSegments = nameof(SkipSegments);

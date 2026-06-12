@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Abstractions.Views;
 
-public partial class UpdateTrackingView : UserControl
+public partial class UpdateTrackingView : ContentPage
 {
     public UpdateTrackingView()
     {

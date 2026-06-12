@@ -63,11 +63,11 @@
                                                 Orientation="Horizontal"
                                                 Spacing="5">
                                         <ContentControl
-                                            Content="{module:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
+                                            Content="{ext:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
                                             Width="20" />
                                         <TextBlock Text="{Binding AirDate}" Margin="0 0 16 0" />
                                         <ContentControl
-                                            Content="{module:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
+                                            Content="{ext:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
                                             Width="20" />
                                         <TextBlock>
                                             <Run Text="{Binding Runtime}" />

@@ -10,6 +10,7 @@
              xmlns:semi="https://irihi.tech/semi"
              xmlns:mdl="totoro.next/models"
              xmlns:local="using:TotoroNext.Module"
+             xmlns:ext="totoro.next/extensions"
              x:DataType="vm:SettingsViewModel"
              Background="{DynamicResource SemiColorBackground0}"
              x:Class="TotoroNext.Views.SettingsView">
@@ -21,7 +22,7 @@
             <StackPanel>
                 <TextBlock Text="Appearance" FontSize="20" Margin="0 0 0 8" />
                 <fac:FASettingsExpander Header="Theme"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.Theme}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Theme}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding Themes}"
                                   SelectedItem="{Binding Settings.SelectedTheme, FallbackValue={x:Null}}">
@@ -32,7 +33,7 @@
                     </fac:FASettingsExpander.Footer>
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Startup Screen"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.Home}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Home}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding HomeViews}"
                                   SelectedItem="{Binding Settings.HomeView, FallbackValue={x:Null}}">
@@ -47,7 +48,7 @@
                 <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
                 <fac:FASettingsExpander Header="Anime Provider"
                                         Description="Default anime provider"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.VideoLibrary}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.VideoLibrary}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding AnimeProviders}"
                                   SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
@@ -62,7 +63,7 @@
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Media Player"
                                         Description="Default media player"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.VideoPlayer}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.VideoPlayer}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding MediaEngines}"
                                   SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
@@ -77,7 +78,7 @@
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Tracking"
                                         Description="Default tracking service"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.Tracking}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Tracking}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding TrackingServices}"
                                   SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
@@ -102,7 +103,7 @@
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Media Segments"
                                         Description="Default media segments provider"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.SkipSegments}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.SkipSegments}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding SegmentProviders}"
                                   SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
@@ -117,7 +118,7 @@
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Torrent Stream"
                                         Description="Default torrent stream service"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.Torrent}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Torrent}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding TorrentStreamServices}"
                                   SelectedValue="{Binding Settings.SelectedTorrentService, FallbackValue={x:Null}}"
@@ -132,7 +133,7 @@
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Torrent Client"
                                         Description="Default client to download torrents"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.TorrentClient}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.TorrentClient}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding TorrentClients}"
                                   SelectedValue="{Binding Settings.SelectedTorrentClient, FallbackValue={x:Null}}"
@@ -151,7 +152,7 @@
                 <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
                 <fac:FASettingsExpander Header="Openings"
                                         Description="How to handle openings"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.Opening}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Opening}}">
                     <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
@@ -164,7 +165,7 @@
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Endings"
                                         Description="How to handle endings"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.Ending}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Ending}}">
                     <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
@@ -181,7 +182,7 @@
                 <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
                 <fac:FASettingsExpander Header="Check of updates"
                                         Description="{Binding CurrentVersion}"
-                                        IconSource="{local:PathIconSource Key={x:Static local:CommonIcons.Update}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Update}}">
                     <fac:FASettingsExpander.Footer>
                         <Button Content="Check" Command="{Binding CheckForUpdatesCommand}">
                             <Button.Styles>

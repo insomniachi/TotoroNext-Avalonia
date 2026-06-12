@@ -8,6 +8,7 @@
              xmlns:conv="using:TotoroNext.Module.Converters"
              xmlns:mconv="using:TotoroNext.MediaEngine.Abstractions"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:extensions="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="controls:TransportControlsViewModel"
              x:Class="TotoroNext.MediaEngine.Abstractions.Controls.TransportControls"
@@ -52,7 +53,7 @@
                 <u:ToolBar Grid.Column="1" HorizontalAlignment="Center">
                     <Button x:Name="SeekBackwardButton" Command="{Binding SeekBackwardCommand}">
                         <Viewbox Height="20" Width="20"
-                                 Child="{module:PathIcon Key={x:Static module:CommonIcons.SkipPrevious}}" />
+                                 Child="{extensions:PathIcon Key={x:Static module:CommonIcons.SkipPrevious}}" />
                     </Button>
                     <Button x:Name="PlayPauseButton" Command="{Binding TogglePlayPauseCommand}"
                             Height="50"
@@ -66,13 +67,13 @@
                     </Button>
                     <Button x:Name="SeekForwardButton" Command="{Binding SeekForwardCommand}">
                         <Viewbox Height="20" Width="20"
-                                 Child="{module:PathIcon Key={x:Static module:CommonIcons.SkipNext}}" />
+                                 Child="{extensions:PathIcon Key={x:Static module:CommonIcons.SkipNext}}" />
                     </Button>
                 </u:ToolBar>
 
                 <u:ToolBar Grid.Column="2" VerticalAlignment="Center">
                     <Button Command="{Binding ToggleFullscreenCommand}">
-                        <Viewbox Height="20" Width="20" Child="{module:PathIcon Key={x:Static module:CommonIcons.Fullscreen}}" 
+                        <Viewbox Height="20" Width="20" Child="{extensions:PathIcon Key={x:Static module:CommonIcons.Fullscreen}}" 
                                  x:Name="FullscreenViewBox"/>
                     </Button>
                 </u:ToolBar>

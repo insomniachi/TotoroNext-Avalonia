@@ -10,6 +10,7 @@
              xmlns:mdl="totoro.next/models"
              xmlns:ctl="totoro.next/controls"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              MinWidth="700"
              MaxWidth="700"
@@ -24,7 +25,7 @@
             <StackPanel>
                 <fac:FASettingsExpander Header="Incognito"
                                         Description="Don't show discord rich presence for this anime"
-                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.Incognito}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.Incognito}}">
                     <fac:FASettingsExpander.Footer>
                         <ToggleSwitch IsChecked="{Binding IsNsfw}">
                             <ToggleSwitch.Styles>
@@ -36,7 +37,7 @@
                 <fac:FASettingsExpander Header="Provider"
                                         Description="The provider to use for this anime"
                                         IsExpanded="True"
-                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.VideoLibrary}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.VideoLibrary}}">
                     <fac:FASettingsExpander.Footer>
                         <ComboBox ItemsSource="{Binding Providers}"
                                   SelectedValue="{Binding ProviderId}"
@@ -75,7 +76,7 @@
                 <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
                 <fac:FASettingsExpander Header="Opening Skip Method"
                                         Description="How to skip the opening of this anime"
-                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.Opening}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.Opening}}">
                     <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
@@ -87,7 +88,7 @@
                     </fac:FASettingsExpander.Footer>
                 </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Ending Skip Method" Description="How to skip the ending of this anime"
-                                        IconSource="{module:PathIconSource Key={x:Static module:CommonIcons.Ending}}">
+                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.Ending}}">
                     <fac:FASettingsExpander.Footer>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding EndingSkipMethod, Mode=TwoWay }"

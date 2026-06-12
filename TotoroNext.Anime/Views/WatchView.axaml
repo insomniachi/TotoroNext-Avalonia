@@ -9,6 +9,7 @@
              xmlns:views="clr-namespace:TotoroNext.Anime.Views"
              xmlns:bhvr="totoro.next/behaviors"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:WatchViewModel"
              x:Class="TotoroNext.Anime.Views.WatchView">
@@ -32,13 +33,13 @@
                                     Orientation="Horizontal"
                                     Spacing="5">
                             <ContentControl
-                                Content="{module:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
+                                Content="{ext:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock Text="??"
                                        Margin="0 0 16 0" />
                             <ContentControl
-                                Content="{module:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
+                                Content="{ext:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock Text="??" />
@@ -73,13 +74,13 @@
                                     Orientation="Horizontal"
                                     Spacing="5">
                             <ContentControl
-                                Content="{module:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
+                                Content="{ext:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock Text="{Binding Info.AirDate, FallbackValue={x:Null}}"
                                        Margin="0 0 16 0" />
                             <ContentControl
-                                Content="{module:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
+                                Content="{ext:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
                                 Height="20"
                                 Width="20" />
                             <TextBlock>

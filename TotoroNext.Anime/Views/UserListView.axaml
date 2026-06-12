@@ -10,6 +10,7 @@
     xmlns:u="https://irihi.tech/ursa"
     xmlns:vm="using:TotoroNext.Anime.ViewModels"
     xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+    xmlns:ext="totoro.next/extensions"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:UserListViewModel"
@@ -50,11 +51,11 @@
                             <ContentControl
                                 Width="20"
                                 Height="20"
-                                Content="{module:PathIcon Key={x:Static module:CommonIcons.ArrowUpDown}}" />
+                                Content="{ext:PathIcon Key={x:Static module:CommonIcons.ArrowUpDown}}" />
                             <ContentControl
                                 Width="20"
                                 Height="20"
-                                Content="{module:PathIcon Key={x:Static module:CommonIcons.Filter}}" />
+                                Content="{ext:PathIcon Key={x:Static module:CommonIcons.Filter}}" />
                         </StackPanel>
                         <TextBlock VerticalAlignment="Center" Text="Sort &amp; Filter" />
                     </StackPanel>
@@ -64,7 +65,7 @@
                         <MenuItem
                             Command="{Binding ClearFiltersCommand}"
                             Header="Clear"
-                            Icon="{module:PathIcon Key={x:Static module:CommonIcons.ClearAll}}" />
+                            Icon="{ext:PathIcon Key={x:Static module:CommonIcons.ClearAll}}" />
                     </MenuFlyout>
                 </SplitButton.Flyout>
             </SplitButton>

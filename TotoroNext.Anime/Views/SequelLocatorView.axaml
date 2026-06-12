@@ -46,10 +46,10 @@
             </ScrollViewer>
         </u:LoadingContainer>
 
-        <TransitioningContentControl Grid.Column="1"
-                                     ext:NavigationExtensions.IsAttached="True"
-                                     Background="{DynamicResource SemiColorTertiaryLightActive}"
-                                     Padding="16 0" />
+        <NavigationPage Grid.Column="1"
+                        ext:NavigationExtensions.IsAttached="True"
+                        Background="{DynamicResource SemiColorTertiaryLightActive}"
+                        Padding="16 0" />
 
     </Grid>
 </ContentPage>

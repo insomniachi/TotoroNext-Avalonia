@@ -228,36 +228,20 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                                                                                         CommonIcons.Test,
                                                                                         new NavigationDrawerItemTag { IsFooterItem = true });
 
-        // services.AddParentNavigationViewItem("AniGuesser", PackIconMaterialDesignKind.QuestionMark,
-        //                                      new NavMenuItemTag { Order = 3 });
-
         services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
                                                                   CommonIcons.Store,
-                                                                  new NavigationDrawerItemTag
-                                                                  {
-                                                                      IsFooterItem = true
-                                                                  });
+                                                                  new NavigationDrawerItemTag { IsFooterItem = true });
 #endif
 
-        services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents", 
-                                                                                  CommonIcons.Downloads,
-                                                                                  new NavigationDrawerItemTag
-                                                                                  {
-                                                                                      Order = 4
-                                                                                  });
-        services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Installed",
-                                                                      CommonIcons.ShoppingCart,
-                                                                      new NavigationDrawerItemTag
-                                                                      {
-                                                                          IsFooterItem = true
-                                                                      });
+        services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents",
+                                                                                  CommonIcons.TorrentClient,
+                                                                                  new NavigationDrawerItemTag { Order = 4 });
+        services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Extensions",
+                                                                      CommonIcons.Extensions,
+                                                                      new NavigationDrawerItemTag { IsFooterItem = true });
         services.AddMainNavigationItem<SettingsView, SettingsViewModel>("Settings",
                                                                         CommonIcons.Settings,
-                                                                        new NavigationDrawerItemTag
-                                                                        {
-                                                                            IsFooterItem = true,
-                                                                            Order = int.MaxValue
-                                                                        });
+                                                                        new NavigationDrawerItemTag { IsFooterItem = true, Order = int.MaxValue });
     }
 
     private void UpdateStatus(string? primary, string? secondary)

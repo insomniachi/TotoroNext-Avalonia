@@ -77,7 +77,7 @@
                                         <TextBlock Text="Watch" VerticalAlignment="Center" />
                                         <ContentControl Height="15" Width="11"
                                                         VerticalAlignment="Center"
-                                                        Content="{module:PathIcon Key={x:Static module:CommonIcons.Play}}" />
+                                                        Content="{ext:PathIcon Key={x:Static module:CommonIcons.Play}}" />
                                     </StackPanel>
                                 </Button>
                                 <Button Command="{x:Static am:Commands.SearchTorrentsCommand}"
@@ -88,7 +88,7 @@
                                         <TextBlock Text="Torrent" VerticalAlignment="Center" />
                                         <ContentControl Height="15" Width="11"
                                                         VerticalAlignment="Center"
-                                                        Content="{module:PathIcon Key={x:Static module:CommonIcons.Play}}" />
+                                                        Content="{ext:PathIcon Key={x:Static module:CommonIcons.Play}}" />
                                     </StackPanel>
                                 </Button>
                                 <Button Content="Details"

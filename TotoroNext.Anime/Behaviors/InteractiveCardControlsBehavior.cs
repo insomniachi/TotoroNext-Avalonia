@@ -350,7 +350,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                })
                .Content(new Viewbox()
                         .Height(12).Width(12)
-                        .Child(IconRegistry.GetPathIcon(CommonIcons.Downloads)));
+                        .Child(IconRegistry.GetPathIcon(CommonIcons.Download)));
     }
 
     private static Button SettingsButton(AnimeModel anime)

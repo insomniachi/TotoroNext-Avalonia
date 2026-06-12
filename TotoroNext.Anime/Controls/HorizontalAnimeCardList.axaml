@@ -7,6 +7,7 @@
              xmlns:bhvr="totoro.next/behaviors"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:extensions="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Controls.HorizontalAnimeCardList">
 
@@ -26,7 +27,7 @@
                 Height="40" Width="40"
                 CornerRadius="20"
                 IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}">
-            <Viewbox Height="18" Width="18" Child="{module:PathIcon Key={x:Static module:CommonIcons.ChevronLeft}}" />
+            <Viewbox Height="18" Width="18" Child="{extensions:PathIcon Key={x:Static module:CommonIcons.ChevronLeft}}" />
         </Button>
 
         <ScrollViewer Grid.Row="1" Grid.Column="1"
@@ -79,7 +80,7 @@
         <Button Grid.Row="1" Grid.Column="2" Click="ScrollRight" Height="40" Width="40" CornerRadius="20"
                 IsVisible="{Binding $parent[local:HorizontalAnimeCardList].Anime.Count}"
                 x:Name="ScrollRightButton">
-            <Viewbox Height="18" Width="18" Child="{module:PathIcon Key={x:Static module:CommonIcons.ChevronRight}}" />
+            <Viewbox Height="18" Width="18" Child="{extensions:PathIcon Key={x:Static module:CommonIcons.ChevronRight}}" />
         </Button>
     </Grid>
 </UserControl>
