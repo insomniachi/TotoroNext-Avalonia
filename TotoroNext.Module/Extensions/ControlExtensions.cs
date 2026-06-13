@@ -30,7 +30,7 @@ public class ControlExtensions
             return;
         }
 
-        sender.AddHandler(Gestures.DoubleTappedEvent, OnDoubleTapped);
+        sender.AddHandler(InputElement.DoubleTappedEvent, OnDoubleTapped);
     }
 
     private static void OnTappedCommandAdded(Control sender, AvaloniaPropertyChangedEventArgs args)
@@ -40,17 +40,17 @@ public class ControlExtensions
             return;
         }
 
-        sender.AddHandler(Gestures.TappedEvent, OnTapped);
+        sender.AddHandler(InputElement.TappedEvent, OnTapped);
     }
 
     private static void OnRightTappedCommandAdded(Control sender, AvaloniaPropertyChangedEventArgs args)
     {
-        if (args.NewValue is not ICommand command)
+        if (args.NewValue is not ICommand)
         {
             return;
         }
 
-        sender.AddHandler(Gestures.RightTappedEvent, OnRightTapped);
+        sender.AddHandler(InputElement.RightTappedEvent, OnRightTapped);
     }
 
     private static void OnRightTapped(object? sender, TappedEventArgs e)

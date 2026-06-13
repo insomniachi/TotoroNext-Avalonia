@@ -73,7 +73,7 @@ public partial class DownloadRequestViewModel(
                 return Observable.FromAsync(ct => _provider.GetSearchResults(SearchTerm, ct));
             })
             .Switch()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(results =>
             {
                 var currentResult = SelectedResult;
@@ -92,7 +92,7 @@ public partial class DownloadRequestViewModel(
                 return Observable.FromAsync(ct => provider.GetSearchResults(term, ct));
             })
             .Switch()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(results =>
             {
                 var currentResult = SelectedResult;

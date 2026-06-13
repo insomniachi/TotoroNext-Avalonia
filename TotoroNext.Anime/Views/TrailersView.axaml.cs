@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class TrailersView : UserControl
+public partial class TrailersView : ContentPage
 {
     public TrailersView()
     {

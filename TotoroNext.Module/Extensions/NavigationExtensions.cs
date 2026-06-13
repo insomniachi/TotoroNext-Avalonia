@@ -12,15 +12,14 @@ namespace TotoroNext.Module.Extensions;
 public class NavigationExtensions
 {
     public static readonly AttachedProperty<bool> IsAttachedProperty =
-        AvaloniaProperty.RegisterAttached<NavigationExtensions, TransitioningContentControl, bool>(
-                                                                                                   "IsAttached");
+        AvaloniaProperty.RegisterAttached<NavigationExtensions, NavigationPage, bool>("IsAttached");
 
     public static readonly AttachedProperty<Type> NavigateToViewModelProperty =
         AvaloniaProperty.RegisterAttached<NavigationExtensions, NavMenuItem, Type>("NavigateToViewModel");
 
     static NavigationExtensions()
     {
-        IsAttachedProperty.Changed.AddClassHandler<TransitioningContentControl>(OnIsAttachedChanged);
+        IsAttachedProperty.Changed.AddClassHandler<NavigationPage>(OnIsAttachedChanged);
         NavigateToViewModelProperty.Changed.AddClassHandler<NavMenuItem>(OnViewModelChanged);
     }
 
@@ -56,7 +55,7 @@ public class NavigationExtensions
 
     private static void OnIsAttachedChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs args)
     {
-        if (sender is not TransitioningContentControl control || args.NewValue is not true)
+        if (sender is not NavigationPage control || args.NewValue is not true)
         {
             return;
         }
@@ -67,7 +66,7 @@ public class NavigationExtensions
         control.DataContextChanged += (_, _) => { TrySetNavigator(control, navigator); };
         return;
 
-        void TrySetNavigator(TransitioningContentControl tcc, INavigator n)
+        void TrySetNavigator(NavigationPage tcc, INavigator n)
         {
             if (tcc.DataContext is INavigatorHost nh)
             {
@@ -76,17 +75,18 @@ public class NavigationExtensions
         }
     }
 
-    public static void ConfigureView(StyledElement view, object vm)
+    public static void ConfigureView(Page view, object vm)
     {
+        NavigationPage.SetHasNavigationBar(view, false);
         view.DataContext = vm;
-        view.AttachedToLogicalTree += (_, _) =>
+        view.AttachedToVisualTree += (_, _) =>
         {
             HandleClosable(view, vm);
             HandleInitializable(vm);
             HandleKeyBindings(vm, false);
             _ = HandleIAsyncInitializable(vm);
         };
-        
+
         view.DetachedFromLogicalTree += (_, _) =>
         {
             HandleDisposable(vm);
@@ -122,7 +122,7 @@ public class NavigationExtensions
 
         closeable.Closed += (_, _) =>
         {
-            if (FindLogicalParentOfType<DefaultDrawerControl>(view) is not { } drawer)
+            if (FindLogicalParentOfType<StandardDrawerControl>(view) is not { } drawer)
             {
                 return;
             }
@@ -165,7 +165,14 @@ public class NavigationExtensions
             return;
         }
 
-        disposable.Dispose();
+        try
+        {
+            disposable.Dispose();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private static async Task HandleAsyncDisposable(object vm)
@@ -175,7 +182,14 @@ public class NavigationExtensions
             return;
         }
 
-        await asyncDisposable.DisposeAsync();
+        try
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private static T? FindLogicalParentOfType<T>(ILogical? control) where T : class

@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Views;
 
-public partial class DownloadUpdateView : UserControl
+public partial class DownloadUpdateView : ContentPage
 {
     public DownloadUpdateView()
     {

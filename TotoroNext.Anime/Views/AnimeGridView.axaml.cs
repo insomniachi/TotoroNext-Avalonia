@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class AnimeGridView : UserControl
+public partial class AnimeGridView : ContentPage
 {
     public AnimeGridView()
     {

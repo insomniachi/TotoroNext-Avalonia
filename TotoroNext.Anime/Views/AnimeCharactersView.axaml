@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -30,9 +30,13 @@
                                        FontSize="14"
                                        Margin="0 0 0 8"
                                        TextTrimming="CharacterEllipsis" />
-                            <md:MarkdownScrollViewer Grid.Row="1"
-                                                     Markdown="{Binding Description}"
-                                                     VerticalAlignment="Top" />
+                            <TextBlock Grid.Row="1"
+                                       Text="{Binding Description}"
+                                       VerticalAlignment="Top"
+                                       TextWrapping="Wrap" />
+                            <!-- <md:MarkdownScrollViewer Grid.Row="1" -->
+                            <!--                          Markdown="{Binding Description}" -->
+                            <!--                          VerticalAlignment="Top" /> -->
                         </Grid>
                     </Grid>
                 </DataTemplate>
@@ -44,4 +48,4 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
     </ScrollViewer>
-</UserControl>
+</ContentPage>

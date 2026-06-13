@@ -2,9 +2,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using IconPacks.Avalonia;
-using IconPacks.Avalonia.MaterialDesign;
 using ReactiveUI;
+using TotoroNext.Module;
 
 namespace TotoroNext.MediaEngine.Abstractions.Controls;
 
@@ -34,27 +33,27 @@ public partial class AudioPlayer : UserControl
         }
 
         if (player.Find<Slider>("PositionSlider") is not { } slider ||
-            player.Find<PackIconControl>("IconControl") is not { } icon)
+            player.Find<Viewbox>("IconControl") is not { } icon)
         {
             return;
         }
 
         mediaPlayer.StateChanged
-                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                    .Subscribe(state =>
                    {
-                       icon.Kind = state switch
+                       icon.Child = state switch
                        {
-                           MediaPlayerState.Playing => PackIconMaterialDesignKind.Pause,
-                           MediaPlayerState.Paused => PackIconMaterialDesignKind.PlayArrow,
-                           _ => icon.Kind
+                           MediaPlayerState.Playing => IconRegistry.GetPathIcon(CommonIcons.Pause),
+                           MediaPlayerState.Paused => IconRegistry.GetPathIcon(CommonIcons.Play),
+                           _ => icon.Child
                        };
                    });
         mediaPlayer.DurationChanged
-                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                    .Subscribe(value => slider.Maximum = value.TotalSeconds);
         mediaPlayer.PositionChanged
-                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                    .Subscribe(value => slider.Value = value.TotalSeconds);
     }
 
@@ -65,7 +64,7 @@ public partial class AudioPlayer : UserControl
             return;
         }
 
-        var icon = this.Find<PackIconControl>("IconControl");
+        var icon = this.Find<Viewbox>("IconControl");
         if (icon is null)
         {
             return;

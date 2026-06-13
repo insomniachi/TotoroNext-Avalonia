@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Media;
@@ -17,7 +18,7 @@ public class AiringStatusBehavior : Behavior<AnimeCard>
     {
         AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
                         .WhereNotNull()
-                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .Subscribe(_ => AssociatedObject.StatusBorder.BorderBrush = ToBrush(AssociatedObject.Anime))
                         .DisposeWith(_disposables);
     }

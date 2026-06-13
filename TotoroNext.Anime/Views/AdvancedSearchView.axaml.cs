@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class AdvancedSearchView : UserControl
+public partial class AdvancedSearchView : ContentPage
 {
     public AdvancedSearchView()
     {

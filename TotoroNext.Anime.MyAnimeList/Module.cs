@@ -1,4 +1,3 @@
-using IconPacks.Avalonia.Material;
 using MalApi;
 using MalApi.Interfaces;
 using Microsoft.Extensions.DependencyInjection;

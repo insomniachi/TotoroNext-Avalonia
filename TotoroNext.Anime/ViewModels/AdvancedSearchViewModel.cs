@@ -38,8 +38,7 @@ public partial class AdvancedSearchViewModel : ObservableObject, IAsyncInitializ
             .Connect()
             .RefCount()
             .AutoRefresh()
-            .Sort(Sort.Comparer)
-            .Bind(out _anime)
+            .SortAndBind(out _anime, Sort.Comparer)
             .DisposeMany()
             .Subscribe();
         
@@ -97,7 +96,7 @@ public partial class AdvancedSearchViewModel : ObservableObject, IAsyncInitializ
                                  .RefCount();
 
         serviceChanged.SelectMany(x => x.GetGenresAsync())
-                      .ObserveOn(RxApp.MainThreadScheduler)
+                      .ObserveOn(RxSchedulers.MainThreadScheduler)
                       .Subscribe(genres => AllGenres = genres);
 
         var propertiesChanged = this.WhenAnyPropertyChanged(nameof(MinimumYear),
@@ -151,7 +150,7 @@ public partial class AdvancedSearchViewModel : ObservableObject, IAsyncInitializ
                        .SelectMany(metadataService.SearchAnimeAsync);
             })
             .Switch()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(list =>
             {
                 _animeCache.Clear();

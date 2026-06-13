@@ -1,7 +1,9 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Layout;
@@ -10,13 +12,11 @@ using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
-using IconPacks.Avalonia;
-using IconPacks.Avalonia.BootstrapIcons;
-using IconPacks.Avalonia.MaterialDesign;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Behaviors;
 using TotoroNext.Anime.Abstractions.Controls;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
 
@@ -75,7 +75,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
     {
         AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
                         .WhereNotNull()
-                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .Subscribe(anime =>
                         {
                             RemoveControl();
@@ -196,7 +196,8 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                         .Spacing(8)
                         .Orientation(Orientation.Horizontal)
                         .Children(new TextBlock().Text("Watch").VerticalAlignment(VerticalAlignment.Center),
-                                  new PackIconControl { Kind = PackIconBootstrapIconsKind.Play }
+                                  new ContentControl()
+                                      .Content(IconRegistry.GetPathIcon(CommonIcons.Play))
                                       .Height(15).Width(11)
                                       .VerticalAlignment(VerticalAlignment.Center)));
     }
@@ -211,7 +212,8 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                         .Spacing(8)
                         .Orientation(Orientation.Horizontal)
                         .Children(new TextBlock().Text("Torrent").VerticalAlignment(VerticalAlignment.Center),
-                                  new PackIconControl { Kind = PackIconBootstrapIconsKind.Play }
+                                  new ContentControl()
+                                      .Content(IconRegistry.GetPathIcon(CommonIcons.Play))
                                       .Height(15).Width(11)
                                       .VerticalAlignment(VerticalAlignment.Center)));
     }
@@ -248,7 +250,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                      })
                      .Content(new Viewbox()
                               .Height(12).Width(12)
-                              .Child(new PackIconControl { Kind = PackIconMaterialDesignKind.Edit }));
+                              .Child(IconRegistry.GetPathIcon(CommonIcons.Edit)));
 
         button.Bind(Visual.IsVisibleProperty, new Binding("Tracking")
         {
@@ -268,7 +270,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                      .Height(30).Width(30)
                      .Content(new Viewbox()
                               .Height(12).Width(12)
-                              .Child(new PackIconControl { Kind = PackIconMaterialDesignKind.Add }));
+                              .Child(IconRegistry.GetPathIcon(CommonIcons.Add)));
 
         button.Bind(Visual.IsVisibleProperty, new Binding("Tracking")
         {
@@ -281,39 +283,41 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
 
     private static Border UserScoreBorder(AnimeModel anime)
     {
-        var icon = new PackIconControl { Kind = PackIconMaterialDesignKind.Star }
-                   .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
+        var icon = new ContentControl()
+                   .Content(IconRegistry.GetPathIcon(CommonIcons.Star))
                    .Height(12).Width(12)
                    .VerticalAlignment(VerticalAlignment.Center).HorizontalAlignment(HorizontalAlignment.Center);
 
+        icon.Bind(TextElement.ForegroundProperty, new DynamicResourceExtension("ButtonDefaultPrimaryForeground"));
+
         var text = new TextBlock()
                    .Text($"{anime.Tracking?.Score}")
-                   .Foreground(new DynamicResourceExtension("ButtonDefaultPrimaryForeground"))
                    .VerticalAlignment(VerticalAlignment.Center)
                    .FontSize(13)
                    .FontWeight(FontWeight.Bold);
 
+        text.Bind(TextElement.ForegroundProperty, new DynamicResourceExtension("ButtonDefaultPrimaryForeground"));
         text.Bind(TextBlock.TextProperty, new Binding("Tracking.Score")
         {
             Source = anime
         });
 
         var border = new Border()
-               .Background(new DynamicResourceExtension("ButtonDefaultBackground"))
-               .BorderBrush(new DynamicResourceExtension("ButtonDefaultBorderBrush"))
-               .BorderThickness(new DynamicResourceExtension("ButtonBorderThickness"))
-               .CornerRadius(20)
-               .Padding(8, 5)
-               .Child(new StackPanel()
-                      .Spacing(4)
-                      .Orientation(Orientation.Horizontal)
-                      .Children(icon, text));
+                     .CornerRadius(20)
+                     .Padding(8, 5)
+                     .Child(new StackPanel()
+                            .Spacing(4)
+                            .Orientation(Orientation.Horizontal)
+                            .Children(icon, text));
 
+        border.Bind(Border.BackgroundProperty, new DynamicResourceExtension("ButtonDefaultBackground"));
+        border.Bind(Border.BorderBrushProperty, new DynamicResourceExtension("ButtonDefaultBorderBrush"));
+        border.Bind(Border.BorderThicknessProperty, new DynamicResourceExtension("ButtonBorderThickness"));
         border.Bind(Visual.IsVisibleProperty, new Binding("Tracking.Score")
         {
             Source = anime,
             Converter = ObjectConverters.IsNotNull,
-            FallbackValue = false,
+            FallbackValue = false
         });
 
         return border;
@@ -347,7 +351,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                })
                .Content(new Viewbox()
                         .Height(12).Width(12)
-                        .Child(new PackIconControl { Kind = PackIconMaterialDesignKind.Download }));
+                        .Child(IconRegistry.GetPathIcon(CommonIcons.Download)));
     }
 
     private static Button SettingsButton(AnimeModel anime)
@@ -359,6 +363,6 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
                .Height(30).Width(30)
                .Content(new Viewbox()
                         .Height(12).Width(12)
-                        .Child(new PackIconControl { Kind = PackIconMaterialDesignKind.Settings }));
+                        .Child(IconRegistry.GetPathIcon(CommonIcons.Settings)));
     }
 }

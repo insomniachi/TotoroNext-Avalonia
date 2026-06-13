@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Anilist.Views;
 
-public partial class GetAnilistTokenDialog : UserControl
+public partial class GetAnilistTokenDialog : ContentPage
 {
     public GetAnilistTokenDialog()
     {

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,9 +10,9 @@
              x:Class="TotoroNext.Anime.Views.UserListSortAndFilterView"
              x:DataType="vm:UserListSortAndFilterViewModel"
              Width="300">
-    <UserControl.Resources>
+    <ContentPage.Resources>
         <conv:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
-    </UserControl.Resources>
+    </ContentPage.Resources>
     <u:Form Margin="0">
         <u:FormGroup Header="Filters">
             <TextBox u:FormItem.Label="Title"
@@ -31,7 +31,7 @@
                 <u:EnumSelector EnumType="mdl:AiringStatus"
                                 Value="{Binding Filter.AiringStatus}"
                                 DisplayDescription="True"
-                                HorizontalAlignment="Stretch"/>
+                                HorizontalAlignment="Stretch" />
             </u:FormItem>
             <u:FormItem Label="Genres">
                 <u:MultiAutoCompleteBox SelectedItems="{Binding Filter.Genres, Mode=TwoWay}"
@@ -68,9 +68,9 @@
                 <RadioButton
                     IsChecked="{Binding Sort.Field, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=DateCompleted}"
                     Content="Date Completed"
-                    GroupName="Field" 
-                    IsVisible="{Binding Sort.IsDateCompletedSortVisible}"/>
+                    GroupName="Field"
+                    IsVisible="{Binding Sort.IsDateCompletedSortVisible}" />
             </StackPanel>
         </u:FormGroup>
     </u:Form>
-</UserControl>
+</ContentPage>

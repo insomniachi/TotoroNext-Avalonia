@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using IconPacks.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Module.Extensions;
@@ -31,75 +31,58 @@ public static class ServiceCollectionExtensions
             return services.AddSingleton<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
         }
 
-        public IServiceCollection AddMainNavigationItem<TView, TViewModel>(string header, Enum icon,
-                                                                           NavMenuItemTag? tag = null)
+        public IServiceCollection AddMainNavigationItem<TView, TViewModel>(string header, string iconKey,
+                                                                           NavigationDrawerItemTag? tag = null)
             where TView : class, new()
             where TViewModel : class
         {
-            tag ??= new NavMenuItemTag();
+            tag ??= new NavigationDrawerItemTag();
             tag.ViewModelType = typeof(TViewModel);
 
             services.AddKeyedViewMap<TView, TViewModel>(header);
-            services.AddTransient(_ =>
+            services.AddTransient(_ => new NavigationDrawerItem()
             {
-                var item = new NavMenuItem
-                {
-                    Header = header,
-                    Icon = new Viewbox
-                    {
-                        Height = 20,
-                        Width = 20,
-                        Child = new PackIconControl
-                        {
-                            Kind = icon
-                        }
-                    },
-                    Tag = tag
-                };
-
-                NavigationExtensions.SetNavigateToViewModel(item, typeof(TViewModel));
-
-                return item;
+                Header = header,
+                IconKey = iconKey,
+                Tag = tag
             });
+            
             return services;
         }
 
-        public IServiceCollection AddChildNavigationViewItem<TView, TViewModel>(string parent, string header,
-                                                                                Enum icon)
-            where TView : class, new()
-            where TViewModel : class
-        {
-            var tag = new NavMenuItemTag
-            {
-                Parent = parent
-            };
+        // public IServiceCollection AddChildNavigationViewItem<TView, TViewModel>(string parent, string header,
+        //                                                                         string iconKey)
+        //     where TView : class, new()
+        //     where TViewModel : class
+        // {
+        //     var tag = new NavigationDrawerItemTag
+        //     {
+        //         Parent = parent
+        //     };
+        //
+        //     return services.AddMainNavigationItem<TView, TViewModel>(header, iconKey, tag);
+        // }
 
-            return services.AddMainNavigationItem<TView, TViewModel>(header, icon, tag);
-        }
-
-        public IServiceCollection AddParentNavigationViewItem(string header, Enum icon,
-                                                              NavMenuItemTag? tag = null)
-        {
-            tag ??= new NavMenuItemTag();
-            return services.AddTransient(_ =>
-            {
-                var item = new NavMenuItem
-                {
-                    Header = header,
-                    Icon = new Viewbox
-                    {
-                        Height = 20,
-                        Width = 20,
-                        Child = new PackIconControl
-                        {
-                            Kind = icon
-                        }
-                    },
-                    Tag = tag
-                };
-                return item;
-            });
-        }
+        // public IServiceCollection AddParentNavigationViewItem(string header, string iconKey,
+        //                                                       NavigationDrawerItemTag? tag = null)
+        // {
+        //     tag ??= new NavigationDrawerItemTag();
+        //     return services.AddTransient(_ =>
+        //     {
+        //         var item = new NavMenuItem
+        //         {
+        //             Header = header,
+        //             Icon = new Viewbox
+        //             {
+        //                 Height = 20,
+        //                 Width = 20,
+        //                 Child = IconRegistry.GetPathIcon(iconKey)
+        //             },
+        //             Tag = tag
+        //         };
+        //         return item;
+        //     });
+        // }
 
         public IServiceCollection AddViewMap<TView, TViewModel>()
             where TView : class, new()
@@ -152,10 +135,19 @@ public static class ServiceCollectionExtensions
     }
 }
 
-public class NavMenuItemTag
+public class NavigationDrawerItemTag
 {
     public Type? ViewModelType { get; set; }
     public bool IsFooterItem { get; init; }
     public int Order { get; init; }
     public string? Parent { get; init; }
+}
+
+public partial class NavigationDrawerItem : ObservableObject
+{
+    public required string Header { get; init; }
+    public required string IconKey { get; init; }
+    public NavigationDrawerItemTag? Tag { get; init; }
+    
+    [ObservableProperty] public partial bool IsSelected { get; set; }
 }

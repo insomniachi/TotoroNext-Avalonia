@@ -11,7 +11,6 @@
         <PackageReference Include="Avalonia.Labs.Controls"/>
         <PackageReference Include="Avalonia.Labs.Panels"/>
         <PackageReference Include="Avalonia.Markup.Declarative"/>
-        <PackageReference Include="Avalonia.ReactiveUI"/>
         <PackageReference Include="Avalonia.Controls.ItemsRepeater"/>
 
         <PackageReference Include="Flurl.Http"/>
@@ -32,10 +31,10 @@
         <PackageReference Include="Microsoft.Playwright"/>
 
         <!-- Avalonia OSS-->
-        <PackageReference Include="IconPacks.Avalonia"/>
         <PackageReference Include="Irihi.Ursa"/>
         <PackageReference Include="Irihi.Ursa.Themes.Semi"/>
         <PackageReference Include="AsyncImageLoader.Avalonia"/>
+        <PackageReference Include="ReactiveUI.Avalonia" />
         <PackageReference Include="Semi.Avalonia"/>
         <PackageReference Include="Semi.Avalonia.DataGrid"/>
         <PackageReference Include="Xaml.Behaviors.Avalonia"/>

@@ -35,8 +35,7 @@ internal class AnimeOnsenEpisode
 [Serializable]
 internal class ResultResponse<T>
 {
-    [JsonPropertyName("status")] public int Status { get; set; }
-    [JsonPropertyName("result")] public T? Result { get; set; }
+    [JsonPropertyName("hits")] public T? Result { get; set; }
 }
 
 [Serializable]

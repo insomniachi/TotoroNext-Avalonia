@@ -32,8 +32,9 @@ public partial class MainWindowViewModel : ObservableObject,
     private readonly ILogger<MainWindowViewModel> _logger;
     private readonly IMessenger _messenger;
     private readonly UpdateManager _updateManager;
+    private bool _isProgarmaticNavigation;
 
-    public MainWindowViewModel(IEnumerable<NavMenuItem> menuItems,
+    public MainWindowViewModel(IEnumerable<NavigationDrawerItem> menuItems,
                                IViewRegistry locator,
                                IMessenger messenger,
                                IDialogService dialogService,
@@ -46,8 +47,7 @@ public partial class MainWindowViewModel : ObservableObject,
         _dialogService = dialogService;
         _logger = logger;
         _updateManager = updateManager;
-        var items = menuItems.OrderBy(x => x.Tag is not NavMenuItemTag tag ? 0 : tag.Order).ToList();
-        MapChildren(items);
+        var items = menuItems.OrderBy(x => x.Tag is not { } tag ? 0 : tag.Order).ToList();
         MenuItems = [..items.Where(x => IsTopLevelNavItem(x) && !IsFooterNavItem(x))];
         FooterMenuItems = [..items.Where(x => IsTopLevelNavItem(x) && IsFooterNavItem(x))];
 
@@ -63,22 +63,27 @@ public partial class MainWindowViewModel : ObservableObject,
         messenger.RegisterAll(this);
     }
 
-    public List<NavMenuItem> MenuItems { get; }
-    public List<NavMenuItem> FooterMenuItems { get; }
+    public List<NavigationDrawerItem> MenuItems { get; }
+    public List<NavigationDrawerItem> FooterMenuItems { get; }
+
+    [ObservableProperty] public partial NavigationDrawerItem? SelectedMenuItem { get; set; }
+
+    [ObservableProperty] public partial NavigationDrawerItem? SelectedFooterMenuItem { get; set; }
+
     [ObservableProperty] public partial INavigator? Navigator { get; set; }
 
     public void Receive(NavigateToDataMessage message)
     {
         Navigator?.NavigateToData(message.Data);
     }
-    
+
     public void Receive(NavigateToDialogMessage message)
     {
         if (message.Data is null)
         {
             return;
         }
-        
+
         var map = _locator.FindByData(message.Data.GetType());
 
         if (map is null)
@@ -127,7 +132,7 @@ public partial class MainWindowViewModel : ObservableObject,
             return;
         }
 
-        var viewObj = (Control)Activator.CreateInstance(viewType)!;
+        var viewObj = (Page)Activator.CreateInstance(viewType)!;
         var vmObj = ActivatorUtilities.CreateInstance(Container.Services, vmType, message.Data);
 
         var options = new DrawerOptions
@@ -145,7 +150,7 @@ public partial class MainWindowViewModel : ObservableObject,
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
 
-        Drawer.ShowModal(viewObj, vmObj, options: options);
+        OverlayDrawer.ShowStandard(viewObj, vmObj, options: options);
     }
 
     public void Receive(PaneNavigateToViewModelMessage message)
@@ -156,7 +161,7 @@ public partial class MainWindowViewModel : ObservableObject,
             return;
         }
 
-        var viewObj = (Control)Activator.CreateInstance(viewType)!;
+        var viewObj = (Page)Activator.CreateInstance(viewType)!;
         var vmObj = ActivatorUtilities.CreateInstance(Container.Services, vmType);
 
         var options = new DrawerOptions
@@ -174,7 +179,61 @@ public partial class MainWindowViewModel : ObservableObject,
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
 
-        Drawer.ShowModal(viewObj, vmObj, options: options);
+        OverlayDrawer.ShowStandard(viewObj, vmObj, options: options);
+    }
+
+    partial void OnSelectedMenuItemChanged(NavigationDrawerItem? value)
+    {
+        if (value is not { Tag.ViewModelType: not null })
+        {
+            return;
+        }
+
+        // Clear footer selection
+        SelectedFooterMenuItem = null;
+
+        // Update IsSelected states
+        foreach (var item in MenuItems)
+        {
+            item.IsSelected = item == value;
+        }
+
+        foreach (var item in FooterMenuItems)
+        {
+            item.IsSelected = false;
+        }
+
+        if (!_isProgarmaticNavigation)
+        {
+            Navigator?.NavigateViewModel(value.Tag.ViewModelType);
+        }
+    }
+
+    partial void OnSelectedFooterMenuItemChanged(NavigationDrawerItem? value)
+    {
+        if (value is not { Tag.ViewModelType: not null })
+        {
+            return;
+        }
+
+        // Clear menu selection
+        SelectedMenuItem = null;
+
+        // Update IsSelected states
+        foreach (var item in FooterMenuItems)
+        {
+            item.IsSelected = item == value;
+        }
+
+        foreach (var item in MenuItems)
+        {
+            item.IsSelected = false;
+        }
+
+        if (!_isProgarmaticNavigation)
+        {
+            Navigator?.NavigateViewModel(value.Tag.ViewModelType);
+        }
     }
 
     [UsedImplicitly]
@@ -215,32 +274,58 @@ public partial class MainWindowViewModel : ObservableObject,
 
     private void UpdateSelection(NavigationResult result)
     {
+        _isProgarmaticNavigation = true;
+
         foreach (var item in MenuItems)
         {
-            if (item.Tag is not NavMenuItemTag tag)
+            if (item.Tag is not { } tag)
             {
                 item.IsSelected = false;
                 continue;
             }
 
-            item.IsSelected = result.ViewModelType == tag.ViewModelType;
+            var isMatch = result.ViewModelType == tag.ViewModelType;
+            item.IsSelected = isMatch;
+
+            if (!isMatch)
+            {
+                continue;
+            }
+
+            SelectedMenuItem = item;
+            _isProgarmaticNavigation = false;
+            return;
         }
 
         foreach (var item in FooterMenuItems)
         {
-            if (item.Tag is not NavMenuItemTag tag)
+            if (item.Tag is not { } tag)
             {
                 item.IsSelected = false;
                 continue;
             }
 
-            item.IsSelected = result.ViewModelType == tag.ViewModelType;
+            var isMatch = result.ViewModelType == tag.ViewModelType;
+            item.IsSelected = isMatch;
+
+            if (!isMatch)
+            {
+                continue;
+            }
+
+            SelectedFooterMenuItem = item;
+            _isProgarmaticNavigation = false;
+            return;
         }
+
+        SelectedMenuItem = null;
+        SelectedFooterMenuItem = null;
+        _isProgarmaticNavigation = false;
     }
 
-    private static bool IsTopLevelNavItem(NavMenuItem item)
+    private static bool IsTopLevelNavItem(NavigationDrawerItem item)
     {
-        if (item.Tag is not NavMenuItemTag tag)
+        if (item.Tag is not { } tag)
         {
             return false;
         }
@@ -248,27 +333,14 @@ public partial class MainWindowViewModel : ObservableObject,
         return tag.Parent is null;
     }
 
-    private static bool IsFooterNavItem(NavMenuItem item)
+    private static bool IsFooterNavItem(NavigationDrawerItem item)
     {
-        return item.Tag is NavMenuItemTag { IsFooterItem: true };
-    }
-
-    private static void MapChildren(List<NavMenuItem> items)
-    {
-        List<NavMenuItem> children = [.. items.Where(x => x.Tag is NavMenuItemTag { Parent: not null })];
-        foreach (var item in children)
-        {
-            var tag = (NavMenuItemTag)item.Tag!;
-            if (items.FirstOrDefault(x => x.Header?.ToString() == tag.Parent) is { } parent)
-            {
-                parent.Items.Add(item);
-            }
-        }
+        return item.Tag is { IsFooterItem: true };
     }
 
     private static void NavigateToDialog(ViewMap map, NavigateToDialogMessage message)
     {
-        var viewObj = (Control)Activator.CreateInstance(map.View)!;
+        var viewObj = (Page)Activator.CreateInstance(map.View)!;
         var vmObj = message.Data is null
             ? ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel)
             : ActivatorUtilities.CreateInstance(Container.Services, map.ViewModel, message.Data);
@@ -284,7 +356,7 @@ public partial class MainWindowViewModel : ObservableObject,
 
         NavigationExtensions.ConfigureView(viewObj, vmObj);
 
-        Dialog.ShowModal(viewObj, vmObj, options: options)
+        Dialog.ShowStandardAsync(viewObj, vmObj, options: options)
               .ContinueWith(x =>
               {
                   if (vmObj is IDialogViewModel vm)

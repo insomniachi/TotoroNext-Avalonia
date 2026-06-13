@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,6 +11,7 @@
              xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Views.AnimeDetailsView"
+             Background="Transparent"
              Width="750"
              x:DataType="vm:AnimeDetailsViewModel">
 
@@ -97,15 +98,15 @@
             <TabStripItem Content="Options" IsVisible="{Binding HasAnimeAired}" />
         </TabStrip>
 
-        <TransitioningContentControl
+        <NavigationPage
             Grid.Row="2"
             Margin="0 4"
             ext:NavigationExtensions.IsAttached="True">
-            <TransitioningContentControl.PageTransition>
+            <NavigationPage.PageTransition>
                 <PageSlide Duration="0:00:00.200" />
-            </TransitioningContentControl.PageTransition>
-        </TransitioningContentControl>
+            </NavigationPage.PageTransition>
+        </NavigationPage>
 
     </Grid>
 
-</UserControl>
+</ContentPage>

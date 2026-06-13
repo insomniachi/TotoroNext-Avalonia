@@ -3,7 +3,7 @@ using Avalonia.Data.Converters;
 
 namespace TotoroNext.Anime.Views;
 
-public partial class HomeView : UserControl
+public partial class HomeView : ContentPage
 {
     public HomeView()
     {

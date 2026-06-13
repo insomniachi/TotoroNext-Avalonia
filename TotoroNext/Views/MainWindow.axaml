@@ -8,73 +8,79 @@
               x:DataType="vm:MainWindowViewModel"
               xmlns:u="https://irihi.tech/ursa"
               xmlns:ext="totoro.next/extensions"
+              xmlns:c="totoro.next/converters"
+              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
               Icon="/Assets/WindowIcon.ico"
-              WindowStartupLocation="CenterScreen"
               IsFullScreenButtonVisible="False"
               IsManagedResizerVisible="{OnPlatform {x:False}, Linux={x:True}}"
               WindowState="Maximized"
               Title="Totoro">
-
-    <Panel>
-        <Panel.Styles>
+    <u:UrsaWindow.DataTemplates>
+        <DataTemplate x:DataType="module:NavigationDrawerItem">
+            <Grid RowDefinitions="Auto, *" RowSpacing="4">
+                <Viewbox Height="32" Width="32"
+                         Child="{Binding IconKey, Converter={x:Static c:Converters.IconConverter}}" />
+                <TextBlock Grid.Row="1" Text="{Binding Header}"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           FontSize="10" />
+            </Grid>
+        </DataTemplate>
+    </u:UrsaWindow.DataTemplates>
+    <u:UrsaWindow.Styles>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+        <Style Selector="ListBoxItem:pointerover">
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0 2 0 0" />
+        </Style>
+    </u:UrsaWindow.Styles>
+    <DrawerPage DrawerLayoutBehavior="Overlay"
+                DrawerBehavior="Locked"
+                DrawerLength="100">
+        <DrawerPage.Styles>
             <Style Selector="Grid.Blur">
                 <Setter Property="Effect" Value="blur(10)" />
             </Style>
-        </Panel.Styles>
-        <Grid Classes.Blur="{Binding $parent[u:UrsaWindow].(u:OverlayDialogHost.IsInModalStatus)}"
-              ColumnDefinitions="Auto, *">
-            <Border
-                Padding="8,4"
-                VerticalAlignment="Stretch"
-                Theme="{DynamicResource CardBorder}"
-                x:Name="MenuContainer">
-                <u:NavMenu
-                    Name="Menu"
-                    ExpandWidth="300"
-                    ItemsSource="{Binding MenuItems}">
-
-                    <u:NavMenu.HeaderTemplate>
-                        <DataTemplate x:DataType="x:String">
-                            <TextBlock HorizontalAlignment="Left" Text="{Binding}" VerticalAlignment="Center" />
-                        </DataTemplate>
-                    </u:NavMenu.HeaderTemplate>
-                    <u:NavMenu.Header>
-                        <DockPanel
-                            Margin="8 32 8 8"
-                            HorizontalAlignment="Center"
-                            u:NavMenu.CanToggle="True">
-                            <Panel
-                                VerticalAlignment="Center"
-                                Background="Transparent"
-                                DockPanel.Dock="Left">
-                                <Viewbox Height="32" Width="32" Stretch="Uniform">
-                                    <Image Source="../Assets/WindowIcon.ico" Stretch="Uniform" />
-                                </Viewbox>
-                            </Panel>
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Classes="H4"
-                                Margin="16 0 0 0"
-                                IsVisible="{Binding !#Menu.IsHorizontalCollapsed}"
-                                Text="Totoro"
-                                Theme="{DynamicResource TitleTextBlock}" />
-                        </DockPanel>
-                    </u:NavMenu.Header>
-                    <u:NavMenu.Footer>
-                        <ItemsControl ItemsSource="{Binding FooterMenuItems}" />
-                    </u:NavMenu.Footer>
-                </u:NavMenu>
-            </Border>
-            <TransitioningContentControl
-                Grid.Column="1"
-                Margin="12,36,12,12"
+        </DrawerPage.Styles>
+        <DrawerPage.Drawer>
+            <ContentPage>
+                <Border
+                    Padding="8,4"
+                    VerticalAlignment="Stretch"
+                    Theme="{DynamicResource CardBorder}"
+                    x:Name="MenuContainer">
+                    <Grid RowDefinitions="Auto, Auto, *, Auto">
+                        <Viewbox Grid.Row="0" Height="50" Width="50" Stretch="Uniform" Margin="8">
+                            <Image Source="../Assets/WindowIcon.ico" Stretch="Uniform" />
+                        </Viewbox>
+                        <Rectangle Grid.Row="1" Fill="White" Height="1"
+                                   Width="70"
+                                   HorizontalAlignment="Center"
+                                   Margin="0 8 0 8" />
+                        <ListBox Grid.Row="2"
+                                 x:Name="Menu"
+                                 ItemsSource="{Binding MenuItems}"
+                                 SelectedItem="{Binding SelectedMenuItem}"
+                                 SelectionMode="Single"
+                                 VerticalAlignment="Top" />
+                        <ListBox Grid.Row="3" VerticalAlignment="Bottom"
+                                 ItemsSource="{Binding FooterMenuItems}"
+                                 SelectedItem="{Binding SelectedFooterMenuItem}"
+                                 SelectionMode="Single" />
+                    </Grid>
+                </Border>
+            </ContentPage>
+        </DrawerPage.Drawer>
+        <DrawerPage.Content>
+            <NavigationPage
                 x:Name="ContentArea"
-                ext:NavigationExtensions.IsAttached="True">
-                <TransitioningContentControl.PageTransition>
-                    <CrossFade Duration="0:00:00.200" />
-                </TransitioningContentControl.PageTransition>
-            </TransitioningContentControl>
-        </Grid>
-    </Panel>
-
+                Margin="12,36,12,12"
+                ext:NavigationExtensions.IsAttached="True" />
+        </DrawerPage.Content>
+    </DrawerPage>
 </u:UrsaWindow>

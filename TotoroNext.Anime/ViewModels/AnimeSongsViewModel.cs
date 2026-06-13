@@ -36,7 +36,7 @@ public sealed partial class AnimeSongsViewModel(
     public async Task InitializeAsync()
     {
         EmbeddedVlcMediaPlayer.StateChanged
-                              .ObserveOn(RxApp.MainThreadScheduler)
+                              .ObserveOn(RxSchedulers.MainThreadScheduler)
                               .Subscribe(state => IsPlayingOrPaused = state is MediaPlayerState.Playing or MediaPlayerState.Paused);
 
         SubscriptionsForRpc(EmbeddedVlcMediaPlayer);

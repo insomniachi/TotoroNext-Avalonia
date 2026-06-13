@@ -1,10 +1,8 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
 namespace TotoroNext.Torrents.Qbittorrent.Views;
 
-public partial class SettingsView : UserControl
+public partial class SettingsView : ContentPage
 {
     public SettingsView()
     {

@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Views;
 
-public partial class ModulesView : UserControl
+public partial class ModulesView : ContentPage
 {
     public ModulesView()
     {

@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class DownloadsView : UserControl
+public partial class DownloadsView : ContentPage
 {
     public DownloadsView()
     {

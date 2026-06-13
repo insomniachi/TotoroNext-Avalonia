@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,9 +6,9 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:ail="using:AsyncImageLoader"
              xmlns:mdl="totoro.next/models"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:ext="totoro.next/extensions"
              xmlns:bhvr="totoro.next/behaviors"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="vm:AnimeEpisodesListViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeEpisodesListView">
@@ -19,7 +19,7 @@
                      IsVisible="{Binding !NothingToSee}"
                      SelectionMode="Single">
                 <Interaction.Behaviors>
-                    <bhvr:BringSelectedItemIntoViewBehavior/>
+                    <bhvr:BringSelectedItemIntoViewBehavior />
                 </Interaction.Behaviors>
                 <ListBox.Styles>
                     <Style Selector="ListBoxItem">
@@ -62,13 +62,13 @@
                                                 Margin="0 0 0 8"
                                                 Orientation="Horizontal"
                                                 Spacing="5">
-                                        <iconPacks:PackIconControl
-                                            Kind="{x:Static iconPacks:PackIconMaterialKind.CalendarClock}" Height="20"
+                                        <ContentControl
+                                            Content="{ext:PathIcon Key={x:Static module:CommonIcons.CalendarClock}}"
                                             Width="20" />
                                         <TextBlock Text="{Binding AirDate}" Margin="0 0 16 0" />
-                                        <iconPacks:PackIconControl
-                                            Kind="{x:Static iconPacks:PackIconMaterialKind.Alarm}"
-                                            Height="20" Width="20" />
+                                        <ContentControl
+                                            Content="{ext:PathIcon Key={x:Static module:CommonIcons.Alarm}}"
+                                            Width="20" />
                                         <TextBlock>
                                             <Run Text="{Binding Runtime}" />
                                             <Run Text="Min" />
@@ -103,4 +103,4 @@
             </StackPanel>
         </Grid>
     </u:LoadingContainer>
-</UserControl>
+</ContentPage>

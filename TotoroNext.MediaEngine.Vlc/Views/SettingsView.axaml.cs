@@ -2,7 +2,7 @@
 
 namespace TotoroNext.MediaEngine.Vlc.Views;
 
-public partial class SettingsView : UserControl
+public partial class SettingsView : ContentPage
 {
     public SettingsView()
     {

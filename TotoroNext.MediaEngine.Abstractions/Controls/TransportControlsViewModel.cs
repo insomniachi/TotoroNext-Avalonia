@@ -38,7 +38,7 @@ public partial class TransportControlsViewModel(IEmbeddedVlcMediaPlayer mediaPla
         });
 
         mediaPlayer.StateChanged
-                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                    .Do(state =>
                    {
                        switch (state)

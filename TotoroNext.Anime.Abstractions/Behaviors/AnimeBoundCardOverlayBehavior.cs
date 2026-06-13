@@ -1,10 +1,9 @@
-﻿using System.Reactive.Disposables;
+﻿using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions.Controls;
-using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
@@ -15,7 +14,7 @@ public abstract class AnimeBoundCardOverlayBehavior<TOverlay> : AnimeCardOverlay
     {
         AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
                         .WhereNotNull()
-                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .Subscribe(anime =>
                         {
                             RemoveControl();

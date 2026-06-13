@@ -1,7 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.Markup.Declarative;
-using Avalonia.ReactiveUI;
 using JetBrains.Annotations;
+using ReactiveUI.Avalonia;
 using Serilog;
 using Velopack;
 
@@ -34,8 +33,7 @@ internal sealed class Program
         return AppBuilder.Configure<App>()
                          .UsePlatformDetect()
                          .WithInterFont()
-                         .UseReactiveUI()
-                         .UseRiderHotReload()
+                         .UseReactiveUI(_ => { })
                          .LogToTrace();
     }
 }

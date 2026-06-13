@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Anime.Views;
 
-public partial class UserListSortAndFilterView : UserControl
+public partial class UserListSortAndFilterView : ContentPage
 {
     public UserListSortAndFilterView()
     {

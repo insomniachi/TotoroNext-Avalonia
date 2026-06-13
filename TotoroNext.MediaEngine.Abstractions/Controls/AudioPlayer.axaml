@@ -4,12 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:icon="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:extensions="totoro.next/extensions"
              x:Class="TotoroNext.MediaEngine.Abstractions.Controls.AudioPlayer">
     <Grid ColumnDefinitions="Auto,*" Margin="4">
         <Button x:Name="PlayPauseButton" Click="PlayPauseButton_OnClick">
-            <Viewbox Height="20" Width="20">
-                <icon:PackIconControl Kind="{x:Static icon:PackIconMaterialDesignKind.PlayArrow}" x:Name="IconControl" />
-            </Viewbox>
+            <Viewbox Height="20" Width="20" Child="{extensions:PathIcon Key={x:Static module:CommonIcons.Play}}" 
+                     x:Name="IconControl"/>
         </Button>
         <Slider Grid.Column="1"
                 x:Name="PositionSlider"

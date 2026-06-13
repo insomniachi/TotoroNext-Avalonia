@@ -76,9 +76,6 @@
         <Project Path="TotoroNext.Discord/TotoroNext.Discord.csproj">
             <Platform Project="x64" />
         </Project>
-        <Project Path="TotoroNext.SongRecognition/TotoroNext.SongRecognition.csproj">
-            <Platform Project="x64" />
-        </Project>
     </Folder>
     <Folder Name="/Solution Items/">
         <File Path=".github/workflows/dotnet-publish.yml" />

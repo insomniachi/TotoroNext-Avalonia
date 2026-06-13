@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
@@ -19,7 +20,7 @@ public class MediaFormatBehavior : AnimeBoundCardOverlayBehavior<Border>
                .CornerRadius(20)
                .Padding(12, 5)
                .MinWidth(50)
-               .Margin(5, 3.5, 0)
+               .Margin(new Thickness(5, 3.5, 0, 0))
                .Child(new TextBlock()
                       .HorizontalAlignment(HorizontalAlignment.Center)
                       .VerticalAlignment(VerticalAlignment.Center)

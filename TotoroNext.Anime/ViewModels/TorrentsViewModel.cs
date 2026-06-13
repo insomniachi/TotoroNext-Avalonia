@@ -76,7 +76,7 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
             .Where(x => string.IsNullOrEmpty(x.Item2) || x.Item2.Length > 2)
             .Throttle(TimeSpan.FromMilliseconds(500))
             .SelectMany(x => SearchTorrentsAsync(x.Item1, x.Item2, x.Item3))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(list =>
             {
                 _torrentsCache.Clear();

@@ -1,9 +1,10 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Width="400"
              x:DataType="viewModels:RelationsBuilderViewModel"
@@ -17,41 +18,38 @@
                   CanUserSortColumns="True"
                   IsReadOnly="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Title}" 
+                <DataGridTextColumn Binding="{Binding Title}"
                                     Header="Title"
                                     IsReadOnly="True"
-                                    Width="*"/>
+                                    Width="*" />
                 <DataGridTextColumn Binding="{Binding TotalEpisodes}"
-                                    Header="Episodes"/>
+                                    Header="Episodes" />
                 <DataGridTemplateColumn Header="Actions">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Spacing="4" Orientation="Horizontal" Margin="4">
                                 <StackPanel.Styles>
                                     <Style Selector="Button">
-                                        <Setter Property="Height" Value="15"/>
-                                        <Setter Property="Width" Value="30"/> 
-                                        <Setter Property="CommandParameter" Value="{Binding}"/>
+                                        <Setter Property="Height" Value="15" />
+                                        <Setter Property="Width" Value="30" />
+                                        <Setter Property="CommandParameter" Value="{Binding}" />
                                     </Style>
                                     <Style Selector="Viewbox">
-                                        <Setter Property="Height" Value="15"/>
-                                        <Setter Property="Width" Value="15"/> 
+                                        <Setter Property="Height" Value="15" />
+                                        <Setter Property="Width" Value="15" />
                                     </Style>
                                 </StackPanel.Styles>
-                                <Button Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).MoveUpCommand, FallbackValue={x:Null}}">
-                                    <Viewbox>
-                                        <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.ArrowUp}"/>
-                                    </Viewbox>
+                                <Button
+                                    Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).MoveUpCommand, FallbackValue={x:Null}}">
+                                    <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.ArrowUp}}" />
                                 </Button>
-                                <Button Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).MoveDownCommand, FallbackValue={x:Null}}">
-                                    <Viewbox>
-                                        <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.ArrowDown}"/>
-                                    </Viewbox>
+                                <Button
+                                    Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).MoveDownCommand, FallbackValue={x:Null}}">
+                                    <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.ArrowDown}}" />
                                 </Button>
-                                <Button Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).DeleteCommand, FallbackValue={x:Null}}">
-                                    <Viewbox>
-                                        <iconPacks:PackIconControl Kind="{x:Static iconPacks:PackIconMaterialKind.Delete}"/>
-                                    </Viewbox>
+                                <Button
+                                    Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).DeleteCommand, FallbackValue={x:Null}}">
+                                    <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.Delete}}" />
                                 </Button>
                             </StackPanel>
                         </DataTemplate>
@@ -60,4 +58,4 @@
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
-</UserControl>
+</ContentPage>

@@ -1,13 +1,10 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
-using IconPacks.Avalonia;
-using IconPacks.Avalonia.Codicons;
-using IconPacks.Avalonia.MaterialDesign;
-using IconPacks.Avalonia.MemoryIcons;
-using IconPacks.Avalonia.PhosphorIcons;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;
 
@@ -17,7 +14,7 @@ public class ListStatusBehavior : TrackingBoundAnimeCardOverlayBehavior<Border>
     {
         return new Border()
                .Padding(5)
-               .Margin(0, 3.5, 5)
+               .Margin(new Thickness(0, 3.5, 5, 0))
                .CornerRadius(15)
                .Width(50)
                .BorderThickness(1)
@@ -25,24 +22,25 @@ public class ListStatusBehavior : TrackingBoundAnimeCardOverlayBehavior<Border>
                .HorizontalAlignment(HorizontalAlignment.Right)
                .VerticalAlignment(VerticalAlignment.Top)
                .Background(GetBackgroundBrush(anime.Tracking))
-               .Child(new PackIconControl { Kind = GetIcon(anime.Tracking) }
+               .Child(new Viewbox()
                       .Width(15)
                       .Height(15)
-                      .HorizontalAlignment(HorizontalAlignment.Center)
-                      .Foreground(Brushes.Black));
+                      .Child(GetIcon(anime.Tracking)));
     }
 
-    private static Enum? GetIcon(Tracking? tracking)
+    private static PathIcon GetIcon(Tracking? tracking)
     {
-        return tracking?.Status switch
+        var icon = tracking?.Status switch
         {
-            ListItemStatus.Completed => PackIconMaterialDesignKind.Check,
-            ListItemStatus.Watching => PackIconPhosphorIconsKind.HourglassHighFill,
-            ListItemStatus.OnHold => PackIconCodiconsKind.DebugPause,
-            ListItemStatus.Dropped => PackIconMemoryIconsKind.MemoryTrash,
-            ListItemStatus.PlanToWatch => PackIconPhosphorIconsKind.HourglassHighFill,
-            _ => null
+            ListItemStatus.Completed => IconRegistry.GetPathIcon(CommonIcons.Check),
+            ListItemStatus.Watching => IconRegistry.GetPathIcon(CommonIcons.HourglassFill),
+            ListItemStatus.OnHold => IconRegistry.GetPathIcon(CommonIcons.DebugPause),
+            ListItemStatus.Dropped => IconRegistry.GetPathIcon(CommonIcons.MemoryTrash),
+            ListItemStatus.PlanToWatch => IconRegistry.GetPathIcon(CommonIcons.Bookmark),
+            _ => new PathIcon()
         };
+        icon.Foreground = Brushes.Black;
+        return icon;
     }
 
     private static IImmutableSolidColorBrush GetBackgroundBrush(Tracking? tracking)

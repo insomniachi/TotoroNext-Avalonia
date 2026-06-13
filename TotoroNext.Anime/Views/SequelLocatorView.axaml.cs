@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace TotoroNext.Anime.Views;
 
-public partial class SequelLocatorView : UserControl
+public partial class SequelLocatorView : ContentPage
 {
     public SequelLocatorView()
     {

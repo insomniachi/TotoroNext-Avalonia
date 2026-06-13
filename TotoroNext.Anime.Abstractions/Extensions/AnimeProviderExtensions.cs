@@ -36,7 +36,7 @@ public static class AnimeProviderExtensions
             }
             catch (Exception ex)
             {
-                RxApp.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
+                RxSchedulers.MainThreadScheduler.Schedule(() => Container.Services.GetRequiredService<IDialogService>().Warning(ex.Message));
                 return [];
             }
         }

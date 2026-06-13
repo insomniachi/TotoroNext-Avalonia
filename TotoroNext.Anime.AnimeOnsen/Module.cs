@@ -24,10 +24,14 @@ public class Module : IModule<Settings>
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddHttpClient(typeof(Module).FullName!, client => { client.BaseAddress = new Uri("https://api.animeonsen.xyz/v4/"); })
+        services.AddHttpClient("api", client => { client.BaseAddress = new Uri("https://api.animeonsen.xyz/v4/"); })
                 .AddHttpMessageHandler<AnimeOnsenApiInterceptor>();
+        
+        services.AddHttpClient("search", client => { client.BaseAddress = new Uri("https://search.animeonsen.xyz"); })
+                .AddHttpMessageHandler<AnimeOnsenSearchInterceptor>();
 
         services.AddTransient<AnimeOnsenApiInterceptor>()
+                .AddTransient<AnimeOnsenSearchInterceptor>()
                 .AddTransient<TokenProvider>();
 
         services.AddTransient(_ => Descriptor)
@@ -42,11 +46,4 @@ public class Settings : OverridableConfig
     [DisplayName("Subtitle")]
     [AllowedValues("en-US", "fr-FR", "es-LA", "pt-BR", "it-IT", "de-DE")]
     public string SubtitleLanguage { get; set; } = "en-US";
-}
-
-[Serializable]
-public class AnimeOnsenApiToken
-{
-    public string Token { get; set; } = "";
-    public DateTime RenewTime { get; set; }
 }
