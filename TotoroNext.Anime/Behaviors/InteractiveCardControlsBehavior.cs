@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -74,7 +75,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
     {
         AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
                         .WhereNotNull()
-                        .ObserveOn(RxApp.MainThreadScheduler)
+                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .Subscribe(anime =>
                         {
                             RemoveControl();

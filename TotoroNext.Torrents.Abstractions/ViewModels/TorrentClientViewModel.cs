@@ -34,7 +34,7 @@ public sealed class TorrentClientViewModel(IFactory<ITorrentClient, Guid> factor
                 {
                     if(Torrents.FirstOrDefault(x => x.Hash == torrent.Hash) is { } existing)
                     {
-                        RxApp.MainThreadScheduler.Schedule(() => 
+                        RxSchedulers.MainThreadScheduler.Schedule(() => 
                         {
                             existing.Update(torrent);
                             tcs.SetResult();
@@ -42,7 +42,7 @@ public sealed class TorrentClientViewModel(IFactory<ITorrentClient, Guid> factor
                     }
                     else
                     {
-                        RxApp.MainThreadScheduler.Schedule(() => 
+                        RxSchedulers.MainThreadScheduler.Schedule(() => 
                         {
                             Torrents.Add(torrent);
                             tcs.SetResult();

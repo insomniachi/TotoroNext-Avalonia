@@ -39,7 +39,7 @@ public partial class AudioPlayer : UserControl
         }
 
         mediaPlayer.StateChanged
-                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                    .Subscribe(state =>
                    {
                        icon.Child = state switch
@@ -50,10 +50,10 @@ public partial class AudioPlayer : UserControl
                        };
                    });
         mediaPlayer.DurationChanged
-                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                    .Subscribe(value => slider.Maximum = value.TotalSeconds);
         mediaPlayer.PositionChanged
-                   .ObserveOn(RxApp.MainThreadScheduler)
+                   .ObserveOn(RxSchedulers.MainThreadScheduler)
                    .Subscribe(value => slider.Value = value.TotalSeconds);
     }
 

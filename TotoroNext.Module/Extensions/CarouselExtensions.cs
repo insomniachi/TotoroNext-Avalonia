@@ -28,7 +28,7 @@ public class CarouselExtensions
                                .Skip(1)
                                .StartWith(sender.SelectedIndex)
                                .Select(_ => Observable.Timer(ts, ts)
-                                                      .ObserveOn(RxApp.MainThreadScheduler)
+                                                      .ObserveOn(RxSchedulers.MainThreadScheduler)
                                                       .Select(_ => GetItemsCount(sender))
                                                       .WhereNotNull()
                                                       .Select(count => sender.SelectedIndex == count - 1

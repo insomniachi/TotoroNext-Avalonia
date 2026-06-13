@@ -48,6 +48,6 @@ public partial class DownloadUpdateViewModel(
 
     private void UpdateProgress(int progress)
     {
-        RxApp.MainThreadScheduler.Schedule(() => Progress = progress);
+        RxSchedulers.MainThreadScheduler.Schedule(() => Progress = progress);
     }
 }

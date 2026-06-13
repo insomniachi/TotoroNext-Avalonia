@@ -88,29 +88,29 @@ public sealed partial class WatchViewModel(
         this.WhenAnyValue(x => x.Anime)
             .WhereNotNull()
             .Select(x => x is { MediaFormat: AnimeMediaFormat.Movie, TotalEpisodes: 1 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(isMovie => IsMovie = isMovie);
 
         this.WhenAnyValue(x => x.ProviderResult)
             .WhereNotNull()
             .Where(_ => Episodes is { Count: 0 } or null)
-            .ObserveOn(RxApp.MainThreadScheduler).Do(_ => IsEpisodesLoading = true)
+            .ObserveOn(RxSchedulers.MainThreadScheduler).Do(_ => IsEpisodesLoading = true)
             .Select(providerResult => Observable.FromAsync(ct => GetEpisodesAndMetadata(Anime, providerResult, ct)))
             .Switch()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(UpdateEpisodeMetadata);
 
         if (continueWatching)
         {
             this.WhenAnyValue(x => x.Episodes)
                 .WhereNotNull()
-                .ObserveOn(RxApp.MainThreadScheduler)
+                .ObserveOn(RxSchedulers.MainThreadScheduler)
                 .Subscribe(SelectNextEpisode);
         }
 
         this.WhenAnyValue(x => x.SelectedEpisode)
             .WhereNotNull()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Do(_ =>
             {
                 Servers = [];
@@ -118,38 +118,38 @@ public sealed partial class WatchViewModel(
             })
             .Select(ep => Observable.FromAsync(ep.GetServers))
             .Switch()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);
 
         this.WhenAnyValue(x => x.Servers)
             .Where(x => x is { Count: > 0 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(x => SelectedServer = x.First());
 
         this.WhenAnyValue(x => x.SelectedServer)
             .WhereNotNull()
             .DistinctUntilChanged()
-            .ObserveOn(RxApp.TaskpoolScheduler)
+            .ObserveOn(RxSchedulers.TaskpoolScheduler)
             .Select(server => Observable.FromAsync(server.GetSources))
             .Switch()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(sources => Sources = sources);
 
         this.WhenAnyValue(x => x.Sources)
             .Where(x => x is { Count: 1 })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(x => SelectedSource = x.First());
 
         this.WhenAnyValue(x => x.SelectedSource)
             .WhereNotNull()
-            .ObserveOn(RxApp.TaskpoolScheduler)
+            .ObserveOn(RxSchedulers.TaskpoolScheduler)
             .SelectMany(x => Play(x).ToObservable())
             .Subscribe();
 
         this.WhenAnyValue(x => x.CurrentSegment)
             .WhereNotNull()
             .Where(x => x is { Type : MediaSectionType.Opening or MediaSectionType.Ending })
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(ShouldSkipMediaSegment)
             .SelectMany(x => HandleMediaSegment(x).ToObservable())
             .Subscribe();
@@ -285,10 +285,10 @@ public sealed partial class WatchViewModel(
                 _duration = TimeSpan.Zero;
             })
             .Where(_ => SelectedEpisode is { IsCompleted: true } && Episodes is not null)
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .SelectMany(_ => AskIfContinueWatching())
             .WhereNotNull()
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(nexEp => SelectedEpisode = nexEp);
 
         if (MediaPlayer is ISeekable)
@@ -327,7 +327,7 @@ public sealed partial class WatchViewModel(
         var title = string.Join(" - ", parts.Where(x => !string.IsNullOrEmpty(x)));
         var segments = await GetMediaSegments(source, SelectedEpisode);
 
-        RxApp.MainThreadScheduler.Schedule(() => IsFetchingStream = false);
+        RxSchedulers.MainThreadScheduler.Schedule(() => IsFetchingStream = false);
         
         var metadata = new MediaMetadata(title, source.Headers, segments, source.Subtitle);
         _media = new Media(source.Url, metadata);

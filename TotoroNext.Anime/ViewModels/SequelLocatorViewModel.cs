@@ -30,8 +30,7 @@ public sealed partial class SequelLocatorViewModel : ObservableObject, IAsyncIni
             .RefCount()
             .AutoRefresh()
             .Filter(Filter.Predicate)
-            .Sort(Sort.Comparer)
-            .Bind(out _anime)
+            .SortAndBind(out _anime, Sort.Comparer)
             .DisposeMany()
             .Subscribe();
 

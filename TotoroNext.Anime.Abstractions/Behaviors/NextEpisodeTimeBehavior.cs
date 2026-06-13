@@ -1,4 +1,4 @@
-﻿using System.Reactive.Disposables;
+﻿using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Text;
 using Avalonia;
@@ -55,7 +55,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
 
                             return anime.WhenAnyValue(x => x.Tracking)
                                         .WhereNotNull()
-                                        .ObserveOn(RxApp.MainThreadScheduler)
+                                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                                         .Select(_ => Observable.FromAsync(ct => FetchAndDisplayAiringTime(AssociatedObject!.Anime, ct)))
                                         .Switch();
                         })
@@ -73,7 +73,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
     {
         // Fetch the airing time once
         await FetchAiringTime(anime, ct);
-        
+
         if (_cachedAiringAt is null)
         {
             Dispatcher.UIThread.Invoke(() => { Control?.IsVisible = false; });
@@ -84,7 +84,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
         UpdateDisplayText();
 
         // Set up a timer to refresh the UI every minute
-        Observable.Interval(TimeSpan.FromMinutes(1), RxApp.MainThreadScheduler)
+        Observable.Interval(TimeSpan.FromMinutes(1), RxSchedulers.MainThreadScheduler)
                   .Subscribe(_ => UpdateDisplayText())
                   .DisposeWith(Disposables);
     }

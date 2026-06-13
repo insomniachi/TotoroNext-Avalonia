@@ -32,7 +32,7 @@ public partial class TransportControls : UserControl
 
         interaction
             .Throttle(TimeSpan.FromSeconds(3))
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ =>
             {
                 Cursor = new Cursor(StandardCursorType.None);
@@ -40,7 +40,7 @@ public partial class TransportControls : UserControl
             });
 
         interaction
-            .ObserveOn(RxApp.MainThreadScheduler)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(_ =>
             {
                 Cursor = Cursor.Default;

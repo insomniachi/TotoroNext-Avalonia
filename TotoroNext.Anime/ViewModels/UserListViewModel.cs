@@ -33,8 +33,7 @@ public sealed partial class UserListViewModel : ObservableObject, IAsyncInitiali
             .RefCount()
             .AutoRefresh()
             .Filter(Filter.Predicate)
-            .Sort(Sort.Comparer)
-            .Bind(out _anime)
+            .SortAndBind(out _anime, Sort.Comparer)
             .DisposeMany()
             .Subscribe();
 

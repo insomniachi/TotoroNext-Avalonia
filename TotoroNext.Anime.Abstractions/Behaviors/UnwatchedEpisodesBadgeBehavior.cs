@@ -1,4 +1,4 @@
-﻿using System.Reactive.Disposables;
+﻿using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -32,7 +32,7 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
 
                             return anime.WhenAnyValue(x => x.Tracking)
                                         .WhereNotNull()
-                                        .ObserveOn(RxApp.MainThreadScheduler)
+                                        .ObserveOn(RxSchedulers.MainThreadScheduler)
                                         .Select(_ => Observable.FromAsync(ct => UpdateBadge(anime, ct)))
                                         .Switch();
                         })
@@ -40,7 +40,7 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
                         .Subscribe()
                         .DisposeWith(Disposables);
     }
-    
+
     protected override Border CreateControl(AnimeModel anime)
     {
         return new Border()

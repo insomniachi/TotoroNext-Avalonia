@@ -56,7 +56,7 @@ public partial class DownloadOperation(AnimeModel anime, Episode episode, VideoS
         var subscription = Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(1))
                                      .Select(_ => _progress)
                                      .WhereNotNull()
-                                     .ObserveOn(RxApp.MainThreadScheduler)
+                                     .ObserveOn(RxSchedulers.MainThreadScheduler)
                                      .Subscribe(e =>
                                      {
                                          Progress = e.ProgressPercentage;
