@@ -14,11 +14,14 @@ public class AnimeProvider(
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
-        using var client = CreateClient();
-
-        var response = await client.Request("search")
-                                   .AppendPathSegment(query)
-                                   .GetJsonAsync<ResultResponse<List<AnimeOnsenItemModel>>>(cancellationToken: ct);
+        using var client = CreateClient("search");
+        
+        var response = await client.Request("indexes/content/search")
+                                   .PostJsonAsync(new
+                                   {
+                                       q = query
+                                   }, cancellationToken: ct)
+                                   .ReceiveJson<ResultResponse<List<AnimeOnsenItemModel>>>();
 
         foreach (var item in response.Result ?? [])
         {
@@ -30,7 +33,7 @@ public class AnimeProvider(
     
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
-        using var client = CreateClient();
+        using var client = CreateClient("api");
         var response = await client.Request($"content/{animeId}/episodes")
                                    .WithHeader(HeaderNames.Referer, Http.UserAgent)
                                    .GetJsonAsync<Dictionary<string, AnimeOnsenEpisode>>(cancellationToken: ct);
@@ -60,7 +63,7 @@ public class AnimeProvider(
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
-        using var client = CreateClient();
+        using var client = CreateClient("api");
 
         var stream = await client.Request($"content/{animeId}/video/{episodeId}")
                                  .GetStreamAsync(cancellationToken: ct);
@@ -92,9 +95,9 @@ public class AnimeProvider(
         settings.Value.UpdateValues(options);
     }
 
-    private FlurlClient CreateClient()
+    private FlurlClient CreateClient(string name)
     {
-        return new FlurlClient(httpClientFactory.CreateClient(typeof(Module).FullName!));
+        return new FlurlClient(httpClientFactory.CreateClient(name));
     }
 
     private static SkipData? CovertSkipData(AnimeOnsenSkipData? skipData)

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using HtmlAgilityPack;
 using JetBrains.Annotations;
 using TotoroNext.Module;
 
@@ -20,11 +21,42 @@ public class AnimeOnsenApiInterceptor(TokenProvider tokenProvider) : DelegatingH
     }
 }
 
+public class AnimeOnsenSearchInterceptor(TokenProvider tokenProvider) : DelegatingHandler
+{
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        var token = await tokenProvider.GetSearchTokenAsync();
+        if (!string.IsNullOrEmpty(token))
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+        
+        return await base.SendAsync(request, cancellationToken);
+    }
+}
+
 [UsedImplicitly]
 public class TokenProvider(IHttpClientFactory httpClientFactory)
 {
     private string _accessToken = string.Empty;
+    private string _searchToken = string.Empty;
     private DateTime _expiresAt = DateTime.MinValue;
+
+    public async ValueTask<string> GetSearchTokenAsync()
+    {
+        if (!string.IsNullOrEmpty(_accessToken))
+        {
+            return _searchToken;
+        }
+        
+        using var client = httpClientFactory.CreateClient();
+        var stream = await client.GetStreamAsync("https://www.animeonsen.xyz");
+        var doc = new HtmlDocument();
+        doc.Load(stream);
+        var meta = doc.DocumentNode.SelectSingleNode("//meta[@name='ao-search-token']");
+        _searchToken = meta?.GetAttributeValue("content", "") ?? "";
+        return _searchToken;
+    }
 
     public async ValueTask<string> GetTokenAsync()
     {
