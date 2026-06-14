@@ -30,7 +30,7 @@ public class Module : IModule
         services.AddMainNavigationItem<HomeView, HomeViewModel>("Home", CommonIcons.Home);
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", CommonIcons.List);
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", CommonIcons.Search);
-        services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Unseen Arcs", CommonIcons.NewReleases);
+        services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Missed", CommonIcons.NewReleases);
         services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", CommonIcons.Downloads,
                                                                           new NavigationDrawerItemTag { IsFooterItem = true });
 

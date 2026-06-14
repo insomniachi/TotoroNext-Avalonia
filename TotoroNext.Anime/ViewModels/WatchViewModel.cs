@@ -160,6 +160,20 @@ public sealed partial class WatchViewModel(
 
     public IEnumerable<KeyBinding> GetKeyBindings()
     {
+        yield return new KeyBinding()
+        {
+            Gesture = new KeyGesture(Key.F5),
+            Command = new AsyncRelayCommand(async () =>
+            {
+                if (_currentPosition != TimeSpan.Zero || SelectedSource is null)
+                {
+                    return;
+                }
+
+                await Play(SelectedSource);
+            })
+        };
+        
         if (MediaPlayer is not IEmbeddedVlcMediaPlayer embeddedPlayer)
         {
             yield break;
