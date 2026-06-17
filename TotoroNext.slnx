@@ -28,9 +28,6 @@
         <Project Path="TotoroNext.Anime.AnimeGG/TotoroNext.Anime.AnimeGG.csproj">
             <Platform Project="x64" />
         </Project>
-        <Project Path="TotoroNext.Anime.AnimeKai/TotoroNext.Anime.AnimeKai.csproj">
-            <Platform Project="x64" />
-        </Project>
         <Project Path="TotoroNext.Anime.AnimeOnsen/TotoroNext.Anime.AnimeOnsen.csproj">
             <Platform Project="x64" />
         </Project>

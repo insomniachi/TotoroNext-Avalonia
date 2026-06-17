@@ -94,24 +94,6 @@
     ]
   },
   {
-    "Id": "d3b5f4e2-4c6e-4f3a-9f7e-2b8e5c6d7a1b",
-    "Name": "Anime Kai",
-    "Owner": "Totoro",
-    "Categories": [
-      "Anime Provider"
-    ],
-    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimeKai/Assets/animekai.jpg",
-    "EntryPoint": "TotoroNext.Anime.AnimeKai.dll",
-    "Versions": [
-      {
-        "Version": "1.2.0",
-        "Description": "Initial release",
-        "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeKai.zip"
-      }
-    ]
-  },
-  {
     "Id": "c37d57cf-5090-4b48-977d-dbaa78545433",
     "Name": "Anime Onsen",
     "Owner": "Totoro",
