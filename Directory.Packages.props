@@ -50,7 +50,7 @@
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.7.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.60.0" />
-    <PackageVersion Include="MonoTorrent" Version="3.0.2" />
+    <PackageVersion Include="MonoTorrent" Version="3.9.0-alpha.unstable.rev0000" />
     <PackageVersion Include="NAudio.Core" Version="2.3.0" />
     <PackageVersion Include="NAudio.Wasapi" Version="2.3.0" />
     <PackageVersion Include="NLayer.NAudioSupport" Version="1.4.0" />
