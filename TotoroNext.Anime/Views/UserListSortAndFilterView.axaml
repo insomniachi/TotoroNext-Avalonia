@@ -6,6 +6,7 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:conv="totoro.next/converters"
              xmlns:mdl="totoro.next/models"
+             xmlns:bhvr="totoro.next/behaviors"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Anime.Views.UserListSortAndFilterView"
              x:DataType="vm:UserListSortAndFilterViewModel"
@@ -17,7 +18,8 @@
         <u:FormGroup Header="Filters">
             <TextBox u:FormItem.Label="Title"
                      Text="{Binding Filter.Term, UpdateSourceTrigger=PropertyChanged}"
-                     HorizontalAlignment="Stretch" />
+                     HorizontalAlignment="Stretch"
+                     bhvr:FocusOnLoad.IsEnabled="True" />
             <TextBox u:FormItem.Label="Year"
                      Text="{Binding Filter.Year, UpdateSourceTrigger=LostFocus}"
                      HorizontalAlignment="Stretch" />
