@@ -31,7 +31,8 @@ public class App : Application
             ImageLoader.AsyncImageLoader = new DiskCachedWebImageLoader(FileHelper.GetPath(Path.Combine("Cache", "Images")));
             desktop.MainWindow = new MainSplashWindow
             {
-                DataContext = new SplashViewModel(Host.CreateDefaultBuilder())
+                DataContext = new SplashViewModel(Host.CreateDefaultBuilder(),
+                                                  DataTemplates)
             };
         }
 

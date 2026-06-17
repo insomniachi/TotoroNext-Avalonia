@@ -15,10 +15,6 @@
         </ResourceDictionary>
     </Application.Resources>
 
-    <Application.DataTemplates>
-        <local:ViewLocator />
-    </Application.DataTemplates>
-
     <Application.Styles>
         <semi:SemiPopupAnimations />
         <semi:SemiTheme Locale="en-US" />

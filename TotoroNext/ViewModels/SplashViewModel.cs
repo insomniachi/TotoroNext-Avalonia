@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Templates;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -23,7 +24,8 @@ using Velopack.Sources;
 
 namespace TotoroNext.ViewModels;
 
-public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObject, IDialogContext
+public partial class SplashViewModel(IHostBuilder hostBuilder,
+                                     DataTemplates dataTemplates) : ObservableObject, IDialogContext
 {
     [ObservableProperty] public partial string PrimaryText { get; set; } = "";
     [ObservableProperty] public partial string SecondaryText { get; set; } = "";
@@ -142,6 +144,7 @@ public partial class SplashViewModel(IHostBuilder hostBuilder) : ObservableObjec
                       })
                       .Build();
 
+        dataTemplates.Add(new ViewLocator(App.AppHost.Services.GetService<IViewRegistry>()!));
         Container.SetServiceProvider(App.AppHost.Services);
     }
 
