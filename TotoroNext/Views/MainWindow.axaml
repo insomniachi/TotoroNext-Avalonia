@@ -29,14 +29,9 @@
         </DataTemplate>
     </u:UrsaWindow.DataTemplates>
     <u:UrsaWindow.Styles>
-        <Style Selector="ListBoxItem:selected">
-            <Setter Property="CornerRadius" Value="8" />
-        </Style>
-        <Style Selector="ListBoxItem:pointerover">
-            <Setter Property="CornerRadius" Value="8" />
-        </Style>
-        <Style Selector="ListBoxItem">
-            <Setter Property="Margin" Value="0 2 0 0" />
+        <Style Selector="u|SelectionListItem">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
     </u:UrsaWindow.Styles>
     <DrawerPage DrawerLayoutBehavior="Overlay"
@@ -62,16 +57,14 @@
                                    Width="70"
                                    HorizontalAlignment="Center"
                                    Margin="0 8 0 8" />
-                        <ListBox Grid.Row="2"
-                                 x:Name="Menu"
-                                 ItemsSource="{Binding MenuItems}"
-                                 SelectedItem="{Binding SelectedMenuItem}"
-                                 SelectionMode="Single"
-                                 VerticalAlignment="Top" />
-                        <ListBox Grid.Row="3" VerticalAlignment="Bottom"
-                                 ItemsSource="{Binding FooterMenuItems}"
-                                 SelectedItem="{Binding SelectedFooterMenuItem}"
-                                 SelectionMode="Single" />
+                        <u:SelectionList Grid.Row="2"
+                                         x:Name="Menu"
+                                         ItemsSource="{Binding MenuItems}"
+                                         SelectedItem="{Binding SelectedMenuItem}"
+                                         VerticalAlignment="Top" />
+                        <u:SelectionList Grid.Row="3" VerticalAlignment="Bottom"
+                                         ItemsSource="{Binding FooterMenuItems}"
+                                         SelectedItem="{Binding SelectedFooterMenuItem}" />
                     </Grid>
                 </Border>
             </ContentPage>
