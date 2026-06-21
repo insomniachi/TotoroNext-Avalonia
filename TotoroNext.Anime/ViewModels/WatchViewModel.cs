@@ -67,7 +67,7 @@ public sealed partial class WatchViewModel(
     [ObservableProperty] public partial bool IsEpisodesLoading { get; set; } = true;
 
     [ObservableProperty] public partial bool AutoPlayNextEpisode { get; set; }
-    
+
     [ObservableProperty] public partial bool IsFetchingStream { get; set; }
 
     public void Dispose()
@@ -160,7 +160,7 @@ public sealed partial class WatchViewModel(
 
     public IEnumerable<KeyBinding> GetKeyBindings()
     {
-        yield return new KeyBinding()
+        yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.F5),
             Command = new AsyncRelayCommand(async () =>
@@ -173,7 +173,7 @@ public sealed partial class WatchViewModel(
                 await Play(SelectedSource);
             })
         };
-        
+
         if (MediaPlayer is not IEmbeddedVlcMediaPlayer embeddedPlayer)
         {
             yield break;
@@ -342,7 +342,7 @@ public sealed partial class WatchViewModel(
         var segments = await GetMediaSegments(source, SelectedEpisode);
 
         RxSchedulers.MainThreadScheduler.Schedule(() => IsFetchingStream = false);
-        
+
         var metadata = new MediaMetadata(title, source.Headers, segments, source.Subtitle);
         _media = new Media(source.Url, metadata);
 
@@ -361,7 +361,7 @@ public sealed partial class WatchViewModel(
             return null;
         }
 
-        if ((int)SelectedEpisode.Number == Anime.TotalEpisodes)
+        if ((int)SelectedEpisode.Number == Anime.TotalEpisodes && Anime.Tracking?.Score is > 0)
         {
             messenger.Send(new NavigateToKeyDialogMessage
             {
@@ -471,7 +471,7 @@ public sealed partial class WatchViewModel(
         {
             return;
         }
-        
+
         if (relations.FindRelation(Anime!) is { } relation &&
             infos.Count > 0 &&
             episodes.Count(x => x.Number > 0) != infos.Count)
