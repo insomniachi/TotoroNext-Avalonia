@@ -38,7 +38,7 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
         _indexer = indexerFactory.CreateDefault()!;
         _torrentClient = torrentClientFactory.CreateDefault()!;
         _anime = param.Anime;
-        Title = param.Anime.Title;
+        Title = param.Anime.RomajiTitle;
 
         _torrentsCache
             .Connect()
