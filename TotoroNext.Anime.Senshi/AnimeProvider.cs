@@ -7,7 +7,7 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Senshi;
 
-public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider
+public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider, IDownloadableAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -59,7 +59,8 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
                 {
                     [HeaderNames.Referer] = client.BaseUrl,
                     [HeaderNames.UserAgent] = Http.UserAgent
-                }
+                },
+                ContentType = "ts"
             };
         }
     }
@@ -68,4 +69,6 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
     {
         return new FlurlClient(httpClientFactory.CreateClient("Senshi"));
     }
+
+    public IAnimeDownloader CreateDownloader() => new FfmpegDownloader();
 }

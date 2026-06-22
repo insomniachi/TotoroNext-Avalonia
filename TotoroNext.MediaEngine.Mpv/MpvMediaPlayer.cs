@@ -45,7 +45,8 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
                 $"--title={media.Metadata.Title}",
                 $"--force-media-title={media.Metadata.Title}",
                 $"--input-ipc-server={pipePath}",
-                $"--start={startPosition.TotalSeconds}"
+                $"--start={startPosition.TotalSeconds}",
+                "--log-file=mpv.log"
             }
         };
         

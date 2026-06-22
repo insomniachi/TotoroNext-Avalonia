@@ -1,7 +1,7 @@
 using System.IO.Compression;
-using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Flurl.Http;
 
 namespace TotoroNext.MediaEngine.Abstractions;
 
@@ -10,15 +10,7 @@ public static class FfBinaries
     public static async Task EnsureExists()
     {
         var files = Directory.GetFiles(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
-
-        if (files.Any(x => x.Contains("ffprob")))
-        {
-            return;
-        }
-
-        using var client = new HttpClient();
-
-        var release = await client.GetFromJsonAsync<FfBinaryRelease>("https://ffbinaries.com/api/v1/version/latest");
+        var release = await "https://ffbinaries.com/api/v1/version/latest".GetJsonAsync<FfBinaryRelease>();
 
         if (release is null)
         {
@@ -44,11 +36,25 @@ public static class FfBinaries
             return;
         }
 
-        var stream = await client.GetStreamAsync(bin.FfProb);
-        ZipFile.ExtractToDirectory(stream, ".", true);
+        if (!files.Any(x => x.Contains("ffprob")))
+        {
+            await Download(bin.FfProb);
+        }
+        
+        if (!files.Any(x => x.Contains("ffmpeg")))
+        {
+            await Download(bin.FfMpeg);
+        }
+    }
+
+    private static async Task Download(string binary)
+    {
+        var stream = await binary.GetStreamAsync();
+        await ZipFile.ExtractToDirectoryAsync(stream, ".", true);
     }
 }
 
+[Serializable]
 public class FfBinaryRelease
 {
     [JsonPropertyName("version")] public string Version { get; set; } = "";

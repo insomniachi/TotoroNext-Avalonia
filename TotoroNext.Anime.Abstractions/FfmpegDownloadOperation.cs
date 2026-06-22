@@ -1,8 +1,5 @@
-﻿using System.Xml.Linq;
-using FFMpegCore;
-using Flurl.Http;
+﻿using System.Diagnostics;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions;
 
@@ -10,32 +7,59 @@ public class FfmpegDownloader : BaseDownloader
 {
     protected override IDownloadOperation CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
     {
-        var input = server.Url;
-        var output = Path.Combine(FileHelper.GetPath("Downloads"), filepath);
-        var operation = new FfmpegDownloadOperation(input, output)
+        var operation = new FfmpegDownloadOperation(server.Url, server.Headers, filepath)
         {
-            Link = input,
-            FileName = output
+            Link = server.Url,
+            FileName = filepath
         };
         return operation;
     }
 }
 
-public class FfmpegDownloadOperation(Uri input, string output) : BaseDownloadOperation
+public class FfmpegDownloadOperation(Uri input, IDictionary<string, string> headers, string output) : BaseDownloadOperation
 {
-    private Action? _cancel;
-
     public override async Task StartAsync()
     {
-        TotalBytes = await EstimateTotalBytesAsync(input);
-        await FFMpegArguments
-              .FromUrlInput(input)
-              .OutputToFile(output, true, options => options
-                                                     .WithVideoCodec("copy")
-                                                     .WithAudioCodec("copy"))
-              .NotifyOnOutput(ParseProgress)
-              .CancellableThrough(out _cancel, 100)
-              .ProcessAsynchronously();
+        try
+        {
+            var dir = Path.GetDirectoryName(output);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir!);
+            }
+
+            var headerString = string.Join(@"\r\n", headers.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+            var args = $"-headers \"{headerString}\" -i \"{input}\" -c copy \"{output}\"";
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = "ffmpeg.exe",
+                Arguments = args,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            var proc = new Process { StartInfo = psi };
+            proc.OutputDataReceived += (_, e) => { ParseProgress(e.Data); };
+            proc.ErrorDataReceived += (_, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                {
+                    Console.WriteLine(e.Data);
+                }
+            };
+
+            proc.Start();
+            proc.BeginOutputReadLine();
+            proc.BeginErrorReadLine();
+            await proc.WaitForExitAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private void ParseProgress(string? line)
@@ -71,37 +95,21 @@ public class FfmpegDownloadOperation(Uri input, string output) : BaseDownloadOpe
     }
 
 
-    private static async Task<long> EstimateTotalBytesAsync(Uri mpdUrl)
-    {
-        var xml = await mpdUrl.GetStringAsync();
-        var doc = XDocument.Parse(xml);
-
-        long totalBytes = 0;
-
-        var segments = doc.Descendants()
-                          .Where(e => e.Name.LocalName == "SegmentURL")
-                          .Select(e => e.Attribute("media")?.Value)
-                          .Where(v => !string.IsNullOrEmpty(v));
-
-        foreach (var media in segments)
-        {
-            var segmentUrl = new Uri(mpdUrl, media).ToString();
-            var resp = await segmentUrl.GetAsync(HttpCompletionOption.ResponseHeadersRead);
-            if (!resp.Headers.TryGetFirst("Content-Length", out var length))
-            {
-                continue;
-            }
-
-            if (long.TryParse(length, out var size))
-            {
-                totalBytes += size;
-            }
-
-            totalBytes += size;
-        }
-
-        return totalBytes;
-    }
+    // private async Task<Uri> GetFirstStream()
+    // {
+    //     var playlist = await input.WithHeaders(headers).GetStringAsync();
+    //     var lines = playlist.Split('\n')
+    //                         .Where(l => !string.IsNullOrWhiteSpace(l) && !l.StartsWith("#"))
+    //                         .ToList();
+    //
+    //     if (lines.Count == 0)
+    //     {
+    //         throw new InvalidOperationException("No streams found in master playlist.");
+    //     }
+    //
+    //     var firstStream = lines[0].Trim();
+    //     return new Uri(input, firstStream);
+    // }
 
 
     protected override void TogglePauseResumeImpl()
@@ -111,6 +119,6 @@ public class FfmpegDownloadOperation(Uri input, string output) : BaseDownloadOpe
 
     protected override void CancelImpl()
     {
-        _cancel?.Invoke();
+        throw new NotSupportedException("Cancel is not supported for ffmpeg downloads.");
     }
 }

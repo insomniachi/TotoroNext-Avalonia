@@ -18,7 +18,7 @@ public class Module : IModule<Settings>
         HeroImage = ResourceHelper.GetResource("animeonsen.jpg"),
         Description =
             "Watch anime, always up to date and in high quality, with multiple sub direct from Japan The God of High School, Attack on Titan and more!",
-        Components = [ComponentTypes.AnimeProvider],
+        Components = [ComponentTypes.AnimeProvider, ComponentTypes.AnimeDownloader],
         SettingViewModel = typeof(SettingsViewModel)
     };
 
