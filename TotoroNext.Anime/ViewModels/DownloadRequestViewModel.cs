@@ -1,6 +1,5 @@
 ﻿using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
 using TotoroNext.Anime.Abstractions;
@@ -16,8 +15,8 @@ namespace TotoroNext.Anime.ViewModels;
 public partial class DownloadRequestViewModel(
     AnimeModel anime,
     IFactory<IAnimeProvider, Guid> providerFactory,
-    IMessenger messenger,
-    IEnumerable<Descriptor> descriptors) : ObservableObject, IInitializable, IDialogViewModel
+    IEnumerable<Descriptor> descriptors,
+    IDownloadManager downloadManager) : ObservableObject, IInitializable, IDialogViewModel
 {
     private IAnimeProvider? _provider;
 
@@ -36,14 +35,19 @@ public partial class DownloadRequestViewModel(
         [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider) && x.Components.Contains(ComponentTypes.AnimeDownloader))];
 
 
-    public Task Handle(DialogResult result)
+    public async Task Handle(DialogResult result)
     {
         if (result != DialogResult.OK || SelectedResult is null || _provider is null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        messenger.Send(new DownloadRequest
+        if (_provider is not IDownloadableAnimeProvider provider)
+        {
+            return;
+        }
+
+        var request = new DownloadRequest
         {
             Anime = anime,
             Provider = _provider,
@@ -53,9 +57,13 @@ public partial class DownloadRequestViewModel(
             SaveFolder = SaveFolder,
             FilenameFormat = FilenameFormat,
             EpisodeOffset = EpisodeOffset
-        });
-
-        return Task.CompletedTask;
+        };
+        
+        var downloader = provider.CreateDownloader();
+        await foreach (var operation in downloader.Download(request))
+        {
+            downloadManager.AddDownload(operation);
+        }
     }
 
     public void Initialize()
@@ -86,6 +94,7 @@ public partial class DownloadRequestViewModel(
             .Skip(1)
             .Where(x => x is { Length: > 2 })
             .Where(_ => ProviderId.HasValue)
+            .Throttle(TimeSpan.FromSeconds(1))
             .Select(term =>
             {
                 var provider = providerFactory.Create(ProviderId!.Value);

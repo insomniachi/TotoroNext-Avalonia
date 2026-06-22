@@ -24,8 +24,9 @@ using Velopack.Sources;
 
 namespace TotoroNext.ViewModels;
 
-public partial class SplashViewModel(IHostBuilder hostBuilder,
-                                     DataTemplates dataTemplates) : ObservableObject, IDialogContext
+public partial class SplashViewModel(
+    IHostBuilder hostBuilder,
+    DataTemplates dataTemplates) : ObservableObject, IDialogContext
 {
     [ObservableProperty] public partial string PrimaryText { get; set; } = "";
     [ObservableProperty] public partial string SecondaryText { get; set; } = "";

@@ -11,11 +11,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="FFMpegCore"/>
         <PackageReference Include="GraphQL.Client"/>
         <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft"/>
         <PackageReference Include="HtmlAgilityPack"/>
         <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore"/>
         <PackageReference Include="MonoTorrent"/>
+        <PackageReference Include="Downloader"/>
     </ItemGroup>
 
 </Project>

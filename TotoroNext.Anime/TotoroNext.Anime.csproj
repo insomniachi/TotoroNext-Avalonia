@@ -11,7 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Downloader"/>
         <PackageReference Include="ZstdSharp.Port"/>
     </ItemGroup>
 

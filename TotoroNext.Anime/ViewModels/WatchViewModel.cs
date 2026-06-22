@@ -368,7 +368,7 @@ public sealed partial class WatchViewModel(
                 Title = Anime.Title,
                 Key = $"tracking/{Anime.ServiceName}",
                 Data = Anime
-            });
+            });  
             return null;
         }
 
