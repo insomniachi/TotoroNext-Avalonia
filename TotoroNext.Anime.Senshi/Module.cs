@@ -11,7 +11,7 @@ public class Module : IModule
     {
         Id = new Guid("c6066fda-8e30-4545-9599-8e6c3e917312"),
         Name = "Senshi",
-        Components = [ComponentTypes.AnimeProvider, ComponentTypes.AnimeDownloader],
+        Components = [ComponentTypes.AnimeProvider],
         HeroImage = ResourceHelper.GetResource("senshi.jpg")
     };
 
