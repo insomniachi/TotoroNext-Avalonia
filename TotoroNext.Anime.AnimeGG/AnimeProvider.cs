@@ -12,7 +12,7 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.AnimeGG;
 
-public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider
+public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider, IDownloadableAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -113,7 +113,8 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
                     Headers =
                     {
                         { HeaderNames.Referer, embed }
-                    }
+                    },
+                    ContentType = "mp4"
                 };
             }
         }
@@ -129,6 +130,8 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
     {
         return new FlurlClient(httpClientFactory.CreateClient("animegg"));
     }
+
+    public IAnimeDownloader CreateDownloader() => new StandardDownloader();
 }
 
 [Serializable]

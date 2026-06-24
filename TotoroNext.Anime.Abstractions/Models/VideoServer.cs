@@ -13,6 +13,7 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
     public Dictionary<string, string> Headers { get; init; } = [];
     public string? Subtitle { get; set; }
     public SkipData? SkipData { get; set; }
+    public bool IsDefault { get; set; }
 
     public async IAsyncEnumerable<VideoSource> Extract([EnumeratorCancellation] CancellationToken ct)
     {

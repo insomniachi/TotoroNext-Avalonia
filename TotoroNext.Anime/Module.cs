@@ -55,7 +55,6 @@ public class Module : IModule
                 .AddSelectionUserInteraction<SelectAnimeResult, AnimeModel>();
 
         services.AddHostedService(sp => sp.GetRequiredService<ITrackingUpdater>())
-                .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>())
-                .AddHostedService<DownloadService>();
+                .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>());
     }
 }

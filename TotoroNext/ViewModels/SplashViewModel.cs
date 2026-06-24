@@ -24,8 +24,9 @@ using Velopack.Sources;
 
 namespace TotoroNext.ViewModels;
 
-public partial class SplashViewModel(IHostBuilder hostBuilder,
-                                     DataTemplates dataTemplates) : ObservableObject, IDialogContext
+public partial class SplashViewModel(
+    IHostBuilder hostBuilder,
+    DataTemplates dataTemplates) : ObservableObject, IDialogContext
 {
     [ObservableProperty] public partial string PrimaryText { get; set; } = "";
     [ObservableProperty] public partial string SecondaryText { get; set; } = "";
@@ -289,6 +290,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.AnimeGG.Module();
         yield return new Anime.TokyoInsider.Module();
         yield return new Anime.Senshi.Module();
+        yield return new Anime.Anikoto.Module();
 
         // Misc
         yield return new Anime.Aniskip.Module();

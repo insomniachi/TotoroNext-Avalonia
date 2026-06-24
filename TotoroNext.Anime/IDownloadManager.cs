@@ -1,9 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using TotoroNext.Anime.Abstractions;
 
 namespace TotoroNext.Anime;
 
 public interface IDownloadManager
 {
-    ReadOnlyObservableCollection<DownloadOperation> Downloads { get; }
-    void AddDownload(DownloadOperation download);
+    ReadOnlyObservableCollection<IDownloadOperation> Downloads { get; }
+    void AddDownload(IDownloadOperation download);
 }

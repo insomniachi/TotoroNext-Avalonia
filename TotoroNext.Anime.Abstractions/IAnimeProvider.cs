@@ -13,6 +13,11 @@ public interface IAnimeProvider
     void UpdateOptions(List<ModuleOptionItem> options) { }
 }
 
+public interface IDownloadableAnimeProvider
+{
+    public IAnimeDownloader CreateDownloader();
+}
+
 public interface IAnimeScheduleProvider
 {
     Task<DateTimeOffset?> GetNextEpisodeAiringTime(string animeId, CancellationToken ct);

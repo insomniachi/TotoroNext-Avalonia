@@ -1,0 +1,17 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="totoro.next/controls"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.Anikoto.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:SettingsViewModel"
+             x:Class="TotoroNext.Anime.Anikoto.Views.SettingsView">
+    <Grid RowDefinitions="Auto,*" RowSpacing="16">
+        <Image Grid.Row="0"
+               Source="avares://TotoroNext.Anime.AnimeOnsen/Assets/animeonsen.jpg"
+               Stretch="UniformToFill"
+               Width="600" />
+        <controls:ModuleOptionsEditor Grid.Row="1" Options="{Binding EditableSettings}" />
+    </Grid>
+</ContentPage>

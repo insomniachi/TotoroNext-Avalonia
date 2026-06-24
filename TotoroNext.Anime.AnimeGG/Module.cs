@@ -12,7 +12,7 @@ public class Module : IModule
         Name = "Anime GG",
         Id = new Guid("9cc96db6-27b2-41a7-b0ae-c2cb1c8a6dc4"),
         Description = "Anime provider for Anime GG",
-        Components = [ComponentTypes.AnimeProvider],
+        Components = [ComponentTypes.AnimeProvider, ComponentTypes.AnimeDownloader],
         HeroImage = ResourceHelper.GetResource("animegg.jpg")
     };
 

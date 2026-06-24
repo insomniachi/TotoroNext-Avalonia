@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Downloader;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -10,7 +11,7 @@ namespace TotoroNext.Anime.AnimeOnsen;
 
 public class AnimeProvider(
     IModuleSettings<Settings> settings,
-    IHttpClientFactory httpClientFactory) : IAnimeProvider
+    IHttpClientFactory httpClientFactory) : IAnimeProvider, IDownloadableAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -79,8 +80,10 @@ public class AnimeProvider(
             Subtitle = response.Subtitles.Get(settings.Value.SubtitleLanguage),
             Headers =
             {
-                [HeaderNames.Referer] = "https://www.animeonsen.xyz/"
+                [HeaderNames.Referer] = "https://www.animeonsen.xyz/",
+                [HttpHeaderNames.UserAgent] = Http.UserAgent
             },
+            ContentType = "mp4",
             SkipData = CovertSkipData(skipData)
         };
     }
@@ -128,4 +131,6 @@ public class AnimeProvider(
 
         return data;
     }
+
+    public IAnimeDownloader CreateDownloader() => new FfmpegDownloader();
 }
