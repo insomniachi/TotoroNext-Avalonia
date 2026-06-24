@@ -124,7 +124,17 @@ public sealed partial class WatchViewModel(
         this.WhenAnyValue(x => x.Servers)
             .Where(x => x is { Count: > 0 })
             .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .Subscribe(x => SelectedServer = x.First());
+            .Subscribe(x =>
+            {
+                if (x.FirstOrDefault(s => s.IsDefault) is { } defaultServer)
+                {
+                    SelectedServer = defaultServer;
+                }
+                else
+                {
+                    SelectedServer = x.First();
+                }
+            });
 
         this.WhenAnyValue(x => x.SelectedServer)
             .WhereNotNull()
