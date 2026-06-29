@@ -11,9 +11,11 @@ namespace TotoroNext.Anime.AnimeOnsen;
 
 public class Module : IModule<Settings>
 {
+    public static readonly Guid Id = new("c37d57cf-5090-4b48-977d-dbaa78545433");
+    
     public Descriptor Descriptor { get; } = new()
     {
-        Id = new Guid("c37d57cf-5090-4b48-977d-dbaa78545433"),
+        Id = Id,
         Name = "Anime Onsen",
         HeroImage = ResourceHelper.GetResource("animeonsen.jpg"),
         Description =
@@ -24,10 +26,10 @@ public class Module : IModule<Settings>
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddHttpClient("api", client => { client.BaseAddress = new Uri("https://api.animeonsen.xyz/v4/"); })
+        services.AddHttpClient($"{Id}-api", client => { client.BaseAddress = new Uri("https://api.animeonsen.xyz/v4/"); })
                 .AddHttpMessageHandler<AnimeOnsenApiInterceptor>();
         
-        services.AddHttpClient("search", client => { client.BaseAddress = new Uri("https://search.animeonsen.xyz"); })
+        services.AddHttpClient($"{Id}-search", client => { client.BaseAddress = new Uri("https://search.animeonsen.xyz"); })
                 .AddHttpMessageHandler<AnimeOnsenSearchInterceptor>();
 
         services.AddTransient<AnimeOnsenApiInterceptor>()

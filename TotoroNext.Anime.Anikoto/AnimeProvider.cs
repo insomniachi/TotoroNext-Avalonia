@@ -142,7 +142,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory,
 
     private FlurlClient CreateClient(string name)
     {
-        return new FlurlClient(httpClientFactory.CreateClient(name));
+        return new FlurlClient(httpClientFactory.CreateClient($"{Module.Id}-{name}"));
     }
 
     [GeneratedRegex("data-id=\"([^\"]+)\"", RegexOptions.IgnoreCase | RegexOptions.Compiled)]

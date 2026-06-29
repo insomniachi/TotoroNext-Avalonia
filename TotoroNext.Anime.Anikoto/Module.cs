@@ -10,10 +10,12 @@ namespace TotoroNext.Anime.Anikoto;
 
 public class Module : IModule<Settings>
 {
+    public static readonly Guid Id = new("56244ee0-4460-40b7-84cf-af3819d2429a");
+    
     public Descriptor Descriptor { get; } = new()
     {
         Name = "Anikoto",
-        Id = new Guid("56244ee0-4460-40b7-84cf-af3819d2429a"),
+        Id = Id,
         Components = [ComponentTypes.AnimeProvider],
         HeroImage = ResourceHelper.GetResource("anikoto.png"),
         SettingViewModel = typeof(SettingsViewModel)
@@ -24,7 +26,7 @@ public class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
-        services.AddHttpClient("api", client =>
+        services.AddHttpClient($"{Id}-api",client =>
         {
             client.BaseAddress = new Uri(AnimeProvider.BaseUrl);
             client.DefaultRequestHeaders.Referrer = client.BaseAddress;

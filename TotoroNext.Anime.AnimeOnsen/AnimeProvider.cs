@@ -100,7 +100,7 @@ public class AnimeProvider(
 
     private FlurlClient CreateClient(string name)
     {
-        return new FlurlClient(httpClientFactory.CreateClient(name));
+        return new FlurlClient(httpClientFactory.CreateClient($"{Module.Id}-{name}"));
     }
 
     private static SkipData? CovertSkipData(AnimeOnsenSkipData? skipData)
