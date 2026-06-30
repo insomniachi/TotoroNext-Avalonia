@@ -20,8 +20,8 @@ public partial class WatchView : ContentPage
         this.GetObservable(DataContextProperty)
             .Select(x => x as WatchViewModel)
             .WhereNotNull()
-            .Where(x => x.MediaPlayer is IEmbeddedVlcMediaPlayer)
-            .Select(vm => CreateEmbeddedVideoView(vm.MediaPlayer))
+            .Where(x => x.Context.MediaPlayer is IEmbeddedVlcMediaPlayer)
+            .Select(vm => CreateEmbeddedVideoView(vm.Context.MediaPlayer))
             .WhereNotNull()
             .Subscribe(view => MainGrid.Children.Add(view));
     }

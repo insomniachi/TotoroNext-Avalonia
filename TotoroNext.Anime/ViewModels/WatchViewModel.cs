@@ -33,12 +33,11 @@ public sealed partial class WatchViewModel(
                                                   IDisposable,
                                                   IKeyBindingsProvider
 {
-    private TimeSpan _currentPosition;
     private TimeSpan _duration;
     private bool _isCancelled;
     private Media? _media;
 
-    public IMediaPlayer? MediaPlayer { get; } = mediaPlayerFactory.CreateDefault();
+    public TrackingMediaPlayerContext Context { get; } = new(mediaPlayerFactory.CreateDefault(), messenger);
 
     [ObservableProperty] public partial SearchResult? ProviderResult { get; set; }
 
@@ -74,6 +73,7 @@ public sealed partial class WatchViewModel(
     {
         messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
         _isCancelled = true;
+        Context.Dispose();
     }
 
     public void Initialize()
@@ -84,6 +84,8 @@ public sealed partial class WatchViewModel(
         {
             return;
         }
+
+        Context.Anime = Anime;
 
         this.WhenAnyValue(x => x.Anime)
             .WhereNotNull()
@@ -114,6 +116,7 @@ public sealed partial class WatchViewModel(
             .Do(_ =>
             {
                 Servers = [];
+                Context.SelectedEpisode = SelectedEpisode;
                 IsFetchingStream = true;
             })
             .Select(ep => Observable.FromAsync(ep.GetServers))
@@ -165,6 +168,7 @@ public sealed partial class WatchViewModel(
             .Subscribe();
 
         InitializePublishers();
+        Context.Initialize();
         InitializeListeners();
     }
 
@@ -175,7 +179,7 @@ public sealed partial class WatchViewModel(
             Gesture = new KeyGesture(Key.F5),
             Command = new AsyncRelayCommand(async () =>
             {
-                if (_currentPosition != TimeSpan.Zero || SelectedSource is null)
+                if (Context.Position != TimeSpan.Zero || SelectedSource is null)
                 {
                     return;
                 }
@@ -184,7 +188,7 @@ public sealed partial class WatchViewModel(
             })
         };
 
-        if (MediaPlayer is not IEmbeddedVlcMediaPlayer embeddedPlayer)
+        if (Context.MediaPlayer is not IEmbeddedVlcMediaPlayer embeddedPlayer)
         {
             yield break;
         }
@@ -224,12 +228,12 @@ public sealed partial class WatchViewModel(
         yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Right),
-            Command = new RelayCommand(() => embeddedPlayer.SeekTo(_currentPosition + TimeSpan.FromSeconds(10)))
+            Command = new RelayCommand(() => embeddedPlayer.SeekTo(Context.Position + TimeSpan.FromSeconds(10)))
         };
         yield return new KeyBinding
         {
             Gesture = new KeyGesture(Key.Left),
-            Command = new RelayCommand(() => embeddedPlayer.SeekTo(_currentPosition - TimeSpan.FromSeconds(10)))
+            Command = new RelayCommand(() => embeddedPlayer.SeekTo(Context.Position - TimeSpan.FromSeconds(10)))
         };
     }
 
@@ -254,7 +258,7 @@ public sealed partial class WatchViewModel(
         {
             SkipMethod.Always => new ValueTuple<MediaSegment, MessageBoxResult>(segment,
                                                                                 await dialogService.AskSkip(segment.Type.ToString(),
-                                                                                 MessageBoxResult.Yes)),
+                                                                                     MessageBoxResult.Yes)),
             SkipMethod.Never => new ValueTuple<MediaSegment, MessageBoxResult>(segment, MessageBoxResult.No),
             _ => new ValueTuple<MediaSegment, MessageBoxResult>(segment, await dialogService.AskSkip(segment.Type.ToString()))
         };
@@ -262,68 +266,30 @@ public sealed partial class WatchViewModel(
 
     private void InitializePublishers()
     {
-        if (MediaPlayer is null)
+        if (Context.MediaPlayer is null)
         {
             return;
         }
 
-        MediaPlayer.StateChanged
-                   .Subscribe(state =>
-                   {
-                       messenger.Send(new PlaybackState
-                       {
-                           Anime = Anime!,
-                           Episode = SelectedEpisode!,
-                           Position = _currentPosition,
-                           Duration = _duration,
-                           IsPaused = state is MediaPlayerState.Paused
-                       });
-                   });
+        Context.MediaPlayer
+               .PlaybackStopped
+               .Do(_ => { CurrentSegment = null; })
+               .Where(_ => SelectedEpisode is { IsCompleted: true } && Episodes is not null)
+               .ObserveOn(RxSchedulers.MainThreadScheduler)
+               .SelectMany(_ => AskIfContinueWatching())
+               .WhereNotNull()
+               .ObserveOn(RxSchedulers.MainThreadScheduler)
+               .Subscribe(nexEp => SelectedEpisode = nexEp);
 
-        MediaPlayer
-            .PositionChanged
-            .Where(_ => Anime is not null && SelectedEpisode is not null)
-            .Subscribe(position =>
-            {
-                _currentPosition = position;
-                messenger.Send(new PlaybackState
-                {
-                    Anime = Anime!,
-                    Episode = SelectedEpisode!,
-                    Position = position,
-                    Duration = _duration
-                });
-            });
-
-        MediaPlayer
-            .DurationChanged
-            .Subscribe(duration => _duration = duration);
-
-        MediaPlayer
-            .PlaybackStopped
-            .Do(_ =>
-            {
-                messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
-                CurrentSegment = null;
-                _currentPosition = TimeSpan.Zero;
-                _duration = TimeSpan.Zero;
-            })
-            .Where(_ => SelectedEpisode is { IsCompleted: true } && Episodes is not null)
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .SelectMany(_ => AskIfContinueWatching())
-            .WhereNotNull()
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .Subscribe(nexEp => SelectedEpisode = nexEp);
-
-        if (MediaPlayer is ISeekable)
+        if (Context.MediaPlayer is ISeekable)
         {
-            MediaPlayer
-                .PositionChanged
-                .Where(_ => _media is not null)
-                .Select(position => (_media!.Metadata.MedaSections ?? []).FirstOrDefault(item => position > item.Start && position < item.End))
-                .WhereNotNull()
-                .DistinctUntilChanged()
-                .Subscribe(segment => CurrentSegment = segment);
+            Context.MediaPlayer
+                   .PositionChanged
+                   .Where(_ => _media is not null)
+                   .Select(position => (_media!.Metadata.MedaSections ?? []).FirstOrDefault(item => position > item.Start && position < item.End))
+                   .WhereNotNull()
+                   .DistinctUntilChanged()
+                   .Subscribe(segment => CurrentSegment = segment);
         }
     }
 
@@ -339,7 +305,7 @@ public sealed partial class WatchViewModel(
 
     private async Task Play(VideoSource source)
     {
-        if (SelectedEpisode is null || MediaPlayer is null)
+        if (SelectedEpisode is null || Context.MediaPlayer is null)
         {
             return;
         }
@@ -361,7 +327,7 @@ public sealed partial class WatchViewModel(
             return;
         }
 
-        MediaPlayer.Play(_media, SelectedEpisode.StartPosition);
+        Context.Play(_media, SelectedEpisode.StartPosition);
     }
 
     private async Task<Episode?> AskIfContinueWatching()
@@ -378,7 +344,7 @@ public sealed partial class WatchViewModel(
                 Title = Anime.Title,
                 Key = $"tracking/{Anime.ServiceName}",
                 Data = Anime
-            });  
+            });
             return null;
         }
 
@@ -530,7 +496,7 @@ public sealed partial class WatchViewModel(
     {
         var (segment, result) = tuple;
 
-        if (MediaPlayer is not ISeekable seekable ||
+        if (Context.MediaPlayer is not ISeekable seekable ||
             result is not MessageBoxResult.Yes)
         {
             return;

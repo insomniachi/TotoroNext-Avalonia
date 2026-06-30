@@ -1,7 +1,10 @@
 ﻿using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
+using TotoroNext.Anime;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -17,8 +20,12 @@ public partial class ProviderDebuggerViewModel(
     IEnumerable<Descriptor> descriptors,
     IFactory<IAnimeProvider, Guid> providerFactory,
     IFactory<IMediaPlayer, Guid> playerFactory,
+    IFactory<IMetadataService, Guid> metadataFactory,
+    IMessenger messenger,
     SettingsModel settings) : ObservableObject, IInitializable
 {
+    private readonly IMetadataService? _metadataService = metadataFactory.CreateDefault();
+    private AnimeModel? _anime;
     private IAnimeProvider? _provider;
 
     [ObservableProperty] public partial List<Descriptor> AnimeProviders { get; set; } = [];
@@ -117,6 +124,31 @@ public partial class ProviderDebuggerViewModel(
         var metadata = new MediaMetadata(title, source.Headers, Subtitle: source.Subtitle);
         var media = new Media(source.Url, metadata);
         var player = playerFactory.Create(MediaPlayerId.Value);
-        player?.Play(media, SelectedEpisode.StartPosition);
+        if (player is null)
+        {
+            return;
+        }
+
+        var context = new TrackingMediaPlayerContext(player, messenger);
+        if (_anime is not null)
+        {
+            context.Anime = _anime;
+            context.SelectedEpisode = SelectedEpisode;
+            context.Initialize();
+        }
+
+        context.Play(media, SelectedEpisode.StartPosition);
+    }
+
+    partial void OnSelectedResultChanged(SearchResult? value)
+    {
+        if (value is null || _metadataService is null)
+        {
+            return;
+        }
+
+        _metadataService.SearchAndSelectAsync(value)
+                        .ToObservable()
+                        .Subscribe(anime => _anime = anime);
     }
 }
