@@ -76,6 +76,22 @@
                         </ComboBox>
                     </fac:FASettingsExpander.Footer>
                 </fac:FASettingsExpander>
+                <fac:FASettingsExpander Header="Yt-dlp Path"
+                                        IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.FilePath}}">
+                    <fac:FASettingsExpander.Footer>
+                        <u:PathPicker
+                            Title="Browse"
+                            AllowMultiple="False"
+                            SelectedPathsText="{Binding Settings.YtdlpPath, FallbackValue={x:Null}}"
+                            UsePickerType="OpenFile"
+                            HorizontalAlignment="Stretch"
+                            MinWidth="300">
+                            <u:PathPicker.Styles>
+                                <semi:SemiTheme Locale="en-US" />
+                            </u:PathPicker.Styles>
+                        </u:PathPicker>
+                    </fac:FASettingsExpander.Footer>
+                </fac:FASettingsExpander>
                 <fac:FASettingsExpander Header="Tracking"
                                         Description="Default tracking service"
                                         IconSource="{ext:PathIconSource Key={x:Static local:CommonIcons.Tracking}}">

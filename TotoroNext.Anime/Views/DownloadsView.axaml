@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
              xmlns:c="clr-namespace:TotoroNext.Module.Converters;assembly=TotoroNext.Module"
+             xmlns:ac="clr-namespace:TotoroNext.Anime.Abstractions;assembly=TotoroNext.Anime.Abstractions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:DownloadsViewModel"
              x:Class="TotoroNext.Anime.Views.DownloadsView">
@@ -30,6 +31,7 @@
                                        Classes.cancelled="{Binding IsCancelled}" />
                             <ProgressBar Value="{Binding Progress}"
                                          IsIndeterminate="{Binding !DownloadStarted}"
+                                         ShowProgressText="True"
                                          IsVisible="{Binding !IsCompleted}">
                                 <ProgressBar.Transitions>
                                     <Transitions>
@@ -38,7 +40,8 @@
                                 </ProgressBar.Transitions>
                             </ProgressBar>
                             <Grid ColumnDefinitions="*, Auto" Margin="0 8 0 0" IsVisible="{Binding !IsCompleted}">
-                                <TextBlock>
+                                <TextBlock
+                                    IsVisible="{Binding Path=., Converter={x:Static ac:Converters.IsNotYtdlpDownloadOperationConverter}}">
                                     <Run
                                         Text="{Binding Speed, Converter={x:Static c:Converters.DownloadSpeedConverter}}" />
                                     <Run Text="-" />
@@ -48,7 +51,8 @@
                                     <Run
                                         Text="{Binding TotalBytes, Converter={x:Static c:Converters.ByteToStringConverter}}" />
                                 </TextBlock>
-                                <StackPanel Orientation="Horizontal" Spacing="4" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" Spacing="4" Grid.Column="1"
+                                            IsVisible="{Binding Path=., Converter={x:Static ac:Converters.IsNotYtdlpDownloadOperationConverter}}">
                                     <Button Command="{Binding TogglePauseResumeCommand}"
                                             Classes.paused="{Binding IsPaused}"
                                             Classes.downloading="{Binding !IsPaused}" />

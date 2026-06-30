@@ -19,7 +19,8 @@ public class Module : IModule
                 .AddTransient<IAnimeMusicService, AnimeMusicService>()
                 .AddSingleton<IAnimeRelations, AnimeRelations>()
                 .AddSingleton<IDownloadManager, DownloadManager>()
-                .AddDebrid();
+                .AddDebrid()
+                .AddDownloaders();
 
         // initializers
         services.AddTransient<IInitializer, AnimeRelationsParser>()

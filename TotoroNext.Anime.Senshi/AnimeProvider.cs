@@ -1,13 +1,16 @@
 ﻿using System.Runtime.CompilerServices;
 using Flurl;
 using Flurl.Http;
+using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Senshi;
 
-public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider, IDownloadableAnimeProvider
+public class AnimeProvider(
+    IHttpClientFactory httpClientFactory,
+    [FromKeyedServices(DownloaderTypes.Ytdlp)] IAnimeDownloader downloader) : IAnimeProvider, IDownloadableAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -49,7 +52,7 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
     {
         using var client = CreateClient();
         var servers = await client.Request("episode-embeds", animeId, episodeId)
-                            .GetJsonAsync<List<SenshiStream>>(cancellationToken: ct);
+                                  .GetJsonAsync<List<SenshiStream>>(cancellationToken: ct);
 
         foreach (var server in servers)
         {
@@ -65,10 +68,10 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvide
         }
     }
 
+    public IAnimeDownloader GetDownloader() => downloader;
+
     private FlurlClient CreateClient()
     {
         return new FlurlClient(httpClientFactory.CreateClient("Senshi"));
     }
-
-    public IAnimeDownloader CreateDownloader() => new FfmpegDownloader();
 }

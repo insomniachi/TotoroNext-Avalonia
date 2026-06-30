@@ -59,7 +59,7 @@ public partial class DownloadRequestViewModel(
             EpisodeOffset = EpisodeOffset
         };
         
-        var downloader = provider.CreateDownloader();
+        var downloader = provider.GetDownloader();
         await foreach (var operation in downloader.Download(request))
         {
             downloadManager.AddDownload(operation);

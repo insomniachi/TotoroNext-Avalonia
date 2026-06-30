@@ -15,7 +15,7 @@ public interface IAnimeProvider
 
 public interface IDownloadableAnimeProvider
 {
-    public IAnimeDownloader CreateDownloader();
+    public IAnimeDownloader GetDownloader();
 }
 
 public interface IAnimeScheduleProvider

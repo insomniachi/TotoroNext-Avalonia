@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Downloader;
 using Flurl.Http;
+using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
@@ -11,6 +12,7 @@ namespace TotoroNext.Anime.AnimeOnsen;
 
 public class AnimeProvider(
     IModuleSettings<Settings> settings,
+    [FromKeyedServices(DownloaderTypes.Ytdlp)] IAnimeDownloader downloader,
     IHttpClientFactory httpClientFactory) : IAnimeProvider, IDownloadableAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
@@ -132,5 +134,5 @@ public class AnimeProvider(
         return data;
     }
 
-    public IAnimeDownloader CreateDownloader() => new FfmpegDownloader();
+    public IAnimeDownloader GetDownloader() => downloader;
 }

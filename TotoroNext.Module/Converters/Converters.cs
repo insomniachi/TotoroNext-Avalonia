@@ -22,13 +22,4 @@ public static class Converters
              : ts.ToString(@"mm\:ss"));
 
     public static readonly IValueConverter IconConverter = new FuncValueConverter<string, PathIcon>(IconRegistry.GetPathIcon!);
-    
-    public static readonly IValueConverter BoolToBackgroundConverter = new FuncValueConverter<bool, IBrush>(isSelected =>
-        isSelected ? new SolidColorBrush(Color.Parse("#1E90FF")) : Brushes.Transparent);
-    
-    public static readonly IValueConverter BoolToOpacityConverter = new FuncValueConverter<bool, double>(isSelected =>
-        isSelected ? 1.0 : 0.7);
-    
-    public static readonly IValueConverter BoolToFontWeightConverter = new FuncValueConverter<bool, FontWeight>(isSelected =>
-        isSelected ? FontWeight.Bold : FontWeight.Normal);
 }

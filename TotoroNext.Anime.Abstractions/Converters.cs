@@ -21,4 +21,7 @@ public static class Converters
                    .Replace("</b>", "")
                    .Replace("<br><br>", Environment.NewLine);
     });
+
+    public static IValueConverter IsNotYtdlpDownloadOperationConverter { get; } =
+        new FuncValueConverter<IDownloadOperation, bool>(op => op is not YtdlpDownloadOperation);
 }

@@ -14,16 +14,34 @@ public abstract class BaseDownloader : IAnimeDownloader
         foreach (var episode in targetEpisodes)
         {
             var servers = await episode.GetServersAsync(CancellationToken.None).ToListAsync();
-            foreach (var server in servers)
+            var defaultServer = servers.FirstOrDefault(x => x.IsDefault);
+
+            if (defaultServer is null)
             {
-                var fileName = CreateFilename(request, episode, server);
-                yield return CreateDownload(request.Anime, episode, server, fileName);
-                break;
+                foreach (var server in servers)
+                {
+                    var fileName = CreateFilename(request, episode, server);
+                    var download = CreateDownload(request.Anime, episode, server, fileName);
+                    if (download is not null)
+                    {
+                        yield return download;
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                var fileName = CreateFilename(request, episode, defaultServer);
+                var download = CreateDownload(request.Anime, episode, defaultServer, fileName);
+                if (download is not null)
+                {
+                    yield return download;
+                }
             }
         }
     }
 
-    protected abstract IDownloadOperation CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath);
+    protected abstract IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath);
 
     private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)
     {

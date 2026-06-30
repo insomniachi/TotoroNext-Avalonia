@@ -19,6 +19,7 @@ public static class CommonIcons
     public const string Downloads = nameof(Downloads);
     public const string Edit = nameof(Edit);
     public const string Ending = nameof(Ending);
+    public const string FilePath = nameof(FilePath);
     public const string Filter = nameof(Filter);
     public const string Fullscreen = nameof(Fullscreen);
     public const string FullscreenExit = nameof(FullscreenExit);

@@ -14,5 +14,11 @@ public static class ServiceCollectionExtensions
                            .AddKeyedTransient<ITorrentStream, NoOpTorrentStreamService>(Guid.Empty)
                            .AddKeyedTransient<ITorrentStream, MonoTorrentStream>(MonoTorrentStream.MonoTorrentStreamId);
         }
+
+        public IServiceCollection AddDownloaders()
+        {
+            return services.AddKeyedTransient<IAnimeDownloader, StandardDownloader>(DownloaderTypes.Http)
+                           .AddKeyedTransient<IAnimeDownloader, YtdlpDownloader>(DownloaderTypes.Ytdlp);
+        }
     }
 }

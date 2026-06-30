@@ -131,7 +131,7 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
         return new FlurlClient(httpClientFactory.CreateClient("animegg"));
     }
 
-    public IAnimeDownloader CreateDownloader() => new StandardDownloader();
+    public IAnimeDownloader GetDownloader() => new StandardDownloader();
 }
 
 [Serializable]

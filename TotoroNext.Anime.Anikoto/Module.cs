@@ -16,7 +16,7 @@ public class Module : IModule<Settings>
     {
         Name = "Anikoto",
         Id = Id,
-        Components = [ComponentTypes.AnimeProvider],
+        Components = [ComponentTypes.AnimeProvider, ComponentTypes.AnimeDownloader],
         HeroImage = ResourceHelper.GetResource("anikoto.png"),
         SettingViewModel = typeof(SettingsViewModel)
     };

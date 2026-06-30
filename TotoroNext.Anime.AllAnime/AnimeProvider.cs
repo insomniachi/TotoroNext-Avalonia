@@ -320,5 +320,5 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         return Encoding.UTF8.GetString(plaintext);
     }
 
-    public IAnimeDownloader CreateDownloader() => new StandardDownloader();
+    public IAnimeDownloader GetDownloader() => new StandardDownloader();
 }
