@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              xmlns:controls="clr-namespace:TotoroNext.MediaEngine.Abstractions.Controls"
              xmlns:conv="using:TotoroNext.Module.Converters"
              xmlns:mconv="using:TotoroNext.MediaEngine.Abstractions"

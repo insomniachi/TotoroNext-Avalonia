@@ -5,7 +5,6 @@
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
              xmlns:mdl="totoro.next/models"
              xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
-             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:AnimeCharactersViewModel"
              x:Class="TotoroNext.Anime.Views.AnimeCharactersView">
