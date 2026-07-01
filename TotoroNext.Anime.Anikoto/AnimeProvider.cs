@@ -9,6 +9,7 @@ using HtmlAgilityPack.CssSelectors.NetCore;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Anikoto;
@@ -143,6 +144,17 @@ public partial class AnimeProvider(
             }
         }
     }
+    
+    public List<ModuleOptionItem> GetOptions()
+    {
+        return settings.Value.ToModuleOptions();
+    }
+
+    public void UpdateOptions(List<ModuleOptionItem> options)
+    {
+        settings.Value.UpdateValues(options);
+    }
+    
 
     public IAnimeDownloader GetDownloader() => downloader;
 

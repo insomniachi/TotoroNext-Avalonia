@@ -30,6 +30,7 @@ public partial class DownloadRequestViewModel(
     [ObservableProperty] public partial string? SaveFolder { get; set; }
     [ObservableProperty] public partial string? FilenameFormat { get; set; }
     [ObservableProperty] public partial int EpisodeOffset { get; set; }
+    [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
 
     public List<Descriptor> Providers { get; } =
         [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider) && x.Components.Contains(ComponentTypes.AnimeDownloader))];
@@ -46,6 +47,8 @@ public partial class DownloadRequestViewModel(
         {
             return;
         }
+        
+        _provider.UpdateOptions(ProviderOptions);
 
         var request = new DownloadRequest
         {
@@ -84,6 +87,7 @@ public partial class DownloadRequestViewModel(
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(results =>
             {
+                ProviderOptions = _provider?.GetOptions() ?? [];
                 var currentResult = SelectedResult;
                 ProviderResults = results;
                 SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult?.Title) ??
