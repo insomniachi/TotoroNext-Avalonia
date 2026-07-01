@@ -131,6 +131,7 @@ public partial class SplashViewModel(
                           [
                               new Anime.Module(),
                               new Anime.Local.Module(),
+                              new Anime.LocalStorage.Module(),
                               new Anime.Anilist.Module(),
                               new Anime.MyAnimeList.Module(),
                               new Torrents.Nyaa.Module(),

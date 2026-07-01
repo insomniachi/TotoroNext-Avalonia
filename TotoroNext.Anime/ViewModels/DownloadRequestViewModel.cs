@@ -27,8 +27,6 @@ public partial class DownloadRequestViewModel(
     [ObservableProperty] public partial bool CanDownload { get; set; }
     [ObservableProperty] public partial int Start { get; set; } = 1;
     [ObservableProperty] public partial int End { get; set; }
-    [ObservableProperty] public partial string? SaveFolder { get; set; }
-    [ObservableProperty] public partial string? FilenameFormat { get; set; }
     [ObservableProperty] public partial int EpisodeOffset { get; set; }
     [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
 
@@ -57,8 +55,6 @@ public partial class DownloadRequestViewModel(
             SearchResult = SelectedResult,
             EpisodeStart = Start,
             EpisodeEnd = End,
-            SaveFolder = SaveFolder,
-            FilenameFormat = FilenameFormat,
             EpisodeOffset = EpisodeOffset
         };
         

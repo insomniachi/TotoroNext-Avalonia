@@ -19,32 +19,6 @@
         </Style>
     </ContentPage.Styles>
     <StackPanel>
-        <fa:FASettingsExpander Header="Folder">
-            <fa:FASettingsExpander.Footer>
-                <u:PathPicker
-                    Title="Browse"
-                    AllowMultiple="False"
-                    SelectedPathsText="{Binding SaveFolder}"
-                    UsePickerType="OpenFolder"
-                    HorizontalAlignment="Stretch"
-                    MinWidth="250">
-                    <u:PathPicker.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </u:PathPicker.Styles>
-                </u:PathPicker>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
-        <fa:FASettingsExpander Header="Filename format"
-                               Description="Use {ep} as placeholders">
-            <fa:FASettingsExpander.Footer>
-                <TextBox Text="{Binding FilenameFormat, Mode=TwoWay}" HorizontalAlignment="Stretch"
-                         Width="250">
-                    <TextBox.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </TextBox.Styles>
-                </TextBox>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
         <fa:FASettingsExpander Header="Episode offset "
                                Description="Set the starting episode number">
             <fa:FASettingsExpander.Footer>
@@ -53,6 +27,17 @@
                         <semi:SemiTheme Locale="en-US" />
                     </u:NumericIntUpDown.Styles>
                 </u:NumericIntUpDown>
+            </fa:FASettingsExpander.Footer>
+        </fa:FASettingsExpander>
+        <fa:FASettingsExpander Header="Episode Range">
+            <fa:FASettingsExpander.Footer>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <StackPanel.Styles>
+                        <semi:SemiTheme Locale="en-US" />
+                    </StackPanel.Styles>
+                    <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}" />
+                    <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}" />
+                </StackPanel>
             </fa:FASettingsExpander.Footer>
         </fa:FASettingsExpander>
         <fa:FASettingsExpander Header="Provider">
@@ -90,17 +75,6 @@
                         <semi:SemiTheme Locale="en-US" />
                     </ComboBox.Styles>
                 </ComboBox>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
-        <fa:FASettingsExpander Header="Episode Range">
-            <fa:FASettingsExpander.Footer>
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <StackPanel.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </StackPanel.Styles>
-                    <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}" />
-                    <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}" />
-                </StackPanel>
             </fa:FASettingsExpander.Footer>
         </fa:FASettingsExpander>
     </StackPanel>

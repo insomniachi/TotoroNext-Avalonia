@@ -24,7 +24,7 @@ public class YtdlpDownloader : BaseDownloader
             return null;
         }
         
-        return new YtdlpDownloadOperation(server.Url, server.Headers, filepath)
+        return new YtdlpDownloadOperation(server, filepath)
         {
             Link = server.Url,
             FileName = filepath,

@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using TotoroNext.Anime.Abstractions.Models;
+﻿using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions;
@@ -26,6 +25,7 @@ public abstract class BaseDownloader : IAnimeDownloader
                     {
                         yield return download;
                     }
+
                     break;
                 }
             }
@@ -45,15 +45,11 @@ public abstract class BaseDownloader : IAnimeDownloader
 
     private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)
     {
-        var directory = message.SaveFolder ?? FileHelper.GetPath("Downloads");
+        var directory = FileHelper.GetPath("Downloads");
         var absoluteEpNumber = episode.Number + message.EpisodeOffset;
         var invalidChars = Path.GetInvalidFileNameChars();
         var validTitle = new string(message.Anime.Title.Where(c => !invalidChars.Contains(c)).ToArray());
-        
-        var fileName = string.IsNullOrEmpty(message.FilenameFormat)
-            ? $"{validTitle} - Episode - {absoluteEpNumber}.{server.ContentType}"
-            : $"{message.FilenameFormat.Replace("{ep}", absoluteEpNumber.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0'))}.{server.ContentType}";
-
+        var fileName = $"{absoluteEpNumber}.{server.ContentType}";
         return Path.Combine(directory, validTitle, fileName);
     }
 }
