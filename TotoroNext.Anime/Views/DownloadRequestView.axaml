@@ -5,77 +5,62 @@
              xmlns:u="https://irihi.tech/ursa"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.ViewModels"
              xmlns:controls="totoro.next/controls"
-             xmlns:styling="clr-namespace:FluentAvalonia.Styling;assembly=FluentAvalonia"
-             xmlns:fa="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
-             xmlns:semi="https://irihi.tech/semi"
+             xmlns:mdl="totoro.next/models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:DownloadRequestViewModel"
              x:Class="TotoroNext.Anime.Views.DownloadRequestView"
              Width="500">
     <ContentPage.Styles>
-        <styling:FluentAvaloniaTheme />
         <Style Selector="ComboBox">
-            <Setter Property="MinWidth" Value="250"/>
+            <Setter Property="MinWidth" Value="250" />
         </Style>
     </ContentPage.Styles>
     <StackPanel>
-        <fa:FASettingsExpander Header="Episode offset "
-                               Description="Set the starting episode number">
-            <fa:FASettingsExpander.Footer>
-                <u:NumericIntUpDown Value="{Binding EpisodeOffset, Mode=TwoWay}">
-                    <u:NumericIntUpDown.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </u:NumericIntUpDown.Styles>
-                </u:NumericIntUpDown>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
-        <fa:FASettingsExpander Header="Episode Range">
-            <fa:FASettingsExpander.Footer>
+        <controls:SettingsExpander Header="Episode offset "
+                                   Description="Set the starting episode number">
+            <controls:SettingsExpander.Editor>
+                <u:NumericIntUpDown Value="{Binding EpisodeOffset, Mode=TwoWay}" />
+            </controls:SettingsExpander.Editor>
+        </controls:SettingsExpander>
+        <controls:SettingsExpander Header="Episode Range">
+            <controls:SettingsExpander.Editor>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <StackPanel.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </StackPanel.Styles>
                     <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}" />
                     <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}" />
                 </StackPanel>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
-        <fa:FASettingsExpander Header="Provider">
-            <fa:FASettingsExpander.Footer>
+            </controls:SettingsExpander.Editor>
+        </controls:SettingsExpander>
+        <controls:SettingsExpander Header="Provider">
+            <controls:SettingsExpander.Editor>
                 <ComboBox ItemsSource="{Binding Providers}"
                           SelectedValue="{Binding ProviderId}"
                           SelectedValueBinding="{Binding Id}"
                           DisplayMemberBinding="{Binding Name}"
-                          HorizontalAlignment="Stretch">
-                    <ComboBox.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </ComboBox.Styles>
-                </ComboBox>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
+                          HorizontalAlignment="Stretch" />
+            </controls:SettingsExpander.Editor>
+        </controls:SettingsExpander>
         <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
-        <fa:FASettingsExpander Header="Search Term">
-            <fa:FASettingsExpander.Footer>
-                <TextBox Text="{Binding SearchTerm}" HorizontalAlignment="Stretch"
-                         Width="250">
-                    <TextBox.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </TextBox.Styles>
-                </TextBox>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
-        <fa:FASettingsExpander Header="Provider Result">
-            <fa:FASettingsExpander.Footer>
-                <ComboBox ItemsSource="{Binding ProviderResults, Mode=OneWay}"
-                          SelectedIndex="0"
-                          SelectedItem="{Binding SelectedResult}"
-                          DisplayMemberBinding="{Binding Title}"
-                          HorizontalAlignment="Stretch">
-                    <ComboBox.Styles>
-                        <semi:SemiTheme Locale="en-US" />
-                    </ComboBox.Styles>
-                </ComboBox>
-            </fa:FASettingsExpander.Footer>
-        </fa:FASettingsExpander>
+        <controls:SettingsExpander Header="Provider Result">
+            <controls:SettingsExpander.Editor>
+                <u:AutoCompleteBox x:Name="AutoCompleteBox"
+                                   Text="{Binding SearchTerm}"
+                                   SelectedItem="{Binding SelectedResult}"
+                                   ValueMemberBinding="{ReflectionBinding Title}"
+                                   FilterMode="None"
+                                   MaxDropDownHeight="300"
+                                   MinimumPopulateDelay="0:0:0.500"
+                                   MinimumPrefixLength="2"
+                                   Width="250">
+                    <u:AutoCompleteBox.ItemTemplate>
+                        <DataTemplate x:DataType="mdl:SearchResult">
+                            <TextBlock Text="{Binding Title}"
+                                       ToolTip.Tip="{Binding Title}"
+                                       TextTrimming="CharacterEllipsis"
+                                       Width="250" />
+                        </DataTemplate>
+                    </u:AutoCompleteBox.ItemTemplate>
+                </u:AutoCompleteBox>
+            </controls:SettingsExpander.Editor>
+        </controls:SettingsExpander>
     </StackPanel>
 </ContentPage>

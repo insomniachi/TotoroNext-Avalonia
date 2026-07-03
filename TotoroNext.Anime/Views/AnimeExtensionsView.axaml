@@ -4,13 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
              xmlns:sty="using:FluentAvalonia.Styling"
-             xmlns:fac="using:FluentAvalonia.UI.Controls"
-             xmlns:semi="https://irihi.tech/semi"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:mdl="totoro.next/models"
              xmlns:ctl="totoro.next/controls"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
-             xmlns:ext="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              MinWidth="700"
              MaxWidth="700"
@@ -23,82 +20,66 @@
     <Grid RowDefinitions="*, Auto, Auto">
         <ScrollViewer Grid.Row="0">
             <StackPanel>
-                <fac:FASettingsExpander Header="Incognito"
-                                        Description="Don't show discord rich presence for this anime"
-                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.Incognito}}">
-                    <fac:FASettingsExpander.Footer>
-                        <ToggleSwitch IsChecked="{Binding IsNsfw}">
-                            <ToggleSwitch.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </ToggleSwitch.Styles>
-                        </ToggleSwitch>
-                    </fac:FASettingsExpander.Footer>
-                </fac:FASettingsExpander>
-                <fac:FASettingsExpander Header="Provider"
-                                        Description="The provider to use for this anime"
-                                        IsExpanded="True"
-                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.VideoLibrary}}">
-                    <fac:FASettingsExpander.Footer>
+                <ctl:SettingsExpander Header="Incognito"
+                                      Description="Don't show discord rich presence for this anime"
+                                      IconKey="{x:Static module:CommonIcons.Incognito}">
+                    <ctl:SettingsExpander.Editor>
+                        <ToggleSwitch IsChecked="{Binding IsNsfw}" />
+                    </ctl:SettingsExpander.Editor>
+                </ctl:SettingsExpander>
+                <ctl:SettingsExpander Header="Provider"
+                                      Description="The provider to use for this anime"
+                                      IconKey="{x:Static module:CommonIcons.VideoLibrary}">
+                    <ctl:SettingsExpander.Editor>
                         <ComboBox ItemsSource="{Binding Providers}"
                                   SelectedValue="{Binding ProviderId}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
-                                  HorizontalAlignment="Stretch">
-                            <ComboBox.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </ComboBox.Styles>
-                        </ComboBox>
-                    </fac:FASettingsExpander.Footer>
-                    <fac:FASettingsExpanderItem Content="Provider Item" Description="Media item inside the provider"
-                                                IsVisible="{Binding HasProvider}">
-                        <fac:FASettingsExpanderItem.Footer>
-                            <u:AutoCompleteBox x:Name="AutoCompleteBox"
-                                               Text="{Binding SearchTerm}"
-                                               SelectedItem="{Binding ProviderResult}"
-                                               ValueMemberBinding="{ReflectionBinding Title}"
-                                               FilterMode="None"
-                                               MaxDropDownHeight="300"
-                                               MinimumPopulateDelay="0:0:0.500"
-                                               MinimumPrefixLength="2"
-                                               Width="200">
-                                <u:AutoCompleteBox.ItemTemplate>
-                                    <DataTemplate x:DataType="mdl:SearchResult">
-                                        <TextBlock Text="{Binding Title}"
-                                                   ToolTip.Tip="{Binding Title}"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   Width="200" />
-                                    </DataTemplate>
-                                </u:AutoCompleteBox.ItemTemplate>
-                            </u:AutoCompleteBox>
-                        </fac:FASettingsExpanderItem.Footer>
-                    </fac:FASettingsExpanderItem>
-                </fac:FASettingsExpander>
+                                  HorizontalAlignment="Stretch" />
+                    </ctl:SettingsExpander.Editor>
+                </ctl:SettingsExpander>
+                <ctl:SettingsExpander IsVisible="{Binding HasProvider}"
+                                      Header="Selected Result">
+                    <ctl:SettingsExpander.Editor>
+                        <u:AutoCompleteBox x:Name="AutoCompleteBox"
+                                           Text="{Binding SearchTerm}"
+                                           SelectedItem="{Binding ProviderResult}"
+                                           ValueMemberBinding="{ReflectionBinding Title}"
+                                           FilterMode="None"
+                                           MaxDropDownHeight="300"
+                                           MinimumPopulateDelay="0:0:0.500"
+                                           MinimumPrefixLength="2"
+                                           Width="200">
+                            <u:AutoCompleteBox.ItemTemplate>
+                                <DataTemplate x:DataType="mdl:SearchResult">
+                                    <TextBlock Text="{Binding Title}"
+                                               ToolTip.Tip="{Binding Title}"
+                                               TextTrimming="CharacterEllipsis"
+                                               Width="200" />
+                                </DataTemplate>
+                            </u:AutoCompleteBox.ItemTemplate>
+                        </u:AutoCompleteBox>
+                    </ctl:SettingsExpander.Editor>
+                </ctl:SettingsExpander>
                 <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
-                <fac:FASettingsExpander Header="Opening Skip Method"
-                                        Description="How to skip the opening of this anime"
-                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.Opening}}">
-                    <fac:FASettingsExpander.Footer>
+                <ctl:SettingsExpander Header="Opening Skip Method"
+                                      Description="How to skip the opening of this anime"
+                                      IconKey="{x:Static module:CommonIcons.Opening}">
+                    <ctl:SettingsExpander.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
-                                        HorizontalAlignment="Stretch">
-                            <u:EnumSelector.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </u:EnumSelector.Styles>
-                        </u:EnumSelector>
-                    </fac:FASettingsExpander.Footer>
-                </fac:FASettingsExpander>
-                <fac:FASettingsExpander Header="Ending Skip Method" Description="How to skip the ending of this anime"
-                                        IconSource="{ext:PathIconSource Key={x:Static module:CommonIcons.Ending}}">
-                    <fac:FASettingsExpander.Footer>
+                                        HorizontalAlignment="Stretch" />
+                    </ctl:SettingsExpander.Editor>
+                </ctl:SettingsExpander>
+                <ctl:SettingsExpander Header="Ending Skip Method"
+                                      Description="How to skip the ending of this anime"
+                                      IconKey="{x:Static module:CommonIcons.Ending}">
+                    <ctl:SettingsExpander.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding EndingSkipMethod, Mode=TwoWay }"
-                                        HorizontalAlignment="Stretch">
-                            <u:EnumSelector.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </u:EnumSelector.Styles>
-                        </u:EnumSelector>
-                    </fac:FASettingsExpander.Footer>
-                </fac:FASettingsExpander>
+                                        HorizontalAlignment="Stretch" />
+                    </ctl:SettingsExpander.Editor>
+                </ctl:SettingsExpander>
             </StackPanel>
         </ScrollViewer>
 

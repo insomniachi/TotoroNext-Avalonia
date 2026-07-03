@@ -4,54 +4,36 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:TotoroNext.Module.Controls"
              xmlns:module="clr-namespace:TotoroNext.Module"
-             xmlns:fac="using:FluentAvalonia.UI.Controls"
-             xmlns:semi="https://irihi.tech/semi"
-             xmlns:styling="clr-namespace:FluentAvalonia.Styling;assembly=FluentAvalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Module.Controls.ModuleOptionsEditor">
-    <UserControl.Styles>
-        <styling:FluentAvaloniaTheme />
-    </UserControl.Styles>
     <ItemsControl
         ItemsSource="{Binding $parent[controls:ModuleOptionsEditor].Options}">
         <ItemsControl.DataTemplates>
             <DataTemplate DataType="module:SelectableModuleOptionItem">
-                <fac:FASettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <fac:FASettingsExpander.Footer>
+                <controls:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <controls:SettingsExpander.Editor>
                         <ComboBox ItemsSource="{Binding AllowedValues}"
                                   SelectedItem="{Binding Value, Mode=TwoWay}"
-                                  HorizontalAlignment="Stretch">
-                            <ComboBox.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </ComboBox.Styles>
-                        </ComboBox>
-                    </fac:FASettingsExpander.Footer>
-                </fac:FASettingsExpander>
+                                  HorizontalAlignment="Stretch" />
+                    </controls:SettingsExpander.Editor>
+                </controls:SettingsExpander>
             </DataTemplate>
             <DataTemplate DataType="module:ToggleModuleOptionItem">
-                <fac:FASettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <fac:FASettingsExpander.Footer>
-                        <ToggleSwitch IsChecked="{Binding IsChecked}">
-                            <ToggleSwitch.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </ToggleSwitch.Styles>
-                        </ToggleSwitch>
-                    </fac:FASettingsExpander.Footer>
-                </fac:FASettingsExpander>
+                <controls:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <controls:SettingsExpander.Editor>
+                        <ToggleSwitch IsChecked="{Binding IsChecked}" />
+                    </controls:SettingsExpander.Editor>
+                </controls:SettingsExpander>
             </DataTemplate>
             <DataTemplate DataType="module:ModuleOptionItem">
-                <fac:FASettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <fac:FASettingsExpander.Footer>
+                <controls:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
+                    <controls:SettingsExpander.Editor>
                         <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
-                                 MaxWidth="350" 
+                                 MaxWidth="350"
                                  MinWidth="200"
-                                 TextWrapping="WrapWithOverflow">
-                            <TextBox.Styles>
-                                <semi:SemiTheme Locale="en-US" />
-                            </TextBox.Styles>
-                        </TextBox>
-                    </fac:FASettingsExpander.Footer>
-                </fac:FASettingsExpander>
+                                 TextWrapping="WrapWithOverflow" />
+                    </controls:SettingsExpander.Editor>
+                </controls:SettingsExpander>
             </DataTemplate>
         </ItemsControl.DataTemplates>
     </ItemsControl>

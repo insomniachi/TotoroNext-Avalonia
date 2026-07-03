@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:styling="clr-namespace:FluentAvalonia.Styling;assembly=FluentAvalonia"
+             xmlns:fac="using:FluentAvalonia.UI.Controls"
+             xmlns:semi="https://irihi.tech/semi"
+             xmlns:controls="totoro.next/controls"
+             xmlns:extensions="totoro.next/extensions"
+             x:Class="TotoroNext.Module.Controls.SettingsExpander">
+    <UserControl.Styles>
+        <styling:FluentAvaloniaTheme />
+    </UserControl.Styles>
+    <fac:FASettingsExpander
+        Header="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SettingsExpander}, Path=Header}"
+        Description="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SettingsExpander}, Path=Description}"
+        extensions:PathIconSourceBehavior.IconKey="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SettingsExpander}, Path=IconKey}">
+        <fac:FASettingsExpander.Footer>
+            <ContentControl
+                Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=controls:SettingsExpander}, Path=Editor}">
+                <ContentControl.Styles>
+                    <semi:SemiTheme Locale="en-US" />
+                </ContentControl.Styles>
+            </ContentControl>
+        </fac:FASettingsExpander.Footer>
+    </fac:FASettingsExpander>
+</UserControl>

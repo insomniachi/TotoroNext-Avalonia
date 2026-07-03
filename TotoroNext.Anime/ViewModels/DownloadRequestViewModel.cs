@@ -22,7 +22,6 @@ public partial class DownloadRequestViewModel(
 
     [ObservableProperty] public partial Guid? ProviderId { get; set; }
     [ObservableProperty] public partial SearchResult? SelectedResult { get; set; }
-    [ObservableProperty] public partial List<SearchResult> ProviderResults { get; set; } = [];
     [ObservableProperty] public partial string? SearchTerm { get; set; }
     [ObservableProperty] public partial bool CanDownload { get; set; }
     [ObservableProperty] public partial int Start { get; set; } = 1;
@@ -45,7 +44,7 @@ public partial class DownloadRequestViewModel(
         {
             return;
         }
-        
+
         _provider.UpdateOptions(ProviderOptions);
 
         var request = new DownloadRequest
@@ -57,7 +56,7 @@ public partial class DownloadRequestViewModel(
             EpisodeEnd = End,
             EpisodeOffset = EpisodeOffset
         };
-        
+
         var downloader = provider.GetDownloader();
         await foreach (var operation in downloader.Download(request))
         {
@@ -81,34 +80,7 @@ public partial class DownloadRequestViewModel(
             })
             .Switch()
             .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .Subscribe(results =>
-            {
-                ProviderOptions = _provider?.GetOptions() ?? [];
-                var currentResult = SelectedResult;
-                ProviderResults = results;
-                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult?.Title) ??
-                                 ProviderResults.FirstOrDefault(x => x.Title == SearchTerm);
-            });
-
-        this.WhenAnyValue(x => x.SearchTerm)
-            .Skip(1)
-            .Where(x => x is { Length: > 2 })
-            .Where(_ => ProviderId.HasValue)
-            .Throttle(TimeSpan.FromSeconds(1))
-            .Select(term =>
-            {
-                var provider = providerFactory.Create(ProviderId!.Value);
-                return Observable.FromAsync(ct => provider.GetSearchResults(term, ct));
-            })
-            .Switch()
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .Subscribe(results =>
-            {
-                var currentResult = SelectedResult;
-                ProviderResults = results;
-                SelectedResult = ProviderResults.FirstOrDefault(x => x.Title == currentResult?.Title) ??
-                                 ProviderResults.FirstOrDefault(x => x.Title == SearchTerm);
-            });
+            .Subscribe(_ => { ProviderOptions = _provider?.GetOptions() ?? []; });
 
         this.WhenAnyValue(x => x.SelectedResult, x => x.Start, x => x.End)
             .Select(x => x.Item1 is not null &&
@@ -116,5 +88,22 @@ public partial class DownloadRequestViewModel(
                          x.Item3 >= x.Item2 &&
                          _provider is not null)
             .Subscribe(canDownload => CanDownload = canDownload);
+    }
+
+    public async Task<List<SearchResult>> GetSearchResults(string? term, CancellationToken ct)
+    {
+        if (_provider is null || string.IsNullOrEmpty(term))
+        {
+            return [];
+        }
+
+        try
+        {
+            return await _provider.SearchAsync(term, ct).ToListAsync(ct);
+        }
+        catch
+        {
+            return [];
+        }
     }
 }
