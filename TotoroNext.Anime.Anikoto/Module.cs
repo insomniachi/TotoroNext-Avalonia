@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Anikoto.ViewModels;
@@ -40,8 +41,10 @@ public class Module : IModule<Settings>
 public class Settings : OverridableConfig
 {
     [AllowedValues("sub", "hsub", "dub")]
+    [DisplayName("Preferred Stream Category")]
     public string PreferredStreamCategory { get; set; } = "sub";
 
     [AllowedValues("VidPlay-1", "HD-1", "Vidstream-2", "VidCloud-1")]
+    [DisplayName("Preferred Server")]
     public string PreferredServer { get; set; } = "HD-1";
 }
