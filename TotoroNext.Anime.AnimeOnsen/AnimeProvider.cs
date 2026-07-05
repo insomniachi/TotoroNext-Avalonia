@@ -12,8 +12,8 @@ namespace TotoroNext.Anime.AnimeOnsen;
 
 public class AnimeProvider(
     IModuleSettings<Settings> settings,
-    [FromKeyedServices(DownloaderTypes.Ytdlp)] IAnimeDownloader downloader,
-    IHttpClientFactory httpClientFactory) : IAnimeProvider, IDownloadableAnimeProvider
+    [FromKeyedServices(DownloaderTypes.Ytdlp)] IDownloader downloader,
+    IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -133,6 +133,4 @@ public class AnimeProvider(
 
         return data;
     }
-
-    public IAnimeDownloader GetDownloader() => downloader;
 }

@@ -10,7 +10,7 @@ namespace TotoroNext.Anime.Senshi;
 
 public class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    [FromKeyedServices(DownloaderTypes.Ytdlp)] IAnimeDownloader downloader) : IAnimeProvider, IDownloadableAnimeProvider
+    [FromKeyedServices(DownloaderTypes.Ytdlp)] IDownloader downloader) : IAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -67,9 +67,7 @@ public class AnimeProvider(
             };
         }
     }
-
-    public IAnimeDownloader GetDownloader() => downloader;
-
+    
     private FlurlClient CreateClient()
     {
         return new FlurlClient(httpClientFactory.CreateClient("Senshi"));

@@ -13,7 +13,7 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.AllAnime;
 
-internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider, IDownloadableAnimeProvider
+internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
 {
     private const string DecryptSecret = "Xot36i3lK3";
     private const int DecryptTagLength = 128; // bits
@@ -319,6 +319,4 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         // 5. Return JSON string
         return Encoding.UTF8.GetString(plaintext);
     }
-
-    public IAnimeDownloader GetDownloader() => new StandardDownloader();
 }

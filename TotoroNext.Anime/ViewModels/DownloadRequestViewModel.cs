@@ -16,6 +16,7 @@ public partial class DownloadRequestViewModel(
     AnimeModel anime,
     IFactory<IAnimeProvider, Guid> providerFactory,
     IEnumerable<Descriptor> descriptors,
+    IAnimeDownloader animeDownloader,
     IDownloadManager downloadManager) : ObservableObject, IInitializable, IDialogViewModel
 {
     private IAnimeProvider? _provider;
@@ -30,7 +31,7 @@ public partial class DownloadRequestViewModel(
     [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
 
     public List<Descriptor> Providers { get; } =
-        [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider) && x.Components.Contains(ComponentTypes.AnimeDownloader))];
+        [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
 
     public async Task Handle(DialogResult result)
@@ -39,12 +40,7 @@ public partial class DownloadRequestViewModel(
         {
             return;
         }
-
-        if (_provider is not IDownloadableAnimeProvider provider)
-        {
-            return;
-        }
-
+        
         _provider.UpdateOptions(ProviderOptions);
 
         var request = new DownloadRequest
@@ -57,8 +53,7 @@ public partial class DownloadRequestViewModel(
             EpisodeOffset = EpisodeOffset
         };
 
-        var downloader = provider.GetDownloader();
-        await foreach (var operation in downloader.Download(request))
+        await foreach (var operation in animeDownloader.Download(request))
         {
             downloadManager.AddDownload(operation);
         }

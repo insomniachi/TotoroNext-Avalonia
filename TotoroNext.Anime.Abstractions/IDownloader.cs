@@ -2,9 +2,9 @@
 
 namespace TotoroNext.Anime.Abstractions;
 
-public interface IAnimeDownloader
+public interface IDownloader
 {
-    public IAsyncEnumerable<IDownloadOperation> Download(DownloadRequest request);
+    IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath);
 }
 
 public static class DownloaderTypes

@@ -12,7 +12,7 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.AnimeGG;
 
-public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider, IDownloadableAnimeProvider
+public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
@@ -130,8 +130,6 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
     {
         return new FlurlClient(httpClientFactory.CreateClient("animegg"));
     }
-
-    public IAnimeDownloader GetDownloader() => new StandardDownloader();
 }
 
 [Serializable]

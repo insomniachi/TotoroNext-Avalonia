@@ -5,7 +5,6 @@ namespace TotoroNext.Anime.Abstractions.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-
     extension(IServiceCollection services)
     {
         public IServiceCollection AddDebrid()
@@ -17,8 +16,9 @@ public static class ServiceCollectionExtensions
 
         public IServiceCollection AddDownloaders()
         {
-            return services.AddKeyedTransient<IAnimeDownloader, StandardDownloader>(DownloaderTypes.Http)
-                           .AddKeyedTransient<IAnimeDownloader, YtdlpDownloader>(DownloaderTypes.Ytdlp);
+            return services.AddTransient<IAnimeDownloader, AnimeDownloader>()
+                           .AddKeyedTransient<IDownloader, StandardDownloader>(DownloaderTypes.Http)
+                           .AddKeyedTransient<IDownloader, YtdlpDownloader>(DownloaderTypes.Ytdlp);
         }
     }
 }

@@ -16,8 +16,8 @@ namespace TotoroNext.Anime.Anikoto;
 
 public partial class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    [FromKeyedServices(DownloaderTypes.Ytdlp)] IAnimeDownloader downloader,
-    IModuleSettings<Settings> settings) : IAnimeProvider, IDownloadableAnimeProvider
+    [FromKeyedServices(DownloaderTypes.Ytdlp)] IDownloader downloader,
+    IModuleSettings<Settings> settings) : IAnimeProvider
 {
     public const string BaseUrl = "https://anikototv.to/";
 
@@ -154,9 +154,6 @@ public partial class AnimeProvider(
     {
         settings.Value.UpdateValues(options);
     }
-    
-
-    public IAnimeDownloader GetDownloader() => downloader;
 
     private FlurlClient CreateClient(string name)
     {

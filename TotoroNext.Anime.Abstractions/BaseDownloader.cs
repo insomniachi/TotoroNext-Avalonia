@@ -1,9 +1,15 @@
-﻿using TotoroNext.Anime.Abstractions.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public abstract class BaseDownloader : IAnimeDownloader
+public interface IAnimeDownloader
+{
+    IAsyncEnumerable<IDownloadOperation> Download(DownloadRequest request);
+}
+
+public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloader
 {
     public async IAsyncEnumerable<IDownloadOperation> Download(DownloadRequest request)
     {
@@ -41,7 +47,28 @@ public abstract class BaseDownloader : IAnimeDownloader
         }
     }
 
-    protected abstract IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath);
+    protected IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+    {
+        var downloaderType = GetDownloaderType(server.ContentType);
+        if (string.IsNullOrEmpty(downloaderType))
+        {
+            return null;
+        }
+        
+        var downloader = serviceProvider.GetKeyedService<IDownloader>(downloaderType);
+        return downloader?.CreateDownload(anime, episode, server, filepath);
+    }
+
+    private string GetDownloaderType(string? contentType)
+    {
+        return contentType switch
+        {
+            "ts" => DownloaderTypes.Ytdlp,
+            "mp4" or "mkv" => DownloaderTypes.Http,
+            "torrent" => DownloaderTypes.Torrent,
+            _ => ""
+        };
+    }
 
     private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)
     {

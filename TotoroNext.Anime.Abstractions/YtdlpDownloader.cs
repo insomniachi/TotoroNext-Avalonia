@@ -3,10 +3,10 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public class YtdlpDownloader : BaseDownloader
+public class YtdlpDownloader : IDownloader
 {
     private readonly string? _executable;
-    
+
     public YtdlpDownloader(ILocalSettingsService localSettingsService,
                            IDialogService dialogService)
     {
@@ -16,14 +16,14 @@ public class YtdlpDownloader : BaseDownloader
             dialogService.Warning("Yt-dlp  path is missing, configure in settings");
         }
     }
-    
-    protected override IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+
+    public IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
     {
         if (string.IsNullOrEmpty(_executable))
         {
             return null;
         }
-        
+
         return new YtdlpDownloadOperation(server, filepath)
         {
             Link = server.Url,
