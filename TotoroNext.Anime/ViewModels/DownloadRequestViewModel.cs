@@ -32,9 +32,7 @@ public partial class DownloadRequestViewModel(
     [ObservableProperty] public partial double TotalEpisodes { get; set; }
     [ObservableProperty] public partial int EpisodeOffset { get; set; }
     [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
-
-    public List<Descriptor> Providers { get; } =
-        [..descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
+    [ObservableProperty] public partial List<Descriptor> Providers { get; set; } = [];
 
 
     public async Task Handle(DialogResult result)
@@ -64,20 +62,26 @@ public partial class DownloadRequestViewModel(
 
     public void Initialize()
     {
+        var tempList = descriptors.ToList();
+        var localProviderId = descriptors.First(x => x.Name == "Local").Id;
+        Providers = [..tempList.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider) && x.Name != "Local")];
+
         var extensions = extensionService.GetExtension(anime.Id);
-        ProviderId = extensions?.Provider ?? localSettingsService.ReadSetting<Guid>("SelectedAnimeProvider");
+        ProviderId = extensions?.Provider == localProviderId || extensions?.Provider is null
+            ? localSettingsService.ReadSetting<Guid>("SelectedAnimeProvider")
+            : extensions.Provider;
         End = anime.TotalEpisodes ?? 0;
         Start = (anime.Tracking?.WatchedEpisodes ?? 0) + 1;
         TotalEpisodes = anime.TotalEpisodes ?? double.NaN;
 
         this.WhenAnyValue(x => x.ProviderId)
             .WhereNotNull()
-            .Where(x => x != Guid.Empty)
+            .Where(x => x != localProviderId)
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(id =>
             {
                 SearchTerm = "";
-                _provider = providerFactory.Create(id!.Value)!;
+                _provider = providerFactory.Create(id!.Value) ?? providerFactory.CreateDefault()!;
                 ProviderOptions = _provider.GetOptions();
                 extensionService.SearchOrSelectAsync(_provider, anime)
                                 .ToObservable()
