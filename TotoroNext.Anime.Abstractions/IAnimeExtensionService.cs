@@ -9,6 +9,7 @@ public interface IAnimeExtensionService
     void RemoveExtension(long id);
     bool IsInIncognitoMode(long id);
     Task<SearchResult?> SearchOrSelectAsync(AnimeModel anime);
+    Task<SearchResult?> SearchOrSelectAsync(IAnimeProvider provider, AnimeModel anime);
     Task<SearchResult?> SearchAsync(AnimeModel anime);
     Task<DateTimeOffset?> GetNextEpisodeAiringTimeAsync(AnimeModel anime, CancellationToken ct);
 }
