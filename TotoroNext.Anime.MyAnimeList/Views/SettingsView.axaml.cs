@@ -21,17 +21,8 @@ public partial class SettingsView : ContentPage
             {
                 return;
             }
-
-            var launcher = TopLevel.GetTopLevel(Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
-                                                    ? desktop.MainWindow
-                                                    : null)?.Launcher;
-
-            if (launcher is null)
-            {
-                return;
-            }
-
-            await vm.Login(launcher);
+            
+            await vm.Login();
         }
         catch
         {
