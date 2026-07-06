@@ -18,4 +18,6 @@ public interface IDownloadOperation : INotifyPropertyChanged
     IRelayCommand TogglePauseResumeCommand { get; }
     IRelayCommand CancelCommand { get; }
     Task StartAsync();
+    event EventHandler? Completed;
+    event EventHandler? Started;
 }

@@ -48,8 +48,8 @@ public partial class MainWindowViewModel : ObservableObject,
         _logger = logger;
         _updateManager = updateManager;
         var items = menuItems.OrderBy(x => x.Tag is not { } tag ? 0 : tag.Order).ToList();
-        MenuItems = [..items.Where(x => IsTopLevelNavItem(x) && !IsFooterNavItem(x))];
-        FooterMenuItems = [..items.Where(x => IsTopLevelNavItem(x) && IsFooterNavItem(x))];
+        MenuItems = [..items.Where(x => !IsFooterNavItem(x))];
+        FooterMenuItems = [..items.Where(IsFooterNavItem)];
 
         this.WhenAnyValue(x => x.Navigator)
             .WhereNotNull()
@@ -321,16 +321,6 @@ public partial class MainWindowViewModel : ObservableObject,
         SelectedMenuItem = null;
         SelectedFooterMenuItem = null;
         _isProgarmaticNavigation = false;
-    }
-
-    private static bool IsTopLevelNavItem(NavigationDrawerItem item)
-    {
-        if (item.Tag is not { } tag)
-        {
-            return false;
-        }
-
-        return tag.Parent is null;
     }
 
     private static bool IsFooterNavItem(NavigationDrawerItem item)

@@ -1,5 +1,4 @@
-﻿using Flurl;
-using Flurl.Http;
+﻿using Flurl.Http;
 using ManuHub.Ytdlp.NET;
 using TotoroNext.Anime.Abstractions.Models;
 
@@ -8,7 +7,7 @@ namespace TotoroNext.Anime.Abstractions;
 public class YtdlpDownloadOperation(VideoServer server, string output) : BaseDownloadOperation
 {
     public required string YtdlpPath { get; init; }
-    
+
     public override async Task StartAsync()
     {
         try
@@ -18,7 +17,7 @@ public class YtdlpDownloadOperation(VideoServer server, string output) : BaseDow
             {
                 Directory.CreateDirectory(dir!);
             }
-            
+
             if (!string.IsNullOrEmpty(server.Subtitle))
             {
                 var subtitleExt = Path.GetExtension(server.Subtitle);
@@ -33,19 +32,18 @@ public class YtdlpDownloadOperation(VideoServer server, string output) : BaseDow
             }
 
             var downloader = new Ytdlp(YtdlpPath)
-                .WithOutputFolder(dir!)
-                .WithOutputTemplate(Path.GetFileName(output));
+                             .WithOutputFolder(dir!)
+                             .WithOutputTemplate(Path.GetFileName(output));
 
             downloader = server.Headers.Aggregate(downloader, (current, kvp) => current.WithAddHeader(kvp.Key, kvp.Value));
 
-            downloader.ProgressDownload += (_, e) =>
-            {
-                Progress = e.Percent;
-            };
+            downloader.ProgressDownload += (_, e) => { Progress = e.Percent; };
 
             DownloadStarted = true;
+            OnStarted();
             await downloader.DownloadAsync(server.Url.ToString());
             IsCompleted = true;
+            OnCompleted();
         }
         catch (Exception e)
         {

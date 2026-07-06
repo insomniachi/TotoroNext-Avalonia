@@ -8,6 +8,7 @@ internal class DownloadManager : IDownloadManager
     public const int MaxConcurrentDownloads = 3;
     private readonly ObservableCollection<IDownloadOperation> _downloads = [];
     private readonly SemaphoreSlim _semaphore = new(MaxConcurrentDownloads, MaxConcurrentDownloads);
+    public event EventHandler? DownloadsChanged;
 
     public DownloadManager()
     {
@@ -23,8 +24,9 @@ internal class DownloadManager : IDownloadManager
             await _semaphore.WaitAsync();
             try
             {
-                _downloads.Add(download);
-                await download.StartAsync();
+                download.Completed += OnCompleted;
+                download.Started += OnStarted;
+                await StartDownload(download);
             }
             finally
             {
@@ -33,4 +35,34 @@ internal class DownloadManager : IDownloadManager
         });
 
     }
+
+    private void OnCompleted(object? sender, EventArgs e)
+    {
+        if (sender is not IDownloadOperation download)
+        {
+            return;
+        }
+        
+        download.Completed -= OnCompleted;
+        OnDownloadsChanged();
+    }
+    
+    private void OnStarted(object? sender, EventArgs e)
+    {
+        if (sender is not IDownloadOperation download)
+        {
+            return;
+        }
+        
+        download.Started -= OnStarted;
+        OnDownloadsChanged();
+    }
+
+    private async Task StartDownload(IDownloadOperation download)
+    {
+        _downloads.Add(download);
+        await download.StartAsync();
+    }
+    
+    private void OnDownloadsChanged() => DownloadsChanged?.Invoke(this, EventArgs.Empty);
 }

@@ -1,10 +1,7 @@
-﻿using Avalonia.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module.Abstractions;
-using TotoroNext.Module.Extensions;
-using Ursa.Controls;
 
 namespace TotoroNext.Module;
 
@@ -40,49 +37,15 @@ public static class ServiceCollectionExtensions
             tag.ViewModelType = typeof(TViewModel);
 
             services.AddKeyedViewMap<TView, TViewModel>(header);
-            services.AddTransient(_ => new NavigationDrawerItem()
+            services.AddTransient(_ => new NavigationDrawerItem
             {
                 Header = header,
                 IconKey = iconKey,
                 Tag = tag
             });
-            
+
             return services;
         }
-
-        // public IServiceCollection AddChildNavigationViewItem<TView, TViewModel>(string parent, string header,
-        //                                                                         string iconKey)
-        //     where TView : class, new()
-        //     where TViewModel : class
-        // {
-        //     var tag = new NavigationDrawerItemTag
-        //     {
-        //         Parent = parent
-        //     };
-        //
-        //     return services.AddMainNavigationItem<TView, TViewModel>(header, iconKey, tag);
-        // }
-
-        // public IServiceCollection AddParentNavigationViewItem(string header, string iconKey,
-        //                                                       NavigationDrawerItemTag? tag = null)
-        // {
-        //     tag ??= new NavigationDrawerItemTag();
-        //     return services.AddTransient(_ =>
-        //     {
-        //         var item = new NavMenuItem
-        //         {
-        //             Header = header,
-        //             Icon = new Viewbox
-        //             {
-        //                 Height = 20,
-        //                 Width = 20,
-        //                 Child = IconRegistry.GetPathIcon(iconKey)
-        //             },
-        //             Tag = tag
-        //         };
-        //         return item;
-        //     });
-        // }
 
         public IServiceCollection AddViewMap<TView, TViewModel>()
             where TView : class, new()
@@ -140,7 +103,6 @@ public class NavigationDrawerItemTag
     public Type? ViewModelType { get; set; }
     public bool IsFooterItem { get; init; }
     public int Order { get; init; }
-    public string? Parent { get; init; }
 }
 
 public partial class NavigationDrawerItem : ObservableObject
@@ -148,6 +110,6 @@ public partial class NavigationDrawerItem : ObservableObject
     public required string Header { get; init; }
     public required string IconKey { get; init; }
     public NavigationDrawerItemTag? Tag { get; init; }
-    
+    [ObservableProperty] public partial string? BadgeContent { get; set; }
     [ObservableProperty] public partial bool IsSelected { get; set; }
 }

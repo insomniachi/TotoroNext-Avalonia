@@ -7,4 +7,5 @@ public interface IDownloadManager
 {
     ReadOnlyObservableCollection<IDownloadOperation> Downloads { get; }
     void AddDownload(IDownloadOperation download);
+    event EventHandler? DownloadsChanged;
 }

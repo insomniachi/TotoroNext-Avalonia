@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
@@ -32,8 +33,7 @@ public class Module : IModule
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", CommonIcons.List);
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", CommonIcons.Search);
         services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Missed", CommonIcons.NewReleases);
-        services.AddMainNavigationItem<DownloadsView, DownloadsViewModel>("Downloads", CommonIcons.Downloads,
-                                                                          new NavigationDrawerItemTag { IsFooterItem = true });
+        AddDownloadsView(services);
 
         // Pane navigation
         services.AddDataViewMap<UserListSortAndFilterView, UserListSortAndFilterViewModel, UserListSortAndFilter>()
@@ -57,5 +57,34 @@ public class Module : IModule
 
         services.AddHostedService(sp => sp.GetRequiredService<ITrackingUpdater>())
                 .AddHostedService(sp => sp.GetRequiredService<IPlaybackProgressService>());
+    }
+
+    private static void AddDownloadsView(IServiceCollection services)
+    {
+        services.AddKeyedViewMap<DownloadsView, DownloadsViewModel>("Downloads");
+        services.AddTransient(sp =>
+        {
+            var downloadManager =  sp.GetRequiredService<IDownloadManager>();
+            var item = new NavigationDrawerItem
+            {
+                Header = "Downloads",
+                IconKey = CommonIcons.Downloads,
+                Tag = new NavigationDrawerItemTag
+                {
+                    ViewModelType = typeof(DownloadsViewModel),
+                    IsFooterItem = true
+                }
+            };
+            
+            downloadManager.DownloadsChanged += (_, _) =>
+            {
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    item.BadgeContent = downloadManager.Downloads.Count(x => !x.IsCompleted).ToString();
+                });
+            };
+
+            return item;
+        });
     }
 }

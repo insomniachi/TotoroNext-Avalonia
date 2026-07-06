@@ -11,11 +11,16 @@ public class StandardDownloadOperation(IDownload download) : BaseDownloadOperati
 
     public override async Task StartAsync()
     {
-        download.DownloadStarted += (_, _) => Dispatcher.UIThread.Invoke(() => DownloadStarted = true);
+        download.DownloadStarted += (_, _) => Dispatcher.UIThread.Invoke(() =>
+        {
+            DownloadStarted = true;
+            OnStarted();
+        });
         download.DownloadFileCompleted += (_, _) => Dispatcher.UIThread.Invoke(() =>
         {
             Progress = 100;
             IsCompleted = true;
+            OnCompleted();
         });
         download.DownloadProgressChanged += (_, e) => { _progress = e; };
         var subscription = Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(1))

@@ -16,7 +16,9 @@ public abstract partial class BaseDownloadOperation : ObservableObject, IDownloa
     public required Uri Link { get; init; }
     public required string FileName { get; init; }
     public abstract Task StartAsync();
-    
+    public event EventHandler? Completed;
+    public event EventHandler? Started;
+
     [RelayCommand]
     private void TogglePauseResume()
     {
@@ -31,4 +33,6 @@ public abstract partial class BaseDownloadOperation : ObservableObject, IDownloa
 
     protected abstract void TogglePauseResumeImpl();
     protected abstract void CancelImpl();
+    protected void OnCompleted() => Completed?.Invoke(this, EventArgs.Empty);
+    protected void OnStarted() => Started?.Invoke(this, EventArgs.Empty);
 }
