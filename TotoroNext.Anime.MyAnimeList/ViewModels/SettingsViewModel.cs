@@ -1,4 +1,7 @@
 using System.Collections.Specialized;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using MalApi;
 using TotoroNext.Anime.Abstractions;
@@ -42,10 +45,19 @@ public sealed class SettingsViewModel : ModuleSettingsViewModel<Settings>, IDisp
         _listener.Stop();
     }
 
-    public async Task Login(ILauncher launcher)
+    public async Task Login()
     {
         _listener.Start();
-        await launcher.LaunchUriAsync(new Uri(MalAuthHelper.GetAuthUrl(Settings.ClientId)));
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            var options = new WebAuthenticatorOptions(new Uri(MalAuthHelper.GetAuthUrl(Settings.ClientId)),
+                                                      new Uri($"http://localhost:2222/callback/"))
+            {
+                PreferNativeWebDialog = true,
+            };
+
+            await WebAuthenticationBroker.AuthenticateAsync(desktop.MainWindow!, options);
+        }
     }
 
     private async Task ProcessQuery(NameValueCollection query)

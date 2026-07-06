@@ -34,7 +34,7 @@ public partial class SettingsView : ContentPage
                 return;
             }
 
-            await vm.Login(launcher, new WindowToastManager(topLevel) { MaxItems = 3 });
+            await vm.Login(new WindowToastManager(topLevel) { MaxItems = 3 });
         }
         catch
         {

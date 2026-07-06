@@ -1,6 +1,7 @@
+using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Platform.Storage;
-using TotoroNext.Anime.Anilist.Views;
+using Avalonia.Controls.ApplicationLifetimes;
+using Flurl;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using Ursa.Controls;
@@ -41,37 +42,36 @@ public class SettingsViewModel : ModuleSettingsViewModel<Settings>, IInitializab
         set => SetAndSaveProperty(ref field, value, x => x.TitleLanguage = value);
     }
 
-    public TitleLanguage[] TitleLanguages { get; } = [TitleLanguage.English, TitleLanguage.Romaji];
-
-    public async Task Login(ILauncher launcher, IToastManager toastManager)
+    public async Task Login(IToastManager toastManager)
     {
-        await launcher.LaunchUriAsync(new Uri($"https://anilist.co/api/v2/oauth/authorize?client_id={Settings.ClientId}&response_type=token"));
-
-        var options = new DialogOptions
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
-            Title = "Copy & Paste the text from the browser",
-            Mode = DialogMode.Info,
-            Button = DialogButton.OKCancel,
-            CanDragMove = false,
-            IsCloseButtonVisible = false,
-            CanResize = false,
-            ShowInTaskBar = false,
-            StartupLocation = WindowStartupLocation.CenterOwner
-        };
-
-        var vm = new GetAnilistTokenDialogViewModel();
-        var result = await Dialog.ShowStandardAsync<GetAnilistTokenDialog, GetAnilistTokenDialogViewModel>(vm, options: options);
-
-        if (result == DialogResult.OK)
-        {
-            Token = vm.Token;
-
-            toastManager.Show(new Toast
-            {
-                Content = "Anilist Authenticated",
-                Expiration = TimeSpan.FromSeconds(2),
-                Type = Avalonia.Controls.Notifications.NotificationType.Success
-            });
+            return;
         }
+
+        var options =
+            new WebAuthenticatorOptions(new Uri($"https://anilist.co/api/v2/oauth/authorize?client_id={Settings.ClientId}&response_type=token"),
+                                        new Uri("https://anilist.co/api/v2/oauth/pin"))
+            {
+                PreferNativeWebDialog = true
+            };
+
+        var result = await WebAuthenticationBroker.AuthenticateAsync(desktop.MainWindow!, options);
+        var query = new Url("https://dummy.com/?" + result.CallbackUri.Fragment.TrimStart('#')).QueryParams;
+
+        var accessToken = query.FirstOrDefault(p => p.Name == "access_token").Value?.ToString();
+
+        if (string.IsNullOrEmpty(accessToken))
+        {
+            return;
+        }
+
+        Token = accessToken;
+        toastManager.Show(new Toast
+        {
+            Content = "Anilist Authenticated",
+            Expiration = TimeSpan.FromSeconds(2),
+            Type = Avalonia.Controls.Notifications.NotificationType.Success
+        });
     }
 }

@@ -95,7 +95,8 @@ public sealed class Settings : OverridableConfig
     [DisplayName("Search Limit")]
     public double SearchLimit { get; set; } = 15;
     
-    [DisplayName("Title Language")]public TitleLanguage TitleLanguage { get; set; } = TitleLanguage.Romaji;
+    [DisplayName("Title Language")]
+    public TitleLanguage TitleLanguage { get; set; } = TitleLanguage.Romaji;
 }
 
 public enum TitleLanguage
