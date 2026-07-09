@@ -2,7 +2,7 @@
 using ManuHub.Ytdlp.NET;
 using TotoroNext.Anime.Abstractions.Models;
 
-namespace TotoroNext.Anime.Abstractions;
+namespace TotoroNext.Anime.Abstractions.Downloading;
 
 public class YtdlpDownloadOperation(VideoServer server, string output) : BaseDownloadOperation
 {

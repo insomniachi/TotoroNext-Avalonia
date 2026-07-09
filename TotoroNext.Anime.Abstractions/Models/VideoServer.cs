@@ -6,6 +6,7 @@ namespace TotoroNext.Anime.Abstractions.Models;
 [DebuggerDisplay("{Name} ({Url})")]
 public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor = null)
 {
+    public string DownloaderType { get; init; } = DownloaderTypes.Ytdlp;
     public string? ContentType { get; set; }
     public string Name { get; } = name;
     public Uri Url { get; } = url;

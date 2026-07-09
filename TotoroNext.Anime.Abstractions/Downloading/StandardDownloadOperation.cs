@@ -3,7 +3,7 @@ using Avalonia.Threading;
 using Downloader;
 using ReactiveUI;
 
-namespace TotoroNext.Anime.Abstractions;
+namespace TotoroNext.Anime.Abstractions.Downloading;
 
 public class StandardDownloadOperation(IDownload download) : BaseDownloadOperation
 {

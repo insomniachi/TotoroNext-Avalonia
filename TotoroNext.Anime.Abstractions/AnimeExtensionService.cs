@@ -93,6 +93,12 @@ public class AnimeExtensionService : IAnimeExtensionService
         return TryFindMatch(results, anime, anime.Title);
     }
     
+    public async Task<SearchResult?> SearchAsync(IAnimeProvider provider, AnimeModel anime)
+    {
+        var results = await provider.GetSearchResults(anime.Title, CancellationToken.None);
+        return TryFindMatch(results, anime, anime.Title);
+    }
+    
     public async Task<DateTimeOffset?> GetNextEpisodeAiringTimeAsync(AnimeModel anime, CancellationToken ct)
     {
         var searchResult = GetSearchResult(anime.Id);

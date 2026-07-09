@@ -83,7 +83,7 @@ public partial class DownloadRequestViewModel(
                 SearchTerm = "";
                 _provider = providerFactory.Create(id!.Value) ?? providerFactory.CreateDefault()!;
                 ProviderOptions = _provider.GetOptions();
-                extensionService.SearchOrSelectAsync(_provider, anime)
+                extensionService.SearchAsync(_provider, anime)
                                 .ToObservable()
                                 .Subscribe(searchResult =>
                                 {

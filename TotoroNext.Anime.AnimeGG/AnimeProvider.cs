@@ -114,7 +114,8 @@ public partial class AnimeProvider(IHttpClientFactory httpClientFactory) : IAnim
                     {
                         { HeaderNames.Referer, embed }
                     },
-                    ContentType = "mp4"
+                    ContentType = "mp4",
+                    DownloaderType = DownloaderTypes.Http
                 };
             }
         }

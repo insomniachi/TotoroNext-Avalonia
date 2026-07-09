@@ -443,14 +443,13 @@ public sealed partial class WatchViewModel(
     {
         var (episodes, infos, specials) = tuple;
 
-        if (Anime is null)
+        if (Anime is not { TotalEpisodes: not null })
         {
             return;
         }
 
-        if (relations.FindRelation(Anime!) is { } relation &&
-            infos.Count > 0 &&
-            episodes.Count(x => x.Number > 0) != infos.Count)
+        if (relations.FindRelation(Anime!) is { } relation && infos.Count > 0 &&
+            ProviderResult?.HasAbsoluteNumbering == true)
         {
             var eps = episodes
                       .Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End)
@@ -477,7 +476,7 @@ public sealed partial class WatchViewModel(
     {
         foreach (var ep in episodes)
         {
-            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.AbsoluteEpisodeNumber - ep.Number) == 0);
+            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.EpisodeNumber - ep.Number) == 0);
         }
 
         var specialsQueue = new Queue<EpisodeInfo>(specials);
@@ -512,19 +511,6 @@ public sealed partial class WatchViewModel(
         var all = await anime.GetEpisodes(ct);
         var infos = all.Where(x => !x.IsSpecial).ToList();
         var specials = all.Where(x => x.IsSpecial).ToList();
-
-        if (infos.Count == 0)
-        {
-            return new ValueTuple<List<Episode>, List<EpisodeInfo>, List<EpisodeInfo>>(episodes, infos, specials);
-        }
-
-        var min = infos.Min(x => x.AbsoluteEpisodeNumber);
-        var diff = min - 1;
-        if (diff > 0)
-        {
-            infos.ForEach(x => x.AbsoluteEpisodeNumber -= diff);
-        }
-
         return new ValueTuple<List<Episode>, List<EpisodeInfo>, List<EpisodeInfo>>(episodes, infos, specials);
     }
 

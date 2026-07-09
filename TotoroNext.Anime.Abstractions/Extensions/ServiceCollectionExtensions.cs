@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using TotoroNext.Anime.Abstractions.Downloading;
 using TotoroNext.Torrents.Abstractions;
 
 namespace TotoroNext.Anime.Abstractions.Extensions;
@@ -18,7 +19,8 @@ public static class ServiceCollectionExtensions
         {
             return services.AddTransient<IAnimeDownloader, AnimeDownloader>()
                            .AddKeyedTransient<IDownloader, StandardDownloader>(DownloaderTypes.Http)
-                           .AddKeyedTransient<IDownloader, YtdlpDownloader>(DownloaderTypes.Ytdlp);
+                           .AddKeyedTransient<IDownloader, YtdlpDownloader>(DownloaderTypes.Ytdlp)
+                           .AddKeyedTransient<IDownloader, MonoTorrentDownloader>(DownloaderTypes.Torrent);
         }
     }
 }

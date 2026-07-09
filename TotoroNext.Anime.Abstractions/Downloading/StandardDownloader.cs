@@ -1,11 +1,11 @@
 ﻿using Downloader;
 using TotoroNext.Anime.Abstractions.Models;
 
-namespace TotoroNext.Anime.Abstractions;
+namespace TotoroNext.Anime.Abstractions.Downloading;
 
 public class StandardDownloader : IDownloader
 {
-    public IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+    public Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
     {
         var configuration = new DownloadConfiguration { RequestConfiguration = new RequestConfiguration() };
         var builder = DownloadBuilder.New()
@@ -26,6 +26,6 @@ public class StandardDownloader : IDownloader
             Link = new Uri(download.Url)
         };
 
-        return operation;
+        return Task.FromResult<IDownloadOperation?>(operation);
     }
 }

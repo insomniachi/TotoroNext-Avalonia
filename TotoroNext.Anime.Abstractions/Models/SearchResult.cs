@@ -9,7 +9,7 @@ public class SearchResult(IAnimeProvider provider, string id, string title, Uri?
     public string Title { get; } = title;
     public Uri? Image { get; } = image;
     public AnimeId ExternalId { get; init; } = new();
-
+    public bool HasAbsoluteNumbering { get; init; }
     public IAsyncEnumerable<Episode> GetEpisodesAsync(CancellationToken ct)
     {
         return provider.GetEpisodes(Id, ct);

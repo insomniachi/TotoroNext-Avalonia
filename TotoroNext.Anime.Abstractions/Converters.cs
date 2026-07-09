@@ -1,4 +1,5 @@
 ﻿using Avalonia.Data.Converters;
+using TotoroNext.Anime.Abstractions.Downloading;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions;

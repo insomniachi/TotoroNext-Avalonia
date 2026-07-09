@@ -4,11 +4,6 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public interface IAnimeDownloader
-{
-    IAsyncEnumerable<IDownloadOperation> Download(DownloadRequest request);
-}
-
 public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloader
 {
     public async IAsyncEnumerable<IDownloadOperation> Download(DownloadRequest request)
@@ -26,7 +21,7 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
                 foreach (var server in servers)
                 {
                     var fileName = CreateFilename(request, episode, server);
-                    var download = CreateDownload(request.Anime, episode, server, fileName);
+                    var download = await CreateDownload(request.Anime, episode, server, fileName);
                     if (download is not null)
                     {
                         yield return download;
@@ -38,7 +33,7 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
             else
             {
                 var fileName = CreateFilename(request, episode, defaultServer);
-                var download = CreateDownload(request.Anime, episode, defaultServer, fileName);
+                var download = await CreateDownload(request.Anime, episode, defaultServer, fileName);
                 if (download is not null)
                 {
                     yield return download;
@@ -47,27 +42,18 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
         }
     }
 
-    protected IDownloadOperation? CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+    protected async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
     {
-        var downloaderType = GetDownloaderType(server.ContentType);
-        if (string.IsNullOrEmpty(downloaderType))
+        var downloader = serviceProvider.GetKeyedService<IDownloader>(server.DownloaderType);
+
+        if (downloader is null)
         {
             return null;
         }
         
-        var downloader = serviceProvider.GetKeyedService<IDownloader>(downloaderType);
-        return downloader?.CreateDownload(anime, episode, server, filepath);
-    }
-
-    private string GetDownloaderType(string? contentType)
-    {
-        return contentType switch
-        {
-            "ts" => DownloaderTypes.Ytdlp,
-            "mp4" or "mkv" => DownloaderTypes.Http,
-            "torrent" => DownloaderTypes.Torrent,
-            _ => ""
-        };
+        var operation = await downloader.CreateDownload(anime, episode, server, filepath);
+        
+        return operation ?? null;
     }
 
     private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)
