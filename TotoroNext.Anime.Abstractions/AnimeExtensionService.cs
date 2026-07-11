@@ -63,7 +63,7 @@ public class AnimeExtensionService : IAnimeExtensionService
     
     public async Task<SearchResult?> SearchOrSelectAsync(IAnimeProvider provider, AnimeModel anime)
     {
-        var results = await provider.GetSearchResults(anime.Title, CancellationToken.None);
+        var results = await provider.GetSearchResults(anime, CancellationToken.None);
 
         if (TryFindMatch(results, anime, anime.Title) is { } result)
         {
