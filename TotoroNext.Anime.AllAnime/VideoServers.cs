@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Flurl.Http;
+using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
 
@@ -20,7 +21,8 @@ internal static partial class VideoServers
                 {
                     [HeaderNames.Referer] = "https://www.mp4upload.com/"
                 },
-                ContentType = "mp4"
+                ContentType = "mp4",
+                DownloaderType = DownloaderTypes.Http
             };
         }
         catch
