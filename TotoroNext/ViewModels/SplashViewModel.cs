@@ -292,6 +292,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.TokyoInsider.Module();
         yield return new Anime.Senshi.Module();
         yield return new Anime.Anikoto.Module();
+        yield return new Anime.TsukiHime.Module();
 
         // Misc
         yield return new Anime.Aniskip.Module();

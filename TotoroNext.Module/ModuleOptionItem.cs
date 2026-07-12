@@ -257,6 +257,8 @@ public abstract class OverridableConfig
                 builder.WithAllowedValues(allowedValuesAttribute.Values);
             }
 
+            ConfigureProperty(builder, propertyInfo);
+            
             ModuleOptionItem option;
             if (propertyInfo.PropertyType == typeof(bool))
             {
@@ -276,6 +278,8 @@ public abstract class OverridableConfig
 
         return options;
     }
+    
+    protected virtual void ConfigureProperty(ModuleOptionBuilder builder, PropertyInfo info) { }
 
     protected virtual object? GetValue(ModuleOptionItem options, string name, Type t, object? defaultValue)
     {

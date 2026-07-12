@@ -4,7 +4,7 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Downloading;
 
-public class YtdlpDownloadOperation(VideoServer server, string output) : BaseDownloadOperation
+public class YtdlpDownloadOperation(VideoSource server, string output) : BaseDownloadOperation
 {
     public required string YtdlpPath { get; init; }
 

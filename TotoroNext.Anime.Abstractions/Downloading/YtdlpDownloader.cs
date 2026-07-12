@@ -1,5 +1,6 @@
 ﻿using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module.Abstractions;
+using Ursa.Controls;
 
 namespace TotoroNext.Anime.Abstractions.Downloading;
 
@@ -17,18 +18,19 @@ public class YtdlpDownloader : IDownloader
         }
     }
 
-    public Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+    public async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoSource source, string filepath)
     {
         if (string.IsNullOrEmpty(_executable))
         {
-            return Task.FromResult<IDownloadOperation?>(null);
+            return null;
         }
+        
 
-        return Task.FromResult<IDownloadOperation?>(new YtdlpDownloadOperation(server, filepath)
+        return new YtdlpDownloadOperation(source, filepath)
         {
-            Link = server.Url,
+            Link = source.Url,
             FileName = filepath,
             YtdlpPath = _executable
-        });
+        };
     }
 }

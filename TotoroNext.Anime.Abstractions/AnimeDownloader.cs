@@ -21,7 +21,8 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
                 foreach (var server in servers)
                 {
                     var fileName = CreateFilename(request, episode, server);
-                    var download = await CreateDownload(request.Anime, episode, server, fileName);
+                    var source = (await server.Extract(CancellationToken.None).ToListAsync()).First();
+                    var download = await CreateDownload(request.Anime, episode, source, fileName);
                     if (download is not null)
                     {
                         yield return download;
@@ -33,7 +34,8 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
             else
             {
                 var fileName = CreateFilename(request, episode, defaultServer);
-                var download = await CreateDownload(request.Anime, episode, defaultServer, fileName);
+                var source = (await defaultServer.Extract(CancellationToken.None).ToListAsync()).First();
+                var download = await CreateDownload(request.Anime, episode, source, fileName);
                 if (download is not null)
                 {
                     yield return download;
@@ -42,7 +44,7 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
         }
     }
 
-    protected async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+    protected async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoSource server, string filepath)
     {
         var downloader = serviceProvider.GetKeyedService<IDownloader>(server.DownloaderType);
 
