@@ -31,7 +31,9 @@ public class AnimeProvider(
 
     public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
-        return AsyncEnumerable.Empty<SearchResult>();
+        return TsukiHimeLocalData.Search(query)
+                                 .Select(x => new SearchResult(this, x.Id.ToString(), x.Title))
+                                 .ToAsyncEnumerable();
     }
 
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
@@ -53,12 +55,16 @@ public class AnimeProvider(
         var response = await client.Request("animes", animeId, "episodes", episodeId)
                                    .GetJsonAsync<EpisodeTorrentsListResponse>(cancellationToken: ct);
 
-        foreach (var torrent in response.Results.Where(x => x.Group.Id == settings.Value.Group))
+        var descriptor = TsukiHimeLocalData.Groups.FirstOrDefault(x => x.Name == settings.Value.Group);
+        
+        foreach (var torrent in response.Results.Where(x => x.Group.Id == descriptor?.Id))
         {
-            yield return new VideoServer(ParseStreamName(torrent), new Uri($"https://api.tsukihime.org/v1/torrents/{torrent.Id}"), _extractor)
+            var name = TorrentName.Parse(torrent);
+            yield return new VideoServer(name.GetDisplayName(), new Uri($"https://api.tsukihime.org/v1/torrents/{torrent.Id}"), _extractor)
             {
                 ContentType = "mkv",
-                DownloaderType = DownloaderTypes.Http
+                DownloaderType = DownloaderTypes.Http,
+                IsDefault = name.Resolution?.Contains(settings.Value.Resolution) == true
             };
         }
     }
@@ -68,35 +74,56 @@ public class AnimeProvider(
         return new FlurlClient(httpClientFactory.CreateClient($"{Module.Id}-api"));
     }
 
-    private static string ParseStreamName(TorrentDescriptor torrent)
+    class TorrentName
     {
-        var parts = AnitomySharp.AnitomySharp.Parse(torrent.Name).ToList();
-        var resolution = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementVideoResolution)?.Value ?? "";
-        var encodingVideo = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementVideoTerm)?.Value ?? "";
-        var encodingAudio = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementAudioTerm)?.Value ?? "";
-        var source = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementSource)?.Value ?? "";
-        var sb = new StringBuilder();
-        sb.Append($"[{torrent.Group.Name}]");
-        if (!string.IsNullOrEmpty(resolution))
-        {
-            sb.Append($" [{resolution}]");
-        }
+        public string? Resolution { get; init; }
+        public required string Group { get; init; }
+        public string? Video { get; init; }
+        public string? Audio { get; init; }
+        public string? Source { get; init; }
 
-        if (!string.IsNullOrEmpty(source))
+        public static TorrentName Parse(TorrentDescriptor descriptor)
         {
-            sb.Append($" [{source}]");
+            var parts = AnitomySharp.AnitomySharp.Parse(descriptor.Name).ToList();
+            var resolution = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementVideoResolution)?.Value;
+            var encodingVideo = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementVideoTerm)?.Value;
+            var encodingAudio = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementAudioTerm)?.Value;
+            var source = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementSource)?.Value;
+            return new TorrentName()
+            {
+                Group = descriptor.Group.Name,
+                Resolution = resolution,
+                Video = encodingVideo,
+                Audio = encodingAudio,
+                Source = source
+            };
         }
-
-        if (!string.IsNullOrEmpty(encodingVideo))
+        
+        public string GetDisplayName()
         {
-            sb.Append($" [{encodingVideo}]");
-        }
+            var sb = new StringBuilder();
+            sb.Append($"[{Group}]");
+            if (!string.IsNullOrEmpty(Resolution))
+            {
+                sb.Append($" [{Resolution}]");
+            }
 
-        if (!string.IsNullOrEmpty(encodingAudio))
-        {
-            sb.Append($" [{encodingAudio}]");
-        }
+            if (!string.IsNullOrEmpty(Source))
+            {
+                sb.Append($" [{Source}]");
+            }
 
-        return sb.ToString();
+            if (!string.IsNullOrEmpty(Video))
+            {
+                sb.Append($" [{Video}]");
+            }
+
+            if (!string.IsNullOrEmpty(Audio))
+            {
+                sb.Append($" [{Audio}]");
+            }
+
+            return sb.ToString();
+        }
     }
 }

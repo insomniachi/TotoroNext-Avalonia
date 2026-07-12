@@ -14,25 +14,15 @@
                Stretch="UniformToFill"
                Width="600" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
-
-            <controls:SettingsExpander Header="Group"
-                                       Description="Select the group to display">
-                <controls:SettingsExpander.Editor>
-                    <AutoCompleteBox ItemsSource="{x:Static local:TsukiHimeGroups.Groups}"
-                                     SelectedItem="{Binding SelectedGroup}"
-                                     ValueMemberBinding="{ReflectionBinding Name}"
-                                     Width="300">
-                        <AutoCompleteBox.ItemTemplate>
-                            <DataTemplate DataType="local:GroupDescriptor">
-                                <TextBlock Text="{Binding Name}"/>
-                            </DataTemplate>
-                        </AutoCompleteBox.ItemTemplate>
-                    </AutoCompleteBox>
-                </controls:SettingsExpander.Editor>
-            </controls:SettingsExpander>
-
+            
             <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"
                                           IsVisible="{Binding EditableSettings, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <Button Content="Fetch Catalog"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding FetchAnimeCommand}" />
+            
             <Button Content="Fetch Groups"
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"

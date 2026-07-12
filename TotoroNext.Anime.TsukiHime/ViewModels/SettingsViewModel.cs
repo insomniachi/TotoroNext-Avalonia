@@ -6,7 +6,7 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.TsukiHime.ViewModels;
 
-public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
+public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>, IInitializable
 {
     private readonly IHttpClientFactory _httpClientFactory;
 
@@ -14,19 +14,19 @@ public partial class SettingsViewModel : ModuleSettingsViewModel<Settings>
                              IHttpClientFactory httpClientFactory) : base(data)
     {
         _httpClientFactory = httpClientFactory;
-        SelectedGroup = TsukiHimeGroups.Groups.FirstOrDefault(x => x.Id == data.Value.Group);
     }
-
-    public GroupDescriptor? SelectedGroup
-    {
-        get;
-        set => SetAndSaveProperty(ref field, value, v => v.Group = SelectedGroup?.Id ?? 10);
-    }
-
+    
     [RelayCommand]
     private async Task FetchGroups()
     {
         using var client = new FlurlClient(_httpClientFactory.CreateClient($"{Module.Id}-api"));
-        await TsukiHimeGroups.FetchAsync(client);
+        await TsukiHimeLocalData.FetchGroupsAsync(client);
+    }
+
+    [RelayCommand]
+    private async Task FetchAnime()
+    {
+        using var client = new FlurlClient(_httpClientFactory.CreateClient($"{Module.Id}-api"));
+        await TsukiHimeLocalData.FetchAnimeAsync(client);
     }
 }

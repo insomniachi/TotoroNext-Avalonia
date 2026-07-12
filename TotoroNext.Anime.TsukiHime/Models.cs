@@ -9,6 +9,9 @@ public class GroupsListResponse : BaseListResponse<GroupDescriptor>;
 public class EpisodeTorrentsListResponse : BaseListResponse<TorrentDescriptor>;
 
 [Serializable]
+public class AnimeListResponse : BaseListResponse<AnimeDescriptor>;
+
+[Serializable]
 public class BaseListResponse<T>
 {
     [JsonPropertyName("total")] public int Total { get; set; }
@@ -31,6 +34,16 @@ public class TorrentDescriptor
     [JsonPropertyName("name")] public string Name { get; set; } = "";
 
     [JsonPropertyName("group")] public GroupDescriptor Group { get; set; } = new();
+}
+
+[Serializable]
+public class AnimeDescriptor
+{
+    [JsonPropertyName("title")] public string Title { get; set; } = "";
+    [JsonPropertyName("id")] public int Id { get; set; }
+    [JsonPropertyName("anilist")] public long? AnilistId { get; set; }
+    [JsonPropertyName("mal")] public long? MyAnimeListId { get; set; }
+    [JsonPropertyName("anidb")] public long? AniDbId { get; set; }
 }
 
 [Serializable]

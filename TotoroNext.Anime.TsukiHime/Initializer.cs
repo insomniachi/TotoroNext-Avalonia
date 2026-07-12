@@ -1,9 +1,11 @@
-﻿using TotoroNext.Module;
-using TotoroNext.Module.Abstractions;
+﻿using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.TsukiHime;
 
 public class Initializer : IInitializer
 {
-    public void Initialize() => TsukiHimeGroups.LoadGroups();
+    public void Initialize()
+    {
+        TsukiHimeLocalData.LoadData();
+    }
 }

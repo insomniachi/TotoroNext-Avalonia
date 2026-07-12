@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Reflection;
 using System.Runtime.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
@@ -23,7 +25,7 @@ public class Module : IModule<Settings>
 
     public void ConfigureServices(IServiceCollection services)
     {
-        TsukiHimeGroups.Descriptor = Descriptor;
+        TsukiHimeLocalData.Descriptor = Descriptor;
         
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
@@ -39,6 +41,16 @@ public class Module : IModule<Settings>
 
 public class Settings : OverridableConfig
 {
-    [IgnoreDataMember]
-    public int Group { get; set; } = 10;
+    public string Group { get; set; } = "Erai-raws";
+
+    [AllowedValues("1080", "720", "480")]
+    public string Resolution { get; set; } = "1080";
+
+    protected override void ConfigureProperty(ModuleOptionBuilder builder, PropertyInfo info)
+    {
+        if (info.Name == nameof(Group))
+        {
+            builder.WithAllowedValues(TsukiHimeLocalData.Groups.Select(x => x.Name));
+        }
+    }
 }
