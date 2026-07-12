@@ -9,8 +9,7 @@ using TotoroNext.Module;
 namespace TotoroNext.Anime.Senshi;
 
 public class AnimeProvider(
-    IHttpClientFactory httpClientFactory,
-    [FromKeyedServices(DownloaderTypes.Ytdlp)] IDownloader downloader) : IAnimeProvider
+    IHttpClientFactory httpClientFactory) : IAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {

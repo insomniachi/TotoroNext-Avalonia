@@ -75,6 +75,28 @@ public static class AnimeProviderExtensions
                 return [];
             }
         }
+        
+        public async Task<List<SearchResult>> GetSearchResults(AnimeModel anime, CancellationToken ct)
+        {
+            if (provider is null)
+            {
+                return [];
+            }
+
+            try
+            {
+                var options = new SearchOptions()
+                {
+                    Query = anime.Title,
+                    Ids = anime.ExternalIds
+                };
+                return await provider.SearchAsync(options, ct).ToListAsync(ct);
+            }
+            catch (Exception)
+            {
+                return [];
+            }
+        }
     }
 
     extension(VideoServer server)

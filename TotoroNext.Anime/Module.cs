@@ -80,7 +80,8 @@ public class Module : IModule
             {
                 Dispatcher.UIThread.Invoke(() =>
                 {
-                    item.BadgeContent = downloadManager.Downloads.Count(x => !x.IsCompleted).ToString();
+                    var count = downloadManager.Downloads.Count(x => !x.IsCompleted);
+                    item.BadgeContent = count == 0 ? null : count.ToString();
                 });
             };
 

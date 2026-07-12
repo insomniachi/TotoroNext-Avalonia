@@ -15,3 +15,9 @@ public class SearchResult(IAnimeProvider provider, string id, string title, Uri?
         return provider.GetEpisodes(Id, ct);
     }
 }
+
+public class SearchOptions
+{
+    public required string Query { get; init; }
+    public AnimeId? Ids { get; set; }
+}

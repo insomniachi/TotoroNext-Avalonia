@@ -6,7 +6,6 @@ using Flurl;
 using Flurl.Http;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
-using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
@@ -16,7 +15,6 @@ namespace TotoroNext.Anime.Anikoto;
 
 public partial class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    [FromKeyedServices(DownloaderTypes.Ytdlp)] IDownloader downloader,
     IModuleSettings<Settings> settings) : IAnimeProvider
 {
     public const string BaseUrl = "https://anikototv.to/";
@@ -144,7 +142,7 @@ public partial class AnimeProvider(
             }
         }
     }
-    
+
     public List<ModuleOptionItem> GetOptions()
     {
         return settings.Value.ToModuleOptions();
