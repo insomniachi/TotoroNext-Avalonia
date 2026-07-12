@@ -6,7 +6,6 @@ namespace TotoroNext.Anime.Abstractions.Models;
 [DebuggerDisplay("{Name} ({Url})")]
 public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor = null)
 {
-    public string DownloaderType { get; init; } = DownloaderTypes.Ytdlp;
     public string? ContentType { get; set; }
     public string Name { get; } = name;
     public Uri Url { get; } = url;
@@ -15,6 +14,7 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
     public string? Subtitle { get; set; }
     public SkipData? SkipData { get; set; }
     public bool IsDefault { get; set; }
+    public string DownloaderType { get; init; } = DownloaderTypes.Ytdlp;
 
     public async IAsyncEnumerable<VideoSource> Extract([EnumeratorCancellation] CancellationToken ct)
     {
@@ -26,7 +26,9 @@ public class VideoServer(string name, Uri url, IVideoExtractor? videoExtractor =
                 Quality = Quality,
                 Headers = Headers,
                 Subtitle = Subtitle,
-                SkipData = SkipData
+                SkipData = SkipData,
+                ContentType = ContentType,
+                DownloaderType = DownloaderType
             };
         }
         else

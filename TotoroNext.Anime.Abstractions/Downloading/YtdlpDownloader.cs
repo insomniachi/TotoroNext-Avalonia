@@ -18,16 +18,15 @@ public class YtdlpDownloader : IDownloader
         }
     }
 
-    public async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+    public async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoSource source, string filepath)
     {
         if (string.IsNullOrEmpty(_executable))
         {
             return null;
         }
         
-        var source = (await server.Extract(CancellationToken.None).ToListAsync()).First();
 
-        return new YtdlpDownloadOperation(server, filepath)
+        return new YtdlpDownloadOperation(source, filepath)
         {
             Link = source.Url,
             FileName = filepath,

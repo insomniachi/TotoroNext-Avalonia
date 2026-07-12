@@ -11,4 +11,6 @@ public class VideoSource
     public Dictionary<string, string> Headers { get; init; } = [];
     public string? Subtitle { get; init; }
     public SkipData? SkipData { get; init; }
+    public string DownloaderType { get; init; } = DownloaderTypes.Ytdlp;
+    public string? ContentType { get; init; }
 }

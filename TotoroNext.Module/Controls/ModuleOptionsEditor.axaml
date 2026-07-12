@@ -14,7 +14,8 @@
                     <controls:SettingsExpander.Editor>
                         <ComboBox ItemsSource="{Binding AllowedValues}"
                                   SelectedItem="{Binding Value, Mode=TwoWay}"
-                                  HorizontalAlignment="Stretch" />
+                                  HorizontalAlignment="Stretch" 
+                                  Width="250"/>
                     </controls:SettingsExpander.Editor>
                 </controls:SettingsExpander>
             </DataTemplate>

@@ -15,28 +15,35 @@ public partial class TsukiHimeExtractor : IVideoExtractor
     {
         var stream = await url.GetStreamAsync(cancellationToken: ct);
         var jdoc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
-        var files = jdoc.RootElement.GetProperty("files");
-        var biggestFile = files.Deserialize<List<TorrentContent>>()?.MaxBy(x => x.Size);
-
-        if (biggestFile is null)
+        var filesElement = jdoc.RootElement.GetProperty("files");
+        var files = filesElement.Deserialize<List<TorrentContent>>();
+        
+        if (files is not { Count: > 0 })
         {
+            var id = jdoc.RootElement.GetProperty("nyaa_id").GetInt64();
+            yield return new VideoSource()
+            {
+                Url = new Uri($"https://nyaa.si/download/{id}.torrent"),
+                DownloaderType = DownloaderTypes.Torrent
+            };
             yield break;
         }
 
-        if (string.IsNullOrEmpty(biggestFile.Links.FileDitch))
-        {
-            yield break;
-        }
-
-        var source = await ExtractFileDitch(biggestFile.Links.FileDitch, ct);
+        var biggestFile = files.MaxBy(x => x.Size);
+        var source = await ExtractFileDitch(biggestFile?.Links.FileDitch, ct);
         if (source is not null)
         {
             yield return source;
         }
     }
 
-    private static async Task<VideoSource?> ExtractFileDitch(string url, CancellationToken ct)
+    private static async Task<VideoSource?> ExtractFileDitch(string? url, CancellationToken ct)
     {
+        if (string.IsNullOrEmpty(url))
+        {
+            return null;
+        }
+        
         var stream = await url.GetStreamAsync(cancellationToken: ct);
         var doc = new HtmlDocument();
         doc.Load(stream);
@@ -50,6 +57,7 @@ public partial class TsukiHimeExtractor : IVideoExtractor
         return new VideoSource
         {
             Url = new Uri(streamUrl),
+            DownloaderType = DownloaderTypes.Http
         };
     }
 
