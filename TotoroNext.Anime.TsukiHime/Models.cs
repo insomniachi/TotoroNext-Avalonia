@@ -28,6 +28,23 @@ public class GroupDescriptor
 public class TorrentDescriptor
 {
     [JsonPropertyName("id")] public int Id { get; set; }
+    [JsonPropertyName("name")] public string Name { get; set; } = "";
 
     [JsonPropertyName("group")] public GroupDescriptor Group { get; set; } = new();
+}
+
+[Serializable]
+public class TorrentContent
+{
+    [JsonPropertyName("size")] public long Size { get; set; }
+
+    [JsonPropertyName("links")] public DirectLinks Links { get; set; } = new();
+}
+
+[Serializable]
+public class DirectLinks
+{
+    public string FileDitch { get; set; } = "";
+    public string Gofile { get; set; } = "";
+    public string BuzzHeavier { get; set; } = "";
 }

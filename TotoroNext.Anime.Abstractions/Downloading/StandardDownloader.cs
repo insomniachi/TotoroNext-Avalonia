@@ -5,11 +5,12 @@ namespace TotoroNext.Anime.Abstractions.Downloading;
 
 public class StandardDownloader : IDownloader
 {
-    public Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
+    public async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoServer server, string filepath)
     {
+        var source = (await server.Extract(CancellationToken.None).ToListAsync()).First();
         var configuration = new DownloadConfiguration { RequestConfiguration = new RequestConfiguration() };
         var builder = DownloadBuilder.New()
-                                     .WithUrl(server.Url)
+                                     .WithUrl(source.Url)
                                      .WithDirectory(Path.GetDirectoryName(filepath))
                                      .WithFileName(Path.GetFileName(filepath))
                                      .WithConfiguration(configuration);
@@ -26,6 +27,6 @@ public class StandardDownloader : IDownloader
             Link = new Uri(download.Url)
         };
 
-        return Task.FromResult<IDownloadOperation?>(operation);
+        return operation;
     }
 }
