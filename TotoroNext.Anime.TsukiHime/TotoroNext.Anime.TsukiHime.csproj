@@ -11,4 +11,8 @@
       <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\tsukihime.png" />
+    </ItemGroup>
+
 </Project>

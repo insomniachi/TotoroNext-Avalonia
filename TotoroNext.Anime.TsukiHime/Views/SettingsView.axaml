@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:controls="totoro.next/controls"
-             xmlns:local="clr-namespace:TotoroNext.Anime.TsukiHime"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.TsukiHime.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:SettingsViewModel"
@@ -12,9 +11,10 @@
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
         <Image Grid.Row="0"
                Stretch="UniformToFill"
-               Width="600" />
+               Width="600"
+               Source="/Assets/tsukihime.png" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
-            
+
             <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"
                                           IsVisible="{Binding EditableSettings, Converter={x:Static ObjectConverters.IsNotNull}}" />
             <Button Content="Fetch Catalog"
@@ -22,7 +22,7 @@
                     Theme="{DynamicResource SolidButton}"
                     HorizontalAlignment="Stretch"
                     Command="{Binding FetchAnimeCommand}" />
-            
+
             <Button Content="Fetch Groups"
                     u:FormItem.NoLabel="True"
                     Theme="{DynamicResource SolidButton}"

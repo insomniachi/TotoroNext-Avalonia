@@ -20,12 +20,7 @@ public partial class TsukiHimeExtractor : IVideoExtractor
         
         if (files is not { Count: > 0 })
         {
-            var id = jdoc.RootElement.GetProperty("nyaa_id").GetInt64();
-            yield return new VideoSource()
-            {
-                Url = new Uri($"https://nyaa.si/download/{id}.torrent"),
-                DownloaderType = DownloaderTypes.Torrent
-            };
+            yield return TorrentAsVideoSource(jdoc);
             yield break;
         }
 
@@ -35,6 +30,18 @@ public partial class TsukiHimeExtractor : IVideoExtractor
         {
             yield return source;
         }
+        
+        yield return TorrentAsVideoSource(jdoc);
+    }
+
+    private static VideoSource TorrentAsVideoSource(JsonDocument jdoc)
+    {
+        var id = jdoc.RootElement.GetProperty("nyaa_id").GetInt64();
+        return new VideoSource()
+        {
+            Url = new Uri($"https://nyaa.si/download/{id}.torrent"),
+            DownloaderType = DownloaderTypes.Torrent
+        };
     }
 
     private static async Task<VideoSource?> ExtractFileDitch(string? url, CancellationToken ct)

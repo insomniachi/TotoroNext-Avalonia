@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using System.Runtime.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.TsukiHime.ViewModels;
@@ -20,20 +19,18 @@ public class Module : IModule<Settings>
         Name = "TsukiHime",
         Id = Id,
         Components = [ComponentTypes.AnimeProvider],
-        SettingViewModel = typeof(SettingsViewModel)
+        SettingViewModel = typeof(SettingsViewModel),
+        HeroImage = ResourceHelper.GetResource("tsukihime.png")
     };
 
     public void ConfigureServices(IServiceCollection services)
     {
         TsukiHimeLocalData.Descriptor = Descriptor;
-        
+
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
-        services.AddHttpClient($"{Id}-api", client =>
-        {
-            client.BaseAddress = new Uri(AnimeProvider.BaseUrl);
-        });
+        services.AddHttpClient($"{Id}-api", client => { client.BaseAddress = new Uri(AnimeProvider.BaseUrl); });
         services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddTransient<IInitializer, Initializer>();
     }
@@ -41,9 +38,11 @@ public class Module : IModule<Settings>
 
 public class Settings : OverridableConfig
 {
+    [Description("Only torrents from this group would be returned by the provider")]
     public string Group { get; set; } = "Erai-raws";
 
-    [AllowedValues("1080", "720", "480")]
+    [AllowedValues("1080", "720", "480")] 
+    [Description("First torrent of matching this resolution would be selected as default, remaining will be returned and used manually")]
     public string Resolution { get; set; } = "1080";
 
     protected override void ConfigureProperty(ModuleOptionBuilder builder, PropertyInfo info)
