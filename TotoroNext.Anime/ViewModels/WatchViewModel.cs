@@ -448,8 +448,15 @@ public sealed partial class WatchViewModel(
             return;
         }
 
-        if (relations.FindRelation(Anime!) is { } relation && infos.Count > 0 &&
-            ProviderResult?.HasAbsoluteNumbering == true)
+        var useAbsoluteNumbering = false;
+        
+        if (Anime is not null)
+        {
+            var overrides = animeExtensionService.GetExtension(Anime.Id);
+            useAbsoluteNumbering = overrides?.UseAbsoluteNumbering ?? false;
+        }
+
+        if (relations.FindRelation(Anime!) is { } relation && infos.Count > 0 && useAbsoluteNumbering)
         {
             var eps = episodes
                       .Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End)

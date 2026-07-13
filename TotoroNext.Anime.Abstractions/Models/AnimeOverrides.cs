@@ -9,6 +9,7 @@ public sealed class AnimeOverrides
     public SkipMethod OpeningSkipMethod { get; init; }
     public SkipMethod EndingSkipMethod { get; init; }
     public ProviderItemResult? ProviderResult { get; set; }
+    public bool UseAbsoluteNumbering { get; set; }
     public List<ModuleOptionItem> AnimeProviderOptions { get; init; } = [];
 }
 

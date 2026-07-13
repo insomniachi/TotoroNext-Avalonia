@@ -80,6 +80,12 @@
                                         HorizontalAlignment="Stretch" />
                     </ctl:SettingsExpander.Editor>
                 </ctl:SettingsExpander>
+                <ctl:SettingsExpander Header="Use absolute numbering"
+                                      Description="Uses anime relations to map episodes to seasons">
+                    <ctl:SettingsExpander.Editor>
+                        <ToggleSwitch IsChecked="{Binding UseAbsoluteNumbering}"/>
+                    </ctl:SettingsExpander.Editor>
+                </ctl:SettingsExpander>
             </StackPanel>
         </ScrollViewer>
 

@@ -32,7 +32,8 @@ public partial class AnimeExtensionsViewModel(
         nameof(OpeningSkipMethod),
         nameof(EndingSkipMethod),
         nameof(ProviderOptions),
-        nameof(ProviderResult)
+        nameof(ProviderResult),
+        nameof(UseAbsoluteNumbering)
     ];
 
     private IAnimeProvider? _animeProvider;
@@ -56,7 +57,9 @@ public partial class AnimeExtensionsViewModel(
     [ObservableProperty] public partial ObservableCollection<string> ProviderResults { get; set; } = [];
     
     [ObservableProperty] public partial SearchResult? ProviderResult { get; set; }
-
+    
+    [ObservableProperty] public partial bool UseAbsoluteNumbering { get; set; }
+ 
     public List<Descriptor> Providers { get; } = [Descriptor.None, .. descriptors.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
 
     public void Initialize()
@@ -69,6 +72,7 @@ public partial class AnimeExtensionsViewModel(
         OpeningSkipMethod = overrides?.OpeningSkipMethod ?? SkipMethod.Ask;
         EndingSkipMethod = overrides?.EndingSkipMethod ?? SkipMethod.Ask;
         ProviderOptions = overrides?.AnimeProviderOptions ?? [];
+        UseAbsoluteNumbering = overrides?.UseAbsoluteNumbering ?? false;
 
         if (ProviderId is not null && ProviderId != Guid.Empty)
         {
@@ -91,6 +95,7 @@ public partial class AnimeExtensionsViewModel(
                     OpeningSkipMethod = OpeningSkipMethod,
                     EndingSkipMethod = EndingSkipMethod,
                     AnimeProviderOptions = ProviderOptions,
+                    UseAbsoluteNumbering = UseAbsoluteNumbering
                 };
 
                 if (ProviderId != null && ProviderResult is not null)
@@ -194,6 +199,7 @@ public partial class AnimeExtensionsViewModel(
         ProviderResult = null;
         Unsubscribe(ProviderOptions);
         ProviderOptions = [];
+        UseAbsoluteNumbering = false;
 
         _isDeleting = false;
     }
