@@ -93,8 +93,10 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
             return;
         }
 
+        var extensions = ExtensionService.GetExtension(anime.Id);
+
         var episodes = await result.GetEpisodes(ct);
-        if (episodes.Count > (anime.TotalEpisodes ?? 0) && Relations.FindRelation(anime) is { } relation)
+        if (extensions?.UseAbsoluteNumbering == true && Relations.FindRelation(anime) is { } relation)
         {
             episodes = episodes.Where(x => x.Number >= relation.SourceEpisodesRage.Start && x.Number <= relation.SourceEpisodesRage.End).ToList();
             foreach (var ep in episodes)
