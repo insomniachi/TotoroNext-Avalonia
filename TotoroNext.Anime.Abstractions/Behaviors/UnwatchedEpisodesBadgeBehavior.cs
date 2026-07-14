@@ -68,7 +68,7 @@ public class UnwatchedEpisodesBadgeBehavior : AnimeCardOverlayBehavior<Border>
 
         var watched = anime.Tracking?.WatchedEpisodes ?? 0;
         var total = anime.AiredEpisodes;
-        if (total == 0 && MappingService.GetId(anime) is { } id)
+        if (total == 0 && await MappingService.GetId(anime) is { } id)
         {
             total = await AnilistHelper.GetTotalAiredEpisodes(Client, id.Anilist, ct);
         }

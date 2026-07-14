@@ -40,14 +40,13 @@ public sealed class TrackingUpdater(
 
             if (id is not > 0)
             {
-                id = animeMappingService.GetId(anime)?.GetIdForService(trackingService.Name);
+                id = (await animeMappingService.GetId(anime))?.GetIdForService(trackingService.Name);
             }
 
             if (id is not > 0)
             {
                 id = await SearchId(anime, trackingService.Id);
             }
-
 
             if (id is null)
             {
@@ -77,15 +76,14 @@ public sealed class TrackingUpdater(
 
             if (id is not > 0)
             {
-                id = animeMappingService.GetId(anime)?.GetIdForService(trackingService.Name);
+                id = (await animeMappingService.GetId(anime))?.GetIdForService(trackingService.Name);
             }
 
             if (id is not > 0)
             {
                 id = await SearchId(anime, trackingService.Id);
             }
-
-
+            
             if (id is null)
             {
                 continue;

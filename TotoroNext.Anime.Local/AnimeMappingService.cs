@@ -1,11 +1,12 @@
 ﻿using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Local;
 
 internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingService
 {
-    public AnimeId? GetId(AnimeModel anime)
+    public async Task<AnimeId?> GetId(AnimeModel anime)
     {
         if (anime.ServiceName == "Local")
         {
@@ -25,7 +26,7 @@ internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingServ
 
         if (localAnime is null)
         {
-            return null;
+            return await anime.GetMappings();
         }
 
         return new AnimeId

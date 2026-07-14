@@ -96,7 +96,7 @@ public class NextEpisodeTimeBehavior : AnimeCardOverlayBehavior<Border>
             return;
         }
 
-        var id = MappingService.GetId(anime);
+        var id = await MappingService.GetId(anime);
         if (id is null)
         {
             return;

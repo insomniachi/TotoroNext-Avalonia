@@ -2,5 +2,5 @@
 
 public interface IAnimeMappingService
 {
-    AnimeId? GetId(Models.AnimeModel anime);
+    Task<AnimeId?> GetId(Models.AnimeModel anime);
 }

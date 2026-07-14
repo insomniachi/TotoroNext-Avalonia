@@ -207,7 +207,7 @@ public partial class AnimeExtensionsViewModel(
     [RelayCommand]
     private async Task BuildRelationshipTree()
     {
-        if (mappingService.GetId(parameters.Anime) is not { } id)
+        if (await mappingService.GetId(parameters.Anime) is not { } id)
         {
             return;
         }

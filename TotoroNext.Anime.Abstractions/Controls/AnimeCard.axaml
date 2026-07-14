@@ -54,6 +54,7 @@
                             TextAlignment="Center"
                             Text="{Binding $parent[local:AnimeCard].Anime.Title, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
+                            Foreground="White"
                             ToolTip.Tip="{Binding $parent[local:AnimeCard].Anime.Title, Mode=OneWay}" />
                     </Border>
                 </Grid>

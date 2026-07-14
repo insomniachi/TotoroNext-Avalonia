@@ -238,7 +238,7 @@ internal class TrackingService(
             return;
         }
         
-        if (mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 } id)
+        if (await mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 } id)
         {
             return;
         }

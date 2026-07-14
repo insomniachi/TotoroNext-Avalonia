@@ -46,6 +46,28 @@ public static class AnimeMetadataExtensions
 
     extension(AnimeModel anime)
     {
+        public async Task<AnimeId> GetMappings()
+        {
+            var serviceType = anime.ServiceName switch
+            {
+                "Anilist" => "anilist_id",
+                "MyAnimeList" or "Local" => "mal_id",
+                _ => throw new NotSupportedException($"Service type {anime.ServiceId} is not supported.")
+            };
+            
+            var response = await @"https://api.ani.zip/mappings".SetQueryParam(serviceType, anime.Id).GetStreamAsync();
+            var doc = await JsonDocument.ParseAsync(response);
+            var mappings = doc.RootElement.GetProperty("mappings");
+
+            return new AnimeId()
+            {
+                AniDb = mappings.GetProperty("anidb_id").GetInt64(),
+                Anilist = mappings.GetProperty("anilist_id").GetInt64(),
+                Kitsu = mappings.GetProperty("kitsu_id").GetInt64(),
+                MyAnimeList = anime.ExternalIds.MyAnimeList,
+            };
+        }
+        
         public async Task<List<EpisodeInfo>> GetEpisodes(CancellationToken ct = default)
         {
             try

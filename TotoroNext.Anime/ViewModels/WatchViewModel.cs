@@ -395,7 +395,7 @@ public sealed partial class WatchViewModel(
             return [.. segments.MakeContiguousSegments(_duration)];
         }
 
-        var id = animeMappingService.GetId(Anime);
+        var id = await animeMappingService.GetId(Anime);
 
         if (id is null ||
             id.MyAnimeList <= 0 ||

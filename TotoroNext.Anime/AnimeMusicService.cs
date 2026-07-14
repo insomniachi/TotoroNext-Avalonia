@@ -13,7 +13,7 @@ internal class AnimeMusicService(
     {
         try
         {
-            var id = GetAnnId(anime);
+            var id = await GetAnnId(anime);
 
             if (id == 0)
             {
@@ -49,14 +49,14 @@ internal class AnimeMusicService(
         }
     }
 
-    private long GetAnnId(AnimeModel anime)
+    private async Task<long> GetAnnId(AnimeModel anime)
     {
         if (anime.ExternalIds is { AnimeNewsNetwork: > 0 })
         {
             return anime.ExternalIds.AnimeNewsNetwork;
         }
 
-        var id = animeMappingService.GetId(anime);
+        var id = await animeMappingService.GetId(anime);
 
         if (id is null)
         {
