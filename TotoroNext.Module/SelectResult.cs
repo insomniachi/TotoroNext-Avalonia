@@ -1,5 +1,6 @@
 ﻿using AsyncImageLoader;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using TotoroNext.Module.Abstractions;
@@ -16,12 +17,14 @@ public abstract class SelectResult<T> : ISelectionUserInteraction<T>
                  .ItemsSource(input)
                  .SelectionMode(SelectionMode.Single)
                  .MaxHeight(600)
+                 .Width(400)
                  .ItemTemplate<T>(CreateElement);
 
         var options = new OverlayDialogOptions
         {
             Buttons = DialogButton.OKCancel,
-            Title = GetTitle()
+            Title = GetTitle(),
+            VerticalOffset = 300
         };
 
         var result = await OverlayDialog.ShowStandardAsync(lb, null, null, options);
