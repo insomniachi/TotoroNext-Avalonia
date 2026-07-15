@@ -4,8 +4,16 @@ using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Abstractions;
 
-public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloader
+public class AnimeDownloader(IServiceScopeFactory serviceScopeFactory) : IAnimeDownloader
 {
+    public async Task<IDownloadOperation?> Download(AnimeModel anime, Episode episode, VideoServer server)
+    {
+        var fileName = CreateFilename(anime, episode, server);
+        var source = (await server.Extract(CancellationToken.None).ToListAsync()).First();
+        var download = await CreateDownload(anime, episode, source, fileName);
+        return download;
+    }
+    
     public async IAsyncEnumerable<IDownloadOperation> Download(DownloadRequest request)
     {
         var allEpisodes = await request.Provider.GetEpisodes(request.SearchResult.Id, CancellationToken.None).ToListAsync();
@@ -46,7 +54,8 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
 
     protected async Task<IDownloadOperation?> CreateDownload(AnimeModel anime, Episode episode, VideoSource server, string filepath)
     {
-        var downloader = serviceProvider.GetKeyedService<IDownloader>(server.DownloaderType);
+        using var scope = serviceScopeFactory.CreateScope();
+        var downloader = scope.ServiceProvider.GetKeyedService<IDownloader>(server.DownloaderType);
 
         if (downloader is null)
         {
@@ -63,6 +72,16 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
         var absoluteEpNumber = episode.Number + message.EpisodeOffset;
         var invalidChars = Path.GetInvalidFileNameChars();
         var validTitle = new string(message.Anime.Title.Where(c => !invalidChars.Contains(c)).ToArray());
+        var fileName = $"{absoluteEpNumber}.{server.ContentType}";
+        return Path.Combine(directory, validTitle, fileName);
+    }
+    
+    private static string CreateFilename(AnimeModel anime, Episode episode, VideoServer server)
+    {
+        var directory = FileHelper.GetPath("Downloads");
+        var absoluteEpNumber = episode.Number;
+        var invalidChars = Path.GetInvalidFileNameChars();
+        var validTitle = new string(anime.Title.Where(c => !invalidChars.Contains(c)).ToArray());
         var fileName = $"{absoluteEpNumber}.{server.ContentType}";
         return Path.Combine(directory, validTitle, fileName);
     }

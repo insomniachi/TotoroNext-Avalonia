@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
+using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -93,6 +94,10 @@ public partial class SplashViewModel(
                                                                 .GetTopLevel((Application.Current?.ApplicationLifetime as
                                                                                  IClassicDesktopStyleApplicationLifetime)!.MainWindow)!
                                                                 .Launcher);
+                          services.AddTransient<IClipboard>(_ => TopLevel
+                                                                .GetTopLevel((Application.Current?.ApplicationLifetime as
+                                                                                 IClassicDesktopStyleApplicationLifetime)!.MainWindow)!
+                                                                .Clipboard!);
 
                           services.AddSingleton<UpdateManager>(_ => updateManager);
                           services.AddDataViewMap<DownloadUpdateView, DownloadUpdateViewModel, UpdateInfo>();

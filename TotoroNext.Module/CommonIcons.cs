@@ -13,6 +13,7 @@ public static class CommonIcons
     public const string ChevronLeft = nameof(ChevronLeft);
     public const string ChevronRight = nameof(ChevronRight);
     public const string ClearAll = nameof(ClearAll);
+    public const string CopyToClipboard = nameof(CopyToClipboard);
     public const string DebugPause = nameof(DebugPause);
     public const string Delete = nameof(Delete);
     public const string Download = nameof(Download);

@@ -9,6 +9,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:ProviderDebuggerViewModel"
              x:Class="TotoroNext.Views.ProviderDebuggerView">
+    <ContentPage.Styles>
+        <Style Selector="Border.IsDefault">
+            <Setter Property="Background" Value="{DynamicResource SemiColorAIBackgroundBottom}"/>
+        </Style>
+    </ContentPage.Styles>
     <Grid RowDefinitions="Auto,*"
           RowSpacing="16"
           ColumnSpacing="16"
@@ -21,7 +26,7 @@
                       SelectedValue="{Binding ProviderId, Mode=TwoWay}"
                       SelectedValueBinding="{Binding Id}" />
             <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Settings}}" Grid.Column="2"
-                    Command="{Binding EditOptionsCommand}"/>
+                    Command="{Binding EditOptionsCommand}" />
             <ComboBox ItemsSource="{Binding MediaPlayers}"
                       Grid.Column="3"
                       DisplayMemberBinding="{Binding Name}"
@@ -48,17 +53,55 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox Grid.Column="2" Grid.Row="1" ItemsSource="{Binding Servers}"
-                 SelectedItem="{Binding SelectedServer}">
-            <ListBox.ItemTemplate>
+        <ItemsControl Grid.Column="2" Grid.Row="1" ItemsSource="{Binding Servers}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="12" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="mdl:VideoServer">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="{Binding Name}" />
-                        <TextBlock Text="{Binding Url}" TextWrapping="Wrap" />
-                    </StackPanel>
+                    <Border Background="{DynamicResource SemiColorBackground1}" 
+                            BorderBrush="{DynamicResource SemiColorBorder}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12"
+                            Classes.IsDefault="{Binding IsDefault}">
+                        <Grid ColumnDefinitions="1.25*,*" ColumnSpacing="8">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding Url}" TextWrapping="Wrap" />
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Play}}"
+                                            Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).PlayCommand, FallbackValue={x:Null}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip.Tip="Stream"/>
+                                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Download}}"
+                                            Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).DownloadCommand, FallbackValue={x:Null}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip.Tip="Download"/>
+                                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.CopyToClipboard}}" 
+                                            Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).CopyToClipboardCommand, FallbackValue={x:Null}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip.Tip="Copy as curl"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <TableView Grid.Column="1"
+                                       ItemsSource="{Binding Headers}"
+                                       HorizontalAlignment="Stretch"
+                                       CanUserResizeColumns="False">
+                                <TableView.Columns>
+                                    <TableViewColumn Header="Header" Binding="{Binding Key}"
+                                                     Width="Auto" />
+                                    <TableViewColumn Header="Value" Binding="{Binding Value}"
+                                                     Width="*" />
+                                </TableView.Columns>
+                            </TableView>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
     </Grid>
 </ContentPage>

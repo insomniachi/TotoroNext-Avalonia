@@ -5,4 +5,5 @@ namespace TotoroNext.Anime.Abstractions;
 public interface IAnimeDownloader
 {
     IAsyncEnumerable<IDownloadOperation> Download(DownloadRequest request);
+    Task<IDownloadOperation?> Download(AnimeModel anime, Episode episode, VideoServer server);
 }

@@ -1,5 +1,7 @@
 ﻿using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Text;
+using Avalonia.Input.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -24,6 +26,9 @@ public partial class ProviderDebuggerViewModel(
     IFactory<IMetadataService, Guid> metadataFactory,
     IMessenger messenger,
     IDialogService dialogService,
+    IAnimeDownloader downloader,
+    IDownloadManager downloadManager,
+    IClipboard clipboard,
     SettingsModel settings) : ObservableObject, IInitializable
 {
     private readonly IMetadataService? _metadataService = metadataFactory.CreateDefault();
@@ -49,9 +54,6 @@ public partial class ProviderDebuggerViewModel(
     [ObservableProperty] public partial Episode? SelectedEpisode { get; set; }
 
     [ObservableProperty] public partial List<VideoServer> Servers { get; set; } = [];
-
-    [ObservableProperty] public partial VideoServer? SelectedServer { get; set; }
-
 
     public void Initialize()
     {
@@ -103,18 +105,13 @@ public partial class ProviderDebuggerViewModel(
             .Switch()
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(servers => Servers = servers);
-
-        this.WhenAnyValue(x => x.SelectedServer)
-            .WhereNotNull()
-            .SelectMany(AnimeProviderExtensions.GetSources)
-            .Select(x => x.FirstOrDefault())
-            .WhereNotNull()
-            .ObserveOn(RxSchedulers.MainThreadScheduler)
-            .Subscribe(Play);
     }
 
-    private void Play(VideoSource source)
+    [RelayCommand]
+    private async Task Play(VideoServer server)
     {
+        var source = (await server.Extract(CancellationToken.None).ToListAsync()).First();
+
         if (SelectedEpisode is null || MediaPlayerId is null)
         {
             return;
@@ -153,6 +150,38 @@ public partial class ProviderDebuggerViewModel(
         _metadataService.SearchAndSelectAsync(value)
                         .ToObservable()
                         .Subscribe(anime => _anime = anime);
+    }
+
+    [RelayCommand]
+    private async Task Download(VideoServer server)
+    {
+        if (_anime is null || SelectedEpisode is null)
+        {
+            return;
+        }
+
+        var download = await downloader.Download(_anime, SelectedEpisode, server);
+
+        if (download is null)
+        {
+            return;
+        }
+
+        downloadManager.AddDownload(download);
+    }
+
+    [RelayCommand]
+    private async Task CopyToClipboard(VideoServer server)
+    {
+        var source = (await server.Extract(CancellationToken.None).ToListAsync()).First();
+        var sb = new StringBuilder();
+        sb.Append("curl ").Append($"'{source.Url}'").AppendLine(@" \");
+        foreach (var kvp in source.Headers)
+        {
+            sb.Append("-H '").Append(kvp.Key).Append(": ").Append(kvp.Value).Append(@"' \");
+        }
+
+        await clipboard.SetTextAsync(sb.ToString());
     }
 
     [RelayCommand]
