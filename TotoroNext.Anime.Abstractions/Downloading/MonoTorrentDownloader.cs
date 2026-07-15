@@ -16,7 +16,7 @@ public class MonoTorrentDownloader(
         var torrent = await Torrent.LoadAsync(client, source.Url, path);
         var manager = await engine.AddAsync(torrent, dir);
 
-        return new MonotorrentDownloadOperation(manager, path, episode, dir)
+        return new MonotorrentDownloadOperation(manager, path, anime, episode, dir)
         {
             Link = source.Url,
             FileName = filepath

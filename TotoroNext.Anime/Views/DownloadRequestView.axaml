@@ -26,11 +26,13 @@
             <controls:SettingsExpander.Editor>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}" 
-                                        Maximum="{Binding TotalEpisodes, Mode=OneWay}"
-                                        Minimum="1"/>
+                                        Maximum="{Binding #EndInput.Value, Mode=OneWay}"
+                                        Minimum="1"
+                                        x:Name="StartInput"/>
                     <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}" 
                                         Maximum="{Binding TotalEpisodes, Mode=OneWay}" 
-                                        Minimum="1"/>
+                                        Minimum="{Binding #StartInput.Value, Mode=OneWay}"
+                                        x:Name="EndInput"/>
                 </StackPanel>
             </controls:SettingsExpander.Editor>
         </controls:SettingsExpander>

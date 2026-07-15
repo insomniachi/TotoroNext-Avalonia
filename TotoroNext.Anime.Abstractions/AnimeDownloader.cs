@@ -54,8 +54,7 @@ public class AnimeDownloader(IServiceProvider serviceProvider) : IAnimeDownloade
         }
         
         var operation = await downloader.CreateDownload(anime, episode, server, filepath);
-        
-        return operation ?? null;
+        return operation;
     }
 
     private static string CreateFilename(DownloadRequest message, Episode episode, VideoServer server)

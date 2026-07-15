@@ -2,10 +2,11 @@
 using Avalonia.Threading;
 using Downloader;
 using ReactiveUI;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Downloading;
 
-public class StandardDownloadOperation(IDownload download) : BaseDownloadOperation
+public class StandardDownloadOperation(IDownload download, AnimeModel anime, Episode ep) : BaseDownloadOperation(anime, ep)
 {
     private DownloadProgressChangedEventArgs? _progress;
 

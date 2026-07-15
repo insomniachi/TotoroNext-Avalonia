@@ -4,7 +4,8 @@ using Timer = System.Timers.Timer;
 
 namespace TotoroNext.Anime.Abstractions.Downloading;
 
-public class MonotorrentDownloadOperation(TorrentManager manager, string torrentFilePath, Episode episode, string downloadDir) : BaseDownloadOperation
+public class MonotorrentDownloadOperation(TorrentManager manager, string torrentFilePath, AnimeModel anime, Episode episode, string downloadDir)
+    : BaseDownloadOperation(anime, episode)
 {
     private Timer? _progressTimer;
 
@@ -150,7 +151,7 @@ public class MonotorrentDownloadOperation(TorrentManager manager, string torrent
             }
 
             var extension = Path.GetExtension(downloadedFile);
-            var newFileName = $"{episode.Number}{extension}";
+            var newFileName = $"{Episode.Number}{extension}";
             var newFilePath = Path.Combine(downloadDir, newFileName);
 
             if (File.Exists(newFilePath))

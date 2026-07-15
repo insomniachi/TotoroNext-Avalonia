@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions;
 
@@ -15,6 +16,8 @@ public interface IDownloadOperation : INotifyPropertyChanged
     bool IsCancelled { get; set; }
     Uri Link { get; init; }
     string FileName { get; init; }
+    public AnimeModel Anime { get; }
+    public Episode Episode { get;}
     IRelayCommand TogglePauseResumeCommand { get; }
     IRelayCommand CancelCommand { get; }
     Task StartAsync();

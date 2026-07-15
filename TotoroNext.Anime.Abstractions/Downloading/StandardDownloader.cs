@@ -22,7 +22,7 @@ public class StandardDownloader : IDownloader
             }
 
             var download = builder.Build();
-            var operation = new StandardDownloadOperation(download)
+            var operation = new StandardDownloadOperation(download, anime, episode)
             {
                 FileName = filepath,
                 Link = new Uri(download.Url)
