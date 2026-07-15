@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
         public IServiceCollection AddModuleSettings<TData>(IModule<TData> module)
             where TData : class, new()
         {
-            return services.AddSingleton<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
+            return services.AddTransient<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
         }
 
         public IServiceCollection AddMainNavigationItem<TView, TViewModel>(string header, string iconKey,

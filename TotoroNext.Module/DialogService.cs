@@ -5,6 +5,7 @@ using Avalonia.Layout;
 using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Module.Controls;
 using Ursa.Controls;
 
 namespace TotoroNext.Module;
@@ -46,6 +47,19 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
         }
 
         await OverlayMessageBox.ShowAsync(info, "Info", icon: MessageBoxIcon.Information, button: MessageBoxButton.OK);
+    }
+
+    public async Task<bool> EditModuleOptions(string title, List<ModuleOptionItem> options)
+    {
+        var dialogOptions = new OverlayDialogOptions
+        {
+            Buttons = DialogButton.OKCancel,
+            Title = title,
+        };
+
+        var editor = new ModuleOptionsEditor { Options = options, Width = 600 };
+        var result = await OverlayDialog.ShowStandardAsync(editor, null, null, dialogOptions);
+        return result == DialogResult.OK;
     }
 
     public async Task<MessageBoxResult> AskSkip(string type, MessageBoxResult defaultResult = MessageBoxResult.No)

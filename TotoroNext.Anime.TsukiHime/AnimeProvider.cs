@@ -5,6 +5,7 @@ using AnitomySharp;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.TsukiHime;
@@ -68,6 +69,10 @@ public class AnimeProvider(
             };
         }
     }
+    
+    public List<ModuleOptionItem> GetOptions() => settings.Value.ToModuleOptions();
+    
+    public void UpdateOptions(List<ModuleOptionItem> options) => settings.Value.UpdateValues(options);
 
     private FlurlClient CreateClient()
     {

@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.ViewModels"
              xmlns:mdl="totoro.next/models"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:extensions="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:ProviderDebuggerViewModel"
              x:Class="TotoroNext.Views.ProviderDebuggerView">
@@ -11,15 +13,17 @@
           RowSpacing="16"
           ColumnSpacing="16"
           ColumnDefinitions="*,*,*">
-        <Grid ColumnSpacing="8" ColumnDefinitions="*,Auto,Auto" ColumnSpan="4">
+        <Grid ColumnSpacing="8" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpan="4">
             <TextBox Text="{Binding Query}" HorizontalAlignment="Stretch" />
             <ComboBox ItemsSource="{Binding AnimeProviders}"
                       Grid.Column="1"
                       DisplayMemberBinding="{Binding Name}"
                       SelectedValue="{Binding ProviderId, Mode=TwoWay}"
                       SelectedValueBinding="{Binding Id}" />
+            <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Settings}}" Grid.Column="2"
+                    Command="{Binding EditOptionsCommand}"/>
             <ComboBox ItemsSource="{Binding MediaPlayers}"
-                      Grid.Column="2"
+                      Grid.Column="3"
                       DisplayMemberBinding="{Binding Name}"
                       SelectedValue="{Binding MediaPlayerId, Mode=TwoWay}"
                       SelectedValueBinding="{Binding Id}" />

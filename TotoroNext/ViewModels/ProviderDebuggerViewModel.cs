@@ -1,6 +1,7 @@
 ﻿using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
@@ -22,6 +23,7 @@ public partial class ProviderDebuggerViewModel(
     IFactory<IMediaPlayer, Guid> playerFactory,
     IFactory<IMetadataService, Guid> metadataFactory,
     IMessenger messenger,
+    IDialogService dialogService,
     SettingsModel settings) : ObservableObject, IInitializable
 {
     private readonly IMetadataService? _metadataService = metadataFactory.CreateDefault();
@@ -49,6 +51,7 @@ public partial class ProviderDebuggerViewModel(
     [ObservableProperty] public partial List<VideoServer> Servers { get; set; } = [];
 
     [ObservableProperty] public partial VideoServer? SelectedServer { get; set; }
+
 
     public void Initialize()
     {
@@ -150,5 +153,28 @@ public partial class ProviderDebuggerViewModel(
         _metadataService.SearchAndSelectAsync(value)
                         .ToObservable()
                         .Subscribe(anime => _anime = anime);
+    }
+
+    [RelayCommand]
+    private async Task EditOptions()
+    {
+        if (_provider?.GetOptions() is not { Count: > 0 } options)
+        {
+            return;
+        }
+
+        var title = AnimeProviders.FirstOrDefault(x => x.Id == ProviderId)?.Name ?? "";
+
+        var isUpdated = await dialogService.EditModuleOptions(title, options);
+
+        if (!isUpdated)
+        {
+            return;
+        }
+
+        _provider.UpdateOptions(options);
+        Result = [];
+        Episodes = [];
+        Servers = [];
     }
 }
