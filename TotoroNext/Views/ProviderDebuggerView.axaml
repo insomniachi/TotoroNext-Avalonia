@@ -6,18 +6,19 @@
              xmlns:mdl="totoro.next/models"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              xmlns:extensions="totoro.next/extensions"
+             xmlns:ail="clr-namespace:AsyncImageLoader;assembly=AsyncImageLoader.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:ProviderDebuggerViewModel"
              x:Class="TotoroNext.Views.ProviderDebuggerView">
     <ContentPage.Styles>
         <Style Selector="Border.IsDefault">
-            <Setter Property="Background" Value="{DynamicResource SemiColorAIBackgroundBottom}"/>
+            <Setter Property="Background" Value="{DynamicResource SemiColorAIBackgroundBottom}" />
         </Style>
     </ContentPage.Styles>
     <Grid RowDefinitions="Auto,*"
           RowSpacing="16"
           ColumnSpacing="16"
-          ColumnDefinitions="*,*,*">
+          ColumnDefinitions="600,*,*">
         <Grid ColumnSpacing="8" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpan="4">
             <TextBox Text="{Binding Query}" HorizontalAlignment="Stretch" />
             <ComboBox ItemsSource="{Binding AnimeProviders}"
@@ -34,11 +35,35 @@
                       SelectedValueBinding="{Binding Id}" />
         </Grid>
 
-        <ListBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Result}"
+        <ListBox Grid.Column="0"
+                 Grid.Row="1"
+                 ItemsSource="{Binding Result}"
                  SelectedItem="{Binding SelectedResult}">
+            <ListBox.Styles>
+                <Style Selector="ScrollViewer">
+                    <Setter Property="VerticalScrollBarVisibility" Value="Hidden" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="3" VerticalAlignment="Top" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="mdl:SearchResult">
-                    <TextBlock Text="{Binding Title}" />
+                    <Grid RowDefinitions="*, 50" Height="300">
+                        <Image
+                            Stretch="UniformToFill"
+                            ail:ImageLoader.Source="{Binding Image}" />
+                        <Border Grid.Row="1" Padding="4"
+                                Background="{DynamicResource SemiColorBackground1}"
+                                VerticalAlignment="Stretch">
+                            <TextBlock Text="{Binding Title}" TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       ToolTip.Tip="{Binding Title}"/>
+                        </Border>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -53,7 +78,9 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ItemsControl Grid.Column="2" Grid.Row="1" ItemsSource="{Binding Servers}">
+        <ItemsControl Grid.Column="2"
+                      Grid.Row="1"
+                      ItemsSource="{Binding Servers}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Spacing="12" />
@@ -61,7 +88,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="mdl:VideoServer">
-                    <Border Background="{DynamicResource SemiColorBackground1}" 
+                    <Border Background="{DynamicResource SemiColorBackground1}"
                             BorderBrush="{DynamicResource SemiColorBorder}"
                             BorderThickness="1"
                             CornerRadius="8"
@@ -69,21 +96,24 @@
                             Classes.IsDefault="{Binding IsDefault}">
                         <Grid ColumnDefinitions="1.25*,*" ColumnSpacing="8">
                             <StackPanel Spacing="4">
-                                <TextBlock Text="{Binding Name}" />
-                                <TextBlock Text="{Binding Url}" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding Url}" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource SemiColorText3}"
+                                           FontSize="{DynamicResource SemiFontSizeSmall}" />
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Play}}"
                                             Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).PlayCommand, FallbackValue={x:Null}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip.Tip="Stream"/>
+                                            ToolTip.Tip="Stream" />
                                     <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Download}}"
                                             Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).DownloadCommand, FallbackValue={x:Null}}"
                                             CommandParameter="{Binding}"
-                                            ToolTip.Tip="Download"/>
-                                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.CopyToClipboard}}" 
-                                            Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).CopyToClipboardCommand, FallbackValue={x:Null}}"
-                                            CommandParameter="{Binding}"
-                                            ToolTip.Tip="Copy as curl"/>
+                                            ToolTip.Tip="Download" />
+                                    <Button
+                                        Content="{extensions:PathIcon Key={x:Static module:CommonIcons.CopyToClipboard}}"
+                                        Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).CopyToClipboardCommand, FallbackValue={x:Null}}"
+                                        CommandParameter="{Binding}"
+                                        ToolTip.Tip="Copy as curl" />
                                 </StackPanel>
                             </StackPanel>
                             <TableView Grid.Column="1"
@@ -102,6 +132,5 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-
     </Grid>
 </ContentPage>

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Web;
 using Downloader;
 using Flurl;
 using Flurl.Http;
@@ -37,7 +38,7 @@ public partial class AnimeProvider(
         {
             var imgNode = node.QuerySelector("img");
             var image = imgNode?.GetAttributeValue("src", "");
-            var title = imgNode?.GetAttributeValue("alt", "");
+            var title = HttpUtility.HtmlDecode(imgNode?.GetAttributeValue("alt", ""));
             var id = node.QuerySelector(".tip").GetAttributeValue("data-tip", "");
             var url = new Uri(node.QuerySelector(".d-title").GetAttributeValue("href", ""));
             var siteId = url.Segments[^2][.. ^1];
