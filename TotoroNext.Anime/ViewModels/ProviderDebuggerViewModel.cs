@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using ReactiveUI;
-using TotoroNext.Anime;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -16,7 +15,7 @@ using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using Media = TotoroNext.MediaEngine.Abstractions.Media;
 
-namespace TotoroNext.ViewModels;
+namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
 public partial class ProviderDebuggerViewModel(
@@ -29,7 +28,7 @@ public partial class ProviderDebuggerViewModel(
     IAnimeDownloader downloader,
     IDownloadManager downloadManager,
     IClipboard clipboard,
-    SettingsModel settings) : ObservableObject, IInitializable
+    ILocalSettingsService localSettingsService) : ObservableObject, IInitializable
 {
     private readonly IMetadataService? _metadataService = metadataFactory.CreateDefault();
     private AnimeModel? _anime;
@@ -61,8 +60,8 @@ public partial class ProviderDebuggerViewModel(
         AnimeProviders = all.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider)).OrderBy(x => x.Name).ToList();
         MediaPlayers = all.Where(x => x.Components.Contains(ComponentTypes.MediaEngine)).ToList();
 
-        ProviderId = settings.SelectedAnimeProvider;
-        MediaPlayerId = settings.SelectedMediaEngine;
+        ProviderId = localSettingsService.ReadSetting<Guid>("SelectedAnimeProvider");
+        MediaPlayerId = localSettingsService.ReadSetting<Guid>("SelectedMediaEngine");
 
         this.WhenAnyValue(x => x.ProviderId)
             .WhereNotNull()

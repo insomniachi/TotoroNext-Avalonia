@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace TotoroNext.Views;
+namespace TotoroNext.Anime.Views;
 
 public partial class ProviderDebuggerView : ContentPage
 {

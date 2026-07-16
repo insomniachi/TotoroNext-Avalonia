@@ -23,6 +23,10 @@
         <DependentUpon>HorizontalAnimeCardList.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\ProviderDebuggerView.axaml.cs">
+        <DependentUpon>ProviderDebuggerView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
 </Project>

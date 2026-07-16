@@ -22,9 +22,20 @@ public class TorrentExtractor(IFactory<ITorrentStream, Guid> debridFactory) : IT
         }
 
         var directLink = await debrid.TryGetStreamUrl(url, ct);
+
+        if (directLink is null || directLink == url)
+        {
+            yield return new VideoSource
+            {
+                Url = url,
+                DownloaderType = DownloaderTypes.Torrent
+            };
+            yield break;
+        }
+        
         yield return new VideoSource
         {
-            Url = directLink ?? url,
+            Url = directLink,
             DownloaderType = DownloaderTypes.Http
         };
     }

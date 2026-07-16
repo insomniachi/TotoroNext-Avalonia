@@ -10,10 +10,11 @@ namespace TotoroNext.Anime.TsukiHime;
 
 public class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    IModuleSettings<Settings> settings) : IAnimeProvider
+    IModuleSettings<Settings> settings,
+    ITorrentExtractor torrentExtractor) : IAnimeProvider
 {
     public const string BaseUrl = "https://api.tsukihime.org/v1/";
-    private readonly IVideoExtractor _extractor = new TsukiHimeExtractor();
+    private readonly IVideoExtractor _extractor = new TsukiHimeExtractor(torrentExtractor);
 
     public async IAsyncEnumerable<SearchResult> SearchAsync(SearchOptions options, [EnumeratorCancellation] CancellationToken ct)
     {

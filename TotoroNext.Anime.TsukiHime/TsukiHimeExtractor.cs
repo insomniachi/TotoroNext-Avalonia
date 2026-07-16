@@ -9,19 +9,20 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.TsukiHime;
 
-public partial class TsukiHimeExtractor : IVideoExtractor
+public partial class TsukiHimeExtractor(ITorrentExtractor torrentExtractor) : IVideoExtractor
 {
     public async IAsyncEnumerable<VideoSource> Extract(Uri url, [EnumeratorCancellation] CancellationToken ct)
     {
         var stream = await url.GetStreamAsync(cancellationToken: ct);
-        var jdoc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
-        var filesElement = jdoc.RootElement.GetProperty("files");
-        var files = filesElement.Deserialize<List<TorrentContent>>();
+        var jsonDocument = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+        var filesElement = jsonDocument.RootElement.GetProperty("files");
+        var files = filesElement.Deserialize<List<TorrentContent>>() ?? [];
         
-        if (files is not { Count: > 0 })
+        var torrentSource = await TorrentAsVideoSource(jsonDocument);;
+        
+        if (files is not { Count: > 0 } && torrentSource is not null)
         {
-            yield return TorrentAsVideoSource(jdoc);
-            yield break;
+            yield return torrentSource;
         }
 
         var biggestFile = files.MaxBy(x => x.Size);
@@ -30,18 +31,18 @@ public partial class TsukiHimeExtractor : IVideoExtractor
         {
             yield return source;
         }
-        
-        yield return TorrentAsVideoSource(jdoc);
+
+        if (torrentSource is not null)
+        {
+            yield return torrentSource;
+        }
     }
 
-    private static VideoSource TorrentAsVideoSource(JsonDocument jdoc)
+    private async Task<VideoSource?> TorrentAsVideoSource(JsonDocument jsonDocument)
     {
-        var id = jdoc.RootElement.GetProperty("nyaa_id").GetInt64();
-        return new VideoSource()
-        {
-            Url = new Uri($"https://nyaa.si/download/{id}.torrent"),
-            DownloaderType = DownloaderTypes.Torrent
-        };
+        var id = jsonDocument.RootElement.GetProperty("nyaa_id").GetInt64();
+        var url = new Uri($"https://nyaa.si/download/{id}.torrent");
+        return await torrentExtractor.Extract(url, CancellationToken.None).FirstOrDefaultAsync();
     }
 
     private static async Task<VideoSource?> ExtractFileDitch(string? url, CancellationToken ct)

@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using TotoroNext.Anime.Abstractions;
+using TotoroNext.Anime.ViewModels;
+using TotoroNext.Anime.Views;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -234,18 +236,13 @@ public partial class SplashViewModel(
     private static void RegisterNavigationViewItems(IServiceCollection services)
     {
 #if DEBUG
-        services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Provider Tester",
-                                                                                        CommonIcons.Test,
-                                                                                        new NavigationDrawerItemTag { IsFooterItem = true });
-
         services.AddMainNavigationItem<StoreView, StoreViewModel>("Store",
                                                                   CommonIcons.Store,
                                                                   new NavigationDrawerItemTag { IsFooterItem = true });
 #endif
-
         services.AddMainNavigationItem<TorrentClientView, TorrentClientViewModel>("Torrents",
                                                                                   CommonIcons.TorrentClient,
-                                                                                  new NavigationDrawerItemTag { Order = 4 });
+                                                                                  new NavigationDrawerItemTag { Order = 5 });
         services.AddMainNavigationItem<ModulesView, ModulesViewModel>("Extensions",
                                                                       CommonIcons.Extensions,
                                                                       new NavigationDrawerItemTag { IsFooterItem = true });

@@ -18,6 +18,7 @@ public static class CommonIcons
     public const string Delete = nameof(Delete);
     public const string Download = nameof(Download);
     public const string Downloads = nameof(Downloads);
+    public const string Earth = nameof(Earth);
     public const string Edit = nameof(Edit);
     public const string Ending = nameof(Ending);
     public const string FilePath = nameof(FilePath);

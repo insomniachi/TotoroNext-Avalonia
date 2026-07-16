@@ -32,6 +32,7 @@ public class Module : IModule
         services.AddMainNavigationItem<HomeView, HomeViewModel>("Home", CommonIcons.Home);
         services.AddMainNavigationItem<UserListView, UserListViewModel>("Anime List", CommonIcons.List);
         services.AddMainNavigationItem<AdvancedSearchView, AdvancedSearchViewModel>("Search", CommonIcons.Search);
+        services.AddMainNavigationItem<ProviderDebuggerView, ProviderDebuggerViewModel>("Browse", CommonIcons.Earth);
         services.AddMainNavigationItem<SequelLocatorView, SequelLocatorViewModel>("Missed", CommonIcons.NewReleases);
         AddDownloadsView(services);
 
@@ -64,7 +65,7 @@ public class Module : IModule
         services.AddKeyedViewMap<DownloadsView, DownloadsViewModel>("Downloads");
         services.AddTransient(sp =>
         {
-            var downloadManager =  sp.GetRequiredService<IDownloadManager>();
+            var downloadManager = sp.GetRequiredService<IDownloadManager>();
             var item = new NavigationDrawerItem
             {
                 Header = "Downloads",
@@ -75,7 +76,7 @@ public class Module : IModule
                     IsFooterItem = true
                 }
             };
-            
+
             downloadManager.DownloadsChanged += (_, _) =>
             {
                 Dispatcher.UIThread.Invoke(() =>
