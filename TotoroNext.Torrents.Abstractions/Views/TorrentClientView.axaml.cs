@@ -2,7 +2,7 @@
 
 namespace TotoroNext.Torrents.Abstractions.Views;
 
-public partial class TorrentClientView : UserControl
+public partial class TorrentClientView : ContentPage
 {
     public TorrentClientView()
     {

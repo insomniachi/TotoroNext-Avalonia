@@ -337,7 +337,7 @@ public sealed partial class WatchViewModel(
             return null;
         }
 
-        if ((int)SelectedEpisode.Number == Anime.TotalEpisodes && Anime.Tracking?.Score is > 0)
+        if ((int)SelectedEpisode.Number == Anime.TotalEpisodes && Anime.Tracking?.Score is not > 0)
         {
             messenger.Send(new NavigateToKeyDialogMessage
             {

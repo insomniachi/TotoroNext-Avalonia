@@ -70,13 +70,26 @@ public partial class AnimeProvider(
         {
             var numberString = node.GetAttributeValue("data-num", "");
             var id = node.GetAttributeValue("data-ids", "");
-
+            var titleNode = node.QuerySelector(".d-title");
+            var titleEn = titleNode?.InnerHtml ?? "";
+            var titleJp = titleNode?.GetAttributeValue("data-jb", "") ?? "";
+            
             if (!float.TryParse(numberString, out var number))
             {
                 continue;
             }
 
-            yield return new Episode(this, animeId, $"{id}:{number}", number);
+            yield return new Episode(this, animeId, $"{id}:{number}", number)
+            {
+                Info = new EpisodeInfo()
+                {
+                    Titles =
+                    {
+                        English = HttpUtility.HtmlDecode(titleEn),
+                        Romaji = HttpUtility.HtmlDecode(titleJp)
+                    }
+                }
+            };
         }
     }
 

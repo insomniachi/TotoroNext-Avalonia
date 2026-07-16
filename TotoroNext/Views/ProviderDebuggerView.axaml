@@ -73,7 +73,10 @@
                  SelectedItem="{Binding SelectedEpisode}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="mdl:Episode">
-                    <TextBlock Text="{Binding Number}" />
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="32">
+                        <TextBlock Text="{Binding Number}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Info.Titles.English, FallbackValue='N/A'}"/>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

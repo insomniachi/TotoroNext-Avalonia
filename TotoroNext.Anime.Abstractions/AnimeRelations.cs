@@ -14,7 +14,25 @@ public class AnimeRelations : List<AnimeRelation>, IAnimeRelations
 
     public AnimeRelation? FindRelation(Models.AnimeModel anime)
     {
-        var relation = this.FirstOrDefault(x => x.DestinationIds.GetIdForService(anime.ServiceName!) == anime.Id);
-        return relation;
+        if (this.FirstOrDefault(x => x.DestinationIds.GetIdForService(anime.ServiceName!) == anime.Id) is { } relation)
+        {
+            return relation;
+        }
+
+        var secondSeason = this.Where(x => x.SourceIds.GetIdForService(anime.ServiceName!) == anime.Id)
+                               .MinBy(x => x.SourceEpisodesRage.Start);
+
+        if (secondSeason is null)
+        {
+            return null;
+        }
+
+        return new AnimeRelation()
+        {
+            SourceIds = secondSeason.SourceIds,
+            DestinationIds = secondSeason.SourceIds,
+            SourceEpisodesRage = new EpisodeRange(1, secondSeason.SourceEpisodesRage.Start - 1),
+            DestinationEpisodesRage = new EpisodeRange(1, secondSeason.SourceEpisodesRage.Start - 1)
+        };
     }
 }
