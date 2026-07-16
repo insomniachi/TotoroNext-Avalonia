@@ -7,6 +7,7 @@ using TotoroNext.Anime.TsukiHime.ViewModels;
 using TotoroNext.Anime.TsukiHime.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Torrents.Abstractions;
 
 namespace TotoroNext.Anime.TsukiHime;
 
@@ -18,7 +19,7 @@ public class Module : IModule<Settings>
     {
         Name = "TsukiHime",
         Id = Id,
-        Components = [ComponentTypes.AnimeProvider],
+        Components = [ComponentTypes.AnimeProvider, ComponentTypes.TorrentIndexer],
         SettingViewModel = typeof(SettingsViewModel),
         HeroImage = ResourceHelper.GetResource("tsukihime.png")
     };
@@ -30,9 +31,10 @@ public class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddKeyedTransient<IAnimeProvider, AnimeProvider>(Descriptor.Id);
-        services.AddHttpClient($"{Id}-api", client => { client.BaseAddress = new Uri(AnimeProvider.BaseUrl); });
+        services.AddHttpClient($"{Id}", client => { client.BaseAddress = new Uri(AnimeProvider.BaseUrl); });
         services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddTransient<IInitializer, Initializer>();
+        services.AddKeyedTransient<ITorrentIndexer, Indexer>(Descriptor.Id);
     }
 }
 

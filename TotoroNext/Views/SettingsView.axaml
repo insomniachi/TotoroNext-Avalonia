@@ -114,6 +114,17 @@
                                   Width="300" />
                     </controls:SettingsExpander.Editor>
                 </controls:SettingsExpander>
+                <controls:SettingsExpander Header="Torrent Indexer"
+                                           Description="Default indexer to download torrents"
+                                           IconKey="{x:Static local:CommonIcons.Rss}">
+                    <controls:SettingsExpander.Editor>
+                        <ComboBox ItemsSource="{Binding TorrentIndexers}"
+                                  SelectedValue="{Binding Settings.SelectedTorrentIndexer, FallbackValue={x:Null}}"
+                                  SelectedValueBinding="{Binding Id}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300" />
+                    </controls:SettingsExpander.Editor>
+                </controls:SettingsExpander>
             </StackPanel>
 
             <StackPanel>

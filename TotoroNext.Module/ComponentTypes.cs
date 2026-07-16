@@ -11,6 +11,7 @@ public static class ComponentTypes
     public const string Debrid = "Debrid";
     public const string Miscellaneous = "Miscellaneous";
     public const string TorrentClient = "Torrent Client";
+    public const string TorrentIndexer = "Torrent Indexer";
 }
 
 public interface IComponentRegistry

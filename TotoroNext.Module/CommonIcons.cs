@@ -35,6 +35,7 @@ public static class CommonIcons
     public const string Opening = nameof(Opening);
     public const string Pause = nameof(Pause);
     public const string Play = nameof(Play);
+    public const string Rss = nameof(Rss);
     public const string Search = nameof(Search);
     public const string Settings = nameof(Settings);
     public const string Extensions = nameof(Extensions);

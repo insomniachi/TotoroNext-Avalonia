@@ -1,7 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
-using AnitomySharp;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
@@ -60,7 +58,7 @@ public class AnimeProvider(
         
         foreach (var torrent in response.Results.Where(x => x.Group.Id == descriptor?.Id))
         {
-            var name = TorrentName.Parse(torrent);
+            var name = TorrentInfo.Parse(torrent);
             yield return new VideoServer(name.GetDisplayName(), new Uri($"https://api.tsukihime.org/v1/torrents/{torrent.Id}"), _extractor)
             {
                 ContentType = "mkv",
@@ -76,59 +74,6 @@ public class AnimeProvider(
 
     private FlurlClient CreateClient()
     {
-        return new FlurlClient(httpClientFactory.CreateClient($"{Module.Id}-api"));
-    }
-
-    class TorrentName
-    {
-        public string? Resolution { get; init; }
-        public required string Group { get; init; }
-        public string? Video { get; init; }
-        public string? Audio { get; init; }
-        public string? Source { get; init; }
-
-        public static TorrentName Parse(TorrentDescriptor descriptor)
-        {
-            var parts = AnitomySharp.AnitomySharp.Parse(descriptor.Name).ToList();
-            var resolution = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementVideoResolution)?.Value;
-            var encodingVideo = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementVideoTerm)?.Value;
-            var encodingAudio = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementAudioTerm)?.Value;
-            var source = parts.FirstOrDefault(x => x.Category == Element.ElementCategory.ElementSource)?.Value;
-            return new TorrentName()
-            {
-                Group = descriptor.Group.Name,
-                Resolution = resolution,
-                Video = encodingVideo,
-                Audio = encodingAudio,
-                Source = source
-            };
-        }
-        
-        public string GetDisplayName()
-        {
-            var sb = new StringBuilder();
-            sb.Append($"[{Group}]");
-            if (!string.IsNullOrEmpty(Resolution))
-            {
-                sb.Append($" [{Resolution}]");
-            }
-
-            if (!string.IsNullOrEmpty(Source))
-            {
-                sb.Append($" [{Source}]");
-            }
-
-            if (!string.IsNullOrEmpty(Video))
-            {
-                sb.Append($" [{Video}]");
-            }
-
-            if (!string.IsNullOrEmpty(Audio))
-            {
-                sb.Append($" [{Audio}]");
-            }
-
-            return sb.ToString();
-        }
+        return new FlurlClient(httpClientFactory.CreateClient($"{Module.Id}"));
     }
 }

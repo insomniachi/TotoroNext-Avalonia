@@ -10,17 +10,17 @@ namespace TotoroNext.Torrents.Nyaa;
 
 public class Indexer : ITorrentIndexer
 {
-    public async IAsyncEnumerable<AnimeTorrentModel> SearchAsync(string term, string group, string quality)
+    public async IAsyncEnumerable<AnimeTorrentModel> SearchAsync(TorrentSearchOptions options)
     {
-        var sb = new StringBuilder(term);
-        if (!string.IsNullOrEmpty(group))
+        var sb = new StringBuilder(options.Query);
+        if (!string.IsNullOrEmpty(options.GroupName))
         {
-            sb.Append($" {group}");
+            sb.Append($" {options.GroupName}");
         }
 
-        if (!string.IsNullOrEmpty(quality))
+        if (!string.IsNullOrEmpty(options.Quality))
         {
-            sb.Append($" {quality}");
+            sb.Append($" {options.Quality}");
         }
 
         var query = sb.ToString();
@@ -66,4 +66,19 @@ public class Indexer : ITorrentIndexer
             yield return torrent;
         }
     }
+
+    public IEnumerable<string> GetReleaseGroups() =>
+    [
+        "Anime Time",
+        "ASW",
+        "DKB",
+        "EMBER",
+        "Erai-raws",
+        "Ironclad",
+        "Judas",
+        "New-raws",
+        "Raze",
+        "SubsPlease",
+        "ToonsHub"
+    ];
 }

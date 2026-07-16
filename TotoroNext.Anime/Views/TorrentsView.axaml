@@ -13,15 +13,13 @@
         <u:Form LabelPosition="Top" HorizontalAlignment="Stretch">
             <TextBox Text="{Binding Title}" u:FormItem.Label="Title"
                      HorizontalAlignment="Stretch" />
-            <ComboBox Text="{Binding ReleaseGroup}"
+            <ComboBox SelectedItem="{Binding ReleaseGroup}"
                       ItemsSource="{Binding ReleaseGroups}"
-                      IsEditable="True"
                       u:FormItem.Label="Group"
                       HorizontalAlignment="Stretch" />
-            <ComboBox Text="{Binding Quality}"
+            <ComboBox SelectedItem="{Binding Quality}"
                       ItemsSource="{Binding Qualities}"
                       HorizontalAlignment="Stretch"
-                      IsEditable="True"
                       u:FormItem.Label="Resolution" />
             <u:Form.ItemsPanel>
                 <ItemsPanelTemplate>

@@ -32,7 +32,7 @@ public class TorrentDescriptor
 {
     [JsonPropertyName("id")] public int Id { get; set; }
     [JsonPropertyName("name")] public string Name { get; set; } = "";
-
+    [JsonPropertyName("nyaa_id")] public long NyaaId { get; set; }
     [JsonPropertyName("group")] public GroupDescriptor Group { get; set; } = new();
 }
 

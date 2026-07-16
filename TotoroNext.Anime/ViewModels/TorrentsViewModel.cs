@@ -39,6 +39,7 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
         _torrentClient = torrentClientFactory.CreateDefault()!;
         _anime = param.Anime;
         Title = param.Anime.RomajiTitle;
+        ReleaseGroups = _indexer.GetReleaseGroups().ToList();
 
         _torrentsCache
             .Connect()
@@ -53,29 +54,23 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
     [ObservableProperty] public partial string Title { get; set; }
 
     public ReadOnlyObservableCollection<Selectable<AnimeTorrentModel>> Torrents => _torrents;
-    public List<string> Qualities { get; } = ["720p", "1080p"];
+    public List<string> Qualities { get; } = ["480", "720p", "1080p"];
 
-    public List<string> ReleaseGroups { get; } =
-    [
-        "Anime Time",
-        "ASW",
-        "DKB",
-        "EMBER",
-        "Erai-raws",
-        "Ironclad",
-        "Judas",
-        "New-raws",
-        "Raze",
-        "SubsPlease",
-        "ToonsHub"
-    ];
+    public List<string> ReleaseGroups { get; }
 
     public void Initialize()
     {
         this.WhenAnyValue(x => x.Title, x => x.ReleaseGroup, x => x.Quality)
             .Where(x => string.IsNullOrEmpty(x.Item2) || x.Item2.Length > 2)
             .Throttle(TimeSpan.FromMilliseconds(500))
-            .SelectMany(x => SearchTorrentsAsync(x.Item1, x.Item2, x.Item3))
+            .Select(x => new TorrentSearchOptions()
+            {
+                Query = x.Item1,
+                GroupName = x.Item2,
+                Quality = x.Item3,
+                MyAnimeListId = _anime.ExternalIds.MyAnimeList
+            })
+            .SelectMany(SearchTorrentsAsync)
             .ObserveOn(RxSchedulers.MainThreadScheduler)
             .Subscribe(list =>
             {
@@ -84,11 +79,11 @@ public partial class TorrentsViewModel : DialogViewModel, IInitializable
             });
     }
 
-    private async Task<List<AnimeTorrentModel>> SearchTorrentsAsync(string title, string releaseGroup, string quality)
+    private async Task<List<AnimeTorrentModel>> SearchTorrentsAsync(TorrentSearchOptions options)
     {
         try
         {
-            return await _indexer.SearchAsync(title, releaseGroup, quality).ToListAsync();
+            return await _indexer.SearchAsync(options).ToListAsync();
         }
         catch
         {

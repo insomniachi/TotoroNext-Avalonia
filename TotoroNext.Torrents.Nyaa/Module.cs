@@ -11,7 +11,8 @@ public class Module : IModule<Settings>
     {
         Id = new Guid("6df72a21-3130-4975-bc49-1d8982d96c35"),
         Name = "Nyaa",
-        Description = "Nyaa torrent indexer module"
+        Description = "Nyaa torrent indexer module",
+        Components = [ComponentTypes.TorrentIndexer]
     };
 
 
@@ -19,7 +20,7 @@ public class Module : IModule<Settings>
     {
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
-        services.AddKeyedTransient<ITorrentIndexer, Indexer>(Guid.Empty);
+        services.AddKeyedTransient<ITorrentIndexer, Indexer>(Descriptor.Id);
     }
 }
 

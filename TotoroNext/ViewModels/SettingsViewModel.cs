@@ -47,6 +47,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         SegmentProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaSegments))];
         TorrentStreamServices = [Descriptor.None, Descriptor.New("Local", MonoTorrentStream.MonoTorrentStreamId), .. allModules.Where(x => x.Components.Contains(ComponentTypes.Debrid))];
         TorrentClients = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.TorrentClient))];
+        TorrentIndexers = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.TorrentIndexer))];
     }
 
     public List<Descriptor> MediaEngines { get; }
@@ -55,6 +56,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
     public List<Descriptor> SegmentProviders { get; }
     public List<Descriptor> TorrentStreamServices { get; }
     public List<Descriptor> TorrentClients { get; }
+    public List<Descriptor> TorrentIndexers { get; }
     public List<string> HomeViews { get; } = ["Home", "Anime List"];
     public Version? CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version;
 
@@ -87,6 +89,11 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         if (Settings.SelectedSegmentsProvider == Guid.Empty)
         {
             Settings.SelectedSegmentsProvider = SegmentProviders.FirstOrDefault()?.Id ?? Guid.Empty;
+        }
+
+        if (_settings.SelectedTorrentIndexer == Guid.Empty)
+        {
+            _settings.SelectedTorrentIndexer = TorrentIndexers.FirstOrDefault()?.Id ?? Guid.Empty;
         }
     }
 
