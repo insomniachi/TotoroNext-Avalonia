@@ -19,8 +19,9 @@
         <DataTemplate x:DataType="module:NavigationDrawerItem">
             <Grid RowDefinitions="Auto, *" RowSpacing="4">
                 <u:Badge Header="{Binding BadgeContent, Mode=OneWay}" CornerPosition="TopRight" >
-                    <Viewbox Height="32" Width="32"
-                             Child="{Binding IconKey, Converter={x:Static c:Converters.IconConverter}}" />
+                    <Viewbox Height="32" Width="32">
+                             <Path Data="{ext:Geometry Key={Binding IconKey}}" Fill="{DynamicResource Foreground}" Stretch="Uniform" />
+                        </Viewbox>
                 </u:Badge>
 
                 <TextBlock Grid.Row="1" Text="{Binding Header}"

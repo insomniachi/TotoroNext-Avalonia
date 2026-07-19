@@ -40,7 +40,7 @@
                 <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
                 <controls:SettingsCard Header="Anime Provider"
                                            Description="Default anime provider"
-                                           IconKey="{x:Static local:CommonIcons.VideoLibrary}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.VideoLibrary}}">
                     <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding AnimeProviders}"
                                   SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
@@ -51,7 +51,7 @@
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Media Player"
                                            Description="Default media player"
-                                           IconKey="{x:Static local:CommonIcons.VideoPlayer}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.VideoPlayer}}">
                     <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding MediaEngines}"
                                   SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
@@ -61,7 +61,7 @@
                     </controls:SettingsCard.Editor>
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Yt-dlp Path"
-                                           IconKey="{x:Static local:CommonIcons.FilePath}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.FilePath}}">
                     <controls:SettingsCard.Editor>
                         <u:PathPicker
                             Title="Browse"
@@ -74,7 +74,7 @@
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Tracking"
                                            Description="Default tracking service"
-                                           IconKey="{x:Static local:CommonIcons.Tracking}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Tracking}}">
                     <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TrackingServices}"
                                   SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
@@ -85,7 +85,7 @@
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Media Segments"
                                            Description="Default media segments provider"
-                                           IconKey="{x:Static local:CommonIcons.SkipSegments}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.SkipSegments}}">
                     <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding SegmentProviders}"
                                   SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
@@ -96,7 +96,7 @@
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Torrent Stream"
                                            Description="Default torrent stream service"
-                                           IconKey="{x:Static local:CommonIcons.Torrent}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Torrent}}">
                     <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TorrentStreamServices}"
                                   SelectedValue="{Binding Settings.SelectedTorrentService, FallbackValue={x:Null}}"
@@ -107,7 +107,7 @@
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Torrent Client"
                                            Description="Default client to download torrents"
-                                           IconKey="{x:Static local:CommonIcons.TorrentClient}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.TorrentClient}}">
                     <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TorrentClients}"
                                   SelectedValue="{Binding Settings.SelectedTorrentClient, FallbackValue={x:Null}}"
@@ -118,7 +118,7 @@
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Torrent Indexer"
                                            Description="Default indexer to download torrents"
-                                           IconKey="{x:Static local:CommonIcons.Rss}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Rss}}">
                     <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TorrentIndexers}"
                                   SelectedValue="{Binding Settings.SelectedTorrentIndexer, FallbackValue={x:Null}}"
@@ -133,7 +133,7 @@
                 <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
                 <controls:SettingsCard Header="Openings"
                                            Description="How to handle openings"
-                                           IconKey="{x:Static local:CommonIcons.Opening}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Opening}}">
                     <controls:SettingsCard.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
@@ -142,7 +142,7 @@
                 </controls:SettingsCard>
                 <controls:SettingsCard Header="Endings"
                                            Description="How to handle endings"
-                                           IconKey="{x:Static local:CommonIcons.Ending}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Ending}}">
                     <controls:SettingsCard.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
@@ -155,7 +155,7 @@
                 <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
                 <controls:SettingsCard Header="Check of updates"
                                            Description="{Binding CurrentVersion}"
-                                           IconKey="{x:Static local:CommonIcons.Update}">
+                                           Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Update}}">
                     <controls:SettingsCard.Editor>
                         <Button Content="Check" Command="{Binding CheckForUpdatesCommand}" />
                     </controls:SettingsCard.Editor>
