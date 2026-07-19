@@ -10,32 +10,40 @@
         ItemsSource="{Binding $parent[controls:ModuleOptionsEditor].Options}">
         <ItemsControl.DataTemplates>
             <DataTemplate DataType="module:SelectableModuleOptionItem">
-                <controls:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <controls:SettingsExpander.Editor>
+                <controls:SettingsCard Header="{Binding DisplayName}"
+                                       Description="{Binding Description}">
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding AllowedValues}"
                                   SelectedItem="{Binding Value, Mode=TwoWay}"
-                                  HorizontalAlignment="Stretch" 
-                                  Width="250"/>
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
+                                  HorizontalAlignment="Stretch"
+                                  Width="250" />
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
             </DataTemplate>
             <DataTemplate DataType="module:ToggleModuleOptionItem">
-                <controls:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <controls:SettingsExpander.Editor>
+                <controls:SettingsCard Header="{Binding DisplayName}"
+                                       Description="{Binding Description}">
+                    <controls:SettingsCard.Editor>
                         <ToggleSwitch IsChecked="{Binding IsChecked}" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
             </DataTemplate>
             <DataTemplate DataType="module:ModuleOptionItem">
-                <controls:SettingsExpander Header="{Binding DisplayName}" Description="{Binding Description}">
-                    <controls:SettingsExpander.Editor>
+                <controls:SettingsCard Header="{Binding DisplayName}"
+                                       Description="{Binding Description}">
+                    <controls:SettingsCard.Editor>
                         <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
                                  MaxWidth="350"
                                  MinWidth="200"
                                  TextWrapping="WrapWithOverflow" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
             </DataTemplate>
         </ItemsControl.DataTemplates>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Spacing="4"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
     </ItemsControl>
 </UserControl>

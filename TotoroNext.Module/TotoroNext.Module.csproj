@@ -39,7 +39,6 @@
         <PackageReference Include="Semi.Avalonia"/>
         <PackageReference Include="Semi.Avalonia.DataGrid"/>
         <PackageReference Include="Xaml.Behaviors.Avalonia"/>
-        <PackageReference Include="FluentAvaloniaUI"/>
         
     </ItemGroup>
 

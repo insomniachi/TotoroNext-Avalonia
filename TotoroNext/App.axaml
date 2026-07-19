@@ -11,6 +11,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="avares://TotoroNext/Drawer.axaml" />
+                <ResourceInclude Source="avares://TotoroNext.Module/Themes/SettingsCard.axaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

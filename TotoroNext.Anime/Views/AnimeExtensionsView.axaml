@@ -3,44 +3,40 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TotoroNext.Anime.ViewModels"
-             xmlns:sty="using:FluentAvalonia.Styling"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:mdl="totoro.next/models"
              xmlns:ctl="totoro.next/controls"
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:extensions="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             MinWidth="700"
-             MaxWidth="700"
+             Width="500"
              x:DataType="vm:AnimeExtensionsViewModel"
              Background="{DynamicResource SemiColorBackground2}"
              x:Class="TotoroNext.Anime.Views.AnimeExtensionsView">
-    <ContentPage.Styles>
-        <sty:FluentAvaloniaTheme />
-    </ContentPage.Styles>
     <Grid RowDefinitions="*, Auto, Auto">
         <ScrollViewer Grid.Row="0">
-            <StackPanel>
-                <ctl:SettingsExpander Header="Incognito"
-                                      Description="Don't show discord rich presence for this anime"
-                                      IconKey="{x:Static module:CommonIcons.Incognito}">
-                    <ctl:SettingsExpander.Editor>
+            <StackPanel Spacing="4">
+                <ctl:SettingsCard Header="Incognito"
+                                  Description="Don't show discord rich presence for this anime"
+                                  Icon="{extensions:Geometry Key={x:Static module:CommonIcons.Incognito}}">
+                    <ctl:SettingsCard.Editor>
                         <ToggleSwitch IsChecked="{Binding IsNsfw}" />
-                    </ctl:SettingsExpander.Editor>
-                </ctl:SettingsExpander>
-                <ctl:SettingsExpander Header="Provider"
-                                      Description="The provider to use for this anime"
-                                      IconKey="{x:Static module:CommonIcons.VideoLibrary}">
-                    <ctl:SettingsExpander.Editor>
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
+                <ctl:SettingsCard Header="Provider"
+                                  Description="The provider to use for this anime"
+                                  Icon="{extensions:Geometry Key={x:Static module:CommonIcons.VideoLibrary}}">
+                    <ctl:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding Providers}"
                                   SelectedValue="{Binding ProviderId}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   HorizontalAlignment="Stretch" />
-                    </ctl:SettingsExpander.Editor>
-                </ctl:SettingsExpander>
-                <ctl:SettingsExpander IsVisible="{Binding HasProvider}"
-                                      Header="Selected Result">
-                    <ctl:SettingsExpander.Editor>
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
+                <ctl:SettingsCard IsVisible="{Binding HasProvider}"
+                                  Header="Selected Result">
+                    <ctl:SettingsCard.Editor>
                         <u:AutoCompleteBox x:Name="AutoCompleteBox"
                                            Text="{Binding SearchTerm}"
                                            SelectedItem="{Binding ProviderResult}"
@@ -59,33 +55,34 @@
                                 </DataTemplate>
                             </u:AutoCompleteBox.ItemTemplate>
                         </u:AutoCompleteBox>
-                    </ctl:SettingsExpander.Editor>
-                </ctl:SettingsExpander>
-                <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
-                <ctl:SettingsExpander Header="Opening Skip Method"
-                                      Description="How to skip the opening of this anime"
-                                      IconKey="{x:Static module:CommonIcons.Opening}">
-                    <ctl:SettingsExpander.Editor>
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
+                <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}"
+                                         IsVisible="{Binding ProviderOptions.Count}" />
+                <ctl:SettingsCard Header="Opening Skip Method"
+                                  Description="How to skip the opening of this anime"
+                                  Icon="{extensions:Geometry Key={x:Static module:CommonIcons.Opening}}">
+                    <ctl:SettingsCard.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding OpeningSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch" />
-                    </ctl:SettingsExpander.Editor>
-                </ctl:SettingsExpander>
-                <ctl:SettingsExpander Header="Ending Skip Method"
-                                      Description="How to skip the ending of this anime"
-                                      IconKey="{x:Static module:CommonIcons.Ending}">
-                    <ctl:SettingsExpander.Editor>
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
+                <ctl:SettingsCard Header="Ending Skip Method"
+                                  Description="How to skip the ending of this anime"
+                                  Icon="{extensions:Geometry Key={x:Static module:CommonIcons.Ending}}">
+                    <ctl:SettingsCard.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding EndingSkipMethod, Mode=TwoWay }"
                                         HorizontalAlignment="Stretch" />
-                    </ctl:SettingsExpander.Editor>
-                </ctl:SettingsExpander>
-                <ctl:SettingsExpander Header="Use absolute numbering"
-                                      Description="Uses anime relations to map episodes to seasons">
-                    <ctl:SettingsExpander.Editor>
-                        <ToggleSwitch IsChecked="{Binding UseAbsoluteNumbering}"/>
-                    </ctl:SettingsExpander.Editor>
-                </ctl:SettingsExpander>
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
+                <ctl:SettingsCard Header="Use absolute numbering"
+                                  Description="Uses anime relations to map episodes to seasons">
+                    <ctl:SettingsCard.Editor>
+                        <ToggleSwitch IsChecked="{Binding UseAbsoluteNumbering}" />
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
             </StackPanel>
         </ScrollViewer>
 

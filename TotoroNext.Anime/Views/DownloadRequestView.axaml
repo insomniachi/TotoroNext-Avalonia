@@ -15,39 +15,40 @@
             <Setter Property="MinWidth" Value="250" />
         </Style>
     </ContentPage.Styles>
-    <StackPanel>
-        <controls:SettingsExpander Header="Episode offset "
-                                   Description="Set the starting episode number">
-            <controls:SettingsExpander.Editor>
+    <StackPanel Spacing="4">
+        <controls:SettingsCard Header="Episode offset "
+                               Description="Set the starting episode number">
+            <controls:SettingsCard.Editor>
                 <u:NumericIntUpDown Value="{Binding EpisodeOffset, Mode=TwoWay}" />
-            </controls:SettingsExpander.Editor>
-        </controls:SettingsExpander>
-        <controls:SettingsExpander Header="Episode Range">
-            <controls:SettingsExpander.Editor>
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+        <controls:SettingsCard Header="Episode Range">
+            <controls:SettingsCard.Editor>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}" 
+                    <u:NumericIntUpDown Value="{Binding Start, Mode=TwoWay}"
                                         Maximum="{Binding #EndInput.Value, Mode=OneWay}"
                                         Minimum="1"
-                                        x:Name="StartInput"/>
-                    <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}" 
-                                        Maximum="{Binding TotalEpisodes, Mode=OneWay}" 
+                                        x:Name="StartInput" />
+                    <u:NumericIntUpDown Value="{Binding End, Mode=TwoWay}"
+                                        Maximum="{Binding TotalEpisodes, Mode=OneWay}"
                                         Minimum="{Binding #StartInput.Value, Mode=OneWay}"
-                                        x:Name="EndInput"/>
+                                        x:Name="EndInput" />
                 </StackPanel>
-            </controls:SettingsExpander.Editor>
-        </controls:SettingsExpander>
-        <controls:SettingsExpander Header="Provider">
-            <controls:SettingsExpander.Editor>
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+        <controls:SettingsCard Header="Provider">
+            <controls:SettingsCard.Editor>
                 <ComboBox ItemsSource="{Binding Providers}"
                           SelectedValue="{Binding ProviderId}"
                           SelectedValueBinding="{Binding Id}"
                           DisplayMemberBinding="{Binding Name}"
                           HorizontalAlignment="Stretch" />
-            </controls:SettingsExpander.Editor>
-        </controls:SettingsExpander>
-        <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" />
-        <controls:SettingsExpander Header="Provider Result">
-            <controls:SettingsExpander.Editor>
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+        <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" 
+                                      IsVisible="{Binding ProviderOptions.Count}" />
+        <controls:SettingsCard Header="Provider Result">
+            <controls:SettingsCard.Editor>
                 <u:AutoCompleteBox x:Name="AutoCompleteBox"
                                    Text="{Binding SearchTerm}"
                                    SelectedItem="{Binding SelectedResult}"
@@ -66,7 +67,7 @@
                         </DataTemplate>
                     </u:AutoCompleteBox.ItemTemplate>
                 </u:AutoCompleteBox>
-            </controls:SettingsExpander.Editor>
-        </controls:SettingsExpander>
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
     </StackPanel>
 </ContentPage>

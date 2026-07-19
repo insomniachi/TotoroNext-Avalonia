@@ -12,3 +12,14 @@ public class PathIconExtension : MarkupExtension
         return IconRegistry.GetPathIcon(Key);
     }
 }
+
+public class GeometryExtension : MarkupExtension
+{
+    public string? Key { get; set; }
+
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(Key);
+        return IconRegistry.GetGeometry(Key);
+    }
+}
