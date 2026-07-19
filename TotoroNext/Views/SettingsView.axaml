@@ -9,6 +9,7 @@
              xmlns:mdl="totoro.next/models"
              xmlns:local="using:TotoroNext.Module"
              xmlns:controls="totoro.next/controls"
+             xmlns:extensions="totoro.next/extensions"
              x:DataType="vm:SettingsViewModel"
              Background="{DynamicResource SemiColorBackground0}"
              x:Class="TotoroNext.Views.SettingsView">
@@ -19,48 +20,49 @@
         <StackPanel Spacing="24" MaxWidth="1000">
             <StackPanel>
                 <TextBlock Text="Appearance" FontSize="20" Margin="0 0 0 8" />
-                <controls:SettingsExpander Header="Theme"
-                                           IconKey="{x:Static local:CommonIcons.Theme}">
-                    <controls:SettingsExpander.Editor>
+                <controls:SettingsCard Header="Theme"
+                                       Description="Color pallet of the application"
+                                       Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Theme}}">
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding Themes}"
                                   SelectedItem="{Binding Settings.SelectedTheme, FallbackValue={x:Null}}" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Startup Screen"
-                                           IconKey="{x:Static local:CommonIcons.Home}">
-                    <controls:SettingsExpander.Editor>
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Startup Screen"
+                                       Icon="{extensions:Geometry Key={x:Static local:CommonIcons.Home}}">
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding HomeViews}"
                                   SelectedItem="{Binding Settings.HomeView, FallbackValue={x:Null}}" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
-                <controls:SettingsExpander Header="Anime Provider"
+                <controls:SettingsCard Header="Anime Provider"
                                            Description="Default anime provider"
                                            IconKey="{x:Static local:CommonIcons.VideoLibrary}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding AnimeProviders}"
                                   SelectedValue="{Binding Settings.SelectedAnimeProvider, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Media Player"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Media Player"
                                            Description="Default media player"
                                            IconKey="{x:Static local:CommonIcons.VideoPlayer}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding MediaEngines}"
                                   SelectedValue="{Binding Settings.SelectedMediaEngine, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Yt-dlp Path"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Yt-dlp Path"
                                            IconKey="{x:Static local:CommonIcons.FilePath}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <u:PathPicker
                             Title="Browse"
                             AllowMultiple="False"
@@ -68,96 +70,96 @@
                             UsePickerType="OpenFile"
                             HorizontalAlignment="Stretch"
                             MinWidth="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Tracking"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Tracking"
                                            Description="Default tracking service"
                                            IconKey="{x:Static local:CommonIcons.Tracking}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TrackingServices}"
                                   SelectedValue="{Binding Settings.SelectedTrackingService, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Media Segments"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Media Segments"
                                            Description="Default media segments provider"
                                            IconKey="{x:Static local:CommonIcons.SkipSegments}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding SegmentProviders}"
                                   SelectedValue="{Binding Settings.SelectedSegmentsProvider, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Torrent Stream"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Torrent Stream"
                                            Description="Default torrent stream service"
                                            IconKey="{x:Static local:CommonIcons.Torrent}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TorrentStreamServices}"
                                   SelectedValue="{Binding Settings.SelectedTorrentService, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Torrent Client"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Torrent Client"
                                            Description="Default client to download torrents"
                                            IconKey="{x:Static local:CommonIcons.TorrentClient}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TorrentClients}"
                                   SelectedValue="{Binding Settings.SelectedTorrentClient, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Torrent Indexer"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Torrent Indexer"
                                            Description="Default indexer to download torrents"
                                            IconKey="{x:Static local:CommonIcons.Rss}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <ComboBox ItemsSource="{Binding TorrentIndexers}"
                                   SelectedValue="{Binding Settings.SelectedTorrentIndexer, FallbackValue={x:Null}}"
                                   SelectedValueBinding="{Binding Id}"
                                   DisplayMemberBinding="{Binding Name}"
                                   Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
             </StackPanel>
 
             <StackPanel>
                 <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
-                <controls:SettingsExpander Header="Openings"
+                <controls:SettingsCard Header="Openings"
                                            Description="How to handle openings"
                                            IconKey="{x:Static local:CommonIcons.Opening}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.OpeningSkipMethod, FallbackValue={x:Null}}"
                                         Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
-                <controls:SettingsExpander Header="Endings"
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
+                <controls:SettingsCard Header="Endings"
                                            Description="How to handle endings"
                                            IconKey="{x:Static local:CommonIcons.Ending}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <u:EnumSelector EnumType="mdl:SkipMethod"
                                         Value="{Binding Settings.EndingSkipMethod, FallbackValue={x:Null}}"
                                         Width="300" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
             </StackPanel>
 
             <StackPanel>
                 <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
-                <controls:SettingsExpander Header="Check of updates"
+                <controls:SettingsCard Header="Check of updates"
                                            Description="{Binding CurrentVersion}"
                                            IconKey="{x:Static local:CommonIcons.Update}">
-                    <controls:SettingsExpander.Editor>
+                    <controls:SettingsCard.Editor>
                         <Button Content="Check" Command="{Binding CheckForUpdatesCommand}" />
-                    </controls:SettingsExpander.Editor>
-                </controls:SettingsExpander>
+                    </controls:SettingsCard.Editor>
+                </controls:SettingsCard>
             </StackPanel>
 
         </StackPanel>
