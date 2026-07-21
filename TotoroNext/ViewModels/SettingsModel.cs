@@ -17,43 +17,43 @@ public class SettingsModel : ObservableObject
         Initialize();
     }
 
-    public Guid SelectedMediaEngine
+    public Guid? SelectedMediaEngine
     {
         get;
         set => SetAndSaveProperty(ref field, value);
     }
 
-    public Guid SelectedAnimeProvider
+    public Guid? SelectedAnimeProvider
     {
         get;
         set => SetAndSaveProperty(ref field, value);
     }
 
-    public Guid SelectedTrackingService
+    public Guid? SelectedTrackingService
     {
         get;
         set => SetAndSaveProperty(ref field, value);
     }
 
-    public Guid SelectedSegmentsProvider
+    public Guid? SelectedSegmentsProvider
     {
         get;
         set => SetAndSaveProperty(ref field, value);
     }
 
-    public Guid SelectedTorrentService
+    public Guid? SelectedTorrentService
     {
         get;
         set => SetAndSaveProperty(ref field, value);
     }
 
-    public Guid SelectedTorrentIndexer
+    public Guid? SelectedTorrentIndexer
     {
         get;
         set => SetAndSaveProperty(ref field, value);
     }
 
-    public Guid SelectedTorrentClient
+    public Guid? SelectedTorrentClient
     {
         get;
         set => SetAndSaveProperty(ref field, value);
@@ -120,7 +120,12 @@ public class SettingsModel : ObservableObject
             var fallback = prop.GetValue(this);
             var genericMethod = readSettingMethod.MakeGenericMethod(propertyType);
             var value = genericMethod.Invoke(_localSettingsService, [prop.Name, fallback]);
-            
+
+            if (value == null && propertyType.IsValueType && Nullable.GetUnderlyingType(propertyType) == null)
+            {
+                value = fallback ?? Activator.CreateInstance(propertyType);
+            }
+
             prop.SetValue(this, value);
         }
     }

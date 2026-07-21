@@ -37,6 +37,7 @@
                                 <TextBlock Text="{TemplateBinding Description}"
                                            FontSize="{DynamicResource SemiFontSizeSmall}"
                                            Foreground="{DynamicResource SemiColorText2}"
+                                           TextWrapping="Wrap"
                                            IsVisible="{TemplateBinding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
                             </StackPanel>
 

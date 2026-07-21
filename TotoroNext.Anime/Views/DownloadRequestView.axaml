@@ -15,7 +15,7 @@
             <Setter Property="MinWidth" Value="250" />
         </Style>
     </ContentPage.Styles>
-    <StackPanel Spacing="4">
+    <StackPanel Classes.SettingsContainer="true">
         <controls:SettingsCard Header="Episode offset "
                                Description="Set the starting episode number">
             <controls:SettingsCard.Editor>

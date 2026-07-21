@@ -22,7 +22,6 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
     private readonly IDialogService _dialogService;
     private readonly ILogger<SettingsViewModel> _logger;
     private readonly IMessenger _messenger;
-    private readonly SettingsModel _settings;
     private readonly UpdateManager _updateManager;
 
     public SettingsViewModel(IEnumerable<Descriptor> modules,
@@ -37,8 +36,8 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         _dialogService = dialogService;
         _messenger = messenger;
         _updateManager = updateManager;
-        _settings = settings;
         _logger = logger;
+        Settings = settings;
         var allModules = modules.ToList();
 
         MediaEngines = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaEngine))];
@@ -71,29 +70,28 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         "NightSky"
     ];
 
-    [ObservableProperty] public partial SettingsModel? Settings { get; private set; }
+    public SettingsModel Settings { get; }
 
     public void Initialize()
     {
-        Settings = _settings;
-        if (Settings.SelectedAnimeProvider == Guid.Empty)
+        if (Settings.SelectedAnimeProvider.GetValueOrDefault() == Guid.Empty)
         {
             Settings.SelectedAnimeProvider = AnimeProviders.FirstOrDefault()?.Id ?? Guid.Empty;
         }
 
-        if (Settings.SelectedTrackingService == Guid.Empty)
+        if (Settings.SelectedTrackingService.GetValueOrDefault() == Guid.Empty)
         {
-            _settings.SelectedTrackingService = TrackingServices.FirstOrDefault()?.Id ?? Guid.Empty;
+            Settings.SelectedTrackingService = TrackingServices.FirstOrDefault()?.Id ?? Guid.Empty;
         }
 
-        if (Settings.SelectedSegmentsProvider == Guid.Empty)
+        if (Settings.SelectedSegmentsProvider.GetValueOrDefault() == Guid.Empty)
         {
             Settings.SelectedSegmentsProvider = SegmentProviders.FirstOrDefault()?.Id ?? Guid.Empty;
         }
 
-        if (_settings.SelectedTorrentIndexer == Guid.Empty)
+        if (Settings.SelectedTorrentIndexer.GetValueOrDefault() == Guid.Empty)
         {
-            _settings.SelectedTorrentIndexer = TorrentIndexers.FirstOrDefault()?.Id ?? Guid.Empty;
+            Settings.SelectedTorrentIndexer = TorrentIndexers.FirstOrDefault()?.Id ?? Guid.Empty;
         }
     }
 
@@ -137,7 +135,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
     [RelayCommand]
     private async Task SyncList()
     {
-        if (_settings.SelectedTrackingService == Guid.Empty)
+        if (Settings.SelectedTrackingService == Guid.Empty)
         {
             return;
         }
@@ -147,7 +145,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
             return;
         }
 
-        var service = _trackingServiceFactory.Create(_settings.SelectedTrackingService);
+        var service = _trackingServiceFactory.Create(Settings.SelectedTrackingService.GetValueOrDefault());
         if (service is null)
         {
             return;

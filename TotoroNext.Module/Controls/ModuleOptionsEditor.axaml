@@ -42,7 +42,7 @@
         </ItemsControl.DataTemplates>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <StackPanel Spacing="4"/>
+                <StackPanel Classes.SettingsContainer="true"/>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
     </ItemsControl>

@@ -14,7 +14,15 @@
              x:Class="TotoroNext.Views.SettingsView">
     <ScrollViewer>
         <StackPanel Spacing="24" MaxWidth="1000">
-            <StackPanel Spacing="4">
+            <StackPanel.Styles>
+                <Style Selector="StackPanel">
+                    <Setter Property="Classes.SettingsContainer" Value="true"/>
+                </Style>
+                <Style Selector="controls|SettingsCard">
+                    <Setter Property="Background" Value="{DynamicResource SemiColorBackground2}"/>
+                </Style>
+            </StackPanel.Styles>
+            <StackPanel>
                 <TextBlock Text="Appearance" FontSize="20" Margin="0 0 0 8" />
                 <controls:SettingsCard Header="Theme"
                                        Description="Color pallet of the application"
@@ -32,7 +40,8 @@
                     </controls:SettingsCard.Editor>
                 </controls:SettingsCard>
             </StackPanel>
-            <StackPanel Spacing="4">
+
+            <StackPanel>
                 <TextBlock Text="Default Services" FontSize="20" Margin="0 0 0 8" />
                 <controls:SettingsCard Header="Anime Provider"
                                        Description="Default anime provider"
@@ -125,7 +134,7 @@
                 </controls:SettingsCard>
             </StackPanel>
 
-            <StackPanel Spacing="4">
+            <StackPanel>
                 <TextBlock Text="Auto Skip Settings" FontSize="20" Margin="0 0 0 8" />
                 <controls:SettingsCard Header="Openings"
                                        Description="How to handle openings"
@@ -147,7 +156,7 @@
                 </controls:SettingsCard>
             </StackPanel>
 
-            <StackPanel Spacing="4">
+            <StackPanel>
                 <TextBlock Text="Updates" FontSize="20" Margin="0 0 0 8" />
                 <controls:SettingsCard Header="Check of updates"
                                        Description="{Binding CurrentVersion}"
@@ -157,7 +166,6 @@
                     </controls:SettingsCard.Editor>
                 </controls:SettingsCard>
             </StackPanel>
-
         </StackPanel>
     </ScrollViewer>
 </ContentPage>

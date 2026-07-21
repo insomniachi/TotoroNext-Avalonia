@@ -89,5 +89,8 @@
         <Style Selector="ContentPage">
             <Setter Property="Background" Value="Transparent"/>
         </Style>
+        <Style Selector="StackPanel.SettingsContainer">
+            <Setter Property="Spacing" Value="4"/>
+        </Style>
     </Application.Styles>
 </Application>

@@ -9,13 +9,13 @@
              xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              xmlns:extensions="totoro.next/extensions"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             Width="500"
+             Width="650"
              x:DataType="vm:AnimeExtensionsViewModel"
              Background="{DynamicResource SemiColorBackground2}"
              x:Class="TotoroNext.Anime.Views.AnimeExtensionsView">
     <Grid RowDefinitions="*, Auto, Auto">
         <ScrollViewer Grid.Row="0">
-            <StackPanel Spacing="4">
+            <StackPanel Classes.SettingsContainer="true">
                 <ctl:SettingsCard Header="Incognito"
                                   Description="Don't show discord rich presence for this anime"
                                   Icon="{extensions:Geometry Key={x:Static module:CommonIcons.Incognito}}">
@@ -34,6 +34,8 @@
                                   HorizontalAlignment="Stretch" />
                     </ctl:SettingsCard.Editor>
                 </ctl:SettingsCard>
+                <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}"
+                                         IsVisible="{Binding ProviderOptions.Count}" />
                 <ctl:SettingsCard IsVisible="{Binding HasProvider}"
                                   Header="Selected Result">
                     <ctl:SettingsCard.Editor>
@@ -57,8 +59,6 @@
                         </u:AutoCompleteBox>
                     </ctl:SettingsCard.Editor>
                 </ctl:SettingsCard>
-                <ctl:ModuleOptionsEditor Options="{Binding ProviderOptions}"
-                                         IsVisible="{Binding ProviderOptions.Count}" />
                 <ctl:SettingsCard Header="Opening Skip Method"
                                   Description="How to skip the opening of this anime"
                                   Icon="{extensions:Geometry Key={x:Static module:CommonIcons.Opening}}">
