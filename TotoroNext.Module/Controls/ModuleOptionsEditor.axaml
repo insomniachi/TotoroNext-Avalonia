@@ -4,45 +4,70 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:TotoroNext.Module.Controls"
              xmlns:module="clr-namespace:TotoroNext.Module"
+             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Module.Controls.ModuleOptionsEditor">
     <ItemsControl
         ItemsSource="{Binding $parent[controls:ModuleOptionsEditor].Options}">
         <ItemsControl.DataTemplates>
-            <DataTemplate DataType="module:SelectableModuleOptionItem">
-                <controls:SettingsCard Header="{Binding DisplayName}"
-                                       Description="{Binding Description}">
-                    <controls:SettingsCard.Editor>
-                        <ComboBox ItemsSource="{Binding AllowedValues}"
-                                  SelectedItem="{Binding Value, Mode=TwoWay}"
-                                  HorizontalAlignment="Stretch"
-                                  Width="250" />
-                    </controls:SettingsCard.Editor>
-                </controls:SettingsCard>
-            </DataTemplate>
-            <DataTemplate DataType="module:ToggleModuleOptionItem">
-                <controls:SettingsCard Header="{Binding DisplayName}"
-                                       Description="{Binding Description}">
-                    <controls:SettingsCard.Editor>
-                        <ToggleSwitch IsChecked="{Binding IsChecked}" />
-                    </controls:SettingsCard.Editor>
-                </controls:SettingsCard>
-            </DataTemplate>
-            <DataTemplate DataType="module:ModuleOptionItem">
-                <controls:SettingsCard Header="{Binding DisplayName}"
-                                       Description="{Binding Description}">
-                    <controls:SettingsCard.Editor>
-                        <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
-                                 MaxWidth="350"
-                                 MinWidth="200"
-                                 TextWrapping="WrapWithOverflow" />
-                    </controls:SettingsCard.Editor>
-                </controls:SettingsCard>
-            </DataTemplate>
+            <controls:ModuleOptionItemTemplateSelector>
+                <controls:ModuleOptionItemTemplateSelector.TextTemplate>
+                    <DataTemplate DataType="module:ModuleOptionItem">
+                        <controls:SettingsCard Header="{Binding DisplayName}"
+                                               Description="{Binding Description}">
+                            <controls:SettingsCard.Editor>
+                                <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                                         MaxWidth="350"
+                                         MinWidth="200"
+                                         TextWrapping="WrapWithOverflow" />
+                            </controls:SettingsCard.Editor>
+                        </controls:SettingsCard>
+                    </DataTemplate>
+                </controls:ModuleOptionItemTemplateSelector.TextTemplate>
+                <controls:ModuleOptionItemTemplateSelector.ComboBoxTemplate>
+                    <DataTemplate DataType="module:ModuleOptionItem">
+                        <controls:SettingsCard Header="{Binding DisplayName}"
+                                               Description="{Binding Description}">
+                            <controls:SettingsCard.Editor>
+                                <ComboBox ItemsSource="{Binding AllowedValues}"
+                                          SelectedItem="{Binding Value, Mode=TwoWay}"
+                                          HorizontalAlignment="Stretch"
+                                          Width="250" />
+                            </controls:SettingsCard.Editor>
+                        </controls:SettingsCard>
+                    </DataTemplate>
+                </controls:ModuleOptionItemTemplateSelector.ComboBoxTemplate>
+                <controls:ModuleOptionItemTemplateSelector.ToggleSwitchTemplate>
+                    <DataTemplate DataType="module:ModuleOptionItem">
+                        <controls:SettingsCard Header="{Binding DisplayName}"
+                                               Description="{Binding Description}">
+                            <controls:SettingsCard.Editor>
+                                <ToggleSwitch IsChecked="{Binding IsChecked}" />
+                            </controls:SettingsCard.Editor>
+                        </controls:SettingsCard>
+                    </DataTemplate>
+                </controls:ModuleOptionItemTemplateSelector.ToggleSwitchTemplate>
+                <controls:ModuleOptionItemTemplateSelector.FileBrowserTemplate>
+                    <DataTemplate DataType="module:ModuleOptionItem">
+                        <controls:SettingsCard Header="{Binding DisplayName}"
+                                               Description="{Binding Description}">
+                            <controls:SettingsCard.Editor>
+                                <u:PathPicker
+                                    Title="Browse"
+                                    AllowMultiple="False"
+                                    SelectedPathsText="{Binding Value, FallbackValue={x:Null}}"
+                                    UsePickerType="OpenFile"
+                                    HorizontalAlignment="Stretch"
+                                    MinWidth="300" />
+                            </controls:SettingsCard.Editor>
+                        </controls:SettingsCard>
+                    </DataTemplate>
+                </controls:ModuleOptionItemTemplateSelector.FileBrowserTemplate>
+            </controls:ModuleOptionItemTemplateSelector>
         </ItemsControl.DataTemplates>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <StackPanel Classes.SettingsContainer="true"/>
+                <StackPanel Classes.SettingsContainer="true" />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
     </ItemsControl>

@@ -26,12 +26,16 @@ public partial class MainSplashWindow : SplashWindow
         }
     }
 
-    protected override async Task<Window?> CreateNextWindow()
+    protected override Task<Window?> CreateNextWindow()
     {
-        await Task.CompletedTask;
-        return new MainWindow
+        // return Task.FromResult<Window?>(new SetupWizard()
+        // {
+        //     DataContext = App.AppHost.Services.GetService<SetupWizardViewModel>()
+        // });
+
+        return Task.FromResult<Window?>(new MainWindow
         {
             DataContext = App.AppHost.Services.GetService<MainWindowViewModel>()
-        };
+        });
     }
 }

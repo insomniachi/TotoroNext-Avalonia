@@ -24,6 +24,8 @@ internal class MpvMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
     public IObservable<Unit> PlaybackStopped => _playbackStopped;
     public IObservable<MediaPlayerState> StateChanged => _stateSubject;
 
+    public bool IsAvailable() => File.Exists(settings.Value.FileName);
+
     public void Play(Media media, TimeSpan startPosition)
     {
         _process?.Kill();

@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Module.Controls;
@@ -10,7 +11,9 @@ using Ursa.Controls;
 
 namespace TotoroNext.Module;
 
-public class DialogService(ILogger<DialogService> logger) : IDialogService
+public class DialogService(ILogger<DialogService> logger,
+                           IServiceScopeFactory scopeFactory,
+                           IEnumerable<Descriptor> modules) : IDialogService
 {
     public async Task<MessageBoxResult> Question(string title, string question)
     {
@@ -58,6 +61,29 @@ public class DialogService(ILogger<DialogService> logger) : IDialogService
         };
 
         var editor = new ModuleOptionsEditor { Options = options, Width = 600 };
+        var result = await OverlayDialog.ShowStandardAsync(editor, null, null, dialogOptions);
+        return result == DialogResult.OK;
+    }
+    
+    public async Task<bool> EditModuleOptions(Guid id, string componentType)
+    {
+        var descriptor = modules.Where(x => x.Components.Contains(componentType)).SingleOrDefault(x => x.Id == id);
+
+        using var scope = scopeFactory.CreateScope();
+        var items = scope.ServiceProvider.GetKeyedService<List<ModuleOptionItem>>(id);
+
+        if (items is not { Count: > 0 })
+        {
+            return false;
+        }
+        
+        var dialogOptions = new OverlayDialogOptions
+        {
+            Buttons = DialogButton.OKCancel,
+            Title = descriptor?.Name ?? "",
+        };
+
+        var editor = new ModuleOptionsEditor { Options = items, Width = 600 };
         var result = await OverlayDialog.ShowStandardAsync(editor, null, null, dialogOptions);
         return result == DialogResult.OK;
     }

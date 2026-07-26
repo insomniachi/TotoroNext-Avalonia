@@ -1,6 +1,33 @@
-﻿namespace TotoroNext.MediaEngine.Vlc;
+﻿using System.Runtime.Versioning;
+using Microsoft.Win32;
+using TotoroNext.Module.Abstractions;
 
-public class WindowsInitializer
+namespace TotoroNext.MediaEngine.Vlc;
+
+[SupportedOSPlatform("windows")]
+public class WindowsInitializer(IModuleSettings<Settings> settings) : IInitializer
 {
-    
+    public void Initialize()
+    {
+        if (!string.IsNullOrEmpty(settings.Value.FileName))
+        {
+            return;
+        }
+
+        using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\vlc.exe");
+        if (key is null)
+        {
+            return;
+        }
+
+        var value = key.GetValue("")?.ToString();
+
+        if (string.IsNullOrEmpty(value))
+        {
+            return;
+        }
+
+        settings.Value.FileName = value;
+        settings.Save();
+    }
 }

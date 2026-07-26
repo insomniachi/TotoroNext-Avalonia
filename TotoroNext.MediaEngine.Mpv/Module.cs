@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.MediaEngine.Mpv.ViewModels;
@@ -23,13 +24,21 @@ public class Module : IModule<Settings>
     {
         services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddTransient(_ => Descriptor);
-        services.AddModuleSettings(this);
+        services.AddModuleSettingsEx(this);
         services.AddKeyedTransient<IMediaPlayer, MpvMediaPlayer>(Descriptor.Id);
+
+        if (OperatingSystem.IsWindows())
+        {
+            services.AddTransient<IInitializer, WindowsInitializer>();
+        }
     }
 }
 
-public class Settings
+public class Settings : OverridableConfig
 {
+    [DisplayName("Executable")] 
+    [SpecialEditorType(SpecialEditorType.FileBrowser)]
     public string FileName { get; set; } = OperatingSystem.IsLinux() ? "/usr/bin/mpv" : "";
-    public bool LaunchFullScreen { get; set; } = true;
+
+    [DisplayName("Start in fullscreen")] public bool LaunchFullScreen { get; set; } = true;
 }

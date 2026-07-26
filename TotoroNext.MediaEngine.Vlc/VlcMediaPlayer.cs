@@ -25,6 +25,7 @@ internal class VlcMediaPlayer(IModuleSettings<Settings> settings) : IMediaPlayer
     public IObservable<TimeSpan> PositionChanged => _positionSubject;
     public IObservable<Unit> PlaybackStopped => _playbackStoppedSubject;
     public IObservable<MediaPlayerState> StateChanged => Observable.Empty<MediaPlayerState>();
+    public bool IsAvailable() => File.Exists(settings.Value.FileName);
 
     public void Play(Media media, TimeSpan startPosition)
     {
