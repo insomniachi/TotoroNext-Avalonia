@@ -9,15 +9,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TotoroNext.Module;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "Type")]
-[JsonDerivedType(typeof(SelectableModuleOptionItem), "Selectable")]
-[JsonDerivedType(typeof(ToggleModuleOptionItem), "Toggle")]
 public partial class ModuleOptionItem : ObservableObject
 {
     public string Name { get; init; } = "";
     public string? DisplayName { get; init; }
     public string? Description { get; init; }
+    public SpecialEditorType EditorType { get; init; } = SpecialEditorType.TextBox;
     [ObservableProperty] public partial string Value { get; set; } = "";
+    public IEnumerable<string>? AllowedValues { get; init; }
+    public bool IsChecked
+    {
+        get => Value == bool.TrueString;
+        set => Value = value.ToString();
+    }
 
     public T GetValueOrDefault<T>(Func<string, T> parser, T defaultValue)
     {
@@ -62,19 +66,6 @@ public partial class ModuleOptionItem : ObservableObject
     }
 }
 
-public class SelectableModuleOptionItem : ModuleOptionItem
-{
-    public required IEnumerable<string> AllowedValues { get; init; }
-}
-
-public class ToggleModuleOptionItem : ModuleOptionItem
-{
-    public bool IsChecked
-    {
-        get => Value == bool.TrueString;
-        set => Value = value.ToString();
-    }
-}
 
 public class ModuleOptionBuilder
 {
@@ -83,6 +74,7 @@ public class ModuleOptionBuilder
     private string? _displayName;
     private string _name = "";
     private string _value = "";
+    private SpecialEditorType _editorType;
 
     public ModuleOptionBuilder WithName(string name)
     {
@@ -134,6 +126,12 @@ public class ModuleOptionBuilder
         return this;
     }
 
+    public ModuleOptionBuilder WithEditorType(SpecialEditorType type)
+    {
+        _editorType = type;
+        return this;
+    }
+
     public ModuleOptionBuilder WithAllowedValues<T>()
         where T : struct, Enum
     {
@@ -153,35 +151,13 @@ public class ModuleOptionBuilder
             Name = _name,
             DisplayName = _displayName,
             Description = _description,
-            Value = _value
-        };
-    }
-
-    public SelectableModuleOptionItem ToSelectablePluginOption()
-    {
-        return new SelectableModuleOptionItem
-        {
-            Name = _name,
-            DisplayName = _displayName,
-            Description = _description,
             Value = _value,
-            AllowedValues = _allowedValues
-        };
-    }
-
-    public ToggleModuleOptionItem ToTogglePluginOption()
-    {
-        return new ToggleModuleOptionItem()
-        {
-            Name = _name,
-            DisplayName = _displayName,
-            Description = _description,
-            Value = _value,
+            EditorType = _editorType,
+            AllowedValues = _allowedValues,
         };
     }
 }
 
-[JsonConverter(typeof(ModuleOptionsConverter))]
 public class ModuleOptions(IEnumerable<ModuleOptionItem> items) : List<ModuleOptionItem>(items.ToList())
 {
     public ModuleOptions() : this([]) { }
@@ -256,24 +232,24 @@ public abstract class OverridableConfig
             {
                 builder.WithAllowedValues(allowedValuesAttribute.Values);
             }
-
-            ConfigureProperty(builder, propertyInfo);
             
-            ModuleOptionItem option;
             if (propertyInfo.PropertyType == typeof(bool))
             {
-                option = builder.ToTogglePluginOption();
+                builder.WithEditorType(SpecialEditorType.ToggleSwitch);
             }
             else if (builder.HasAllowedValues())
             {
-                option = builder.ToSelectablePluginOption();
-            }
-            else
-            {
-                option = builder.ToPluginOption();
+                builder.WithEditorType(SpecialEditorType.ComboBox);
             }
             
-            options.Add(option);
+            if (propertyInfo.GetCustomAttribute<SpecialEditorTypeAttribute>() is { } editorTypeAttribute)
+            {
+                builder.WithEditorType(editorTypeAttribute.Type);
+            }
+
+            ConfigureProperty(builder, propertyInfo);
+            
+            options.Add(builder.ToPluginOption());
         }
 
         return options;
@@ -307,16 +283,18 @@ public abstract class OverridableConfig
     }
 }
 
-public class ModuleOptionsConverter : JsonConverter<ModuleOptions>
-{
-    public override ModuleOptions? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var items = JsonSerializer.Deserialize<List<ModuleOptionItem>>(ref reader, options);
-        return items is null ? null : new ModuleOptions(items);
-    }
 
-    public override void Write(Utf8JsonWriter writer, ModuleOptions value, JsonSerializerOptions options)
-    {
-        JsonSerializer.Serialize<IEnumerable<ModuleOptionItem>>(writer, value, options);
-    }
+[AttributeUsage(AttributeTargets.Property)]
+public class SpecialEditorTypeAttribute(SpecialEditorType type) : Attribute
+{
+    public SpecialEditorType Type { get; } = type;
+}
+
+public enum SpecialEditorType
+{
+    TextBox,
+    ComboBox,
+    NumberBox,
+    ToggleSwitch,
+    FileBrowser
 }
