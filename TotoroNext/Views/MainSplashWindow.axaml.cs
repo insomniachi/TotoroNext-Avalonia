@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using TotoroNext.Module.Abstractions;
 using TotoroNext.ViewModels;
 using Ursa.Controls;
 
@@ -28,14 +29,17 @@ public partial class MainSplashWindow : SplashWindow
 
     protected override Task<Window?> CreateNextWindow()
     {
-        // return Task.FromResult<Window?>(new SetupWizard()
-        // {
-        //     DataContext = App.AppHost.Services.GetService<SetupWizardViewModel>()
-        // });
+        var service = App.AppHost.Services.GetService<ILocalSettingsService>()!;
+        var isSetupCompleted = service.ReadSetting<bool>("IsSetupComplete");
 
-        return Task.FromResult<Window?>(new MainWindow
-        {
-            DataContext = App.AppHost.Services.GetService<MainWindowViewModel>()
-        });
+        return isSetupCompleted
+            ? Task.FromResult<Window?>(new MainWindow
+            {
+                DataContext = App.AppHost.Services.GetService<MainWindowViewModel>()
+            })
+            : Task.FromResult<Window?>(new SetupWizard
+            {
+                DataContext = App.AppHost.Services.GetService<SetupWizardViewModel>()
+            });
     }
 }

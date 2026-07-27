@@ -1,12 +1,13 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using TotoroNext.Module.Abstractions;
 using TotoroNext.ViewModels;
+using Ursa.Controls;
 
 namespace TotoroNext.Views;
 
-public partial class SetupWizard : Window
+public partial class SetupWizard : SplashWindow
 {
     public SetupWizard()
     {
@@ -19,7 +20,18 @@ public partial class SetupWizard : Window
         {
             return;
         }
-        
+
         vm.Initialize();
+    }
+
+    protected override Task<Window?> CreateNextWindow()
+    {
+        var service = App.AppHost.Services.GetService<ILocalSettingsService>()!;
+        service.SaveSetting("IsSetupComplete", true);
+        
+        return Task.FromResult<Window?>(new MainWindow
+        {
+            DataContext = App.AppHost.Services.GetService<MainWindowViewModel>()
+        });
     }
 }

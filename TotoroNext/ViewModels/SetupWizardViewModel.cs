@@ -1,11 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Irihi.Avalonia.Shared.Contracts;
 using ReactiveUI;
 using TotoroNext.Module;
+using Ursa.Controls;
 
 namespace TotoroNext.ViewModels;
 
-public partial class SetupWizardViewModel(IEnumerable<ISetupWizardPageViewModel> pages) : ObservableObject, IInitializable
+public partial class SetupWizardViewModel(IEnumerable<ISetupWizardPageViewModel> pages) : ObservableObject, IInitializable, IDialogContext
 {
     public List<ISetupWizardPageViewModel> Pages { get; } = pages.OrderBy(x => x.Rank).ToList();
     
@@ -56,8 +59,16 @@ public partial class SetupWizardViewModel(IEnumerable<ISetupWizardPageViewModel>
         }
 
         await CurrentPage.ExecuteAsync();
-        var index = Pages.IndexOf(CurrentPage);
-        CurrentPage = Pages[index + 1];
+        
+        if (IsLast)
+        {
+            Close();
+        }
+        else
+        {
+            var index = Pages.IndexOf(CurrentPage);
+            CurrentPage = Pages[index + 1];  
+        }
     }
 
     [RelayCommand]
@@ -71,4 +82,11 @@ public partial class SetupWizardViewModel(IEnumerable<ISetupWizardPageViewModel>
         var index = Pages.IndexOf(CurrentPage);
         CurrentPage = Pages[index + 1];
     }
+
+    public void Close()
+    {
+        Dispatcher.UIThread.Invoke(() => { RequestClose?.Invoke(this, DialogResult.OK); });
+    }
+    
+    public event EventHandler<object?>? RequestClose;
 }

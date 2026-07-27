@@ -1,20 +1,20 @@
-﻿<u:UrsaWindow xmlns="https://github.com/avaloniaui"
-              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-              xmlns:u="https://irihi.tech/ursa"
-              xmlns:viewModels="clr-namespace:TotoroNext.ViewModels"
-              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-              x:DataType="viewModels:SetupWizardViewModel"
-              x:Class="TotoroNext.Views.SetupWizard"
-              WindowStartupLocation="CenterScreen"
-              CanResize="False"
-              CanMaximize="False"
-              CanMinimize="False"
-              Width="500"
-              Height="650"
-              Loaded="Control_OnLoaded"
-              Title="Setup">
+﻿<u:SplashWindow xmlns="https://github.com/avaloniaui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                xmlns:u="https://irihi.tech/ursa"
+                xmlns:viewModels="clr-namespace:TotoroNext.ViewModels"
+                mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                x:DataType="viewModels:SetupWizardViewModel"
+                x:Class="TotoroNext.Views.SetupWizard"
+                WindowStartupLocation="CenterScreen"
+                CanResize="False"
+                CanMaximize="False"
+                CanMinimize="False"
+                Width="500"
+                Height="650"
+                Loaded="Control_OnLoaded"
+                Title="Setup">
     <Grid RowDefinitions="*,Auto">
 
         <ScrollViewer>
@@ -38,7 +38,6 @@
 
             <Button Content="{Binding NextButtonText}"
                     Command="{Binding NextPageCommand}"
-                    IsEnabled="{Binding !IsLast, FallbackValue=false}"
                     Margin="10 8 0 8" />
 
             <Button Content="Back"
@@ -47,4 +46,4 @@
 
         </StackPanel>
     </Grid>
-</u:UrsaWindow>
+</u:SplashWindow>
