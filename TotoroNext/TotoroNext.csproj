@@ -52,6 +52,15 @@
         <ProjectReference Include="..\TotoroNext.Torrents.Qbittorrent\TotoroNext.Torrents.Qbittorrent.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.LocalStorage\TotoroNext.Anime.LocalStorage.csproj"/>
 
+        <ProjectReference Include="..\TotoroNext.MediaEngine.Vlc\TotoroNext.MediaEngine.Vlc.csproj"/>
+        <ProjectReference Include="..\TotoroNext.MediaEngine.Mpv\TotoroNext.MediaEngine.Mpv.csproj"/>
+
+        <ProjectReference Include="..\TotoroNext.Anime.Aniskip\TotoroNext.Anime.Aniskip.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Discord\TotoroNext.Discord.csproj"/>
+
+        <ProjectReference Include="..\TotoroNext.Torrents.TorBox\TotoroNext.Torrents.TorBox.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Torrents.RealDebrid\TotoroNext.Torrents.RealDebrid.csproj"/>
+        
         <ProjectReference Include="..\TotoroNext.MediaEngine.Abstractions\TotoroNext.MediaEngine.Abstractions.csproj"/>
         <ProjectReference Include="..\TotoroNext.Module\TotoroNext.Module.csproj"/>
         <ProjectReference Include="..\TotoroNext.Torrents.Abstractions\TotoroNext.Torrents.Abstractions.csproj"/>
@@ -70,15 +79,6 @@
         <ProjectReference Include="..\TotoroNext.Anime.Senshi\TotoroNext.Anime.Senshi.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Anikoto\TotoroNext.Anime.Anikoto.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.TsukiHime\TotoroNext.Anime.TsukiHime.csproj"/>
-
-        <ProjectReference Include="..\TotoroNext.Anime.Aniskip\TotoroNext.Anime.Aniskip.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Discord\TotoroNext.Discord.csproj"/>
-
-        <ProjectReference Include="..\TotoroNext.MediaEngine.Vlc\TotoroNext.MediaEngine.Vlc.csproj"/>
-        <ProjectReference Include="..\TotoroNext.MediaEngine.Mpv\TotoroNext.MediaEngine.Mpv.csproj"/>
-
-        <ProjectReference Include="..\TotoroNext.Torrents.TorBox\TotoroNext.Torrents.TorBox.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Torrents.RealDebrid\TotoroNext.Torrents.RealDebrid.csproj"/>
     </ItemGroup>
 
 </Project>

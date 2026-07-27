@@ -142,7 +142,14 @@ public partial class SplashViewModel(
                               new Anime.LocalStorage.Module(),
                               new Anime.Anilist.Module(),
                               new Anime.MyAnimeList.Module(),
+                              new Anime.Aniskip.Module(),
+                              new MediaEngine.Mpv.Module(),
+                              new MediaEngine.Vlc.Module(),
+                              new Discord.Module(),
                               new Torrents.Nyaa.Module(),
+                              new Torrents.RealDebrid.Module(),
+                              new Torrents.TorBox.Module(),
+                              new Torrents.Qbittorrent.Module(),
                               ..store.LoadModules()
                           ];
 
