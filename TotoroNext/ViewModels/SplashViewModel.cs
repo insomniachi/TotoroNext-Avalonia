@@ -303,21 +303,6 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.Senshi.Module();
         yield return new Anime.Anikoto.Module();
         yield return new Anime.TsukiHime.Module();
-
-        // Misc
-        yield return new Anime.Aniskip.Module();
-        yield return new Discord.Module();
-
-        // Media Players
-        yield return new MediaEngine.Mpv.Module();
-        yield return new MediaEngine.Vlc.Module();
-
-        // Debrid
-        yield return new Torrents.TorBox.Module();
-        yield return new Torrents.RealDebrid.Module();
-
-        // Torrent Client
-        yield return new Torrents.Qbittorrent.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)
