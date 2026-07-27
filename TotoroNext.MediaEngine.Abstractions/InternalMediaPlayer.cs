@@ -24,7 +24,7 @@ public class EmbeddedVlcMediaPlayer : IEmbeddedVlcMediaPlayer
     public IObservable<TimeSpan> DurationChanged => MediaPlayer.Events().LengthChanged.Select(e => TimeSpan.FromMilliseconds(e.Length));
     public IObservable<TimeSpan> PositionChanged => MediaPlayer.Events().TimeChanged.Select(e => TimeSpan.FromMilliseconds(e.Time));
     public IObservable<Unit> PlaybackStopped => MediaPlayer.Events().Stopped.Select(_ => Unit.Default);
-
+    public bool IsAvailable() => true;
     public MediaPlayerState CurrentState => ConvertState(MediaPlayer.State);
 
     public void Play(Media media, TimeSpan startPosition)

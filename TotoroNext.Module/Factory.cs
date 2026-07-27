@@ -37,6 +37,8 @@ public class Factory<TService, TId>(
                scope.ServiceProvider.GetKeyedServices<TService>(KeyedService.AnyKey).FirstOrDefault();
     }
 
+    public TId? GetDefaultId() => localSettingsService.ReadSetting<TId>(defaultKey);
+
     public IEnumerable<TService> CreateAll()
     {
         using var scope = serviceScopeFactory.CreateScope();

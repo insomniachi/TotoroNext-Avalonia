@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Module.Extensions;
 using TotoroNext.Torrents.Abstractions;
 
 namespace TotoroNext.Torrents.Nyaa;

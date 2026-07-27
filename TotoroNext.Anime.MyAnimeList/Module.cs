@@ -32,6 +32,7 @@ public class Module : IModule<Settings>
         services.AddModuleSettings(this);
         services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>($"tracking/{nameof(AnimeId.MyAnimeList)}");
+        services.AddSetupPage<MalSetupPage, MalSetupViewModel>();
 
         services.AddSingleton<IMalClient, MalClient>();
         services.AddKeyedTransient<IMetadataService, MyAnimeListMetadataService>(Descriptor.Id);

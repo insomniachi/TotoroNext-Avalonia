@@ -27,6 +27,17 @@ public static class ServiceCollectionExtensions
         {
             return services.AddTransient<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
         }
+        
+        public IServiceCollection AddModuleSettingsEx<TData>(IModule<TData> module)
+            where TData : OverridableConfig, new()
+        {
+            return services.AddTransient<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor))
+                           .AddKeyedTransient<List<ModuleOptionItem>>(module.Descriptor.Id, (sp, _) =>
+                           {
+                               var settings = sp.GetRequiredService<IModuleSettings<TData>>();
+                               return settings.Value.ToModuleOptions();
+                           });
+        }
 
         public IServiceCollection AddMainNavigationItem<TView, TViewModel>(string header, string iconKey,
                                                                            NavigationDrawerItemTag? tag = null)
@@ -94,6 +105,15 @@ public static class ServiceCollectionExtensions
             where TImpl : class, ISelectionUserInteraction<TType>
         {
             return services.AddTransient<ISelectionUserInteraction<TType>, TImpl>();
+        }
+
+        public IServiceCollection AddSetupPage<TView, TViewModel>()
+            where TView : class, new()
+            where TViewModel : class, ISetupWizardPageViewModel
+        {
+            services.AddTransient<ISetupWizardPageViewModel, TViewModel>();
+            services.AddViewMap<TView,TViewModel>();
+            return services;
         }
     }
 }

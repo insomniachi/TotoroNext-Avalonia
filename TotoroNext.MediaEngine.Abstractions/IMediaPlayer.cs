@@ -10,6 +10,7 @@ public interface IMediaPlayer
     IObservable<Unit> PlaybackStopped { get; }
     IObservable<MediaPlayerState> StateChanged { get; }
     void Play(Media media, TimeSpan startPosition);
+    bool IsAvailable();
 }
 
 public interface ISeekable

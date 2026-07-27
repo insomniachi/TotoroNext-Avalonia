@@ -29,7 +29,7 @@ public sealed partial class WatchViewModel(
     IDialogService dialogService,
     IMessenger messenger,
     ILocalSettingsService localSettingsService) : ObservableObject,
-                                                  IInitializable,
+                                                  IAsyncInitializable,
                                                   IDisposable,
                                                   IKeyBindingsProvider
 {
@@ -76,8 +76,16 @@ public sealed partial class WatchViewModel(
         Context.Dispose();
     }
 
-    public void Initialize()
+    public async Task InitializeAsync()
     {
+        if (Context.MediaPlayer is null || !Context.MediaPlayer.IsAvailable())
+        {
+            await dialogService.Warning("Media Player installation not found, please configure mpv/vlc");
+            var id = mediaPlayerFactory.GetDefaultId();
+            await dialogService.EditModuleOptions(id, ComponentTypes.MediaEngine);
+            return;
+        }
+        
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
 
         if (Anime is null)

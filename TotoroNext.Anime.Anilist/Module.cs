@@ -42,6 +42,7 @@ public sealed class Module : IModule<Settings>
         services.AddTransient<IAnilistMetadataService, AnilistMetadataService>();
         services.AddKeyedTransient<IMetadataService, AnilistMetadataService>(Descriptor.Id);
         services.AddKeyedTransient<ITrackingService, AnilistTrackingService>(Descriptor.Id);
+        services.AddSetupPage<AnilistSetupView, AnilistSetupViewModel>();
 
         services.AddHttpClient(nameof(AnilistMetadataService), (sp, client) =>
         {

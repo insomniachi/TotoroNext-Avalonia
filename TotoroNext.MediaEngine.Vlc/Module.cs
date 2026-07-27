@@ -25,6 +25,11 @@ public class Module : IModule<Settings>
         services.AddTransient(_ => Descriptor);
         services.AddModuleSettings(this);
         services.AddKeyedTransient<IMediaPlayer, VlcMediaPlayer>(Descriptor.Id);
+        
+        if (OperatingSystem.IsWindows())
+        {
+            services.AddTransient<IInitializer, WindowsInitializer>();
+        }
     }
 }
 

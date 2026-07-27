@@ -103,6 +103,7 @@ public partial class SplashViewModel(
 
                           services.AddSingleton<UpdateManager>(_ => updateManager);
                           services.AddDataViewMap<DownloadUpdateView, DownloadUpdateViewModel, UpdateInfo>();
+                          services.AddTransient<SetupWizardViewModel>();
 
                           services.AddHostedService<ThemeService>();
                           services.AddCoreServices();
