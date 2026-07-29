@@ -8,7 +8,7 @@ namespace TotoroNext.Anime.AllAnime;
 ///     fold into the client mask, which signs the bootstrap request for `partB`; the key is
 ///     `mask XOR partB`.
 /// </summary>
-public class MKissaKeyManager
+public partial class MKissaKeyManager
 {
     // Constants that were implicitly available in the Kotlin file context
     public const string StreamHash = "f4662f4b7510b26795dd53ef824a0bf1740fbbc5d1273fab18222ac831bca8d0";
@@ -19,15 +19,16 @@ public class MKissaKeyManager
     private const string MaterialError = "Unable to obtain MKissa crypto material";
     private const string BootstrapPath = "/client-crypto/v1/bootstrap";
     private const string KeyGroup = "mkissa";
-    private const string PrefBuildKey = "client_build_cache";
     private const string FieldSeparator = "|";
     private const int MaxBuildChunks = 40;
     private const long MaterialTtlMs = 6 * 60 * 60 * 1000L;
     private const string CryptoChunkMarker = "aaReq";
     private static readonly HashSet<int> StaleCodes = new() { 403, 404 };
 
-    private static readonly Regex AppEntryRegex = new(@"import\(""([^""]*/entry/app\.[^""]*\.js)""\)");
-    private static readonly Regex ChunkRefRegex = new(@"[""'](\.\.?/[\w./-]+\.js)[""']");
+    [GeneratedRegex(@"import\(""([^""]*/entry/app\.[^""]*\.js)""\)")]
+    private static partial Regex AppEntryRegex();
+    [GeneratedRegex(@"[""'](\.\.?/[\w./-]+\.js)[""']")]
+    private static partial Regex ChunkRefRegex();
     private readonly string _apiUrl;
 
     private readonly HttpClient _client;
@@ -88,6 +89,11 @@ public class MKissaKeyManager
             }
 
             if (partB.Length < 32)
+            {
+                throw new Exception(MaterialError);
+            }
+
+            if (handshake.Build is null)
             {
                 throw new Exception(MaterialError);
             }
@@ -195,10 +201,7 @@ public class MKissaKeyManager
         var freshResult = await GetBootstrapAsync(fresh.BuildId, freshMask, MKissaCrypto.EpochCandidates());
         return freshResult.Bootstrap != null ? new Handshake(fresh, freshMask, freshResult.Bootstrap) : null;
     }
-
-    /// <summary>
-    ///     GET /client-crypto/v1/bootstrap?buildId=&k=, gated by an HMAC of the client mask.
-    /// </summary>
+    
     private async Task<BootstrapResult> GetBootstrapAsync(string buildId, byte[] mask, IEnumerable<long> epochs)
     {
         var host = new Uri(_siteUrl).Host;
@@ -221,7 +224,7 @@ public class MKissaKeyManager
             request.Headers.TryAddWithoutValidation("Origin", _siteUrl);
             request.Headers.TryAddWithoutValidation("Referer", $"{_siteUrl}/");
 
-            HttpResponseMessage response = null;
+            HttpResponseMessage? response;
             try
             {
                 response = await _client.SendAsync(request);
@@ -242,7 +245,7 @@ public class MKissaKeyManager
                 continue;
             }
 
-            AaCryptoBootstrap bootstrap;
+            AaCryptoBootstrap? bootstrap;
             try
             {
                 var body = await response.Content.ReadAsStringAsync();
@@ -288,21 +291,16 @@ public class MKissaKeyManager
             return null;
         }
 
-        var buildId = StoredBuild.Substring(0, separatorIdx);
+        var buildId = StoredBuild[..separatorIdx];
         if (string.IsNullOrEmpty(buildId))
         {
             return null;
         }
 
-        var seedsStr = StoredBuild.Substring(separatorIdx + FieldSeparator.Length);
+        var seedsStr = StoredBuild[(separatorIdx + FieldSeparator.Length)..];
         var seeds = seedsStr.Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
 
-        if (seeds.Count != MKissaCrypto.SeedCount)
-        {
-            return null;
-        }
-
-        return new MKissaBundle.BuildInfo(buildId, seeds);
+        return seeds.Count != MKissaCrypto.SeedCount ? null : new MKissaBundle.BuildInfo(buildId, seeds);
     }
 
     /// <summary>
@@ -340,7 +338,7 @@ public class MKissaKeyManager
         }
 
         // Shared chunks first: that is where it has always lived.
-        var chunkRefs = ChunkRefRegex.Matches(appJs)
+        var chunkRefs = ChunkRefRegex().Matches(appJs)
                                        .Select(m => m.Groups[1].Value)
                                        .Distinct()
                                        .OrderByDescending(r => r.Contains("/chunks/"))
@@ -404,7 +402,7 @@ public class MKissaKeyManager
             response.EnsureSuccessStatusCode();
             var html = await response.Content.ReadAsStringAsync();
 
-            var match = AppEntryRegex.Match(html);
+            var match = AppEntryRegex().Match(html);
             return match.Success ? match.Groups[1].Value : null;
         }
         catch
