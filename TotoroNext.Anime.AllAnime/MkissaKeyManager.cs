@@ -35,7 +35,7 @@ public class MKissaKeyManager
     private readonly SemaphoreSlim _materialMutex = new(1, 1);
     private readonly string _siteUrl;
 
-    private volatile Material _cachedMaterial;
+    private volatile Material? _cachedMaterial;
 
     public MKissaKeyManager(
         HttpClient client,
@@ -50,7 +50,7 @@ public class MKissaKeyManager
     }
 
     // Property to replace the Kotlin SharedPreferences delegate
-    private string StoredBuild { get; set; }
+    private string? StoredBuild { get; set; }
 
     public async Task<Material> GetMaterialAsync(bool forceRefresh = false)
     {
@@ -80,7 +80,7 @@ public class MKissaKeyManager
             byte[] partB;
             try
             {
-                partB = Convert.FromBase64String(handshake.Bootstrap.PartB);
+                partB = Convert.FromBase64String(handshake.Bootstrap!.PartB);
             }
             catch
             {
@@ -93,7 +93,7 @@ public class MKissaKeyManager
             }
 
             // Only after the server accepted it, so a bad parse cannot wedge every later launch.
-            StoredBuild = SerializeBuild(handshake.Build);
+            StoredBuild = SerializeBuild(handshake.Build!);
 
             // Not the bootstrap's switchAt: it can already be past while the epoch is live.
             var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -154,7 +154,7 @@ public class MKissaKeyManager
     /// <summary>
     ///     Re-scraping starts at the Cloudflare-gated HTML, so cheaper causes are ruled out first.
     /// </summary>
-    private async Task<Handshake> GetHandshakeAsync()
+    private async Task<Handshake?> GetHandshakeAsync()
     {
         var cached = GetCachedBuild();
         var mask = cached != null ? MKissaCrypto.DeriveMask(cached.BuildId, cached.Seeds) : null;
@@ -275,7 +275,7 @@ public class MKissaKeyManager
         return new BootstrapResult(null, sawStale);
     }
 
-    private MKissaBundle.BuildInfo GetCachedBuild()
+    private MKissaBundle.BuildInfo? GetCachedBuild()
     {
         if (string.IsNullOrEmpty(StoredBuild))
         {
@@ -308,7 +308,7 @@ public class MKissaKeyManager
     /// <summary>
     ///     The entry is re-read every time: chunk URLs are immutable, so a rebuild only shows in HTML.
     /// </summary>
-    private async Task<MKissaBundle.BuildInfo> ResolveBuildAsync()
+    private async Task<MKissaBundle.BuildInfo?> ResolveBuildAsync()
     {
         var entryUrlStr = await EntryUrlFromSiteAsync();
         if (entryUrlStr == null)
@@ -390,7 +390,7 @@ public class MKissaKeyManager
     /// <summary>
     ///     Cloudflare-gated; only needed to locate the CDN app entry.
     /// </summary>
-    private async Task<string> EntryUrlFromSiteAsync()
+    private async Task<string?> EntryUrlFromSiteAsync()
     {
         try
         {
