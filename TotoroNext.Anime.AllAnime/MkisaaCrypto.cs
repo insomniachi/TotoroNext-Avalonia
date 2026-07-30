@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace TotoroNext.Anime.AllAnime.Views;
+namespace TotoroNext.Anime.AllAnime;
 
 /// <summary>
 ///     Stateless primitives for the "aaReq" scheme, wire layout `[0x01] + iv(12) + AES-GCM(ct‖tag)`.
@@ -30,7 +30,7 @@ public static class MKissaCrypto
     /// <summary>
     ///     `seeds XOR f(buildId) XOR f(position)`; both inputs change on every site rebuild.
     /// </summary>
-    public static byte[] DeriveMask(string buildId, List<string> seeds)
+    public static byte[]? DeriveMask(string buildId, List<string> seeds)
     {
         if (string.IsNullOrEmpty(buildId) || seeds.Count != SeedCount)
         {
@@ -166,7 +166,7 @@ public static class MKissaCrypto
         return Convert.ToBase64String(blob);
     }
 
-    public static string Decrypt(string base64Payload, byte[] materialKey)
+    public static string? Decrypt(string base64Payload, byte[] materialKey)
     {
         byte[] blob;
         try
@@ -231,5 +231,5 @@ public static class MKissaCrypto
     /// <summary>
     ///     Payload structure matching the Kotlin `AaReqPayload`.
     /// </summary>
-    public record AaReqPayload(int v, long ts, long epoch, string buildId, string qh, string k);
+    public record AaReqPayload(int V, long Ts, long Epoch, string BuildId, string Qh, string K);
 }

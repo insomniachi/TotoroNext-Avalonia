@@ -8,12 +8,14 @@ namespace TotoroNext.Anime.AllAnime;
 ///     fold into the client mask, which signs the bootstrap request for `partB`; the key is
 ///     `mask XOR partB`.
 /// </summary>
-public partial class MKissaKeyManager
+public partial class MKissaKeyManager(
+    HttpClient client,
+    Dictionary<string, string> headers,
+    string siteUrl,
+    string apiUrl)
 {
     // Constants that were implicitly available in the Kotlin file context
     public const string StreamHash = "f4662f4b7510b26795dd53ef824a0bf1740fbbc5d1273fab18222ac831bca8d0";
-    [Obsolete("Use StreamHash instead")]
-    public const string STREAM_HASH = StreamHash;
     private const string AnimeLane = "k7";
 
     private const string MaterialError = "Unable to obtain MKissa crypto material";
@@ -25,33 +27,18 @@ public partial class MKissaKeyManager
     private const string CryptoChunkMarker = "aaReq";
     private static readonly HashSet<int> StaleCodes = new() { 403, 404 };
 
-    [GeneratedRegex(@"import\(""([^""]*/entry/app\.[^""]*\.js)""\)")]
-    private static partial Regex AppEntryRegex();
-    [GeneratedRegex(@"[""'](\.\.?/[\w./-]+\.js)[""']")]
-    private static partial Regex ChunkRefRegex();
-    private readonly string _apiUrl;
-
-    private readonly HttpClient _client;
-    private readonly Dictionary<string, string> _headers;
     private readonly SemaphoreSlim _materialMutex = new(1, 1);
-    private readonly string _siteUrl;
 
     private volatile Material? _cachedMaterial;
 
-    public MKissaKeyManager(
-        HttpClient client,
-        Dictionary<string, string> headers,
-        string siteUrl,
-        string apiUrl)
-    {
-        _client = client;
-        _headers = headers;
-        _siteUrl = siteUrl;
-        _apiUrl = apiUrl;
-    }
-
     // Property to replace the Kotlin SharedPreferences delegate
     private string? StoredBuild { get; set; }
+
+    [GeneratedRegex("""import\("([^"]*/entry/app\.[^"]*\.js)"\)""")]
+    private static partial Regex AppEntryRegex();
+
+    [GeneratedRegex("""["'](\.\.?/[\w./-]+\.js)["']""")]
+    private static partial Regex ChunkRefRegex();
 
     public async Task<Material> GetMaterialAsync(bool forceRefresh = false)
     {
@@ -120,12 +107,12 @@ public partial class MKissaKeyManager
         }
     }
 
-    public string AaReq(Material material)
+    public static string AaReq(Material material)
     {
         return MKissaCrypto.BuildAaReq(material.Key, material.Epoch, material.BuildId, StreamHash, AnimeLane);
     }
 
-    public string Decrypt(string toBeParsed, Material material)
+    public static string Decrypt(string toBeParsed, Material material)
     {
         return MKissaCrypto.Decrypt(toBeParsed, material.Key);
     }
@@ -201,11 +188,11 @@ public partial class MKissaKeyManager
         var freshResult = await GetBootstrapAsync(fresh.BuildId, freshMask, MKissaCrypto.EpochCandidates());
         return freshResult.Bootstrap != null ? new Handshake(fresh, freshMask, freshResult.Bootstrap) : null;
     }
-    
+
     private async Task<BootstrapResult> GetBootstrapAsync(string buildId, byte[] mask, IEnumerable<long> epochs)
     {
-        var host = new Uri(_siteUrl).Host;
-        var url = $"{_apiUrl.TrimEnd('/')}{BootstrapPath}?buildId={Uri.EscapeDataString(buildId)}&k={Uri.EscapeDataString(AnimeLane)}";
+        var host = new Uri(siteUrl).Host;
+        var url = $"{apiUrl.TrimEnd('/')}{BootstrapPath}?buildId={Uri.EscapeDataString(buildId)}&k={Uri.EscapeDataString(AnimeLane)}";
 
         var sawStale = false;
         foreach (var epoch in epochs)
@@ -213,7 +200,7 @@ public partial class MKissaKeyManager
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
 
             // Add base headers
-            foreach (var header in _headers)
+            foreach (var header in headers)
             {
                 request.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
@@ -221,13 +208,13 @@ public partial class MKissaKeyManager
             // Add specific headers
             request.Headers.TryAddWithoutValidation("x-build-id", buildId);
             request.Headers.TryAddWithoutValidation("x-aa-boot", MKissaCrypto.BootToken(mask, buildId, epoch, KeyGroup, host, AnimeLane));
-            request.Headers.TryAddWithoutValidation("Origin", _siteUrl);
-            request.Headers.TryAddWithoutValidation("Referer", $"{_siteUrl}/");
+            request.Headers.TryAddWithoutValidation("Origin", siteUrl);
+            request.Headers.TryAddWithoutValidation("Referer", $"{siteUrl}/");
 
             HttpResponseMessage? response;
             try
             {
-                response = await _client.SendAsync(request);
+                response = await client.SendAsync(request);
             }
             catch
             {
@@ -323,12 +310,12 @@ public partial class MKissaKeyManager
         try
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, appUrl);
-            foreach (var header in _headers)
+            foreach (var header in headers)
             {
                 request.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
-            using var response = await _client.SendAsync(request);
+            using var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
             appJs = await response.Content.ReadAsStringAsync();
         }
@@ -338,12 +325,13 @@ public partial class MKissaKeyManager
         }
 
         // Shared chunks first: that is where it has always lived.
-        var chunkRefs = ChunkRefRegex().Matches(appJs)
-                                       .Select(m => m.Groups[1].Value)
-                                       .Distinct()
-                                       .OrderByDescending(r => r.Contains("/chunks/"))
-                                       .Take(MaxBuildChunks)
-                                       .ToList();
+        var chunkRefs = ChunkRefRegex()
+                        .Matches(appJs)
+                        .Select(m => m.Groups[1].Value)
+                        .Distinct()
+                        .OrderByDescending(r => r.Contains("/chunks/"))
+                        .Take(MaxBuildChunks)
+                        .ToList();
 
         foreach (var r in chunkRefs)
         {
@@ -356,12 +344,12 @@ public partial class MKissaKeyManager
             try
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, chunkUrl);
-                foreach (var header in _headers)
+                foreach (var header in headers)
                 {
                     request.Headers.TryAddWithoutValidation(header.Key, header.Value);
                 }
 
-                using var response = await _client.SendAsync(request);
+                using var response = await client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 body = await response.Content.ReadAsStringAsync();
             }
@@ -392,13 +380,13 @@ public partial class MKissaKeyManager
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"{_siteUrl}/");
-            foreach (var header in _headers)
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"{siteUrl}/");
+            foreach (var header in headers)
             {
                 request.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
-            using var response = await _client.SendAsync(request);
+            using var response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
             var html = await response.Content.ReadAsStringAsync();
 
@@ -411,7 +399,7 @@ public partial class MKissaKeyManager
         }
     }
 
-    private string SerializeBuild(MKissaBundle.BuildInfo build)
+    private static string SerializeBuild(MKissaBundle.BuildInfo build)
     {
         return $"{build.BuildId}{FieldSeparator}{string.Join(",", build.Seeds)}";
     }

@@ -47,3 +47,59 @@ public sealed class DefaultResponse
 
     [JsonPropertyName("src")] public string Src { get; set; } = string.Empty;
 }
+
+[Serializable]
+public class AaApiError
+{
+    [JsonPropertyName("errors")]
+    public List<GraphQlError>? Errors { get; set; }
+}
+
+[Serializable]
+public class GraphQlError
+{
+    [JsonPropertyName("extensions")]
+    public GraphQlExtensions? Extensions { get; set; }
+}
+
+[Serializable]
+public class GraphQlExtensions
+{
+    [JsonPropertyName("code")]
+    public string? Code { get; set; }
+}
+
+[Serializable]
+public class AaCryptoBootstrap
+{
+    [JsonPropertyName("epoch")]
+    public long Epoch { get; init; }
+
+    [JsonPropertyName("partB")]
+    public string PartB { get; init; } = string.Empty;
+
+    [JsonPropertyName("k")]
+    public string? K { get; init; }
+}
+
+[Serializable]
+public class AaReqPayload
+{
+    [JsonPropertyName("v")]
+    public int V { get; init; }
+
+    [JsonPropertyName("ts")]
+    public long Ts { get; init; }
+
+    [JsonPropertyName("epoch")]
+    public long Epoch { get; init; }
+
+    [JsonPropertyName("buildId")]
+    public string BuildId { get; init; } = string.Empty;
+
+    [JsonPropertyName("qh")]
+    public string Qh { get; init; } = string.Empty;
+
+    [JsonPropertyName("k")]
+    public string K { get; init; } = string.Empty;
+}

@@ -2,7 +2,7 @@
 
 public static class GraphQl
 {
-    public const string Api = "https://api.allanime.day/api";
+    public const string Api = @"https://api.mkissa.net";
 
     public const string SearchQuery =
         """

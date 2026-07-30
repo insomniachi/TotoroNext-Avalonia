@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Downloader;
 using Flurl;
 using Flurl.Http;
 using FlurlGraphQL;
@@ -26,16 +27,21 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         "feqx1"
     ];
 
-    private const string GraphQlReferer = @"https://youtu-chan.com";
+    private const string GraphQlReferer = @"https://mkissa.to/";
 
     // Pre-compute cumulative XOR mask for each key (XOR of all char codes)
     private static readonly int[] XorMasks = XorKeys
                                               .Select(key => key.Aggregate(0, (mask, ch) => mask ^ ch))
                                               .ToArray();
+
+    private readonly MKissaKeyManager _manager = new(new HttpClient(), new Dictionary<string, string>()
+    {
+        [HeaderNames.Referer] = "https://mkissa.to/"
+    }, "https://mkissa.to/", "https://api.mkissa.net");
     
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
-        var jObject = await GraphQl.Api
+        var jObject = await GraphQl.Api.AppendPathSegment("api")
                                    .WithGraphQLQuery(GraphQl.SearchQuery)
                                    .SetGraphQLVariables(new
                                    {
@@ -83,7 +89,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
     
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
-        var jObject = await GraphQl.Api
+        var jObject = await GraphQl.Api.AppendPathSegment("api")
                                    .WithGraphQLQuery(GraphQl.ShowQuery)
                                    .SetGraphQLVariable("showId", animeId)
                                    .PostGraphQLQueryAsync(ct)
@@ -105,6 +111,8 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
+        var material = await _manager.GetMaterialAsync();
+        
         var variables = JsonSerializer.Serialize(new
         {
             showId = animeId,
@@ -117,14 +125,18 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
             persistedQuery = new
             {
                 version = 1,
-                sha256Hash = "d405d0edd690624b66baba3068e0edc3ac90f1597d898a1ec8db4e5c43c00fec"
-            }
+                sha256Hash = MKissaKeyManager.StreamHash
+            },
+            k = "k7",
+            aaReq = MKissaKeyManager.AaReq(material)
         });
 
-        var stream = await GraphQl.Api
+        var stream = await GraphQl.Api.AppendPathSegment("api")
                                .AppendQueryParam("variables", variables)
                                .AppendQueryParam("extensions", extensions)
                                .WithHeader(HeaderNames.Referer, GraphQlReferer)
+                               .WithHeader(HttpHeaderNames.UserAgent, Http.UserAgent)
+                               .WithHeader("x-build-id", material.BuildId)
                                .GetStreamAsync(cancellationToken:ct);
         
         var jsonNode = await JsonNode.ParseAsync(stream, cancellationToken:ct);
@@ -133,7 +145,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         var encrypted = jsonNode?["data"]?["tobeparsed"]?.GetValue<string>();
         if (encrypted  is not null)
         {
-            var decrypted = DecryptToBeParsed(encrypted);
+            var decrypted = MKissaKeyManager.Decrypt(encrypted, material);
             jsonNode = JsonNode.Parse(decrypted)?.AsObject();
         }
         
@@ -283,40 +295,5 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
             TranslationType.Dub => "dub",
             _ => "sub"
         };
-    }
-    
-    public static string DecryptToBeParsed(string base64Payload)
-    {
-        // 1. Decode the Base64 payload
-        var blob = Convert.FromBase64String(base64Payload);
-
-        // 2. Extract version byte, IV, and ciphertext
-        if (blob.Length < 13) return string.Empty;
-        var versionByte = blob[0] & 0xFF;
-        var iv = new byte[12];
-        Array.Copy(blob, 1, iv, 0, 12);
-        var encryptedData = new byte[blob.Length - 13];
-        Array.Copy(blob, 13, encryptedData, 0, encryptedData.Length);
-
-        // 3. Derive the AES-GCM key: SHA-256($"{DECRYPT_SECRET}:v{versionByte}")
-        var keyMaterial = $"{DecryptSecret}:v{versionByte}";
-        var keyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(keyMaterial));
-
-        // 4. Initialize AES-GCM Cipher
-        var plaintext = new byte[encryptedData.Length - (DecryptTagLength / 8)];
-        var ciphertext = new byte[encryptedData.Length - (DecryptTagLength / 8)];
-        var tag = new byte[DecryptTagLength / 8];
-
-        // Split ciphertext and tag (last 16 bytes for 128-bit tag)
-        Array.Copy(encryptedData, 0, ciphertext, 0, ciphertext.Length);
-        Array.Copy(encryptedData, ciphertext.Length, tag, 0, tag.Length);
-
-        using (var aesGcm = new AesGcm(keyBytes, tag.Length))
-        {
-            aesGcm.Decrypt(iv, ciphertext, tag, plaintext);
-        }
-
-        // 5. Return JSON string
-        return Encoding.UTF8.GetString(plaintext);
     }
 }
