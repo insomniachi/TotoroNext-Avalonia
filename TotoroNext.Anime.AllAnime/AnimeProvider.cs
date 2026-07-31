@@ -1,6 +1,4 @@
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Downloader;
@@ -18,6 +16,9 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 {
     private const string DecryptSecret = "Xot36i3lK3";
     private const int DecryptTagLength = 128; // bits
+
+    private const string GraphQlReferer = @"https://mkissa.to/anime";
+
     private static readonly string[] XorKeys =
     [
         "allanimenews",
@@ -27,18 +28,16 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
         "feqx1"
     ];
 
-    private const string GraphQlReferer = @"https://mkissa.to/";
-
     // Pre-compute cumulative XOR mask for each key (XOR of all char codes)
     private static readonly int[] XorMasks = XorKeys
-                                              .Select(key => key.Aggregate(0, (mask, ch) => mask ^ ch))
-                                              .ToArray();
+                                             .Select(key => key.Aggregate(0, (mask, ch) => mask ^ ch))
+                                             .ToArray();
 
-    private readonly MKissaKeyManager _manager = new(new HttpClient(), new Dictionary<string, string>()
+    private readonly MKissaKeyManager _manager = new(new HttpClient(), new Dictionary<string, string>
     {
         [HeaderNames.Referer] = "https://mkissa.to/"
     }, "https://mkissa.to/", "https://api.mkissa.net");
-    
+
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         var jObject = await GraphQl.Api.AppendPathSegment("api")
@@ -86,7 +85,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
             };
         }
     }
-    
+
     public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var jObject = await GraphQl.Api.AppendPathSegment("api")
@@ -111,101 +110,107 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
 
     public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
     {
-        var material = await _manager.GetMaterialAsync();
-        
-        var variables = JsonSerializer.Serialize(new
+        for (var i = 0; i < 3; i++)
         {
-            showId = animeId,
-            translationType = GetTranslationType(settings.Value.TranslationType),
-            episodeString = episodeId
-        });
+            var material = await _manager.GetMaterialAsync();
 
-        var extensions = JsonSerializer.Serialize(new
-        {
-            persistedQuery = new
+            var variables = JsonSerializer.Serialize(new
             {
-                version = 1,
-                sha256Hash = MKissaKeyManager.StreamHash
-            },
-            k = "k7",
-            aaReq = MKissaKeyManager.AaReq(material)
-        });
+                showId = animeId,
+                translationType = GetTranslationType(settings.Value.TranslationType),
+                episodeString = episodeId
+            });
 
-        var stream = await GraphQl.Api.AppendPathSegment("api")
-                               .AppendQueryParam("variables", variables)
-                               .AppendQueryParam("extensions", extensions)
-                               .WithHeader(HeaderNames.Referer, GraphQlReferer)
-                               .WithHeader(HttpHeaderNames.UserAgent, Http.UserAgent)
-                               .WithHeader("x-build-id", material.BuildId)
-                               .GetStreamAsync(cancellationToken:ct);
-        
-        var jsonNode = await JsonNode.ParseAsync(stream, cancellationToken:ct);
-        
-
-        var encrypted = jsonNode?["data"]?["tobeparsed"]?.GetValue<string>();
-        if (encrypted  is not null)
-        {
-            var decrypted = MKissaKeyManager.Decrypt(encrypted, material);
-            jsonNode = JsonNode.Parse(decrypted)?.AsObject();
-        }
-        
-        var sourceArray = jsonNode?["episode"]?["sourceUrls"];
-        var sourceObjs = sourceArray?.Deserialize<List<SourceUrlObj>>() ?? [];
-        sourceObjs.Sort((x, y) => y.Priority.CompareTo(x.Priority));
-
-        foreach (var item in sourceObjs)
-        {
-            ct.ThrowIfCancellationRequested();
-            
-            item.SourceUrl = DecryptSourceUrl(item.SourceUrl);
-
-            switch (item.SourceName)
+            var extensions = JsonSerializer.Serialize(new
             {
-                case "Mp4":
-                    if (await VideoServers.FromMp4Upload(item.SourceName, item.SourceUrl) is { } server)
-                    {
-                        yield return server;
-                    }
+                persistedQuery = new
+                {
+                    version = 1,
+                    sha256Hash = MKissaKeyManager.StreamHash
+                },
+                k = "k7",
+                aaReq = MKissaKeyManager.AaReq(material)
+            });
 
-                    continue;
-                case "Yt-mp4":
-                    yield return VideoServers.WithReferer(item.SourceName, item.SourceUrl, "https://allanime.day/")
-                                             .WithContentType("mp4");
-                    continue;
-                case "Vg":
-                case "Fm-Hls":
-                case "Sw":
-                case "Ok":
-                case "Ss-Hls":
-                case "Vid-mp4":
-                    continue;
+            var httpResonse = await GraphQl.Api.AppendPathSegment("api")
+                                      .AppendQueryParam("variables", variables)
+                                      .AppendQueryParam("extensions", extensions)
+                                      .WithHeader(HeaderNames.Referer, GraphQlReferer)
+                                      .WithHeader("x-build-id", material.BuildId)
+                                      .GetStringAsync(cancellationToken: ct);
+
+            if (_manager.IsCryptoError(httpResonse))
+            {
+                _manager.InvalidateBuild();
             }
 
-            JsonObject? jObject;
-            try
+            var jsonNode = JsonNode.Parse(httpResonse);
+
+            var encrypted = jsonNode?["data"]?["tobeparsed"]?.GetValue<string>();
+            if (encrypted is not null)
             {
-                var response = await $"https://allanime.day{item.SourceUrl.Replace("clock", "clock.json")}".GetStringAsync(cancellationToken:ct);
-                jObject = JsonNode.Parse(response)!.AsObject();
-            }
-            catch
-            {
-                continue;
+                var decrypted = MKissaKeyManager.Decrypt(encrypted, material);
+                jsonNode = JsonNode.Parse(decrypted)?.AsObject();
             }
 
-            switch (item.SourceName)
-            {
-                case "Luf-Mp4" or "S-mp4":
-                    var links = jObject["links"].Deserialize<List<ApiV2Response>>() ?? [];
-                    if (!string.IsNullOrEmpty(links[0].Url))
-                    {
-                        yield return VideoServers.WithReferer(item.SourceName, links[0].Url, "https://allanime.day/");
-                    }
+            var sourceArray = jsonNode?["episode"]?["sourceUrls"];
+            var sourceObjs = sourceArray?.Deserialize<List<SourceUrlObj>>() ?? [];
+            sourceObjs.Sort((x, y) => y.Priority.CompareTo(x.Priority));
 
+            foreach (var item in sourceObjs)
+            {
+                ct.ThrowIfCancellationRequested();
+
+                item.SourceUrl = DecryptSourceUrl(item.SourceUrl);
+
+                switch (item.SourceName)
+                {
+                    case "Mp4":
+                        if (await VideoServers.FromMp4Upload(item.SourceName, item.SourceUrl) is { } server)
+                        {
+                            yield return server;
+                        }
+
+                        continue;
+                    case "Yt-mp4":
+                        yield return VideoServers.WithReferer(item.SourceName, item.SourceUrl, "https://allanime.day/")
+                                                 .WithContentType("mp4");
+                        continue;
+                    case "Vg":
+                    case "Fm-Hls":
+                    case "Sw":
+                    case "Ok":
+                    case "Ss-Hls":
+                    case "Vid-mp4":
+                        continue;
+                }
+
+                JsonObject? jObject;
+                try
+                {
+                    var response = await $"https://allanime.day{item.SourceUrl.Replace("clock", "clock.json")}".GetStringAsync(cancellationToken: ct);
+                    jObject = JsonNode.Parse(response)!.AsObject();
+                }
+                catch
+                {
                     continue;
-                case "Default":
-                    var hls = jObject["links"].Deserialize<List<DefaultResponse>>() ?? [];
-                    yield return new VideoServer(item.SourceName, new Uri(hls[0].Link));
-                    continue;
+                }
+
+                switch (item.SourceName)
+                {
+                    case "Luf-Mp4" or "S-mp4":
+                        var links = jObject["links"].Deserialize<List<ApiV2Response>>() ?? [];
+                        if (!string.IsNullOrEmpty(links[0].Url))
+                        {
+                            yield return VideoServers.WithReferer(item.SourceName, links[0].Url, "https://allanime.day/");
+                        }
+
+                        continue;
+                    case "Default":
+                        var hls = jObject["links"].Deserialize<List<DefaultResponse>>() ?? [];
+                        yield return new VideoServer(item.SourceName, new Uri(hls[0].Link));
+                        continue;
+                }
             }
         }
     }
@@ -219,7 +224,7 @@ internal class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvide
     {
         settings.Value.UpdateValues(options);
     }
-    
+
     private static string DecryptSourceUrl(string input)
     {
         string hexPayload;
