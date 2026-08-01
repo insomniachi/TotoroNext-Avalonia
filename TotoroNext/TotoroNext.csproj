@@ -79,6 +79,7 @@
         <ProjectReference Include="..\TotoroNext.Anime.Senshi\TotoroNext.Anime.Senshi.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Anikoto\TotoroNext.Anime.Anikoto.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.TsukiHime\TotoroNext.Anime.TsukiHime.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.Labs\TotoroNext.Anime.Labs.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -303,6 +303,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.Senshi.Module();
         yield return new Anime.Anikoto.Module();
         yield return new Anime.TsukiHime.Module();
+        yield return new Anime.Labs.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)
