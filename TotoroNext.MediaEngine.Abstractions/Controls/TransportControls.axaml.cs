@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Module;
 
 namespace TotoroNext.MediaEngine.Abstractions.Controls;

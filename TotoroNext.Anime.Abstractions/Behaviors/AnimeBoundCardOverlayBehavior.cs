@@ -2,7 +2,7 @@
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions.Controls;
 
 namespace TotoroNext.Anime.Abstractions.Behaviors;

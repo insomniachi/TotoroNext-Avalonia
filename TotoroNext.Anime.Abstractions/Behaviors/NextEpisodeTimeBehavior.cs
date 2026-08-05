@@ -9,7 +9,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using GraphQL.Client.Http;
 using Microsoft.Extensions.DependencyInjection;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions.Controls;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;

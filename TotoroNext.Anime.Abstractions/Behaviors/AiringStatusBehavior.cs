@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions.Controls;
 using TotoroNext.Anime.Abstractions.Models;
 

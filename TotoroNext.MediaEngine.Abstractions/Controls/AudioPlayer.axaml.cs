@@ -2,7 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Module;
 
 namespace TotoroNext.MediaEngine.Abstractions.Controls;

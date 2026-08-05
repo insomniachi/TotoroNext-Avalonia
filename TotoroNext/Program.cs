@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using JetBrains.Annotations;
-using ReactiveUI.Avalonia;
+using ReactiveUI.Avalonia.Reactive;
 using Serilog;
 using Velopack;
 

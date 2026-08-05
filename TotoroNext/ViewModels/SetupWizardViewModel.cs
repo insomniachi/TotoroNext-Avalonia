@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Irihi.Avalonia.Shared.Contracts;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Module;
 using Ursa.Controls;
 

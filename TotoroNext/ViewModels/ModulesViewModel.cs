@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using JetBrains.Annotations;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 

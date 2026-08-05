@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using LibVLCSharp.Avalonia;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Anime.ViewModels;
 using TotoroNext.MediaEngine.Abstractions;

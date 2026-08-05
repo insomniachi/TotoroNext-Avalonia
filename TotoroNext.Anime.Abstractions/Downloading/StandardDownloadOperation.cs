@@ -1,7 +1,7 @@
 ﻿using System.Reactive.Linq;
 using Avalonia.Threading;
 using Downloader;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Abstractions.Downloading;

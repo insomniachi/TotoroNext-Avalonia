@@ -1,6 +1,6 @@
 ﻿using System.Reactive.Linq;
 using JetBrains.Annotations;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Module;
 
 namespace TotoroNext.Anime.Anilist.ViewModels;

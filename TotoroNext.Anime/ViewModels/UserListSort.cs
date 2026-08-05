@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
 using JetBrains.Annotations;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 

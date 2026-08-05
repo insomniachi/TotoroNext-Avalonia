@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Module.Extensions;

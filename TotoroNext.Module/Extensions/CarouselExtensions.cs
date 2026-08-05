@@ -3,7 +3,7 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 
 namespace TotoroNext.Module.Extensions;
 

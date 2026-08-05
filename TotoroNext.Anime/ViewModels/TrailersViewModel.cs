@@ -1,7 +1,7 @@
 ﻿using System.Reactive.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;

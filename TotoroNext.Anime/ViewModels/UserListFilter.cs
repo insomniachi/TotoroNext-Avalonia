@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData.Binding;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.ViewModels;

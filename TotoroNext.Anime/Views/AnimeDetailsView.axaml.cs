@@ -2,7 +2,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using ReactiveUI;
+using ReactiveUI.Reactive;
 using TotoroNext.Anime.ViewModels;
 
 namespace TotoroNext.Anime.Views;

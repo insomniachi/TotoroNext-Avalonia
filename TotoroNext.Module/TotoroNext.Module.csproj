@@ -13,6 +13,7 @@
         <PackageReference Include="Avalonia.Labs.Panels"/>
         <PackageReference Include="Avalonia.Markup.Declarative"/>
         <PackageReference Include="Avalonia.Controls.ItemsRepeater"/>
+        <PackageReference Include="DynamicData" />
 
         <PackageReference Include="Flurl.Http"/>
         <PackageReference Include="FuzzySharp"/>
@@ -35,7 +36,7 @@
         <PackageReference Include="Irihi.Ursa"/>
         <PackageReference Include="Irihi.Ursa.Themes.Semi"/>
         <PackageReference Include="AsyncImageLoader.Avalonia"/>
-        <PackageReference Include="ReactiveUI.Avalonia" />
+        <PackageReference Include="ReactiveUI.Avalonia.Reactive" />
         <PackageReference Include="Semi.Avalonia"/>
         <PackageReference Include="Semi.Avalonia.DataGrid"/>
         <PackageReference Include="Xaml.Behaviors.Avalonia"/>
