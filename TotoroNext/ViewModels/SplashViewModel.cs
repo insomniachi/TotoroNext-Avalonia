@@ -12,8 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using TotoroNext.Anime.Abstractions;
-using TotoroNext.Anime.ViewModels;
-using TotoroNext.Anime.Views;
 using TotoroNext.MediaEngine.Abstractions;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
@@ -97,9 +95,9 @@ public partial class SplashViewModel(
                                                                                  IClassicDesktopStyleApplicationLifetime)!.MainWindow)!
                                                                 .Launcher);
                           services.AddTransient<IClipboard>(_ => TopLevel
-                                                                .GetTopLevel((Application.Current?.ApplicationLifetime as
-                                                                                 IClassicDesktopStyleApplicationLifetime)!.MainWindow)!
-                                                                .Clipboard!);
+                                                                 .GetTopLevel((Application.Current?.ApplicationLifetime as
+                                                                                  IClassicDesktopStyleApplicationLifetime)!.MainWindow)!
+                                                                 .Clipboard!);
 
                           services.AddSingleton<UpdateManager>(_ => updateManager);
                           services.AddDataViewMap<DownloadUpdateView, DownloadUpdateViewModel, UpdateInfo>();
@@ -303,7 +301,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.Senshi.Module();
         yield return new Anime.Anikoto.Module();
         yield return new Anime.TsukiHime.Module();
-        yield return new Anime.Labs.Module();
+        yield return new Anime.Anidb.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)

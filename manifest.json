@@ -221,5 +221,23 @@
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.TsukiHime.zip"
       }
     ]
+  },
+  {
+    "Id": "79cf9217-e30e-4451-97f4-404ddae85d06",
+    "Name": "AniDB",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Anidb/Assets/anidb.png",
+    "EntryPoint": "TotoroNext.Anime.Anidb.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Anidb.zip"
+      }
+    ]
   }
 ]

@@ -25,6 +25,9 @@
         <Project Path="TotoroNext.Anime.AllAnime/TotoroNext.Anime.AllAnime.csproj">
             <Platform Project="x64" />
         </Project>
+        <Project Path="TotoroNext.Anime.Anidb/TotoroNext.Anime.Anidb.csproj" >
+            <Platform Project="x64" />
+        </Project>
         <Project Path="TotoroNext.Anime.Anikoto/TotoroNext.Anime.Anikoto.csproj">
             <Platform Project="x64" />
         </Project>
@@ -46,7 +49,6 @@
         <Project Path="TotoroNext.Anime.Jellyfin/TotoroNext.Anime.Jellyfin.csproj">
             <Platform Project="x64" />
         </Project>
-        <Project Path="TotoroNext.Anime.Labs/TotoroNext.Anime.Labs.csproj" />
         <Project Path="TotoroNext.Anime.LocalStorage/TotoroNext.Anime.LocalStorage.csproj">
             <Platform Project="x64" />
         </Project>

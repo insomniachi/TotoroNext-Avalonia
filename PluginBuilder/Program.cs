@@ -33,19 +33,7 @@ var plugins = new List<PluginProject>
     new("TotoroNext.Anime.Senshi"),
     new("TotoroNext.Anime.Anikoto"),
     new("TotoroNext.Anime.TsukiHime"),
-    new("TotoroNext.Discord")
-    {
-        Dependencies =
-        [
-            "DiscordRPC",
-            "Newtonsoft.Json"
-        ]
-    },
-    new("TotoroNext.MediaEngine.Mpv"),
-    new("TotoroNext.MediaEngine.Vlc"),
-    new("TotoroNext.Anime.Aniskip"),
-    new("TotoroNext.Torrents.TorBox"),
-    new("TotoroNext.Torrents.RealDebrid")
+    new("TotoroNext.Anime.Anidb"),
 };
 
 var moduleDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
