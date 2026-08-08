@@ -22,10 +22,7 @@
         </Project>
     </Folder>
     <Folder Name="/Anime/Provider/">
-        <Project Path="TotoroNext.Anime.AllAnime/TotoroNext.Anime.AllAnime.csproj">
-            <Platform Project="x64" />
-        </Project>
-        <Project Path="TotoroNext.Anime.Anidb/TotoroNext.Anime.Anidb.csproj" >
+        <Project Path="TotoroNext.Anime.Anidb/TotoroNext.Anime.Anidb.csproj">
             <Platform Project="x64" />
         </Project>
         <Project Path="TotoroNext.Anime.Anikoto/TotoroNext.Anime.Anikoto.csproj">
@@ -37,12 +34,6 @@
         <Project Path="TotoroNext.Anime.AnimeOnsen/TotoroNext.Anime.AnimeOnsen.csproj">
             <Platform Project="x64" />
         </Project>
-        <Project Path="TotoroNext.Anime.AnimePahe/TotoroNext.Anime.AnimePahe.csproj">
-            <Platform Project="x64" />
-        </Project>
-        <Project Path="TotoroNext.Anime.AnimeParadise/TotoroNext.Anime.AnimeParadise.csproj">
-            <Platform Project="x64" />
-        </Project>
         <Project Path="TotoroNext.Anime.Anizone/TotoroNext.Anime.Anizone.csproj">
             <Platform Project="x64" />
         </Project>
@@ -52,13 +43,8 @@
         <Project Path="TotoroNext.Anime.LocalStorage/TotoroNext.Anime.LocalStorage.csproj">
             <Platform Project="x64" />
         </Project>
-        <Project Path="TotoroNext.Anime.Senshi/TotoroNext.Anime.Senshi.csproj">
-            <Platform Project="x64" />
-        </Project>
+        <Project Path="TotoroNext.Anime.Miruro/TotoroNext.Anime.Miruro.csproj" />
         <Project Path="TotoroNext.Anime.SubsPlease/TotoroNext.Anime.SubsPlease.csproj">
-            <Platform Project="x64" />
-        </Project>
-        <Project Path="TotoroNext.Anime.TokyoInsider/TotoroNext.Anime.TokyoInsider.csproj">
             <Platform Project="x64" />
         </Project>
         <Project Path="TotoroNext.Anime.TsukiHime/TotoroNext.Anime.TsukiHime.csproj">

@@ -67,16 +67,11 @@
     </ItemGroup>
 
     <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(DefineConstants)', '(^|;)REFER_PLUGINS(;|$)'))">
-        <ProjectReference Include="..\TotoroNext.Anime.AllAnime\TotoroNext.Anime.AllAnime.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Anime.AnimePahe\TotoroNext.Anime.AnimePahe.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Anime.AnimeParadise\TotoroNext.Anime.AnimeParadise.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.AnimeOnsen\TotoroNext.Anime.AnimeOnsen.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Anizone\TotoroNext.Anime.Anizone.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.SubsPlease\TotoroNext.Anime.SubsPlease.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Jellyfin\TotoroNext.Anime.Jellyfin.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.AnimeGG\TotoroNext.Anime.AnimeGG.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Anime.TokyoInsider\TotoroNext.Anime.TokyoInsider.csproj"/>
-        <ProjectReference Include="..\TotoroNext.Anime.Senshi\TotoroNext.Anime.Senshi.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Anikoto\TotoroNext.Anime.Anikoto.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.TsukiHime\TotoroNext.Anime.TsukiHime.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.Labs\TotoroNext.Anime.Labs.csproj"/>
