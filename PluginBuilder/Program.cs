@@ -2,16 +2,6 @@
 
 var plugins = new List<PluginProject>
 {
-    new("TotoroNext.Anime.AllAnime")
-    {
-        Dependencies =
-        [
-            "FlurlGraphQL",
-            "Macross.Json.Extensions"
-        ]
-    },
-    new("TotoroNext.Anime.AnimePahe"),
-    new("TotoroNext.Anime.AnimeOnsen"),
     new("TotoroNext.Anime.AnimeParadise"),
     new("TotoroNext.Anime.Anizone"),
     new("TotoroNext.Anime.SubsPlease"),
@@ -30,7 +20,6 @@ var plugins = new List<PluginProject>
         ]
     },
     new("TotoroNext.Anime.AnimeGG"),
-    new("TotoroNext.Anime.Senshi"),
     new("TotoroNext.Anime.Anikoto"),
     new("TotoroNext.Anime.TsukiHime"),
     new("TotoroNext.Anime.Anidb"),

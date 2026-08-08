@@ -1,45 +1,5 @@
 ﻿[
   {
-    "Id": "489576c5-2879-493b-874a-7eb14e081280",
-    "Name": "Allanime",
-    "Description": "All Manga's goal is to provide you with the highest possible amount of daily anime episodes/manga chapters for free and without any kind of limitation. As a very dedicated website, we try to improve each month bringing new updates to improve the user experience as much as possible.",
-    "Owner": "Totoro",
-    "Categories": [
-      "Anime Provider",
-      "Anime Downloader"
-    ],
-    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AllAnime/Assets/hero.png",
-    "EntryPoint": "TotoroNext.Anime.AllAnime.dll",
-    "Versions": [
-      {
-        "Version": "1.7.0",
-        "Description": "Initial release",
-        "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AllAnime.zip"
-      }
-    ]
-  },
-  {
-    "Id": "25332fbc-aed7-4599-a076-40c6fae7ec2b",
-    "Name": "Anime Pahe",
-    "Description": "AnimePahe is an encode \"group\" (me and my lovely bot), was founded in July 2014 by I, me and myself.\r\nWe encode on going anime, completed anime and anime movie.",
-    "Owner": "Totoro",
-    "Categories": [
-      "Anime Provider",
-      "Anime Downloader"
-    ],
-    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimePahe/Assets/pahe.jpg",
-    "EntryPoint": "TotoroNext.Anime.AnimePahe.dll",
-    "Versions": [
-      {
-        "Version": "1.2.0",
-        "Description": "Initial release",
-        "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimePahe.zip"
-      }
-    ]
-  },
-  {
     "Id": "5bdd85ad-523a-48b0-9af6-e84f46e565f6",
     "Name": "Anizone",
     "Owner": "Totoro",
@@ -50,28 +10,10 @@
     "EntryPoint": "TotoroNext.Anime.Anizone.dll",
     "Versions": [
       {
-        "Version": "1.1.0",
+        "Version": "1.2.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Anizone.zip"
-      }
-    ]
-  },
-  {
-    "Id": "3b61e01b-dd7c-4492-a564-4ee031959097",
-    "Name": "Anime Paradise",
-    "Owner": "Totoro",
-    "Categories": [
-      "Anime Provider"
-    ],
-    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.AnimeParadise/Assets/animeparadise.jpg",
-    "EntryPoint": "TotoroNext.Anime.AnimeParadise.dll",
-    "Versions": [
-      {
-        "Version": "1.1.0",
-        "Description": "Initial release",
-        "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeParadise.zip"
       }
     ]
   },
@@ -86,7 +28,7 @@
     "EntryPoint": "TotoroNext.Anime.AnimeGG.dll",
     "Versions": [
       {
-        "Version": "1.2.0",
+        "Version": "1.3.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeGG.zip"
@@ -104,7 +46,7 @@
     "EntryPoint": "TotoroNext.Anime.AnimeOnsen.dll",
     "Versions": [
       {
-        "Version": "1.6.0",
+        "Version": "1.7.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.AnimeOnsen.zip"
@@ -140,48 +82,10 @@
     "EntryPoint": "TotoroNext.Anime.Jellyfin.dll",
     "Versions": [
       {
-        "Version": "1.4.0",
+        "Version": "1.5.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Jellyfin.zip"
-      }
-    ]
-  },
-  {
-    "Id": "8caaa814-2abf-43db-8f92-ad1c56bd6a12",
-    "Name": "Tokyo Insider",
-    "Owner": "Totoro",
-    "Categories": [
-      "Anime Provider",
-      "Anime Downloader"
-    ],
-    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.TokyoInsider/Assets/tokyoinsider.jpg",
-    "EntryPoint": "TotoroNext.Anime.TokyoInsider.dll",
-    "Versions": [
-      {
-        "Version": "1.2.0",
-        "Description": "Initial release",
-        "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.TokyoInsider.zip"
-      }
-    ]
-  },
-  {
-    "Id": "c6066fda-8e30-4545-9599-8e6c3e917312",
-    "Name": "Senshi",
-    "Owner": "Totoro",
-    "Categories": [
-      "Anime Provider",
-      "Anime Downloader"
-    ],
-    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Senshi/Assets/senshi.jpg",
-    "EntryPoint": "TotoroNext.Anime.Senshi.dll",
-    "Versions": [
-      {
-        "Version": "1.2.0",
-        "Description": "Initial release",
-        "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Senshi.zip"
       }
     ]
   },
@@ -197,7 +101,7 @@
     "EntryPoint": "TotoroNext.Anime.Anikoto.dll",
     "Versions": [
       {
-        "Version": "1.5.0",
+        "Version": "1.6.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Anikoto.zip"
@@ -215,7 +119,7 @@
     "EntryPoint": "TotoroNext.Anime.TsukiHime.dll",
     "Versions": [
       {
-        "Version": "1.1.0",
+        "Version": "1.2.0",
         "Description": "Initial release",
         "TargetVersion": "1.0.0",
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.TsukiHime.zip"
