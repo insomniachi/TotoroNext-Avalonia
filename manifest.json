@@ -143,5 +143,23 @@
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Anidb.zip"
       }
     ]
+  },
+  {
+    "Id": "df62dec6-ebe2-407e-9dea-854416fa23bd",
+    "Name": "AniDB",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Miruro/Assets/miruro.png",
+    "EntryPoint": "TotoroNext.Anime.Miruro.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Miruro.zip"
+      }
+    ]
   }
 ]

@@ -231,7 +231,7 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory,
 
         // Miruro's Cloudflare edge enforces a WAF rule that 403s pipe-API
         // requests whose headers don't match a real Chrome CORS fetch.
-        foreach (var header in Http.ApiFingerprintHeaders(BaseUrl))
+        foreach (var header in ApiFingerprintHeaders(BaseUrl))
         {
             request.Headers.TryAddWithoutValidation(header.Key, header.Value);
         }
@@ -344,6 +344,30 @@ public class AnimeProvider(IHttpClientFactory httpClientFactory,
                     English = title?.Trim() ?? ""
                 }
             }
+        };
+    }
+    
+    private const string ChromeMajorVersion = "148";
+
+    public static Dictionary<string, string> ApiFingerprintHeaders(
+        string origin,
+        string? referer = null,
+        bool sameOrigin = true
+    )
+    {
+        return new Dictionary<string, string>
+        {
+            ["Accept"] = "*/*",
+            ["Accept-Language"] = "en-US,en;q=0.9",
+            ["User-Agent"] = Http.UserAgent,
+            ["Sec-Ch-Ua"] = $"\"Chromium\";v=\"{ChromeMajorVersion}\", \"Not_A Brand\";v=\"24\", \"Google Chrome\";v=\"{ChromeMajorVersion}\"",
+            ["Sec-Ch-Ua-Mobile"] = "?0",
+            ["Sec-Ch-Ua-Platform"] = "\"Windows\"",
+            ["Sec-Fetch-Dest"] = "empty",
+            ["Sec-Fetch-Mode"] = "cors",
+            ["Sec-Fetch-Site"] = sameOrigin ? "same-origin" : "same-site",
+            ["Origin"] = origin,
+            ["Referer"] = referer ?? $"{origin}/"
         };
     }
 }

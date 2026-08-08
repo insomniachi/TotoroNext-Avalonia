@@ -43,7 +43,9 @@
         <Project Path="TotoroNext.Anime.LocalStorage/TotoroNext.Anime.LocalStorage.csproj">
             <Platform Project="x64" />
         </Project>
-        <Project Path="TotoroNext.Anime.Miruro/TotoroNext.Anime.Miruro.csproj" />
+        <Project Path="TotoroNext.Anime.Miruro/TotoroNext.Anime.Miruro.csproj" >
+            <Platform Project="x64" />
+        </Project>
         <Project Path="TotoroNext.Anime.SubsPlease/TotoroNext.Anime.SubsPlease.csproj">
             <Platform Project="x64" />
         </Project>

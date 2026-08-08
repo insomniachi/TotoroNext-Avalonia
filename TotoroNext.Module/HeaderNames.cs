@@ -282,28 +282,4 @@ public class Http
 {
     public const string UserAgent =
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0";
-
-    private const string ChromeMajorVersion = "148";
-
-    public static Dictionary<string, string> ApiFingerprintHeaders(
-        string origin,
-        string? referer = null,
-        bool sameOrigin = true
-    )
-    {
-        return new Dictionary<string, string>
-        {
-            ["Accept"] = "*/*",
-            ["Accept-Language"] = "en-US,en;q=0.9",
-            ["User-Agent"] = UserAgent,
-            ["Sec-Ch-Ua"] = $"\"Chromium\";v=\"{ChromeMajorVersion}\", \"Not_A Brand\";v=\"24\", \"Google Chrome\";v=\"{ChromeMajorVersion}\"",
-            ["Sec-Ch-Ua-Mobile"] = "?0",
-            ["Sec-Ch-Ua-Platform"] = "\"Windows\"",
-            ["Sec-Fetch-Dest"] = "empty",
-            ["Sec-Fetch-Mode"] = "cors",
-            ["Sec-Fetch-Site"] = sameOrigin ? "same-origin" : "same-site",
-            ["Origin"] = origin,
-            ["Referer"] = referer ?? $"{origin}/"
-        };
-    }
 }
