@@ -42,7 +42,6 @@ public sealed partial class ModulesViewModel : ObservableObject
         ComponentTypes.Tracking,
         ComponentTypes.Metadata,
         ComponentTypes.AnimeProvider,
-        ComponentTypes.AnimeDownloader,
         ComponentTypes.Debrid,
         ComponentTypes.MediaEngine,
         ComponentTypes.MediaSegments,
