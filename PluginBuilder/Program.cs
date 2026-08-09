@@ -23,6 +23,7 @@ var plugins = new List<PluginProject>
     new("TotoroNext.Anime.Anikoto"),
     new("TotoroNext.Anime.TsukiHime"),
     new("TotoroNext.Anime.Anidb"),
+    new("TotoroNext.Anime.Miruro")
 };
 
 var moduleDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");

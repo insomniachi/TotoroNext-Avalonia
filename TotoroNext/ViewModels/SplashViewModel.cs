@@ -289,19 +289,15 @@ public class DebugModuleStore : IModuleStore
     public IEnumerable<IModule> LoadModules()
     {
         // Anime Providers
-        yield return new Anime.AllAnime.Module();
-        yield return new Anime.AnimePahe.Module();
-        yield return new Anime.AnimeParadise.Module();
         yield return new Anime.AnimeOnsen.Module();
         yield return new Anime.Anizone.Module();
         yield return new Anime.SubsPlease.Module();
         yield return new Anime.Jellyfin.Module();
         yield return new Anime.AnimeGG.Module();
-        yield return new Anime.TokyoInsider.Module();
-        yield return new Anime.Senshi.Module();
         yield return new Anime.Anikoto.Module();
         yield return new Anime.TsukiHime.Module();
         yield return new Anime.Anidb.Module();
+        yield return new Anime.Miruro.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)
