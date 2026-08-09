@@ -21,6 +21,7 @@
         <PackageReference Include="Humanizer"/>
         <PackageReference Include="Infidex" />
         <PackageReference Include="LanguageDetection.Ai" />
+        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
         <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator"/>
         <PackageReference Include="JetBrains.Annotations"/>
 
