@@ -14,4 +14,8 @@
         <PackageReference Include="System.ServiceModel.Syndication"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\nyaa.png" />
+    </ItemGroup>
+
 </Project>

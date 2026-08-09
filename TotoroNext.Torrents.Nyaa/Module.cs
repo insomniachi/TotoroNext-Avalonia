@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
-using TotoroNext.Module.Extensions;
 using TotoroNext.Torrents.Abstractions;
 
 namespace TotoroNext.Torrents.Nyaa;
@@ -13,7 +12,8 @@ public class Module : IModule<Settings>
         Id = new Guid("6df72a21-3130-4975-bc49-1d8982d96c35"),
         Name = "Nyaa",
         Description = "Nyaa torrent indexer module",
-        Components = [ComponentTypes.TorrentIndexer]
+        Components = [ComponentTypes.TorrentIndexer],
+        HeroImage = ResourceHelper.GetResource("nyaa.png")
     };
 
 
