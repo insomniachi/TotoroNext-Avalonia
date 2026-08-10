@@ -28,7 +28,7 @@
                 </ItemsControl.ItemTemplate>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <u:ElasticWrapPanel IsFillHorizontal="True" ItemWidth="300" ItemHeight="250" />
+                        <u:ElasticWrapPanel IsFillHorizontal="True" ItemWidth="300" ItemHeight="200" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>

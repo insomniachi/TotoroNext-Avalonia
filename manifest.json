@@ -161,5 +161,23 @@
         "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Miruro.zip"
       }
     ]
+  },
+  {
+    "Id": "c2431b4e-98bc-41ef-9b8f-7429e62f9a76",
+    "Name": "KickAssAnime",
+    "Owner": "Totoro",
+    "Categories": [
+      "Anime Provider"
+    ],
+    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.KickAssAnime/Assets/kaa.png",
+    "EntryPoint": "TotoroNext.Anime.KickAssAnime.dll",
+    "Versions": [
+      {
+        "Version": "1.0.0",
+        "Description": "Initial release",
+        "TargetVersion": "1.0.0",
+        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.KickAssAnime.zip"
+      }
+    ]
   }
 ]

@@ -298,6 +298,7 @@ public class DebugModuleStore : IModuleStore
         yield return new Anime.TsukiHime.Module();
         yield return new Anime.Anidb.Module();
         yield return new Anime.Miruro.Module();
+        yield return new Anime.KickAssAnime.Module();
     }
 
     public Task<bool> DownloadModule(ModuleManifest manifest)

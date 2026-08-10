@@ -11,7 +11,8 @@ public class Module : IModule
     {
         Name = "Local",
         Id = new Guid("a294557f-4f1b-4c0f-a37d-39825019a761"),
-        Components = [ComponentTypes.AnimeProvider]
+        Components = [ComponentTypes.AnimeProvider],
+        HeroImage = ResourceHelper.GetResource("local.png"),
     };
 
     public void ConfigureServices(IServiceCollection services)
