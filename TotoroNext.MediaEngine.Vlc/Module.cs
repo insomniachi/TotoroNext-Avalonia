@@ -1,7 +1,6 @@
+using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.MediaEngine.Abstractions;
-using TotoroNext.MediaEngine.Vlc.ViewModels;
-using TotoroNext.MediaEngine.Vlc.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -21,11 +20,10 @@ public class Module : IModule<Settings>
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddTransient(_ => Descriptor);
-        services.AddModuleSettings(this);
+        services.AddModuleSettings<SettingsViewModel, Settings>(this);
         services.AddKeyedTransient<IMediaPlayer, VlcMediaPlayer>(Descriptor.Id);
-        
+
         if (OperatingSystem.IsWindows())
         {
             services.AddTransient<IInitializer, WindowsInitializer>();
@@ -33,11 +31,15 @@ public class Module : IModule<Settings>
     }
 }
 
-public class Settings
+public class Settings : OverridableConfig
 {
+    [DisplayName("Executable")]
+    [SpecialEditorType(SpecialEditorType.FileBrowser)]
     public string FileName { get; set; } = OperatingSystem.IsLinux()
         ? "/usr/bin/vlc"
         : "";
 
-    public bool LaunchFullScreen { get; set; } = true;
+    [DisplayName("Start in fullscreen")] public bool LaunchFullScreen { get; set; } = true;
 }
+
+internal class SettingsViewModel(IModuleSettings<Settings> data) : ModuleSettingsViewModel<Settings>(data);

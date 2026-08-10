@@ -18,6 +18,8 @@ public class ModuleSettings<TData> : IModuleSettings<TData>
 
     public ModuleSettings(Descriptor descriptor)
     {
+        Descriptor = descriptor;
+
         _filePath = FileHelper.GetModulePath(descriptor, "settings.json");
 
         Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
@@ -36,6 +38,8 @@ public class ModuleSettings<TData> : IModuleSettings<TData>
     }
 
     public TData Value { get; }
+    
+    public Descriptor Descriptor { get; }
 
     public void Save()
     {
@@ -43,10 +47,12 @@ public class ModuleSettings<TData> : IModuleSettings<TData>
     }
 }
 
-public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettings> data) : ObservableObject
+public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettings> data) : ObservableObject, IModuleSettingsViewModel
     where TSettings : class, new()
 {
     protected TSettings Settings => data.Value;
+    
+    public Descriptor Descriptor => data.Descriptor;
 
     public ModuleOptions? EditableSettings { get; private set; }
 
@@ -81,6 +87,12 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
         settingUpdate(data.Value);
         data.Save();
     }
+}
+
+public interface IModuleSettingsViewModel : IInitializable
+{
+    ModuleOptions? EditableSettings { get; }
+    Descriptor Descriptor { get; }
 }
 
 public static class ResourceHelper

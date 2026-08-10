@@ -2,21 +2,11 @@
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
-using TotoroNext.Torrents.Qbittorrent.ViewModels;
-using TotoroNext.Torrents.Qbittorrent.Views;
 
 namespace TotoroNext.Torrents.Qbittorrent;
 
 public class Module : IModule<Settings>
 {
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddTransient(_ => Descriptor);
-        services.AddKeyedTransient<ITorrentClient, Client>(Descriptor.Id);
-        services.AddModuleSettings(this);
-        services.AddViewMap<SettingsView, SettingsViewModel>();
-    }
-
     public Descriptor Descriptor { get; } = new()
     {
         Id = new Guid("305acd2c-0b08-4bf4-ad2d-de5e24ecc43f"),
@@ -25,6 +15,13 @@ public class Module : IModule<Settings>
         SettingViewModel = typeof(SettingsViewModel),
         Components = [ComponentTypes.TorrentClient]
     };
+    
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddTransient(_ => Descriptor);
+        services.AddKeyedTransient<ITorrentClient, Client>(Descriptor.Id);
+        services.AddModuleSettings<SettingsViewModel, Settings>(this);
+    }
 }
 
 public class Settings : OverridableConfig
@@ -33,3 +30,5 @@ public class Settings : OverridableConfig
     public string Username { get; set; } = "";
     public string Password { get; set; } = "";
 }
+
+internal class SettingsViewModel(IModuleSettings<Settings> data) : ModuleSettingsViewModel<Settings>(data);

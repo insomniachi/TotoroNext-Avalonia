@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Module.Abstractions;
+using TotoroNext.Module.Controls;
 
 namespace TotoroNext.Module;
 
@@ -27,16 +28,20 @@ public static class ServiceCollectionExtensions
         {
             return services.AddTransient<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor));
         }
-        
-        public IServiceCollection AddModuleSettingsEx<TData>(IModule<TData> module)
+
+        public IServiceCollection AddModuleSettings<TViewModel, TData>(IModule<TData> module)
+            where TViewModel : ModuleSettingsViewModel<TData>
             where TData : OverridableConfig, new()
         {
-            return services.AddTransient<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor))
-                           .AddKeyedTransient<List<ModuleOptionItem>>(module.Descriptor.Id, (sp, _) =>
-                           {
-                               var settings = sp.GetRequiredService<IModuleSettings<TData>>();
-                               return settings.Value.ToModuleOptions();
-                           });
+            services.AddTransient<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor))
+                    .AddViewMap<ModuleSettingsView, TViewModel>()
+                    .AddKeyedTransient<List<ModuleOptionItem>>(module.Descriptor.Id, (sp, _) =>
+                    {
+                        var settings = sp.GetRequiredService<IModuleSettings<TData>>();
+                        return settings.Value.ToModuleOptions();
+                    });
+            ;
+            return services;
         }
 
         public IServiceCollection AddMainNavigationItem<TView, TViewModel>(string header, string iconKey,
@@ -112,7 +117,7 @@ public static class ServiceCollectionExtensions
             where TViewModel : class, ISetupWizardPageViewModel
         {
             services.AddTransient<ISetupWizardPageViewModel, TViewModel>();
-            services.AddViewMap<TView,TViewModel>();
+            services.AddViewMap<TView, TViewModel>();
             return services;
         }
     }

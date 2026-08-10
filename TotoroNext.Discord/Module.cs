@@ -1,6 +1,5 @@
+using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
-using TotoroNext.Discord.ViewModels;
-using TotoroNext.Discord.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -21,13 +20,15 @@ public class Module : IModule<Settings>
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
-        services.AddModuleSettings(this);
-        services.AddViewMap<SettingsView, SettingsViewModel>();
+        services.AddModuleSettings<SettingsViewModel, Settings>(this);
         services.AddHostedService<RpcService>();
     }
 }
 
-public class Settings
+public class Settings : OverridableConfig
 {
+    [DisplayName("Show Activity on Discord")]
     public bool IsEnabled { get; set; } = true;
 }
+
+internal class SettingsViewModel(IModuleSettings<Settings> data) : ModuleSettingsViewModel<Settings>(data);

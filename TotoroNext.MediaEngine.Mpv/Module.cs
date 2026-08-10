@@ -1,8 +1,6 @@
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.MediaEngine.Abstractions;
-using TotoroNext.MediaEngine.Mpv.ViewModels;
-using TotoroNext.MediaEngine.Mpv.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
@@ -22,9 +20,8 @@ public class Module : IModule<Settings>
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddViewMap<SettingsView, SettingsViewModel>();
         services.AddTransient(_ => Descriptor);
-        services.AddModuleSettingsEx(this);
+        services.AddModuleSettings<SettingsViewModel, Settings>(this);
         services.AddKeyedTransient<IMediaPlayer, MpvMediaPlayer>(Descriptor.Id);
 
         if (OperatingSystem.IsWindows())
@@ -36,9 +33,11 @@ public class Module : IModule<Settings>
 
 public class Settings : OverridableConfig
 {
-    [DisplayName("Executable")] 
+    [DisplayName("Executable")]
     [SpecialEditorType(SpecialEditorType.FileBrowser)]
     public string FileName { get; set; } = OperatingSystem.IsLinux() ? "/usr/bin/mpv" : "";
 
     [DisplayName("Start in fullscreen")] public bool LaunchFullScreen { get; set; } = true;
 }
+
+internal sealed class SettingsViewModel(IModuleSettings<Settings> data) : ModuleSettingsViewModel<Settings>(data);
