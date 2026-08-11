@@ -72,24 +72,6 @@
     ]
   },
   {
-    "Id": "13bd2ef6-5d5b-4bea-a3f5-d4b9c1391322",
-    "Name": "Jellyfin",
-    "Owner": "Totoro",
-    "Categories": [
-      "Anime Provider"
-    ],
-    "ImageUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/TotoroNext.Anime.Jellyfin/Assets/jellyfin.jpg",
-    "EntryPoint": "TotoroNext.Anime.Jellyfin.dll",
-    "Versions": [
-      {
-        "Version": "1.5.0",
-        "Description": "Initial release",
-        "TargetVersion": "1.0.0",
-        "SourceUrl": "https://raw.githubusercontent.com/insomniachi/TotoroNext-Avalonia/refs/heads/master/Store/TotoroNext.Anime.Jellyfin.zip"
-      }
-    ]
-  },
-  {
     "Id": "56244ee0-4460-40b7-84cf-af3819d2429a",
     "Name": "Anikoto",
     "Owner": "Totoro",
