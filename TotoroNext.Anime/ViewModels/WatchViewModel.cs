@@ -69,13 +69,6 @@ public sealed partial class WatchViewModel(
 
     [ObservableProperty] public partial bool IsFetchingStream { get; set; }
 
-    public void Dispose()
-    {
-        messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
-        _isCancelled = true;
-        Context.Dispose();
-    }
-
     public async Task InitializeAsync()
     {
         if (Context.MediaPlayer is null || !Context.MediaPlayer.IsAvailable())
@@ -85,7 +78,7 @@ public sealed partial class WatchViewModel(
             await dialogService.EditModuleOptions(id, ComponentTypes.MediaEngine);
             return;
         }
-        
+
         (ProviderResult, Anime, Episodes, SelectedEpisode, var continueWatching) = navigationParameter;
 
         if (Anime is null)
@@ -178,6 +171,13 @@ public sealed partial class WatchViewModel(
         InitializePublishers();
         Context.Initialize();
         InitializeListeners();
+    }
+
+    public void Dispose()
+    {
+        messenger.Send(new PlaybackEnded { Id = SelectedEpisode?.Id ?? "" });
+        _isCancelled = true;
+        Context.Dispose();
     }
 
     public IEnumerable<KeyBinding> GetKeyBindings()
@@ -457,7 +457,7 @@ public sealed partial class WatchViewModel(
         }
 
         var useAbsoluteNumbering = false;
-        
+
         if (Anime is not null)
         {
             var overrides = animeExtensionService.GetExtension(Anime.Id);
@@ -491,7 +491,19 @@ public sealed partial class WatchViewModel(
     {
         foreach (var ep in episodes)
         {
-            ep.Info = infos.FirstOrDefault(x => Math.Abs(x.EpisodeNumber - ep.Number) == 0);
+            if (infos.FirstOrDefault(x => Math.Abs(x.EpisodeNumber - ep.Number) == 0) is not { } externalInfo)
+            {
+                continue;
+            }
+
+            if (ep.Info is null)
+            {
+                ep.Info = externalInfo;
+            }
+            else
+            {
+                ep.Info.UpdateIfNotPresent(externalInfo);
+            }
         }
 
         var specialsQueue = new Queue<EpisodeInfo>(specials);
@@ -502,7 +514,14 @@ public sealed partial class WatchViewModel(
                 continue;
             }
 
-            ep.Info = info;
+            if (ep.Info is null)
+            {
+                ep.Info = info;
+            }
+            else
+            {
+                ep.Info.UpdateIfNotPresent(info);
+            }
         }
     }
 

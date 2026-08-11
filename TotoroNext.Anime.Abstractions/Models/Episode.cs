@@ -43,11 +43,23 @@ public class EpisodeInfo
 
     [JsonPropertyName("runtime")] public int Runtime { get; set; }
 
-    [JsonPropertyName("airDateUtc")] public DateTime? AirDateUtc { get; set; }
+    [JsonPropertyName("airDateUtc")] public DateTimeOffset? AirDateUtc { get; set; }
 
     [JsonIgnore] public ProgressInfo? Progress { get; set; }
 
     [JsonIgnore] public bool IsSpecial { get; set; }
+
+    public void UpdateIfNotPresent(EpisodeInfo newInfo)
+    {
+        if (string.IsNullOrEmpty(Titles.Japanese)) Titles.Japanese = newInfo.Titles.Japanese;
+        if (string.IsNullOrEmpty(Titles.English)) Titles.English = newInfo.Titles.English;
+        if (string.IsNullOrEmpty(Titles.Romaji)) Titles.Romaji = newInfo.Titles.Romaji;
+        if (string.IsNullOrEmpty(Overview)) Overview = newInfo.Overview;
+        if (string.IsNullOrEmpty(Image)) Image = newInfo.Image;
+        if (string.IsNullOrEmpty(AirDate)) AirDate = newInfo.AirDate;
+        if (Runtime == 0) Runtime = newInfo.Runtime;
+        AirDateUtc ??= newInfo.AirDateUtc;
+    }
 }
 
 [Serializable]

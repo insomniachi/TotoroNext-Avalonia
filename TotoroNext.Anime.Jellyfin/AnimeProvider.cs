@@ -53,7 +53,7 @@ public class AnimeProvider(
         {
             yield break;
         }
-        
+
         var id = Guid.Parse(animeId);
         var item = await client.Items[id].GetAsync(cancellationToken: ct);
 
@@ -95,7 +95,26 @@ public class AnimeProvider(
                 foreach (var ep in episodes.Items?.Where(x => x.ParentIndexNumber > 0) ?? [])
                 {
                     ct.ThrowIfCancellationRequested();
-                    yield return new Episode(this, animeId, $"{ep.Id}", ++episodeNumber);
+                    if (ep.PremiereDate > DateTimeOffset.Now)
+                    {
+                        break;
+                    }
+
+                    yield return new Episode(this, animeId, $"{ep.Id}", ++episodeNumber)
+                    {
+                        Info = new EpisodeInfo()
+                        {
+                            Overview = ep.Overview ?? "",
+                            AirDateUtc = ep.PremiereDate,
+                            AirDate = ep.PremiereDate?.ToString("yyyy-MM-dd") ?? "",
+                            Runtime = TimeSpan.FromTicks(ep.RunTimeTicks ?? 0).Minutes,
+                            Image= settings.Value.ServerUrl.AppendPathSegment($"/Items/{ep.Id}/Images/Primary"),
+                            Titles = new Titles()
+                            {
+                                English = ep.Name ?? ""
+                            }
+                        }
+                    };
                 }
             }
         }
@@ -195,11 +214,6 @@ public class AnimeProvider(
             AutoOpenLiveStream = true,
             StartTimeTicks = startTime
         };
-
-        // if (bitRate != 0)
-        // {
-        //     playbackInfoDto.MaxStreamingBitrate = bitRate;
-        // }
 
         var playbackInfo = await client.Items[id].PlaybackInfo.PostAsync(playbackInfoDto);
 
