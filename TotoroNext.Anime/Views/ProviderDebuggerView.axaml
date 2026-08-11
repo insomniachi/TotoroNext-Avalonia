@@ -61,7 +61,7 @@
                             <TextBlock Text="{Binding Title}" TextWrapping="Wrap"
                                        TextAlignment="Center"
                                        VerticalAlignment="Center"
-                                       ToolTip.Tip="{Binding Title}"/>
+                                       ToolTip.Tip="{Binding Title}" />
                         </Border>
                     </Grid>
                 </DataTemplate>
@@ -74,66 +74,68 @@
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="mdl:Episode">
                     <Grid ColumnDefinitions="Auto, *" ColumnSpacing="32">
-                        <TextBlock Text="{Binding Number}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Info.Titles.English, FallbackValue='N/A'}"/>
+                        <TextBlock Text="{Binding Number}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Info.Titles.English, FallbackValue='N/A'}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ItemsControl Grid.Column="2"
-                      Grid.Row="1"
-                      ItemsSource="{Binding Servers}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Spacing="12" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="mdl:VideoServer">
-                    <Border Background="{DynamicResource SemiColorBackground1}"
-                            BorderBrush="{DynamicResource SemiColorBorder}"
-                            BorderThickness="1"
-                            CornerRadius="8"
-                            Padding="12"
-                            Classes.IsDefault="{Binding IsDefault}">
-                        <Grid ColumnDefinitions="1.25*,*" ColumnSpacing="8">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
-                                <TextBlock Text="{Binding Url}" TextWrapping="Wrap"
-                                           Foreground="{DynamicResource SemiColorText3}"
-                                           FontSize="{DynamicResource SemiFontSizeSmall}" />
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Play}}"
-                                            Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).PlayCommand, FallbackValue={x:Null}}"
-                                            CommandParameter="{Binding}"
-                                            ToolTip.Tip="Stream" />
-                                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Download}}"
+        <ScrollViewer Grid.Column="2" Grid.Row="1">
+            <ItemsControl
+                ItemsSource="{Binding Servers}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="12" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="mdl:VideoServer">
+                        <Border Background="{DynamicResource SemiColorBackground1}"
+                                BorderBrush="{DynamicResource SemiColorBorder}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="12"
+                                Classes.IsDefault="{Binding IsDefault}">
+                            <Grid ColumnDefinitions="1.25*,*" ColumnSpacing="8">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Url}" TextWrapping="Wrap"
+                                               Foreground="{DynamicResource SemiColorText3}"
+                                               FontSize="{DynamicResource SemiFontSizeSmall}" />
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Play}}"
+                                                Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).PlayCommand, FallbackValue={x:Null}}"
+                                                CommandParameter="{Binding}"
+                                                ToolTip.Tip="Stream" />
+                                        <Button
+                                            Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Download}}"
                                             Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).DownloadCommand, FallbackValue={x:Null}}"
                                             CommandParameter="{Binding}"
                                             ToolTip.Tip="Download" />
-                                    <Button
-                                        Content="{extensions:PathIcon Key={x:Static module:CommonIcons.CopyToClipboard}}"
-                                        Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).CopyToClipboardCommand, FallbackValue={x:Null}}"
-                                        CommandParameter="{Binding}"
-                                        ToolTip.Tip="Copy as curl" />
+                                        <Button
+                                            Content="{extensions:PathIcon Key={x:Static module:CommonIcons.CopyToClipboard}}"
+                                            Command="{Binding $parent[ContentPage].((viewModels:ProviderDebuggerViewModel)DataContext).CopyToClipboardCommand, FallbackValue={x:Null}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip.Tip="Copy as curl" />
+                                    </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
-                            <TableView Grid.Column="1"
-                                       ItemsSource="{Binding Headers}"
-                                       HorizontalAlignment="Stretch"
-                                       CanUserResizeColumns="False">
-                                <TableView.Columns>
-                                    <TableViewColumn Header="Header" Binding="{Binding Key}"
-                                                     Width="Auto" />
-                                    <TableViewColumn Header="Value" Binding="{Binding Value}"
-                                                     Width="*" />
-                                </TableView.Columns>
-                            </TableView>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                                <TableView Grid.Column="1"
+                                           ItemsSource="{Binding Headers}"
+                                           HorizontalAlignment="Stretch"
+                                           CanUserResizeColumns="False">
+                                    <TableView.Columns>
+                                        <TableViewColumn Header="Header" Binding="{Binding Key}"
+                                                         Width="Auto" />
+                                        <TableViewColumn Header="Value" Binding="{Binding Value}"
+                                                         Width="*" />
+                                    </TableView.Columns>
+                                </TableView>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </ContentPage>

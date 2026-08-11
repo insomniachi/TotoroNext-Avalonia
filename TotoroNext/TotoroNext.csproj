@@ -53,6 +53,7 @@
 
         <ProjectReference Include="..\TotoroNext.Anime.Jellyfin\TotoroNext.Anime.Jellyfin.csproj"/>
         <ProjectReference Include="..\TotoroNext.Anime.LocalStorage\TotoroNext.Anime.LocalStorage.csproj"/>
+        <ProjectReference Include="..\TotoroNext.Anime.Miwayomi\TotoroNext.Anime.Miwayomi.csproj"/>
 
         <ProjectReference Include="..\TotoroNext.MediaEngine.Vlc\TotoroNext.MediaEngine.Vlc.csproj"/>
         <ProjectReference Include="..\TotoroNext.MediaEngine.Mpv\TotoroNext.MediaEngine.Mpv.csproj"/>
