@@ -15,7 +15,8 @@ public class Module : IModule<Settings>
         Name = "Miwayomi",
         Id = new Guid("905e1602-b9a1-4ef9-8ce5-228e56acb8ff"),
         Components = [ComponentTypes.AnimeProvider],
-        SettingViewModel = typeof(SettingsViewModel)
+        SettingViewModel = typeof(SettingsViewModel),
+        HeroImage = ResourceHelper.GetResource("miwayomi.png")
     };
     
     public void ConfigureServices(IServiceCollection services)
