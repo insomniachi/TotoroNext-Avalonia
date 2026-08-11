@@ -40,13 +40,16 @@
         <Project Path="TotoroNext.Anime.Jellyfin/TotoroNext.Anime.Jellyfin.csproj">
             <Platform Project="x64" />
         </Project>
-        <Project Path="TotoroNext.Anime.KickAssAnime/TotoroNext.Anime.KickAssAnime.csproj" >
+        <Project Path="TotoroNext.Anime.KickAssAnime/TotoroNext.Anime.KickAssAnime.csproj">
             <Platform Project="x64" />
         </Project>
         <Project Path="TotoroNext.Anime.LocalStorage/TotoroNext.Anime.LocalStorage.csproj">
             <Platform Project="x64" />
         </Project>
         <Project Path="TotoroNext.Anime.Miruro/TotoroNext.Anime.Miruro.csproj">
+            <Platform Project="x64" />
+        </Project>
+        <Project Path="TotoroNext.Anime.Miwayomi/TotoroNext.Anime.Miwayomi.csproj" >
             <Platform Project="x64" />
         </Project>
         <Project Path="TotoroNext.Anime.SubsPlease/TotoroNext.Anime.SubsPlease.csproj">
