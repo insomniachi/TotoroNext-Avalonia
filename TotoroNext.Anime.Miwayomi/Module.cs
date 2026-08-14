@@ -32,7 +32,7 @@ public class Module : IModule<Settings>
 
 public class Settings : OverridableConfig
 {
-    public string BaseUrl { get; set; } = "http://127.0.0.1";
-    public string Repository { get; set; } = "https://raw.githubusercontent.com/yuzono/anime-repo/repo/index.min.json";
-    public string SelectedSource { get; set; } = "1578760449259207021";
+    public string BaseUrl { get; set; } = "";
+    public string Repository { get; set; } = "";
+    public string SelectedSource { get; set; } = "";
 }

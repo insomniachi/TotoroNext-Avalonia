@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.Miwayomi.ViewModels"
              xmlns:controls="totoro.next/controls"
+             xmlns:views="clr-namespace:TotoroNext.Anime.Miwayomi.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:SettingsViewModel"
              x:Class="TotoroNext.Anime.Miwayomi.Views.SettingsView">
@@ -14,7 +15,7 @@
     </ContentPage.Styles>
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
         <Image Grid.Row="0"
-               Source="avares://TotoroNext.Anime.AnimeOnsen/Assets/animeonsen.jpg"
+               Source="avares://TotoroNext.Anime.Miwayomi/Assets/miwayomi.png"
                Stretch="UniformToFill"
                Width="600" />
         <TabControl Grid.Row="1">
@@ -55,6 +56,7 @@
                                             BorderBrush="{DynamicResource SemiColorBorder}"
                                             BorderThickness="1"
                                             Padding="12"
+                                            Margin="4"
                                             Classes.IsInstalled="{Binding IsInstalled}">
                                         <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
                                             <StackPanel Spacing="2">
@@ -66,12 +68,25 @@
                                                            Foreground="{DynamicResource SemiColorText3}"
                                                            FontSize="{DynamicResource SemiFontSizeSmall}" />
                                             </StackPanel>
-                                            <Button Grid.Column="1" Content="Install"
+                                            <Button Grid.Column="1"
+                                                    Content="Install"
+                                                    Command="{Binding $parent[views:SettingsView].((viewModels:SettingsViewModel)DataContext).InstallExtensionCommand, FallbackValue={x:Null}}"
+                                                    CommandParameter="{Binding}"
                                                     IsVisible="{Binding !IsInstalled}" />
+                                            <Button Grid.Column="1" 
+                                                    Content="Uninstall"
+                                                    Command="{Binding $parent[views:SettingsView].((viewModels:SettingsViewModel)DataContext).UninstallExtensionCommand, FallbackValue={x:Null}}"
+                                                    CommandParameter="{Binding}"
+                                                    IsVisible="{Binding IsInstalled}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>

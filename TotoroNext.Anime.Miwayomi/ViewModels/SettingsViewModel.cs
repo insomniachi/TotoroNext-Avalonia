@@ -146,7 +146,7 @@ internal partial class SettingsViewModel(IModuleSettings<Settings> settings) : M
         {
             if (doc.RootElement.GetProperty("ok").GetBoolean())
             {
-                vm.IsInstalled = true;
+                vm.IsInstalled = false;
             }
         }
         catch

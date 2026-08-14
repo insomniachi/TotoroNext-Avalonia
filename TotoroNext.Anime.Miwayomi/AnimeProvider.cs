@@ -4,6 +4,7 @@ using Flurl;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Miwayomi;
@@ -73,6 +74,9 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
             yield return server;
         }
     }
+
+    public List<ModuleOptionItem> GetOptions() => settings.Value.ToModuleOptions();
+    public void UpdateOptions(List<ModuleOptionItem> options) => settings.Value.UpdateValues(options);
 
     private string GetBaseUrl()
     {
