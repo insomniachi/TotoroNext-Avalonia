@@ -5,6 +5,8 @@
              xmlns:viewModels="clr-namespace:TotoroNext.Anime.Miwayomi.ViewModels"
              xmlns:controls="totoro.next/controls"
              xmlns:views="clr-namespace:TotoroNext.Anime.Miwayomi.Views"
+             xmlns:extensions="totoro.next/extensions"
+             xmlns:mod="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="viewModels:SettingsViewModel"
              x:Class="TotoroNext.Anime.Miwayomi.Views.SettingsView">
@@ -37,8 +39,16 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Store">
-                <Grid RowDefinitions="Auto,*" Margin="0 8 0 0" RowSpacing="4">
-                    <Grid Grid.Row="0" ColumnDefinitions="2*, *" ColumnSpacing="2">
+                <Grid RowDefinitions="Auto, Auto,*" Margin="0 8 0 0" RowSpacing="4">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+                        <ComboBox SelectedItem="{Binding SelectedRepository}"
+                                  ItemsSource="{Binding Repositories}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300"/>
+                        <Button Content="{extensions:PathIcon Key={x:Static mod:CommonIcons.Add}}"
+                                Command="{Binding AddRepositoryCommand}"/>
+                    </StackPanel>
+                    <Grid Grid.Row="1" ColumnDefinitions="2*, *" ColumnSpacing="2">
                         <TextBox Text="{Binding SearchText, Mode=TwoWay}"
                                  PlaceholderText="Search" />
                         <ComboBox Grid.Column="1"
@@ -47,7 +57,7 @@
                                   SelectedValue="{Binding SelectedLanguage, Mode=TwoWay}"
                                   SelectedValueBinding="{Binding Path=.}" />
                     </Grid>
-                    <ScrollViewer Grid.Row="1">
+                    <ScrollViewer Grid.Row="2">
                         <ItemsControl ItemsSource="{Binding FilteredProviders}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -73,7 +83,7 @@
                                                     Command="{Binding $parent[views:SettingsView].((viewModels:SettingsViewModel)DataContext).InstallExtensionCommand, FallbackValue={x:Null}}"
                                                     CommandParameter="{Binding}"
                                                     IsVisible="{Binding !IsInstalled}" />
-                                            <Button Grid.Column="1" 
+                                            <Button Grid.Column="1"
                                                     Content="Uninstall"
                                                     Command="{Binding $parent[views:SettingsView].((viewModels:SettingsViewModel)DataContext).UninstallExtensionCommand, FallbackValue={x:Null}}"
                                                     CommandParameter="{Binding}"
@@ -84,7 +94,7 @@
                             </ItemsControl.ItemTemplate>
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel/>
+                                    <VirtualizingStackPanel />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>

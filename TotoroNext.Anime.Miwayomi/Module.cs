@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Miwayomi.ViewModels;
@@ -33,6 +35,15 @@ public class Module : IModule<Settings>
 public class Settings : OverridableConfig
 {
     public string BaseUrl { get; set; } = "";
-    public string Repository { get; set; } = "";
-    public string SelectedSource { get; set; } = "";
+    public string? Repository { get; set; } = "";
+    public string? SelectedSource { get; set; } = "";
+    
+    [IgnoreDataMember] public List<RepositoryDescriptor> Repositories { get; set; } = [];
+}
+
+[Serializable]
+public class RepositoryDescriptor
+{
+    public string Name { get; set; } = "";
+    public string Url { get; set; } = "";
 }

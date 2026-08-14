@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,7 +11,8 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Miwayomi.ViewModels;
 
-internal partial class SettingsViewModel(IModuleSettings<Settings> settings) : ModuleSettingsViewModel<Settings>(settings)
+internal partial class SettingsViewModel(IModuleSettings<Settings> settings,
+                                         IDialogService dialogService) : ModuleSettingsViewModel<Settings>(settings)
 {
     private List<MiwayomiProviderViewModel> _allProviders = [];
 
@@ -26,15 +28,25 @@ internal partial class SettingsViewModel(IModuleSettings<Settings> settings) : M
 
     [ObservableProperty] public partial string SelectedLanguage { get; set; } = "all";
 
+    [ObservableProperty] public partial ObservableCollection<RepositoryDescriptor> Repositories { get; set; } = [];
+
     public string? BaseUrl
     {
         get;
         set => SetAndSaveProperty(ref field, value, x => x.BaseUrl = value ?? "");
     }
 
+    public RepositoryDescriptor? SelectedRepository
+    {
+        get;
+        set => SetAndSaveProperty(ref field, value, x => x.Repository = value?.Url);
+    }
+
     public override void Initialize()
     {
         BaseUrl = Settings.BaseUrl;
+        Repositories = [.. Settings.Repositories];
+        SelectedRepository = Repositories.FirstOrDefault(x => x.Url == Settings.Repository);
 
         this.WhenAnyValue(x => x.BaseUrl)
             .Throttle(TimeSpan.FromSeconds(1))
@@ -154,4 +166,25 @@ internal partial class SettingsViewModel(IModuleSettings<Settings> settings) : M
             // Ignore
         }
     }
+
+    [RelayCommand]
+    private async Task AddRepository()
+    {
+        var options = new ModuleOptions();
+        options.AddOption(b => b.WithName("Name"))
+               .AddOption(b => b.WithName("Url"));
+
+        var result = await dialogService.EditModuleOptions("Add Repository", options);
+
+        if (!result)
+        {
+            return;
+        }
+
+        var repository = OverridableConfig.CreateFrom<RepositoryDescriptor>(options);
+        Repositories.Add(repository);
+        Settings.Repositories.Add(repository);
+        Save();
+    }
+    
 }
