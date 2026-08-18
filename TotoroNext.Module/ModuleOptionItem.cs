@@ -60,14 +60,15 @@ public partial class ModuleOptionItem : ObservableObject
     }
 }
 
-public class ModuleOptions(IEnumerable<ModuleOptionItem> items) : List<ModuleOptionItem>(items.ToList())
+public class ModuleOptions(IEnumerable<ModuleOptionItem> items) : List<ModuleOptionItem>([.. items])
 {
     public ModuleOptions() : this([]) { }
 
-    public ModuleOptions AddOption(Func<ModuleOptionBuilder, ModuleOptionItem> creator)
+    public ModuleOptions AddOption(Action<ModuleOptionBuilder> creator)
     {
         var builder = new ModuleOptionBuilder();
-        Add(creator(builder));
+        creator(builder);
+        Add(builder.ToPluginOption());
         return this;
     }
 }

@@ -81,14 +81,28 @@ public class ModuleOptionBuilder
 
     public ModuleOptionItem ToPluginOption()
     {
-        return new ModuleOptionItem
+        var item = new ModuleOptionItem
         {
             Name = _name,
-            DisplayName = _displayName,
+            DisplayName = string.IsNullOrEmpty(_displayName) ? _name : _displayName,
             Description = _description,
             Value = _value,
             EditorType = _editorType,
             AllowedValues = _allowedValues
         };
+
+        Reset();
+        
+        return item;
+    }
+
+    private void Reset()
+    {
+        _name = "";
+        _displayName = "";
+        _displayName = "";
+        _value = "";
+        _editorType = default;
+        _allowedValues = [];
     }
 }

@@ -25,6 +25,8 @@ namespace TotoroNext.Anime.Behaviors;
 public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOverlayBehavior
 {
     private static readonly SolidColorBrush StatusBorderBrush = new(Color.Parse("#AA000000"));
+    private static readonly Thickness StatusBorderBorder = new(0, 4, 0, 0);
+    private static readonly Thickness Zero = new(0);
     private readonly CompositeDisposable _disposables = new();
     private Grid? _control;
 
@@ -35,8 +37,13 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
             return;
         }
 
+        if (AssociatedObject.ImageContainer.Effect is BlurEffect effect)
+        {
+            effect.Radius = 25;
+        }
         AssociatedObject.StatusBorder.Height = 300;
         AssociatedObject.StatusBorder.Background = Brushes.Transparent;
+        AssociatedObject.StatusBorder.BorderThickness = Zero;
         AssociatedObject.TitleBorder.Height = double.NaN;
         AssociatedObject.TitleBorder.MaxHeight = 120;
         AssociatedObject.TitleTextBlock.FontWeight = FontWeight.Bold;
@@ -44,10 +51,6 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
         AssociatedObject.TitleTextBlock.TextWrapping = TextWrapping.WrapWithOverflow;
         AssociatedObject.TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
         AssociatedObject.Tint.IsVisible = true;
-        if (AssociatedObject.ImageContainer.Effect is BlurEffect effect)
-        {
-            effect.Radius = 25;
-        }
     }
 
     public void OnPointerExited()
@@ -57,18 +60,19 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
             return;
         }
 
+        if (AssociatedObject.ImageContainer.Effect is BlurEffect effect)
+        {
+            effect.Radius = 0;
+        }
         AssociatedObject.StatusBorder.Height = 60;
         AssociatedObject.StatusBorder.Background = StatusBorderBrush;
+        AssociatedObject.StatusBorder.BorderThickness = StatusBorderBorder;
         AssociatedObject.TitleBorder.Height = 54;
         AssociatedObject.TitleTextBlock.FontWeight = FontWeight.Normal;
         AssociatedObject.TitleTextBlock.FontSize = 15;
         AssociatedObject.TitleTextBlock.TextWrapping = TextWrapping.NoWrap;
         AssociatedObject.TitleTextBlock.TextTrimming = TextTrimming.CharacterEllipsis;
         AssociatedObject.Tint.IsVisible = false;
-        if (AssociatedObject.ImageContainer.Effect is BlurEffect effect)
-        {
-            effect.Radius = 0;
-        }
     }
 
     protected override void OnAttachedToVisualTree()

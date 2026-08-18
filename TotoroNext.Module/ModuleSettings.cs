@@ -56,7 +56,7 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
 
     public ModuleOptions? EditableSettings { get; private set; }
 
-    public void Initialize()
+    public virtual void Initialize()
     {
         if (Settings is not OverridableConfig oc)
         {
@@ -87,6 +87,8 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
         settingUpdate(data.Value);
         data.Save();
     }
+    
+    protected void Save() => data.Save();
 }
 
 public interface IModuleSettingsViewModel : IInitializable

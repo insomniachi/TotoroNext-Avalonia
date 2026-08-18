@@ -1,0 +1,106 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.Miwayomi.ViewModels"
+             xmlns:controls="totoro.next/controls"
+             xmlns:views="clr-namespace:TotoroNext.Anime.Miwayomi.Views"
+             xmlns:extensions="totoro.next/extensions"
+             xmlns:mod="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:SettingsViewModel"
+             x:Class="TotoroNext.Anime.Miwayomi.Views.SettingsView">
+    <ContentPage.Styles>
+        <Style Selector="Border.IsInstalled">
+            <Setter Property="Background" Value="{DynamicResource SemiColorAIBackgroundBottom}" />
+        </Style>
+    </ContentPage.Styles>
+    <Grid RowDefinitions="Auto,*" RowSpacing="16">
+        <Image Grid.Row="0"
+               Source="avares://TotoroNext.Anime.Miwayomi/Assets/miwayomi.png"
+               Stretch="UniformToFill"
+               Width="600" />
+        <TabControl Grid.Row="1">
+            <TabItem Header="Settings">
+                <StackPanel Classes.SettingsContainer="true" Margin="0 8 0 0">
+                    <controls:SettingsCard Header="Base url"
+                                           Description="Url of miwayomi instance without port">
+                        <controls:SettingsCard.Editor>
+                            <TextBox Text="{Binding BaseUrl, Mode=TwoWay}" />
+                        </controls:SettingsCard.Editor>
+                    </controls:SettingsCard>
+                    <controls:SettingsCard Header="Selected Source"
+                                           Description="Source to use for fetching anime">
+                        <controls:SettingsCard.Editor>
+                            <ComboBox ItemsSource="{Binding Providers}"
+                                      SelectedItem="{Binding SelectedProvider, Mode=TwoWay}" />
+                        </controls:SettingsCard.Editor>
+                    </controls:SettingsCard>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Store">
+                <Grid RowDefinitions="Auto, Auto,*" Margin="0 8 0 0" RowSpacing="4">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4">
+                        <ComboBox SelectedItem="{Binding SelectedRepository}"
+                                  ItemsSource="{Binding Repositories}"
+                                  DisplayMemberBinding="{Binding Name}"
+                                  Width="300"/>
+                        <Button Content="{extensions:PathIcon Key={x:Static mod:CommonIcons.Add}}"
+                                Command="{Binding AddRepositoryCommand}"/>
+                    </StackPanel>
+                    <Grid Grid.Row="1" ColumnDefinitions="2*, *" ColumnSpacing="2">
+                        <TextBox Text="{Binding SearchText, Mode=TwoWay}"
+                                 PlaceholderText="Search" />
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding Languages}"
+                                  HorizontalAlignment="Stretch"
+                                  SelectedValue="{Binding SelectedLanguage, Mode=TwoWay}"
+                                  SelectedValueBinding="{Binding Path=.}" />
+                    </Grid>
+                    <ScrollViewer Grid.Row="2">
+                        <ItemsControl ItemsSource="{Binding FilteredProviders}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="8"
+                                            Background="{DynamicResource SemiColorBackground1}"
+                                            BorderBrush="{DynamicResource SemiColorBorder}"
+                                            BorderThickness="1"
+                                            Padding="12"
+                                            Margin="4"
+                                            Classes.IsInstalled="{Binding IsInstalled}">
+                                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                                            <StackPanel Spacing="2">
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                                <TextBlock Text="{Binding Version}"
+                                                           Foreground="{DynamicResource SemiColorText3}"
+                                                           FontSize="{DynamicResource SemiFontSizeSmall}" />
+                                                <TextBlock Text="{Binding Package}"
+                                                           Foreground="{DynamicResource SemiColorText3}"
+                                                           FontSize="{DynamicResource SemiFontSizeSmall}" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1"
+                                                    Content="Install"
+                                                    Command="{Binding $parent[views:SettingsView].((viewModels:SettingsViewModel)DataContext).InstallExtensionCommand, FallbackValue={x:Null}}"
+                                                    CommandParameter="{Binding}"
+                                                    IsVisible="{Binding !IsInstalled}" />
+                                            <Button Grid.Column="1"
+                                                    Content="Uninstall"
+                                                    Command="{Binding $parent[views:SettingsView].((viewModels:SettingsViewModel)DataContext).UninstallExtensionCommand, FallbackValue={x:Null}}"
+                                                    CommandParameter="{Binding}"
+                                                    IsVisible="{Binding IsInstalled}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</ContentPage>

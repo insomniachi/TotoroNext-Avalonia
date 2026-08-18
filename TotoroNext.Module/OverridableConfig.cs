@@ -22,6 +22,29 @@ public abstract class OverridableConfig
         }
     }
 
+    public static T CreateFrom<T>(List<ModuleOptionItem> options)
+        where T : class, new()
+    {
+        var type = typeof(T);
+        return (T)CreateType(type, options);
+    }
+    
+    public static object CreateType(Type type, List<ModuleOptionItem> options)
+    {
+        var instance = Activator.CreateInstance(type)!;
+        foreach (var option in options)
+        {
+            var propInfo = type.GetProperty(option.Name);
+            var currentValue = propInfo!.GetValue(instance);
+            var optionValue = GetValue(option, option.Name, propInfo.PropertyType, currentValue);
+            if (optionValue is not null)
+            {
+                propInfo.SetValue(instance, optionValue);
+            }
+        }
+        return instance;
+    }
+
     public ModuleOptions ToModuleOptions()
     {
         var options = new ModuleOptions();
@@ -81,7 +104,7 @@ public abstract class OverridableConfig
 
     protected virtual void ConfigureProperty(ModuleOptionBuilder builder, PropertyInfo info) { }
 
-    protected virtual object? GetValue(ModuleOptionItem options, string name, Type t, object? defaultValue)
+    private static object? GetValue(ModuleOptionItem options, string name, Type t, object? defaultValue)
     {
         if (t == typeof(int))
         {

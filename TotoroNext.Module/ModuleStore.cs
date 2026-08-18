@@ -18,7 +18,7 @@ public class ModuleStore : IModuleStore
     private readonly string _modulesPath =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TotoroNext", "Modules");
 
-    public IEnumerable<IModule>  LoadModules()
+    public IEnumerable<IModule> LoadModules()
     {
         if (!Directory.Exists(_modulesPath))
         {
@@ -100,11 +100,23 @@ public class ModuleStore : IModuleStore
 
     public async IAsyncEnumerable<ModuleManifest> GetAllModules()
     {
-        var response = await _client.GetStringAsync(Url);
-        var array = JsonNode.Parse(response)?.AsArray() ?? throw new InvalidOperationException("Failed to parse module manifest.");
+        string response;
+        try
+        {
+            response = await _client.GetStringAsync(Url);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            yield break;
+        }
+
+        if (JsonNode.Parse(response)?.AsArray() is not { } array)
+        {
+            yield break;
+        }
 
         var manifests = array.Deserialize<List<ModuleManifest>>();
-
         foreach (var item in manifests ?? [])
         {
             yield return item;
