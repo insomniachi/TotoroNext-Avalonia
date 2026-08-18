@@ -135,20 +135,7 @@ public partial class SplashViewModel(
                           UpdateStatus("Loading modules...", "");
                           List<IModule> modules =
                           [
-                              new Anime.Module(),
-                              new Anime.Local.Module(),
-                              new Anime.LocalStorage.Module(),
-                              new Anime.Miwayomi.Module(),
-                              new Anime.Anilist.Module(),
-                              new Anime.MyAnimeList.Module(),
-                              new Anime.Aniskip.Module(),
-                              new MediaEngine.Mpv.Module(),
-                              new MediaEngine.Vlc.Module(),
-                              new Discord.Module(),
-                              new Torrents.Nyaa.Module(),
-                              new Torrents.RealDebrid.Module(),
-                              new Torrents.TorBox.Module(),
-                              new Torrents.Qbittorrent.Module(),
+                              ..GetInBuiltModules(),
                               ..store.LoadModules()
                           ];
 
@@ -280,6 +267,36 @@ public partial class SplashViewModel(
                             "TotoroNext",
                             "Modules",
                             name);
+    }
+
+    private static List<IModule> GetInBuiltModules()
+    {
+        return
+        [
+            new Anime.Module(),
+            new Anime.Local.Module(),
+            new Anime.LocalStorage.Module(),
+            new Anime.Miwayomi.Module(),
+            new Anime.Jellyfin.Module(),
+            
+            // Tracking
+            new Anime.Anilist.Module(),
+            new Anime.MyAnimeList.Module(),
+            
+            // Media Player
+            new MediaEngine.Mpv.Module(),
+            new MediaEngine.Vlc.Module(),
+            
+            // Debrid
+            new Torrents.RealDebrid.Module(),
+            new Torrents.TorBox.Module(),
+            
+            // Misc
+            new Torrents.Nyaa.Module(),
+            new Torrents.Qbittorrent.Module(),
+            new Anime.Aniskip.Module(),
+            new Discord.Module(),
+        ];
     }
 }
 
