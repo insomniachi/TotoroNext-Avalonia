@@ -2,8 +2,8 @@
 
 public class NoOpTorrentStreamService : ITorrentStream
 {
-    public Task<Uri?> TryGetStreamUrl(Uri uri, CancellationToken ct)
+    public Task<Uri?> TryGetStreamUrl(Uri torrentUri, CancellationToken ct)
     {
-        return Task.FromResult<Uri?>(uri);
+        return Task.FromResult<Uri?>(torrentUri);
     }
 }

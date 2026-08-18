@@ -13,13 +13,14 @@ public class Module : IModule<Settings>
         Name = "Qbittorent",
         HeroImage = ResourceHelper.GetResource("qbittorrent.jpg"),
         SettingViewModel = typeof(SettingsViewModel),
-        Components = [ComponentTypes.TorrentClient]
+        Components = [ComponentTypes.TorrentClient, ComponentTypes.Debrid]
     };
     
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddTransient(_ => Descriptor);
         services.AddKeyedTransient<ITorrentClient, Client>(Descriptor.Id);
+        services.AddKeyedTransient<ITorrentStream, TorrentStream>(Descriptor.Id);
         services.AddModuleSettings<SettingsViewModel, Settings>(this);
     }
 }

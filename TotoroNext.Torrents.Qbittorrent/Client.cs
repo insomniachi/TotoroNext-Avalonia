@@ -2,6 +2,7 @@
 using Banned.Qbittorrent;
 using Banned.Qbittorrent.Models.Sync;
 using Banned.Qbittorrent.Models.Torrent;
+using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using TotoroNext.Torrents.Abstractions;
 using TotoroNext.Torrents.Abstractions.ViewModels;
@@ -17,7 +18,7 @@ public class Client(IModuleSettings<Settings> settings) : ITorrentClient
         using var client = await CreateClient();
         await client.Torrent.AddTorrent(new QbAddTorrentRequest
         {
-            Urls = [..request.Torrents],
+            Urls = [.. request.Torrents],
             SavePath = request.SaveDirectory,
             Tags = request.Tags
         });
@@ -57,12 +58,12 @@ public class Client(IModuleSettings<Settings> settings) : ITorrentClient
             }
         }
     }
-    
+
     private async Task<QBittorrentClient> CreateClient()
     {
         return await QBittorrentClient.Create(settings.Value.Url, settings.Value.Username, settings.Value.Password);
     }
-    
+
     private static IEnumerable<TorrentViewModel> ConvertData(MainData? mainData)
     {
         var torrents = mainData?.Torrents ?? [];

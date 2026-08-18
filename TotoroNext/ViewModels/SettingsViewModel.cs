@@ -44,7 +44,12 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
         AnimeProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
         TrackingServices = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.Tracking))];
         SegmentProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaSegments))];
-        TorrentStreamServices = [Descriptor.None, Descriptor.New("Local", MonoTorrentStream.MonoTorrentStreamId), .. allModules.Where(x => x.Components.Contains(ComponentTypes.Debrid))];
+        TorrentStreamServices =
+        [
+            Descriptor.None,
+            Descriptor.New("Local", MonoTorrentStream.MonoTorrentStreamId),
+            .. allModules.Where(x => x.Components.Contains(ComponentTypes.Debrid))
+        ];
         TorrentClients = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.TorrentClient))];
         TorrentIndexers = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.TorrentIndexer))];
     }

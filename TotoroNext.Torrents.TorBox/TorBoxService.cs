@@ -12,11 +12,11 @@ internal class TorBoxService(
 {
     private readonly FlurlClient _client = new(httpClientFactory.CreateClient("TorBox"));
 
-    public async Task<Uri?> TryGetStreamUrl(Uri uri, CancellationToken ct)
+    public async Task<Uri?> TryGetStreamUrl(Uri torrentUri, CancellationToken ct)
     {
         try
         {
-            var magnet = await TorrentHelper.TorrentToMagnet(uri);
+            var magnet = await TorrentHelper.TorrentToMagnet(torrentUri);
             var response = await _client.Request("torrents", "createtorrent")
                                         .PostUrlEncodedAsync(new
                                         {

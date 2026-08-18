@@ -2,5 +2,5 @@
 
 public interface ITorrentStream
 {
-    Task<Uri?> TryGetStreamUrl(Uri magnet, CancellationToken ct);
+    Task<Uri?> TryGetStreamUrl(Uri torrentUri, CancellationToken ct);
 }
