@@ -4,6 +4,8 @@ using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Module;
+using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Local;
 
@@ -11,6 +13,7 @@ namespace TotoroNext.Anime.Local;
 internal class MetadataService(
     IDbContext dbContext,
     IAnimeMappingService mappingService,
+    IDialogService dialogService,
     GraphQLHttpClient client) : ILocalMetadataService
 {
     public Guid Id => Module.Descriptor.Id;
@@ -232,6 +235,30 @@ internal class MetadataService(
                .Where(x => x.Season is not null)
                .OrderBy(x => x.Season!.Year).ThenBy(x => x.Season!.SeasonName)
         ];
+    }
+
+    public async Task Edit(AnimeModel anime)
+    {
+        var dbAnime = dbContext.Anime.FindById(anime.Id);
+        var options = new ModuleOptions();
+        options.AddOption(b => b.WithName(nameof(anime.AiringStatus))
+                                .WithDisplayName("Airing Status")
+                                .WithValue(anime.AiringStatus).WithAllowedValues<AiringStatus>())
+               .AddOption(b => b.WithName(nameof(anime.TotalEpisodes))
+                                .WithDisplayName("Total Episodes")
+                                .WithValue(anime.TotalEpisodes));
+
+        if (!await dialogService.EditModuleOptions(dbAnime.Title.Romaji ?? "", options))
+        {
+            return;
+        }
+        
+        anime.TotalEpisodes = options.GetInt32(nameof(anime.TotalEpisodes));
+        anime.AiringStatus = options.GetEnum(nameof(anime.AiringStatus), anime.AiringStatus);
+
+        dbAnime.TotalEpisodes = anime.TotalEpisodes ?? dbAnime.TotalEpisodes;
+        dbAnime.AiringStatus = anime.AiringStatus;
+        dbContext.Anime.Upsert(dbAnime);
     }
 
     private async Task BuildRelationshipsInternalAsync(AnimeModel anime, HashSet<long> ids, List<AnimeModel> relations, CancellationToken ct)

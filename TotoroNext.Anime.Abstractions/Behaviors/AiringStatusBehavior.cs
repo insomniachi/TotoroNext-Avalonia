@@ -18,6 +18,7 @@ public class AiringStatusBehavior : Behavior<AnimeCard>
     {
         AssociatedObject?.GetObservable(AnimeCard.AnimeProperty)
                         .WhereNotNull()
+                        .SelectMany(x => x.WhenAnyValue(p => p.AiringStatus))
                         .ObserveOn(RxSchedulers.MainThreadScheduler)
                         .Subscribe(_ => AssociatedObject.StatusBorder.BorderBrush = ToBrush(AssociatedObject.Anime))
                         .DisposeWith(_disposables);
