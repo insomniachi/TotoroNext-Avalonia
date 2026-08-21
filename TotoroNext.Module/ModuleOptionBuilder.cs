@@ -52,12 +52,14 @@ public class ModuleOptionBuilder
     public ModuleOptionBuilder WithAllowedValues(IEnumerable<string> allowedValues)
     {
         _allowedValues = allowedValues;
+        _editorType = SpecialEditorType.ComboBox;
         return this;
     }
 
     public ModuleOptionBuilder WithAllowedValues<T>(IEnumerable<T> allowedValues)
     {
         _allowedValues = allowedValues.Where(x => x is not null).Select(x => x!.ToString()!);
+        _editorType = SpecialEditorType.ComboBox;
         return this;
     }
 
@@ -71,6 +73,7 @@ public class ModuleOptionBuilder
         where T : struct, Enum
     {
         _allowedValues = Enum.GetNames<T>();
+        _editorType = SpecialEditorType.ComboBox;
         return this;
     }
 

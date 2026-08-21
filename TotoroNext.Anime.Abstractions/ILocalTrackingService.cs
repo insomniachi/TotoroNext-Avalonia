@@ -9,7 +9,7 @@ public interface ILocalTrackingService : ITrackingService
 
 public interface ILocalMetadataService : IMetadataService
 {
-    Task<Models.AnimeModel> GetAnimeWithoutAdditionalInfoAsync(long id);
+    Task<Models.AnimeModel?> GetAnimeWithoutAdditionalInfoAsync(long id);
 
     Task<List<Models.AnimeModel>> BuilderRelationshipsAsync(long id, CancellationToken ct);
 }

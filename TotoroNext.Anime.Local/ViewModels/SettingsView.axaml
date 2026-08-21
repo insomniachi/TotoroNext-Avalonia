@@ -1,0 +1,35 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:views="clr-namespace:TotoroNext.Anime.Local.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="views:SettingsViewModel"
+             x:Class="TotoroNext.Anime.Local.ViewModels.SettingsView">
+    <Grid RowDefinitions="Auto,*" RowSpacing="16">
+        <Image Source="avares://TotoroNext.Anime.Anilist/Assets/anilist.jpg" Stretch="UniformToFill" Width="600" />
+        <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
+            <Button Content="Download All Seasons From Cache"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding DownloadAllCachedSeasonsCommand}"/>
+            <Button Content="Download Season From Cache"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding DownloadCachedSeasonCommand}"/>
+            <Button Content="Download Season Online"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding DownloadSeasonCommand}"/>
+            <Button Content="Sync List"
+                    u:FormItem.NoLabel="True"
+                    Theme="{DynamicResource SolidButton}"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding SyncListCommand}"/>
+        </u:Form>
+    </Grid>
+</ContentPage>

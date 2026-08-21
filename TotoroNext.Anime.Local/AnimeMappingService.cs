@@ -1,10 +1,12 @@
-﻿using TotoroNext.Anime.Abstractions;
+﻿using JetBrains.Annotations;
+using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Local;
 
-internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingService
+[UsedImplicitly]
+internal class AnimeMappingService(IDbContext dbContext) : IAnimeMappingService
 {
     public async Task<AnimeId?> GetId(AnimeModel anime)
     {
@@ -12,11 +14,11 @@ internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingServ
         {
             return anime.ExternalIds;
         }
-        
+
         var localAnime = anime.ServiceName switch
         {
-            "MyAnimeList" => dbContext.Anime.FindById(anime.Id),
-            "Anilist" => dbContext.Anime.FindOne(x => x.AnilistId == anime.Id),
+            "Anilist" => dbContext.Anime.FindById(anime.Id),
+            "MyAnimeList" => dbContext.Anime.FindOne(x => x.MyAnimeListId == anime.Id),
             "AniDb" => dbContext.Anime.FindOne(x => x.AniDbId == anime.Id),
             "Kitsu" => dbContext.Anime.FindOne(x => x.KitsuId == anime.Id),
             "Simkl" => dbContext.Anime.FindOne(x => x.SimklId == anime.Id),
@@ -31,12 +33,12 @@ internal class AnimeMappingService(ILiteDbContext dbContext) : IAnimeMappingServ
 
         return new AnimeId
         {
-            MyAnimeList = localAnime.MyAnimeListId,
+            MyAnimeList = localAnime.MyAnimeListId ?? 0,
             Anilist = localAnime.AnilistId,
-            AniDb = localAnime.AniDbId,
-            Kitsu = localAnime.KitsuId,
-            Simkl = localAnime.SimklId,
-            AnimeNewsNetwork = localAnime.AnnId,
+            AniDb = localAnime.AniDbId ?? 0,
+            Kitsu = localAnime.KitsuId ?? 0,
+            Simkl = localAnime.SimklId ?? 0,
+            AnimeNewsNetwork = localAnime.AnnId ?? 0
         };
     }
 }

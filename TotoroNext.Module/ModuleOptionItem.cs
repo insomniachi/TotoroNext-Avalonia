@@ -71,6 +71,23 @@ public class ModuleOptions(IEnumerable<ModuleOptionItem> items) : List<ModuleOpt
         Add(builder.ToPluginOption());
         return this;
     }
+
+    public ModuleOptionItem? GetOptionOrDefault(string name) => this.FirstOrDefault(x => x.Name == name);
+
+    public string GetString(string name, string defaultValue = "") => GetOptionOrDefault(name)?.Value ?? defaultValue;
+
+    public bool GetBool(string name, bool defaultValue = false) =>
+        GetOptionOrDefault(name) is not { } option ? defaultValue : option.Value == bool.TrueString;
+
+    public int GetInt32(string name, int defaultValue = 0) => GetOptionOrDefault(name)?.GetInt32(name, defaultValue) ?? defaultValue;
+
+    public double GetDouble(string name, double defaultValue = 0) => GetOptionOrDefault(name)?.GetDouble(name, defaultValue) ?? defaultValue;
+
+    public TEnum GetEnum<TEnum>(string name, TEnum defaultValue) where TEnum : Enum
+    {
+        var option = GetOptionOrDefault(name);
+        return option is null ? defaultValue : option.GetValueOrDefault(x => (TEnum)Enum.Parse(typeof(TEnum), x), defaultValue);
+    }
 }
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -83,7 +100,6 @@ public enum SpecialEditorType
 {
     TextBox,
     ComboBox,
-    NumberBox,
     ToggleSwitch,
     FileBrowser
 }

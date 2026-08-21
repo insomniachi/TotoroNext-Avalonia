@@ -1,19 +1,17 @@
 ﻿using System.Xml;
 using Avalonia.Platform.Storage;
-using GraphQL.Client.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Local;
 
 internal class TrackingService(
-    ILiteDbContext dbContext,
+    IDbContext dbContext,
     IStorageProvider storageProvider,
     IAnimeMappingService mappingService,
-    ILocalMetadataService localMetadataService,
-    GraphQLHttpClient client) : ILocalTrackingService
+    ILocalMetadataService localMetadataService) : ILocalTrackingService
 {
-    public Guid Id => Guid.Empty;
+    public Guid Id => Module.Descriptor.Id;
 
     public string Name => "Local";
 
@@ -29,7 +27,7 @@ internal class TrackingService(
             {
                 anime.AiringStatus = AiringStatus.FinishedAiring;
             }
-            
+
             dbContext.Tracking.Upsert(localTracking);
             dbContext.Anime.Upsert(anime);
             return Task.FromResult(tracking);
@@ -50,45 +48,46 @@ internal class TrackingService(
 
     public Task<List<AnimeModel>> GetUserList(CancellationToken ct)
     {
-        return Task.Run(async () =>
+        return Task.Run(() =>
         {
             List<AnimeModel> list;
             lock (dbContext)
             {
                 var trackedIds = dbContext.Tracking.FindAll().Select(t => t.Id).ToHashSet();
-                list = dbContext.Anime.Find(a => trackedIds.Contains(a.MyAnimeListId))
-                                    .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
-                                    .ToList();
+                list =
+                [
+                    .. dbContext.Anime.Find(a => trackedIds.Contains(a.AnilistId))
+                                .Select(Converter.ToAppModel)
+                ];
             }
-            
-            foreach (var anime in list.Where(x => x.AiringStatus == AiringStatus.CurrentlyAiring))
-            {
-                if (anime.Tracking?.WatchedEpisodes != anime.TotalEpisodes)
-                {
-                    continue;
-                }
 
-                if (anime.ExternalIds.Anilist == 0)
-                {
-                    continue;
-                }
-                    
-                var totalEpisodes = await AnilistHelper.GetTotalAiredEpisodes(client, anime.ExternalIds.Anilist, CancellationToken.None);
-                if (totalEpisodes > 0)
-                {
-                    anime.TotalEpisodes = totalEpisodes;
-                }
-            }
-            
+            // foreach (var anime in list.Where(x => x.AiringStatus == AiringStatus.CurrentlyAiring))
+            // {
+            //     if (anime.Tracking?.WatchedEpisodes != anime.TotalEpisodes)
+            //     {
+            //         continue;
+            //     }
+            //
+            //     if (anime.ExternalIds.Anilist == 0)
+            //     {
+            //         continue;
+            //     }
+            //         
+            //     var totalEpisodes = await AnilistHelper.GetTotalAiredEpisodes(client, anime.ExternalIds.Anilist, CancellationToken.None);
+            //     if (totalEpisodes > 0)
+            //     {
+            //         anime.TotalEpisodes = totalEpisodes;
+            //     }
+            // }
+
             return list;
-
         }, ct);
     }
 
     public void SyncList(List<AnimeModel> animeList)
     {
         var trackings = new List<LocalTracking>();
-        var toUpdate = new List<LocalAnimeModel>();
+        var toUpdate = new List<OfflineAnimeModel>();
         foreach (var anime in animeList)
         {
             if (anime.Tracking is null)
@@ -98,8 +97,8 @@ internal class TrackingService(
 
             var localAnime = anime.ServiceName switch
             {
-                nameof(AnimeId.MyAnimeList) => dbContext.Anime.FindById(anime.Id),
-                nameof(AnimeId.Anilist) => dbContext.Anime.FindOne(x => x.AnilistId == anime.Id),
+                nameof(AnimeId.Anilist) => dbContext.Anime.FindById(anime.Id),
+                nameof(AnimeId.MyAnimeList) => dbContext.Anime.FindOne(x => x.MyAnimeListId == anime.Id),
                 nameof(AnimeId.AniDb) => dbContext.Anime.FindOne(x => x.AniDbId == anime.Id),
                 nameof(AnimeId.Kitsu) => dbContext.Anime.FindOne(x => x.KitsuId == anime.Id),
                 nameof(AnimeId.Simkl) => dbContext.Anime.FindOne(x => x.SimklId == anime.Id),
@@ -114,7 +113,7 @@ internal class TrackingService(
 
             var localTracking = new LocalTracking
             {
-                Id = localAnime.MyAnimeListId,
+                Id = localAnime.AnilistId,
                 Tracking = anime.Tracking
             };
 
@@ -221,23 +220,30 @@ internal class TrackingService(
         }
 
         HashSet<long> visited = [];
-        List<AnimeModel> untracked = [];
+        List<long> untracked = [];
 
         foreach (var anime in animeList)
         {
             await UpdateUntrackedAnime(anime, visited, untracked, ct);
         }
 
-        return untracked.OrderBy(x => x.Title).ToList();
+        return
+        [
+            .. dbContext.Anime
+                        .FindAll()
+                        .Where(x => untracked.Contains(x.AnilistId))
+                        .Select(Converter.ToAppModel)
+                        .OrderBy(x => x.Title)
+        ];
     }
 
-    private async Task UpdateUntrackedAnime(AnimeModel anime, HashSet<long> visited, List<AnimeModel> untracked, CancellationToken ct)
+    private async Task UpdateUntrackedAnime(AnimeModel anime, HashSet<long> visited, List<long> untracked, CancellationToken ct)
     {
         if (ct.IsCancellationRequested)
         {
             return;
         }
-        
+
         if (await mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 } id)
         {
             return;
@@ -250,19 +256,26 @@ internal class TrackingService(
 
         if (anime.Tracking is null)
         {
-            untracked.Add(anime);
+            untracked.Add(anime.Id);
         }
 
-        var localAnime = await localMetadataService.GetAnimeWithoutAdditionalInfoAsync(id.MyAnimeList);
+        var localAnime = dbContext.Anime.FindById(anime.Id);
 
         foreach (var relatedAnime in localAnime.Related)
         {
-            if (relatedAnime.AiringStatus is AiringStatus.NotYetAired)
+            if (relatedAnime.RelationType is not ("PREQUEL" or "SEQUEL" or "PARENT" or "SPIN_OFF") )
+            {
+                continue;
+            }
+
+            var relatedAnimeObj = await localMetadataService.GetAnimeWithoutAdditionalInfoAsync(relatedAnime.Id);
+            
+            if (relatedAnimeObj is null)
             {
                 continue;
             }
             
-            await UpdateUntrackedAnime(relatedAnime, visited, untracked, ct);
+            await UpdateUntrackedAnime(relatedAnimeObj, visited, untracked, ct);
         }
     }
 }
