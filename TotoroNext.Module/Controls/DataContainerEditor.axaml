@@ -3,78 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:TotoroNext.Module.Controls"
-             xmlns:module="clr-namespace:TotoroNext.Module"
-             xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TotoroNext.Module.Controls.DataContainerEditor">
     <ItemsControl
         ItemsSource="{Binding $parent[controls:DataContainerEditor].Options}">
         <ItemsControl.DataTemplates>
-            <controls:DataContainerPropertyTemplateSelector>
-                <controls:DataContainerPropertyTemplateSelector.TextTemplate>
-                    <DataTemplate DataType="module:DataContainerProperty">
-                        <controls:SettingsCard Header="{Binding DisplayName}"
-                                               Description="{Binding Description}">
-                            <controls:SettingsCard.Editor>
-                                <TextBox Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Stretch"
-                                         MaxWidth="350"
-                                         MinWidth="200"
-                                         TextWrapping="WrapWithOverflow" />
-                            </controls:SettingsCard.Editor>
-                        </controls:SettingsCard>
-                    </DataTemplate>
-                </controls:DataContainerPropertyTemplateSelector.TextTemplate>
-                <controls:DataContainerPropertyTemplateSelector.ComboBoxTemplate>
-                    <DataTemplate DataType="module:DataContainerProperty">
-                        <controls:SettingsCard Header="{Binding DisplayName}"
-                                               Description="{Binding Description}">
-                            <controls:SettingsCard.Editor>
-                                <ComboBox ItemsSource="{Binding AllowedValues}"
-                                          SelectedItem="{Binding Value, Mode=TwoWay}"
-                                          HorizontalAlignment="Stretch"
-                                          Width="250" />
-                            </controls:SettingsCard.Editor>
-                        </controls:SettingsCard>
-                    </DataTemplate>
-                </controls:DataContainerPropertyTemplateSelector.ComboBoxTemplate>
-                <controls:DataContainerPropertyTemplateSelector.ToggleSwitchTemplate>
-                    <DataTemplate DataType="module:DataContainerProperty">
-                        <controls:SettingsCard Header="{Binding DisplayName}"
-                                               Description="{Binding Description}">
-                            <controls:SettingsCard.Editor>
-                                <ToggleSwitch IsChecked="{Binding IsChecked}" />
-                            </controls:SettingsCard.Editor>
-                        </controls:SettingsCard>
-                    </DataTemplate>
-                </controls:DataContainerPropertyTemplateSelector.ToggleSwitchTemplate>
-                <controls:DataContainerPropertyTemplateSelector.FileBrowserTemplate>
-                    <DataTemplate DataType="module:DataContainerProperty">
-                        <controls:SettingsCard Header="{Binding DisplayName}"
-                                               Description="{Binding Description}">
-                            <controls:SettingsCard.Editor>
-                                <u:PathPicker
-                                    Title="Browse"
-                                    AllowMultiple="False"
-                                    SelectedPathsText="{Binding Value, FallbackValue={x:Null}}"
-                                    UsePickerType="OpenFile"
-                                    HorizontalAlignment="Stretch"
-                                    MinWidth="300" />
-                            </controls:SettingsCard.Editor>
-                        </controls:SettingsCard>
-                    </DataTemplate>
-                </controls:DataContainerPropertyTemplateSelector.FileBrowserTemplate>
-                <controls:DataContainerPropertyTemplateSelector.NumberBoxTemplate>
-                    <DataTemplate DataType="module:DataContainerProperty">
-                        <controls:SettingsCard Header="{Binding DisplayName}"
-                                               Description="{Binding Description}">
-                            <controls:SettingsCard.Editor>
-                                <u:NumericIntUpDown Value="{Binding Value}"
-                                                    MinWidth="100"/>
-                            </controls:SettingsCard.Editor>
-                        </controls:SettingsCard>
-                    </DataTemplate>
-                </controls:DataContainerPropertyTemplateSelector.NumberBoxTemplate>
-            </controls:DataContainerPropertyTemplateSelector>
+            <controls:DataContainerPropertyTemplateSelector />
         </ItemsControl.DataTemplates>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
