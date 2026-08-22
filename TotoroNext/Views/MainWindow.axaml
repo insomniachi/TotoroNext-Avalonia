@@ -76,7 +76,11 @@
             <NavigationPage
                 x:Name="ContentArea"
                 Margin="12,36,12,12"
-                ext:NavigationExtensions.IsAttached="True" />
+                ext:NavigationExtensions.IsAttached="True" >
+                <NavigationPage.PageTransition>
+                    <CrossFade Duration="0:00:00.200"/>
+                </NavigationPage.PageTransition>
+            </NavigationPage>
         </DrawerPage.Content>
     </DrawerPage>
 </u:UrsaWindow>
