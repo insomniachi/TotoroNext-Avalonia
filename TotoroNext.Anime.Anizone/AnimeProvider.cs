@@ -10,25 +10,31 @@ using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Anizone;
 
-public class AnimeProvider : IAnimeProvider
+public partial class AnimeProvider : IAnimeProvider
 {
     public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
-        var stream = await "https://anizone.to/anime"
+        var html = await "https://anizone.to/anime"
                            .AppendQueryParam("search", query)
-                           .GetStreamAsync(cancellationToken: ct);
+                           .GetStringAsync(cancellationToken: ct);
 
-        var doc = new HtmlDocument();
-        doc.Load(stream);
-
-        foreach (var div in doc.QuerySelectorAll("div.grid > div") ?? [])
+        var match = JsonListRegex().Match(html);
+        
+        if (!match.Success)
         {
-            ct.ThrowIfCancellationRequested();
+            Console.WriteLine("Could not find the JSON data payload using Regex.");
+            yield break;
+        }
 
-            var id = div.GetAttributeValue("wire:key", "")["a-".Length..];
-            var image = div.QuerySelector("img").GetAttributeValue("src", "");
-            var title = GetTitle(div);
+        var escapedJson = match.Groups[1].Value;
+        var decodedJson = Regex.Unescape(escapedJson);
+        var doc = JsonDocument.Parse(decodedJson);
 
+        foreach (var anime in doc.RootElement.EnumerateArray())
+        {
+            var id = anime.GetProperty("slug").GetString()!;
+            var image = anime.GetProperty("cover").GetString()!;
+            var title = anime.GetProperty("main_title").GetString()!;
             yield return new SearchResult(this, id, title, new Uri(image));
         }
     }
@@ -46,22 +52,30 @@ public class AnimeProvider : IAnimeProvider
             ct.ThrowIfCancellationRequested();
 
             var id = li.QuerySelector("a").GetAttributeValue("href", "")[detailsUrl.Length ..];
-            var title = li.QuerySelector("h3").InnerHtml.Replace($"Episode {id} :", "").Trim();
             if (!float.TryParse(id, out var number))
             {
                 continue;
             }
-
-            yield return new Episode(this, animeId, id, number)
+            
+            var ep = new Episode(this, animeId, id, number);
+            var data = li.GetAttributeValue("x-data", "");
+            var match = JsonObjectRegex().Match(data);
+            if (!match.Success)
             {
-                Info = new EpisodeInfo
+                yield return ep;
+            }
+
+            var escapedJson = match.Groups[1].Value;
+            var decodedJson = Regex.Unescape(escapedJson);
+            var titles = JsonDocument.Parse(decodedJson);
+            ep.Info = new EpisodeInfo()
+            {
+                Titles = new Titles()
                 {
-                    Titles = new Titles
-                    {
-                        English = title
-                    }
+                    English = titles.RootElement.EnumerateObject().Last().Value.GetString()!
                 }
             };
+            yield return ep;
         }
     }
 
@@ -72,61 +86,104 @@ public class AnimeProvider : IAnimeProvider
 
         var doc = new HtmlDocument();
         doc.Load(stream);
-
-        var mediaPlayer = doc.QuerySelector("media-player");
-        var src = mediaPlayer.GetAttributeValue("src", "");
+        
+        var match = VideoRegex().Match(doc.Text);
+        var escapedJson = match.Groups[1].Value;
+        var decodedJson = Regex.Unescape(escapedJson);
+        var videos = JsonDocument.Parse(decodedJson);
+        var src = videos.RootElement.GetProperty("src").GetString()!;
         var subtitle = "";
-        foreach (var track in mediaPlayer.QuerySelectorAll("track"))
+        SkipData? data = null;
+        if (videos.RootElement.TryGetProperty("chapter", out var property))
         {
-            var lang = track.GetAttributeValue("srclang", "");
+            var url = property.GetString()!;
+            var vtt = await url.GetStringAsync(cancellationToken: ct);
+            data = ParseVtt(vtt);
+        }
+        
+        foreach (var track in videos.RootElement.GetProperty("subtitles").EnumerateArray())
+        {
+            var lang = track.GetProperty("language").GetString()!;
             if (lang != "en")
             {
                 continue;
             }
 
-            subtitle = track.GetAttributeValue("src", "");
+            subtitle = track.GetProperty("file").GetString();
             break;
         }
 
         yield return new VideoServer("Default", new Uri(src))
         {
-            Subtitle = subtitle
+            Subtitle = subtitle,
+            SkipData = data
         };
     }
-
-    private static string GetTitle(HtmlNode div)
+    
+    public static SkipData ParseVtt(string vttText)
     {
-        var xData = div.GetAttributeValue("x-data", "");
+        var result = new SkipData();
+        var blocks = VttRegex().Split(vttText.Trim());
+
+        foreach (var block in blocks)
+        {
+            // Skip the WEBVTT header block
+            if (block.StartsWith("WEBVTT")) continue;
+
+            var lines = block.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length < 2)
+            {
+                continue;
+            }
+
+            var timeLine = lines[0]; // e.g., 00:00:00.000 --> 00:00:05.041
+            var textLine = lines[1]; // e.g., Intro
+
+            // Target only "Intro" (Openings) or "Credits" (Edits)
+            if (!textLine.Equals("Intro", StringComparison.OrdinalIgnoreCase) &&
+                !textLine.Equals("Credits", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var timeParts = timeLine.Split(["-->"], StringSplitOptions.RemoveEmptyEntries);
+            if (timeParts.Length != 2)
+            {
+                continue;
+            }
+
+            var startTime = TimeSpan.Parse(timeParts[0].Trim());
+            var endTime = TimeSpan.Parse(timeParts[1].Trim());
+            if (textLine.Equals("Intro", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Opening = new Segment()
+                {
+                    Start = startTime,
+                    End = endTime
+                };
+            }
+            if (textLine.Equals("Credits", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Ending = new Segment()
+                {
+                    Start = startTime,
+                    End = endTime
+                };
+            }
+        }
         
-        if (string.IsNullOrEmpty(xData))
-        {
-            return "";
-        }
-
-        var start = xData.IndexOf("JSON.parse('", StringComparison.Ordinal);
-        
-        if (start < 0)
-        {
-            return "";
-        }
-
-        start += "JSON.parse('".Length;
-        var end = xData.IndexOf("')", start, StringComparison.Ordinal);
-        
-        if (end <= start)
-        {
-            return "";
-        }
-
-        var jsonEscaped = xData[start..end];
-        var json = Regex.Unescape(jsonEscaped);
-
-        var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-        if (dict is { Count: > 0 })
-        {
-            return dict.Values.FirstOrDefault() ?? "";
-        }
-
-        return "";
+        return result;
     }
+
+    [GeneratedRegex("""x-data="[^"]*items:\s*JSON\.parse\('(.*?)'\)""", RegexOptions.Singleline)]
+    private partial Regex JsonListRegex();
+
+    [GeneratedRegex(@"JSON\.parse\(\s*'([^']+)'\s*\)")]
+    private partial Regex JsonObjectRegex();
+
+    [GeneratedRegex(@"vidstackPlayer\(JSON\.parse\(\s*'([^']+)'\s*\)\)")]
+    private partial Regex VideoRegex();
+    
+    [GeneratedRegex(@"\r\n\r\n|\n\n|\r\r")]
+    private static partial Regex VttRegex();
 }
