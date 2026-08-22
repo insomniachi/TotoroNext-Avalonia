@@ -9,7 +9,7 @@ public sealed class AnimeId
     public long Kitsu { get; set; }
     public long Simkl { get; set; }
     public long AnimeNewsNetwork { get; set; }
-    public long Local => MyAnimeList;
+    public long Local => Anilist;
 
     public long? GetIdForService(string serviceType)
     {

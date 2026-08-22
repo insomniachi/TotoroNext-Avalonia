@@ -42,7 +42,7 @@ public partial class SettingsViewModel : ObservableObject, IInitializable, IInit
 
         MediaEngines = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaEngine))];
         AnimeProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.AnimeProvider))];
-        TrackingServices = [Descriptor.Default, .. allModules.Where(x => x.Components.Contains(ComponentTypes.Tracking))];
+        TrackingServices = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.Tracking))];
         SegmentProviders = [.. allModules.Where(x => x.Components.Contains(ComponentTypes.MediaSegments))];
         TorrentStreamServices =
         [

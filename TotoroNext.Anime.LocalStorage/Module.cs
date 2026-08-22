@@ -9,7 +9,7 @@ public class Module : IModule
 {
     public static Descriptor Descriptor { get; } = new()
     {
-        Name = "Local",
+        Name = "Local Media",
         Id = new Guid("a294557f-4f1b-4c0f-a37d-39825019a761"),
         Components = [ComponentTypes.AnimeProvider],
         HeroImage = ResourceHelper.GetResource("local.png"),

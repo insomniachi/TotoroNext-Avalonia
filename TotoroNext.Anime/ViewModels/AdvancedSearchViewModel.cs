@@ -42,7 +42,7 @@ public partial class AdvancedSearchViewModel : ObservableObject, IAsyncInitializ
             .DisposeMany()
             .Subscribe();
         
-        MetadataServices = [Descriptor.Default, ..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
+        MetadataServices = [..descriptors.Where(x => x.Components.Contains(ComponentTypes.Metadata))];
     }
 
     [ObservableProperty] public partial AnimeSeason? Season { get; set; }

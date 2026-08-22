@@ -74,8 +74,8 @@ public static class AnimeMetadataExtensions
             {
                 var serviceType = anime.ServiceName switch
                 {
-                    "Anilist" => "anilist_id",
-                    "MyAnimeList" or "Local" => "mal_id",
+                    "Anilist" or "Local" => "anilist_id",
+                    "MyAnimeList" => "mal_id",
                     _ => throw new NotSupportedException($"Service type {anime.ServiceId} is not supported.")
                 };
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
 using JetBrains.Annotations;
@@ -11,7 +12,7 @@ using TotoroNext.Module.Abstractions;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public sealed partial class SequelLocatorViewModel : ObservableObject, IAsyncInitializable, IDisposable, INavigatorHost
+public sealed partial class SequelLocatorViewModel : ObservableObject, IInitializable, IDisposable, INavigatorHost
 {
     private readonly ReadOnlyObservableCollection<AnimeModel> _anime;
     private readonly SourceCache<AnimeModel, long> _animeCache = new(x => x.Id);
@@ -51,13 +52,19 @@ public sealed partial class SequelLocatorViewModel : ObservableObject, IAsyncIni
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
-    public async Task InitializeAsync()
+    public void Initialize()
     {
         IsLoading = true;
-        var userlist = await _trackingService.GetUserList(_cts.Token);
-        var sequelsAndPrequels = await _localTrackingService.GetPrequelsAndSequelsWithoutTracking(userlist, _cts.Token);
-        _animeCache.AddOrUpdate(sequelsAndPrequels);
-        IsLoading = false;
+        _ = Task.Run(async () =>
+        {
+            var userlist = await _trackingService.GetUserList(_cts.Token);
+            var sequelsAndPrequels = await _localTrackingService.GetPrequelsAndSequelsWithoutTracking(userlist, _cts.Token);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _animeCache.AddOrUpdate(sequelsAndPrequels);
+                IsLoading = false;
+            });
+        });
     }
 
     public void Dispose()

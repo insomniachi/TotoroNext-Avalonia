@@ -41,6 +41,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
         {
             effect.Radius = 25;
         }
+
         AssociatedObject.StatusBorder.Height = 300;
         AssociatedObject.StatusBorder.Background = Brushes.Transparent;
         AssociatedObject.StatusBorder.BorderThickness = Zero;
@@ -64,6 +65,7 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
         {
             effect.Radius = 0;
         }
+
         AssociatedObject.StatusBorder.Height = 60;
         AssociatedObject.StatusBorder.Background = StatusBorderBrush;
         AssociatedObject.StatusBorder.BorderThickness = StatusBorderBorder;
@@ -233,6 +235,10 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
 
     private static IEnumerable<Control> GetFooterLeftContents(AnimeModel anime)
     {
+        if (anime.ServiceName == "Local")
+        {
+            yield return EditDbButton(anime);
+        }
         yield return AddToListButton(anime);
         yield return EditButton(anime);
         yield return UserScoreBorder(anime);
@@ -281,6 +287,20 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
             Source = anime,
             Converter = ObjectConverters.IsNull
         });
+
+        return button;
+    }
+
+    private static Button EditDbButton(AnimeModel anime)
+    {
+        var button = new Button()
+                     .Command(Commands.EditDbCommand)
+                     .CommandParameter(anime)
+                     .CornerRadius(30)
+                     .Height(30).Width(30)
+                     .Content(new Viewbox()
+                              .Height(12).Width(12)
+                              .Child(IconRegistry.GetPathIcon(CommonIcons.DatabaseEdit)));
 
         return button;
     }

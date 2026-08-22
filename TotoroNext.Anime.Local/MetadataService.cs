@@ -1,28 +1,30 @@
-﻿using Flurl;
-using FuzzySharp;
-using GraphQL;
+﻿using FuzzySharp;
 using GraphQL.Client.Http;
+using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Anime.Anilist;
+using TotoroNext.Module;
+using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Local;
 
-internal class MetadataService(ILiteDbContext dbContext, 
-                               IAnimeMappingService mappingService,
-                               GraphQLHttpClient client) : ILocalMetadataService
+[UsedImplicitly]
+internal class MetadataService(
+    IDbContext dbContext,
+    IDialogService dialogService,
+    GraphQLHttpClient client) : ILocalMetadataService
 {
-    public Guid Id => Guid.Empty;
+    public Guid Id => Module.Id;
 
     public string Name => "Local";
 
-    public Task<AnimeModel> GetAnimeWithoutAdditionalInfoAsync(long id)
+    public Task<AnimeModel?> GetAnimeWithoutAdditionalInfoAsync(long id)
     {
         return Task.Run(() =>
         {
             var anime = dbContext.Anime.FindById(id);
-            return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
+            return anime is null ? null : Converter.ToAppModel(anime);
         });
     }
 
@@ -39,40 +41,10 @@ internal class MetadataService(ILiteDbContext dbContext,
                 if (totalEpisodes > 0)
                 {
                     anime.TotalEpisodes = totalEpisodes;
-                } 
+                }
             }
 
-            if (anime.AdditionalInfo is not null || anime.AnilistId == 0)
-            {
-                return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
-            }
-
-            var query = new QueryQueryBuilder().WithMedia(MediaQueryBuilderAdditionalInfo(), (int)anime.AnilistId,
-                                                          type: MediaType.Anime).Build();
-            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
-            {
-                Query = query
-            });
-
-            anime.AdditionalInfo = new LocalAdditionalInfo
-            {
-                Id = id,
-                Info = new OfflineAdditionalInfo
-                {
-                    TitleEnglish = response.Data.Media.Title.English,
-                    TitleRomaji = response.Data.Media.Title.Romaji,
-                    Description = response.Data.Media.Description,
-                    Popularity = response.Data.Media.Popularity ?? 0,
-                    Videos = [..ConvertTrailers(response.Data.Media.Trailer)],
-                    BannerImage = response.Data.Media.BannerImage
-                },
-                ExpiresAt = DateTimeOffset.UtcNow.AddMonths(1)
-            };
-
-            dbContext.AdditionalInfo.Upsert(anime.AdditionalInfo);
-            dbContext.Anime.Update(anime);
-
-            return LocalModelConverter.ToAnimeModel(anime, dbContext.Anime);
+            return Converter.ToAppModel(anime);
         });
     }
 
@@ -82,10 +54,11 @@ internal class MetadataService(ILiteDbContext dbContext,
         {
             var results = dbContext.Anime.FindAll().Select(x =>
                                    {
-                                       var titleScore = Fuzz.TokenSetRatio(term, x.Title.ToLower());
-                                       var altScore = x.AlternateTitles.Count != 0
-                                           ? x.AlternateTitles.Max(t => Fuzz.TokenSetRatio(term, t.ToLower()))
-                                           : 0;
+                                       var titleScore = Fuzz.TokenSetRatio(term, x.Title.Romaji);
+                                       var alt = new[] { x.Title.Romaji, x.Title.English };
+                                       var altScore = alt.Where(y => y is not null)
+                                                         .Select(y => y!)
+                                                         .Max(t => Fuzz.TokenSetRatio(term, t.ToLower()));
                                        var bestScore = Math.Max(titleScore, altScore);
                                        return (Anime: x, Score: bestScore);
                                    })
@@ -93,7 +66,7 @@ internal class MetadataService(ILiteDbContext dbContext,
                                    .OrderByDescending(x => x.Score)
                                    .Select(x => x.Anime)
                                    .Take(15)
-                                   .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
+                                   .Select(Converter.ToAppModel)
                                    .ToList();
             return results;
         });
@@ -114,10 +87,11 @@ internal class MetadataService(ILiteDbContext dbContext,
             {
                 candidates = candidates.Select(x =>
                                        {
-                                           var titleScore = Fuzz.TokenSetRatio(term, x.Title.ToLower());
-                                           var altScore = x.AlternateTitles.Count != 0
-                                               ? x.AlternateTitles.Max(t => Fuzz.TokenSetRatio(term, t.ToLower()))
-                                               : 0;
+                                           var titleScore = Fuzz.TokenSetRatio(term, x.Title.Romaji);
+                                           var alt = new[] { x.Title.Romaji, x.Title.English };
+                                           var altScore = alt.Where(y => y is not null)
+                                                             .Select(y => y!)
+                                                             .Max(t => Fuzz.TokenSetRatio(term, t.ToLower()));
                                            var bestScore = Math.Max(titleScore, altScore);
                                            return (Anime: x, Score: bestScore);
                                        })
@@ -163,7 +137,7 @@ internal class MetadataService(ILiteDbContext dbContext,
 
             var response = candidates.OrderByDescending(x => x.MeanScore)
                                      .Take(100)
-                                     .Select(x => LocalModelConverter.ToAnimeModel(x, dbContext.Anime))
+                                     .Select(Converter.ToAppModel)
                                      .ToList();
 
             return response;
@@ -172,56 +146,12 @@ internal class MetadataService(ILiteDbContext dbContext,
 
     public async Task<List<EpisodeInfo>> GetEpisodesAsync(AnimeModel anime)
     {
-        if (anime.Episodes is { Count: > 0 })
-        {
-            return anime.Episodes;
-        }
-
-        var localAnime = dbContext.Anime.FindById(anime.Id);
-        localAnime.EpisodeInfo = new LocalEpisodeInfo
-        {
-            Id = anime.Id,
-            Info = await anime.GetEpisodes(),
-            ExpiresAt = DateTimeOffset.Now.AddDays(6)
-        };
-
-        if (anime.AiringStatus != AiringStatus.FinishedAiring || localAnime.EpisodeInfo.Info is not { Count: > 0 })
-        {
-            return localAnime.EpisodeInfo.Info;
-        }
-
-        lock (dbContext)
-        {
-            dbContext.Episodes.Upsert(localAnime.EpisodeInfo);
-            dbContext.Anime.Update(localAnime);
-        }
-
-        return localAnime.EpisodeInfo.Info;
+        return await anime.GetEpisodes();
     }
 
     public async Task<List<CharacterModel>> GetCharactersAsync(long animeId)
     {
-        var anime = dbContext.Anime.FindById(animeId);
-
-        if (anime.CharacterInfo is { Characters.Count: > 0 })
-        {
-            return anime.CharacterInfo.Characters;
-        }
-
-        anime.CharacterInfo = new LocalCharacterInfo
-        {
-            Id = animeId,
-            Characters = await AnilistHelper.GetCharactersAsync(client, anime.AnilistId),
-            ExpiresAt = DateTimeOffset.Now.AddDays(1)
-        };
-
-        lock (dbContext)
-        {
-            dbContext.Characters.Upsert(anime.CharacterInfo);
-            dbContext.Anime.Update(anime);
-        }
-
-        return anime.CharacterInfo.Characters;
+        return await AnilistHelper.GetCharactersAsync(client, animeId);
     }
 
     public Task<List<string>> GetGenresAsync()
@@ -249,7 +179,7 @@ internal class MetadataService(ILiteDbContext dbContext,
                 return dbContext.Anime.FindAll()
                                 .Where(x => ids.Contains(x.AnilistId))
                                 .ToList()
-                                .Select(LocalModelConverter.ToAnimeModel)
+                                .Select(Converter.ToAppModel)
                                 .ToList();
             }
         }, ct);
@@ -265,7 +195,7 @@ internal class MetadataService(ILiteDbContext dbContext,
                 return dbContext.Anime.FindAll()
                                 .Where(x => ids.Contains(x.AnilistId))
                                 .ToList()
-                                .Select(LocalModelConverter.ToAnimeModel)
+                                .Select(Converter.ToAppModel)
                                 .ToList();
             }
         }, ct);
@@ -281,93 +211,100 @@ internal class MetadataService(ILiteDbContext dbContext,
                 return dbContext.Anime.FindAll()
                                 .Where(x => ids.Contains(x.AnilistId))
                                 .ToList()
-                                .Select(LocalModelConverter.ToAnimeModel)
+                                .Select(Converter.ToAppModel)
                                 .ToList();
             }
         }, ct);
     }
-    
+
     public async Task<List<AnimeModel>> BuilderRelationshipsAsync(long id, CancellationToken ct)
     {
-        var anime = await GetAnimeWithoutAdditionalInfoAsync(id);
-        var ids = new HashSet<long>() { id };
-        var relations = new List<AnimeModel>() { anime };
-        await BuildRelationshipsInternalAsync(anime, ids, relations, ct);
-        return relations
+        var anime = dbContext.Anime.FindById(id);
+        if (anime is null)
+        {
+            return [];
+        }
+
+        var visited = new HashSet<long> { id };
+        var related = new List<OfflineAnimeModel>();
+        await BuildRelationshipsInternalAsync(anime, visited, related, ct);
+        return
+        [
+            .. related
                .Where(x => x.Season is not null)
                .OrderBy(x => x.Season!.Year).ThenBy(x => x.Season!.SeasonName)
-               .ToList();
+               .Select(Converter.ToAppModel)
+        ];
     }
-    
-    private async Task BuildRelationshipsInternalAsync(AnimeModel anime, HashSet<long> ids, List<AnimeModel> relations, CancellationToken ct)
+
+    public async Task Edit(AnimeModel anime)
     {
+        var dbAnime = dbContext.Anime.FindById(anime.Id);
+        var options = new ModuleOptions();
+        options.AddOption(b => b.WithName(nameof(anime.AiringStatus))
+                                .WithDisplayName("Airing Status")
+                                .WithValue(anime.AiringStatus).WithAllowedValues<AiringStatus>())
+               .AddOption(b => b.WithName(nameof(anime.TotalEpisodes))
+                                .WithDisplayName("Total Episodes")
+                                .WithValue(anime.TotalEpisodes))
+               .AddOption(b => b.WithName("AniDbId").WithValue(anime.ExternalIds.AniDb))
+               .AddOption(b => b.WithName("Kitsu").WithValue(anime.ExternalIds.Kitsu))
+               .AddOption(b => b.WithName("AnimeNewsNetwork").WithValue(anime.ExternalIds.AnimeNewsNetwork));
         
+        if (!await dialogService.EditModuleOptions(dbAnime.Title.Romaji ?? "", options))
+        {
+            return;
+        }
+
+        anime.TotalEpisodes = options.GetInt32(nameof(anime.TotalEpisodes));
+        anime.AiringStatus = options.GetEnum(nameof(anime.AiringStatus), anime.AiringStatus);
+        anime.ExternalIds.AniDb = options.GetInt32("AniDbId");
+        anime.ExternalIds.Kitsu = options.GetInt32("Kitsu");
+        anime.ExternalIds.AnimeNewsNetwork = options.GetInt32("AnimeNewsNetwork");
+
+        dbAnime.TotalEpisodes = anime.TotalEpisodes ?? dbAnime.TotalEpisodes;
+        dbAnime.AiringStatus = anime.AiringStatus;
+        dbAnime.AniDbId = anime.ExternalIds.AniDb;
+        dbAnime.KitsuId = anime.ExternalIds.Kitsu;
+        dbAnime.AnnId = anime.ExternalIds.AnimeNewsNetwork;
+        dbContext.Anime.Upsert(dbAnime);
+    }
+
+    private async Task BuildRelationshipsInternalAsync(OfflineAnimeModel anime, HashSet<long> visited, List<OfflineAnimeModel> related,
+                                                       CancellationToken ct)
+    {
         if (ct.IsCancellationRequested)
         {
             return;
         }
-        
-        if (await mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 })
-        {
-            return;
-        }
 
-        foreach (var related in anime.Related)
+        foreach (var relationship in anime.Related)
         {
-            if (!ids.Add(related.Id))
+            if (!visited.Add(relationship.Id))
             {
                 continue;
             }
 
-            var relatedFull = await GetAnimeWithoutAdditionalInfoAsync(related.Id);
+            if (relationship.RelationType is not ("SEQUEL" or "PREQUEL"))
+            {
+                continue;
+            }
+
+            var relatedFull = dbContext.Anime.FindById(relationship.Id);
+
+            if (relatedFull is null)
+            {
+                continue;
+            }
 
             if (relatedFull.MediaFormat is AnimeMediaFormat.Special or AnimeMediaFormat.Music or AnimeMediaFormat.Ona)
             {
                 continue;
             }
-            
-            relations.Add(relatedFull);
-            
-            await BuildRelationshipsInternalAsync(relatedFull, ids, relations, ct);
+
+            related.Add(relatedFull);
+
+            await BuildRelationshipsInternalAsync(relatedFull, visited, related, ct);
         }
-    }
-
-    private static MediaQueryBuilder MediaQueryBuilderAdditionalInfo()
-    {
-        return new MediaQueryBuilder()
-               .WithId()
-               .WithTitle(new MediaTitleQueryBuilder()
-                          .WithEnglish()
-                          .WithNative()
-                          .WithRomaji())
-               .WithPopularity()
-               .WithDescription(false)
-               .WithTrailer(new MediaTrailerQueryBuilder()
-                            .WithSite()
-                            .WithThumbnail()
-                            .WithId());
-    }
-
-    private static IReadOnlyCollection<TrailerVideo> ConvertTrailers(MediaTrailer? mediaTrailer)
-    {
-        if (mediaTrailer is null)
-        {
-            return [];
-        }
-
-        if (mediaTrailer.Site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
-        {
-            return
-            [
-                new TrailerVideo
-                {
-                    Url = "https://www.youtube.com/watch".AppendQueryParam("v", mediaTrailer.Id),
-                    Title = "Trailer",
-                    Thumbnail = mediaTrailer.Thumbnail
-                }
-            ];
-        }
-
-        return [];
     }
 }

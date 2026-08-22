@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 using GraphQL;
 using GraphQL.Client.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,6 +11,53 @@ namespace TotoroNext.Anime.Abstractions;
 public static partial class AnilistHelper
 {
     private static readonly IMemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
+
+    public static async IAsyncEnumerable<ICollection<Media>> GetSeasonalAnime(GraphQLHttpClient client, int year, AnimeSeason season)
+    {
+        var page = 1;
+        bool hasNextPage;
+        var anilistSeason = (MediaSeason)(int)season;
+
+        do
+        {
+            Console.WriteLine("Processing page {0}", page);
+            var query = new QueryQueryBuilder().WithPage(new PageQueryBuilder()
+                                                             .WithMedia(new MediaQueryBuilder()
+                                                                            .WithId()
+                                                                            .WithIdMal()
+                                                                            .WithBannerImage()
+                                                                            .WithCoverImage(new MediaCoverImageQueryBuilder().WithExtraLarge())
+                                                                            .WithDescription()
+                                                                            .WithEndDate(new FuzzyDateQueryBuilder().WithYear().WithMonth().WithDay())
+                                                                            .WithStartDate(new FuzzyDateQueryBuilder().WithYear().WithMonth().WithDay())
+                                                                            .WithEpisodes()
+                                                                            .WithGenres()
+                                                                            .WithFormat()
+                                                                            .WithMeanScore()
+                                                                            .WithSeason()
+                                                                            .WithSeasonYear()
+                                                                            .WithStatus()
+                                                                            .WithRelations(new MediaConnectionQueryBuilder().WithEdges(new MediaEdgeQueryBuilder()
+                                                                                               .WithRelationType()
+                                                                                               .WithNode(new MediaQueryBuilder().WithId())))
+                                                                            .WithTitle(new MediaTitleQueryBuilder().WithEnglish().WithNative().WithRomaji())
+                                                                            .WithTrailer(new MediaTrailerQueryBuilder().WithId().WithSite().WithThumbnail())
+                                                                            .WithTags(new MediaTagQueryBuilder().WithName())
+                                                                            .WithStudios(new StudioConnectionQueryBuilder().WithEdges(new StudioEdgeQueryBuilder()
+                                                                                             .WithIsMain()
+                                                                                             .WithNode(new StudioQueryBuilder().WithName()))),
+                                                                        seasonYear: year, season: anilistSeason, type: MediaType.Anime)
+                                                             .WithPageInfo(new PageInfoQueryBuilder().WithHasNextPage()),
+                                                         page: page).Build();
+            var response = await client.SendQueryAsync<Query>(new GraphQLRequest
+            {
+                Query = query
+            });
+            hasNextPage = response.Data.Page.PageInfo.HasNextPage ?? false;
+            yield return response.Data.Page.Media;
+            page++;
+        } while (hasNextPage);
+    }
     
     public static async ValueTask<int> GetTotalAiredEpisodes(GraphQLHttpClient client, long anilistId, CancellationToken ct)
     {

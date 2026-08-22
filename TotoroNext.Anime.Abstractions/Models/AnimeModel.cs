@@ -15,7 +15,7 @@ public partial class AnimeModel : ObservableObject
     public string RomajiTitle { get; set; } = "";
     [ObservableProperty] public partial Tracking? Tracking { get; set; }
     public int? TotalEpisodes { get; set; }
-    public AiringStatus AiringStatus { get; set; }
+    [ObservableProperty] public partial AiringStatus AiringStatus { get; set; }
     public float? MeanScore { get; set; }
     public int Popularity { get; set; }
     public DateTime? NextEpisodeAt { get; set; }
