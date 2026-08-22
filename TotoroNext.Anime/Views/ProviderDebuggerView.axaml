@@ -122,6 +122,7 @@
                                 </StackPanel>
                                 <TableView Grid.Column="1"
                                            ItemsSource="{Binding Headers}"
+                                           IsVisible="{Binding Headers.Count}"
                                            HorizontalAlignment="Stretch"
                                            CanUserResizeColumns="False">
                                     <TableView.Columns>
