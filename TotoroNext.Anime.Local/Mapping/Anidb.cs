@@ -8,8 +8,13 @@ internal class Anidb(IHttpClientFactory httpClientFactory)
     public const string GzFilePath = "anidb.xml.gz";
     public List<AnidbItem> Items { get; } = [];
 
-    public long? TryGetId(OfflineAnimeModel anime)
+    public async Task<long?> TryGetId(OfflineAnimeModel anime)
     {
+        if (Items.Count == 0)
+        {
+            await ReadCache();
+        }
+        
         var titles = new[]
         {
             anime.Title.Native,
@@ -27,19 +32,13 @@ internal class Anidb(IHttpClientFactory httpClientFactory)
         return null;
     }
 
-    public async Task CacheAniDbTitlesAsync()
+    public async Task DownloadDump()
     {
         if (File.Exists(GzFilePath))
         {
-            await ReadCache();
-            return;
+            File.Delete(GzFilePath);
         }
-
-        await DownloadAniDbTitles();
-    }
-
-    public async Task DownloadAniDbTitles()
-    {
+        
         var client = httpClientFactory.CreateClient();
         const string url = "https://anidb.net/api/anime-titles.xml.gz";
         var response = await client.GetAsync(url);
@@ -48,19 +47,22 @@ internal class Anidb(IHttpClientFactory httpClientFactory)
         var stream = File.OpenWrite(GzFilePath);
         await gzStream.CopyToAsync(stream);
         await stream.DisposeAsync();
-        await ReadCache();
     }
 
     private async Task ReadCache()
     {
         try
         {
+            if (!File.Exists(GzFilePath))
+            {
+                await DownloadDump();
+            }
+            
             await using var fileStream = File.OpenRead(GzFilePath);
             await using var gzipStream = new GZipStream(fileStream, CompressionMode.Decompress);
 
             var doc = await XDocument.LoadAsync(gzipStream, LoadOptions.None, CancellationToken.None);
 
-            // 4. Parse each anime node and its alternative titles
             foreach (var anime in doc.Descendants("anime"))
             {
                 var aid = anime.Attribute("aid")?.Value;

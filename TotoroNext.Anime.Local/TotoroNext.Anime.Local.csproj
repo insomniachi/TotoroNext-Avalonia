@@ -19,4 +19,11 @@
       <AvaloniaResource Include="Assets\oad.png" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Views\SettingsView.axaml.cs">
+        <DependentUpon>SettingsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
 </Project>

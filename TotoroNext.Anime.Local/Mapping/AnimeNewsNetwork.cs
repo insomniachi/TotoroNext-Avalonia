@@ -17,8 +17,13 @@ internal class AnimeNewsNetwork(IHttpClientFactory httpClientFactory)
 
     public List<AnnItemModel> Items { get; set; } = [];
 
-    public int? TryGetId(OfflineAnimeModel anime)
+    public async Task<int?> TryGetId(OfflineAnimeModel anime)
     {
+        if (Items.Count == 0)
+        {
+            await ReadCache();
+        }
+        
         var candidates = Items;
 
         if (anime.StartDate.HasValue)
@@ -52,19 +57,13 @@ internal class AnimeNewsNetwork(IHttpClientFactory httpClientFactory)
         return int.Parse(candidates.ElementAt(bestMatch.Index).Id);
     }
 
-    public async Task Initialize()
+    public async Task DownloadDump()
     {
         if (File.Exists(XmlFile))
         {
-            await ReadCache();
-            return;
+            File.Delete(XmlFile);
         }
-
-        await DownloadAndReadCache();
-    }
-
-    public async Task DownloadAndReadCache()
-    {
+        
         const string url = "https://cdn.animenewsnetwork.com/encyclopedia/reports.xml?id=155&type=anime&nlist=all";
         using var client = httpClientFactory.CreateClient();
         var response = await client.GetAsync(url);
@@ -77,13 +76,17 @@ internal class AnimeNewsNetwork(IHttpClientFactory httpClientFactory)
         var fileStream = File.OpenWrite(XmlFile);
         await stream.CopyToAsync(fileStream);
         await fileStream.DisposeAsync();
-        await ReadCache();
     }
 
     private async Task ReadCache()
     {
         try
         {
+            if (!File.Exists(XmlFile))
+            {
+                await DownloadDump();
+            }
+            
             await using var stream = File.OpenRead(XmlFile);
             var doc = await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
 

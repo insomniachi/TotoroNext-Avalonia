@@ -1,16 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
+using TotoroNext.Anime.Local.Mapping;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
-namespace TotoroNext.Anime.Local.Views;
+namespace TotoroNext.Anime.Local.ViewModels;
 
 internal partial class SettingsViewModel(
     IDbContext dbContext,
     IDialogService dialogService,
     ILocalTrackingService localTrackingService,
     IFactory<ITrackingService, Guid> trackingServiceFactory,
+    IHttpClientFactory httpClientFactory,
     IModuleSettings<Settings> settings,
     IEnumerable<Descriptor> descriptors) : ModuleSettingsViewModel<Settings>(settings)
 {
@@ -92,5 +94,19 @@ internal partial class SettingsViewModel(
 
         var userlist = await service.GetUserList(CancellationToken.None);
         await Task.Run(() => localTrackingService.SyncList(userlist));
+    }
+
+    [RelayCommand]
+    private async Task DownloadAnnDump()
+    {
+        var ann = new AnimeNewsNetwork(httpClientFactory);
+        await ann.DownloadDump();
+    }
+    
+    [RelayCommand]
+    private async Task DownloadAnidbDump()
+    {
+        var ann = new Anidb(httpClientFactory);
+        await ann.DownloadDump();
     }
 }

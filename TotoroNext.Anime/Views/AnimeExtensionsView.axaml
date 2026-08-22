@@ -83,21 +83,21 @@
                         <ToggleSwitch IsChecked="{Binding UseAbsoluteNumbering}" />
                     </ctl:SettingsCard.Editor>
                 </ctl:SettingsCard>
+                <ctl:SettingsCard Header="Create season map"
+                                  Description="Create a season map to enable tracking when anime provider uses absolute numbering">
+                    <ctl:SettingsCard.Editor>
+                        <Button Content="Create"
+                                Command="{Binding BuildRelationshipTreeCommand}"/>
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
+                <ctl:SettingsCard Header="Delete"
+                                  Description="Delete overrides to anime and use defaults">
+                    <ctl:SettingsCard.Editor>
+                        <Button Content="Delete"
+                                Command="{Binding DeleteCommand}"/>
+                    </ctl:SettingsCard.Editor>
+                </ctl:SettingsCard>
             </StackPanel>
         </ScrollViewer>
-
-        <Button Grid.Row="1" Content="Add relations"
-                u:FormItem.NoLabel="True"
-                Command="{Binding BuildRelationshipTreeCommand}"
-                Theme="{DynamicResource SolidButton}"
-                Margin="0 24 0 0 "
-                HorizontalAlignment="Stretch" />
-
-        <Button Grid.Row="2" Content="Delete Overrides"
-                u:FormItem.NoLabel="True"
-                Command="{Binding DeleteCommand}"
-                Theme="{DynamicResource SolidButton}"
-                Margin="0 24 0 0 "
-                HorizontalAlignment="Stretch" />
     </Grid>
 </ContentPage>

@@ -84,14 +84,6 @@ internal class DbContext(GraphQLHttpClient client,
         var ann = new AnimeNewsNetwork(httpClientFactory);
         var kitsu = new Kitsu(httpClientFactory);
 
-        var currentSeason = AnimeHelpers.CurrentSeason();
-
-        if (year > currentSeason.Year || (year == currentSeason.Year && season >= currentSeason.SeasonName))
-        {
-            await anidb.CacheAniDbTitlesAsync();
-            await ann.Initialize();
-        }
-        
         await foreach (var list in AnilistHelper.GetSeasonalAnime(client, year, season))
         {
             foreach (var media in list)
@@ -99,8 +91,8 @@ internal class DbContext(GraphQLHttpClient client,
                 var model = Converter.ToDbModel(media);
                 try
                 {
-                    model.AnnId = ann.TryGetId(model);
-                    model.AniDbId = anidb.TryGetId(model);
+                    model.AnnId = await ann.TryGetId(model);
+                    model.AniDbId = await anidb.TryGetId(model);
                     model.KitsuId = await kitsu.TryGetId(model);
                     model.SimklId = await Simkl.TryGetId(model, settings.Value.SimklClientId);
                 }

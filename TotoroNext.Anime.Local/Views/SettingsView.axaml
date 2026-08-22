@@ -2,11 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:u="https://irihi.tech/ursa"
-             xmlns:views="clr-namespace:TotoroNext.Anime.Local.Views"
              xmlns:controls="totoro.next/controls"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.Local.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="views:SettingsViewModel"
+             x:DataType="viewModels:SettingsViewModel"
              x:Class="TotoroNext.Anime.Local.ViewModels.SettingsView">
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
         <Image Source="avares://TotoroNext.Anime.Local/Assets/oad.png" Stretch="UniformToFill" Width="600" />
@@ -14,6 +13,20 @@
                     HorizontalAlignment="Stretch"
                     Classes.SettingsContainer="true">
             <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"/>
+            <controls:SettingsCard Header="Anime News Network Dump"
+                                   Description="Download all items from ANN, required for mapping">
+                <controls:SettingsCard.Editor>
+                    <Button Content="Download"
+                            Command="{Binding DownloadAnnDumpCommand}"/>
+                </controls:SettingsCard.Editor>
+            </controls:SettingsCard>
+            <controls:SettingsCard Header="AniDb Dump"
+                                   Description="Download all items from ANN, required for mapping">
+                <controls:SettingsCard.Editor>
+                    <Button Content="Download"
+                            Command="{Binding DownloadAnidbDumpCommand}"/>
+                </controls:SettingsCard.Editor>
+            </controls:SettingsCard>
             <controls:SettingsCard Header="Download All Season"
                                    Description="Download all season metadata from 1980 till today which is cached">
                 <controls:SettingsCard.Editor>

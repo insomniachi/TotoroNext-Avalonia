@@ -4,9 +4,9 @@ using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.ViewModels;
 using TotoroNext.Anime.Abstractions.Views;
 using TotoroNext.Anime.Local.ViewModels;
-using TotoroNext.Anime.Local.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
+using SettingsViewModel = TotoroNext.Anime.Local.ViewModels.SettingsViewModel;
 
 namespace TotoroNext.Anime.Local;
 
