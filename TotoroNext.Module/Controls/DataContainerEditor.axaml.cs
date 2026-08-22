@@ -5,33 +5,34 @@ using Avalonia.Controls.Templates;
 
 namespace TotoroNext.Module.Controls;
 
-public partial class ModuleOptionsEditor : UserControl
+public partial class DataContainerEditor : UserControl
 {
-    public static readonly StyledProperty<List<ModuleOptionItem>> OptionsProperty =
-        AvaloniaProperty.Register<ModuleOptionsEditor, List<ModuleOptionItem>>(nameof(Options));
+    public static readonly StyledProperty<List<DataContainerProperty>> OptionsProperty =
+        AvaloniaProperty.Register<DataContainerEditor, List<DataContainerProperty>>(nameof(Options));
 
-    public ModuleOptionsEditor()
+    public DataContainerEditor()
     {
         InitializeComponent();
     }
 
-    public List<ModuleOptionItem> Options
+    public List<DataContainerProperty> Options
     {
         get => GetValue(OptionsProperty);
         set => SetValue(OptionsProperty, value);
     }
 }
 
-public class ModuleOptionItemTemplateSelector : IDataTemplate
+public class DataContainerPropertyTemplateSelector : IDataTemplate
 {
     public IDataTemplate? TextTemplate { get; set; }
     public IDataTemplate? ComboBoxTemplate { get; set; }
     public IDataTemplate? ToggleSwitchTemplate { get; set; }
     public IDataTemplate? FileBrowserTemplate { get; set; }
+    public IDataTemplate? NumberBoxTemplate { get; set; }
     
     public Control? Build(object? param)
     {
-        if (param is not ModuleOptionItem item)
+        if (param is not DataContainerProperty item)
         {
             return null;
         }
@@ -42,9 +43,10 @@ public class ModuleOptionItemTemplateSelector : IDataTemplate
             SpecialEditorType.ComboBox => ComboBoxTemplate?.Build(param),
             SpecialEditorType.ToggleSwitch => ToggleSwitchTemplate?.Build(param),
             SpecialEditorType.FileBrowser => FileBrowserTemplate?.Build(param),
+            SpecialEditorType.NumberBox => NumberBoxTemplate?.Build(param),
             _ => throw new UnreachableException()
         };
     }
 
-    public bool Match(object? data) => data is ModuleOptionItem;
+    public bool Match(object? data) => data is DataContainerProperty;
 }

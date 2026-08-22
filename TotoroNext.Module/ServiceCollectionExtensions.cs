@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
         {
             services.AddTransient<IModuleSettings<TData>>(_ => new ModuleSettings<TData>(module.Descriptor))
                     .AddViewMap<ModuleSettingsView, TViewModel>()
-                    .AddKeyedTransient<List<ModuleOptionItem>>(module.Descriptor.Id, (sp, _) =>
+                    .AddKeyedTransient<List<DataContainerProperty>>(module.Descriptor.Id, (sp, _) =>
                     {
                         var settings = sp.GetRequiredService<IModuleSettings<TData>>();
                         return settings.Value.ToModuleOptions();

@@ -69,9 +69,9 @@ public class AnimeProvider(
         }
     }
     
-    public List<ModuleOptionItem> GetOptions() => settings.Value.ToModuleOptions();
+    public List<DataContainerProperty> GetOptions() => settings.Value.ToModuleOptions();
     
-    public void UpdateOptions(List<ModuleOptionItem> options) => settings.Value.UpdateValues(options);
+    public void UpdateOptions(List<DataContainerProperty> options) => settings.Value.UpdateValues(options);
 
     private FlurlClient CreateClient()
     {

@@ -7,14 +7,14 @@ namespace TotoroNext.Module;
 
 public abstract class OverridableConfig
 {
-    public void UpdateValues(List<ModuleOptionItem> options)
+    public void UpdateValues(List<DataContainerProperty> options)
     {
         var type = GetType();
         foreach (var option in options)
         {
             var propInfo = type.GetProperty(option.Name);
             var currentValue = propInfo!.GetValue(this);
-            var optionValue = GetValue(option, option.Name, propInfo.PropertyType, currentValue);
+            var optionValue = GetValue(option, propInfo.PropertyType, currentValue);
             if (optionValue is not null)
             {
                 propInfo.SetValue(this, optionValue);
@@ -22,21 +22,21 @@ public abstract class OverridableConfig
         }
     }
 
-    public static T CreateFrom<T>(List<ModuleOptionItem> options)
+    public static T CreateFrom<T>(List<DataContainerProperty> options)
         where T : class, new()
     {
         var type = typeof(T);
         return (T)CreateType(type, options);
     }
     
-    public static object CreateType(Type type, List<ModuleOptionItem> options)
+    public static object CreateType(Type type, List<DataContainerProperty> options)
     {
         var instance = Activator.CreateInstance(type)!;
         foreach (var option in options)
         {
             var propInfo = type.GetProperty(option.Name);
             var currentValue = propInfo!.GetValue(instance);
-            var optionValue = GetValue(option, option.Name, propInfo.PropertyType, currentValue);
+            var optionValue = GetValue(option, propInfo.PropertyType, currentValue);
             if (optionValue is not null)
             {
                 propInfo.SetValue(instance, optionValue);
@@ -45,9 +45,9 @@ public abstract class OverridableConfig
         return instance;
     }
 
-    public ModuleOptions ToModuleOptions()
+    public DataContainer ToModuleOptions()
     {
-        var options = new ModuleOptions();
+        var options = new DataContainer();
         foreach (var propertyInfo in GetType().GetProperties())
         {
             if (propertyInfo.GetCustomAttribute<IgnoreDataMemberAttribute>() is not null)
@@ -55,7 +55,7 @@ public abstract class OverridableConfig
                 continue;
             }
 
-            var builder = new ModuleOptionBuilder()
+            var builder = new DataContainerBuilder()
                           .WithName(propertyInfo.Name)
                           .WithDisplayName(propertyInfo.Name)
                           .WithValue(propertyInfo.GetValue(this));
@@ -96,36 +96,36 @@ public abstract class OverridableConfig
 
             ConfigureProperty(builder, propertyInfo);
 
-            options.Add(builder.ToPluginOption());
+            options.Add(builder.ToProperty());
         }
 
         return options;
     }
 
-    protected virtual void ConfigureProperty(ModuleOptionBuilder builder, PropertyInfo info) { }
+    protected virtual void ConfigureProperty(DataContainerBuilder builder, PropertyInfo info) { }
 
-    private static object? GetValue(ModuleOptionItem options, string name, Type t, object? defaultValue)
+    private static object? GetValue(DataContainerProperty options, Type t, object? defaultValue)
     {
         if (t == typeof(int))
         {
-            return options.GetInt32(name, (int)defaultValue!);
+            return options.GetInt32((int)defaultValue!);
         }
 
         if (t == typeof(double))
         {
-            return options.GetDouble(name, (double)defaultValue!);
+            return options.GetDouble((double)defaultValue!);
         }
 
         if (t == typeof(string))
         {
-            return options.GetString(name, (string)defaultValue!);
+            return options.GetString((string)defaultValue!);
         }
 
         if (t == typeof(bool))
         {
-            return options.GetBool(name, (bool)defaultValue!);
+            return options.GetBool((bool)defaultValue!);
         }
 
-        return t.IsEnum ? options.GetEnum(t, name, defaultValue!) : null;
+        return t.IsEnum ? options.GetAsType(t, defaultValue) : null;
     }
 }

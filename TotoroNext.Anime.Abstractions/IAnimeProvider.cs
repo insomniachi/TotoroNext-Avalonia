@@ -10,8 +10,8 @@ public interface IAnimeProvider
     IAsyncEnumerable<Episode> GetEpisodes(string animeId, CancellationToken ct);
     IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, CancellationToken ct);
 
-    List<ModuleOptionItem> GetOptions() => [];
-    void UpdateOptions(List<ModuleOptionItem> options) { }
+    List<DataContainerProperty> GetOptions() => [];
+    void UpdateOptions(List<DataContainerProperty> options) { }
 }
 
 public interface IAnimeScheduleProvider

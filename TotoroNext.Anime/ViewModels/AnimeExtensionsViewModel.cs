@@ -52,7 +52,7 @@ public partial class AnimeExtensionsViewModel(
 
     [ObservableProperty] public partial bool HasProvider { get; set; }
 
-    [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
+    [ObservableProperty] public partial List<DataContainerProperty> ProviderOptions { get; set; } = [];
 
     [ObservableProperty] public partial ObservableCollection<string> ProviderResults { get; set; } = [];
     
@@ -163,7 +163,7 @@ public partial class AnimeExtensionsViewModel(
         }
     }
 
-    private void Unsubscribe(List<ModuleOptionItem> providerOptions)
+    private void Unsubscribe(List<DataContainerProperty> providerOptions)
     {
         foreach (var item in providerOptions)
         {
@@ -171,7 +171,7 @@ public partial class AnimeExtensionsViewModel(
         }
     }
 
-    private void Subscribe(List<ModuleOptionItem> providerOptions)
+    private void Subscribe(List<DataContainerProperty> providerOptions)
     {
         foreach (var item in providerOptions)
         {

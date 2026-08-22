@@ -54,7 +54,7 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
     
     public Descriptor Descriptor => data.Descriptor;
 
-    public ModuleOptions? EditableSettings { get; private set; }
+    public DataContainer? EditableSettings { get; private set; }
 
     public virtual void Initialize()
     {
@@ -93,7 +93,7 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
 
 public interface IModuleSettingsViewModel : IInitializable
 {
-    ModuleOptions? EditableSettings { get; }
+    DataContainer? EditableSettings { get; }
     Descriptor Descriptor { get; }
 }
 

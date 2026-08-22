@@ -94,12 +94,12 @@ public class AnimeProvider(
         }
     }
 
-    public List<ModuleOptionItem> GetOptions()
+    public List<DataContainerProperty> GetOptions()
     {
         return settings.Value.ToModuleOptions();
     }
 
-    public void UpdateOptions(List<ModuleOptionItem> options)
+    public void UpdateOptions(List<DataContainerProperty> options)
     {
         settings.Value.UpdateValues(options);
     }

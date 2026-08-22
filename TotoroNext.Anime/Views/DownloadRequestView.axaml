@@ -45,7 +45,7 @@
                           HorizontalAlignment="Stretch" />
             </controls:SettingsCard.Editor>
         </controls:SettingsCard>
-        <controls:ModuleOptionsEditor Options="{Binding ProviderOptions}" 
+        <controls:DataContainerEditor Options="{Binding ProviderOptions}" 
                                       IsVisible="{Binding ProviderOptions.Count}" />
         <controls:SettingsCard Header="Provider Result">
             <controls:SettingsCard.Editor>

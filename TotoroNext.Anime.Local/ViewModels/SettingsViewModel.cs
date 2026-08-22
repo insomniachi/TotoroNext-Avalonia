@@ -25,18 +25,18 @@ internal partial class SettingsViewModel(
     [RelayCommand]
     private async Task DownloadCachedSeason()
     {
-        var options = new ModuleOptions();
-        options.AddOption(b => b.WithName("Year"));
-        options.AddOption(b => b.WithDisplayName("Season").WithAllowedValues<AnimeSeason>());
+        var options = new DataContainer();
+        options.WithProperty(b => b.WithName("Year").WithEditorType(SpecialEditorType.NumberBox));
+        options.WithProperty(b => b.WithDisplayName("Season").WithAllowedValues<AnimeSeason>());
 
-        var result = await dialogService.EditModuleOptions("Select Season", options);
+        var result = await dialogService.EditDataContainer("Select Season", options);
         if (!result)
         {
             return;
         }
 
         var year = options.GetInt32("Year");
-        var season = options.GetEnum("SeasonName", AnimeSeason.Winter);
+        var season = options.GetValue("SeasonName", AnimeSeason.Winter);
 
         await dbContext.DownloadSeasonFromCache(year, season);
     }
@@ -46,19 +46,18 @@ internal partial class SettingsViewModel(
     {
         var current = AnimeHelpers.CurrentSeason();
 
-        var options = new ModuleOptions();
-        options.AddOption(b => b.WithNameAndValue(current.Year));
-        options.AddOption(b => b.WithNameAndValue(current.SeasonName)
-                                .WithAllowedValues<AnimeSeason>());
+        var options = new DataContainer();
+        options.WithProperty(b => b.WithNameAndValue(current.Year).WithEditorType(SpecialEditorType.NumberBox));
+        options.WithProperty(b => b.WithNameAndValue(current.SeasonName).WithAllowedValues<AnimeSeason>());
 
-        var result = await dialogService.EditModuleOptions("Select Season", options);
+        var result = await dialogService.EditDataContainer("Select Season", options);
         if (!result)
         {
             return;
         }
 
         var year = options.GetInt32("Year");
-        var season = options.GetEnum("SeasonName", AnimeSeason.Winter);
+        var season = options.GetValue("SeasonName", AnimeSeason.Winter);
 
         await dbContext.DownloadSeason(year, season);
     }
@@ -70,10 +69,10 @@ internal partial class SettingsViewModel(
                                           .Where(x => x.Components.Contains(ComponentTypes.Tracking))
                                           .ToList();
         var names = trackingServices.Select(x => x.Name);
-        var options = new ModuleOptions();
-        options.AddOption(b => b.WithName("Service").WithAllowedValues(names));
+        var options = new DataContainer();
+        options.WithProperty(b => b.WithName("Service").WithAllowedValues(names));
 
-        var result = await dialogService.EditModuleOptions("Select Service", options);
+        var result = await dialogService.EditDataContainer("Select Service", options);
         if (!result)
         {
             return;
@@ -102,7 +101,7 @@ internal partial class SettingsViewModel(
         var ann = new AnimeNewsNetwork(httpClientFactory);
         await ann.DownloadDump();
     }
-    
+
     [RelayCommand]
     private async Task DownloadAnidbDump()
     {

@@ -11,7 +11,7 @@
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
         <Image Source="avares://TotoroNext.Anime.Anilist/Assets/anilist.jpg" Stretch="UniformToFill" Width="600" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
-            <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"
+            <controls:DataContainerEditor Options="{Binding EditableSettings}"
                                           IsVisible="{Binding EditableSettings, Converter={x:Static ObjectConverters.IsNotNull}}" />
             <Button Content="Authenticate"
                     u:FormItem.NoLabel="True"

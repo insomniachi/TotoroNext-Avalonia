@@ -2,77 +2,64 @@
 
 namespace TotoroNext.Module;
 
-public class ModuleOptionBuilder
+public class DataContainerBuilder
 {
-    private IEnumerable<string> _allowedValues = [];
+    private IEnumerable<object> _allowedValues = [];
     private string? _description;
     private string? _displayName;
     private SpecialEditorType _editorType;
     private string _name = "";
-    private string _value = "";
+    private object? _value = "";
 
-    public ModuleOptionBuilder WithName(string name)
+    public DataContainerBuilder WithName(string name)
     {
         _name = name;
         return this;
     }
 
-    public ModuleOptionBuilder WithDisplayName(string displayName)
+    public DataContainerBuilder WithDisplayName(string displayName)
     {
         _displayName = displayName;
         return this;
     }
 
-    public ModuleOptionBuilder WithDescription(string description)
+    public DataContainerBuilder WithDescription(string description)
     {
         _description = description;
         return this;
     }
 
-    public ModuleOptionBuilder WithValue(string value)
+    public DataContainerBuilder WithValue(object? value)
     {
         _value = value;
         return this;
     }
 
-    public ModuleOptionBuilder WithValue<T>(T value)
+    public DataContainerBuilder WithNameAndValue<T>(T value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
     {
-        _value = value?.ToString() ?? "";
-        return this;
-    }
-
-    public ModuleOptionBuilder WithNameAndValue<T>(T value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
-    {
-        _value = value?.ToString() ?? "";
+        _value = value;
         _name = valueExpression.Split('.').LastOrDefault() ?? "";
         _displayName = _name;
         return this;
     }
 
-    public ModuleOptionBuilder WithAllowedValues(IEnumerable<string> allowedValues)
+    public DataContainerBuilder WithAllowedValues(IEnumerable<object> allowedValues)
     {
         _allowedValues = allowedValues;
         _editorType = SpecialEditorType.ComboBox;
         return this;
     }
 
-    public ModuleOptionBuilder WithAllowedValues<T>(IEnumerable<T> allowedValues)
-    {
-        _allowedValues = allowedValues.Where(x => x is not null).Select(x => x!.ToString()!);
-        _editorType = SpecialEditorType.ComboBox;
-        return this;
-    }
-
-    public ModuleOptionBuilder WithEditorType(SpecialEditorType type)
+    public DataContainerBuilder WithEditorType(SpecialEditorType type)
     {
         _editorType = type;
         return this;
     }
 
-    public ModuleOptionBuilder WithAllowedValues<T>()
+    public DataContainerBuilder WithAllowedValues<T>()
         where T : struct, Enum
     {
-        _allowedValues = Enum.GetNames<T>();
+        _allowedValues = Enum.GetValues<T>().Cast<object>();
         _editorType = SpecialEditorType.ComboBox;
         return this;
     }
@@ -82,9 +69,9 @@ public class ModuleOptionBuilder
         return _allowedValues.Any();
     }
 
-    public ModuleOptionItem ToPluginOption()
+    public DataContainerProperty ToProperty()
     {
-        var item = new ModuleOptionItem
+        var item = new DataContainerProperty
         {
             Name = _name,
             DisplayName = string.IsNullOrEmpty(_displayName) ? _name : _displayName,

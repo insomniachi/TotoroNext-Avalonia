@@ -75,8 +75,8 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
         }
     }
 
-    public List<ModuleOptionItem> GetOptions() => settings.Value.ToModuleOptions();
-    public void UpdateOptions(List<ModuleOptionItem> options) => settings.Value.UpdateValues(options);
+    public List<DataContainerProperty> GetOptions() => settings.Value.ToModuleOptions();
+    public void UpdateOptions(List<DataContainerProperty> options) => settings.Value.UpdateValues(options);
 
     private string GetBaseUrl()
     {
