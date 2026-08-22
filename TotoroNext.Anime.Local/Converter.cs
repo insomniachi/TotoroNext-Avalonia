@@ -93,7 +93,7 @@ internal static class Converter
             Image = anime.Image,
             BannerImage = anime.Thumbnail,
             ServiceName = "Local",
-            ServiceId = Module.Descriptor.Id,
+            ServiceId = Module.Id,
             Id = anime.AnilistId,
             ExternalIds = new AnimeId
             {

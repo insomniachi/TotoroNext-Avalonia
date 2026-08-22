@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
@@ -7,11 +6,13 @@ using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Local.Views;
 
-internal partial class SettingsViewModel(IDbContext dbContext,
-                                         IDialogService dialogService,
-                                         ILocalTrackingService localTrackingService,
-                                         IFactory<ITrackingService, Guid> trackingServiceFactory,
-                                         IEnumerable<Descriptor> descriptors) : ObservableObject
+internal partial class SettingsViewModel(
+    IDbContext dbContext,
+    IDialogService dialogService,
+    ILocalTrackingService localTrackingService,
+    IFactory<ITrackingService, Guid> trackingServiceFactory,
+    IModuleSettings<Settings> settings,
+    IEnumerable<Descriptor> descriptors) : ModuleSettingsViewModel<Settings>(settings)
 {
     [RelayCommand]
     private async Task DownloadAllCachedSeasons()
@@ -37,12 +38,12 @@ internal partial class SettingsViewModel(IDbContext dbContext,
 
         await dbContext.DownloadSeasonFromCache(year, season);
     }
-    
+
     [RelayCommand]
     private async Task DownloadSeason()
     {
         var current = AnimeHelpers.CurrentSeason();
-        
+
         var options = new ModuleOptions();
         options.AddOption(b => b.WithNameAndValue(current.Year));
         options.AddOption(b => b.WithNameAndValue(current.SeasonName)
@@ -59,17 +60,17 @@ internal partial class SettingsViewModel(IDbContext dbContext,
 
         await dbContext.DownloadSeason(year, season);
     }
-    
+
     [RelayCommand]
-    private async Task SyncList()
+    private async Task ImportList()
     {
-        var trackingServices = descriptors.Where(x => x.Id != Module.Descriptor.Id)
+        var trackingServices = descriptors.Where(x => x.Id != Module.Id)
                                           .Where(x => x.Components.Contains(ComponentTypes.Tracking))
                                           .ToList();
         var names = trackingServices.Select(x => x.Name);
         var options = new ModuleOptions();
         options.AddOption(b => b.WithName("Service").WithAllowedValues(names));
-        
+
         var result = await dialogService.EditModuleOptions("Select Service", options);
         if (!result)
         {
@@ -81,9 +82,9 @@ internal partial class SettingsViewModel(IDbContext dbContext,
         {
             return;
         }
-        
+
         var service = trackingServiceFactory.Create(descriptor.Id);
-        
+
         if (service is null)
         {
             return;

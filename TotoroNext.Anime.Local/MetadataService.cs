@@ -15,7 +15,7 @@ internal class MetadataService(
     IDialogService dialogService,
     GraphQLHttpClient client) : ILocalMetadataService
 {
-    public Guid Id => Module.Descriptor.Id;
+    public Guid Id => Module.Id;
 
     public string Name => "Local";
 

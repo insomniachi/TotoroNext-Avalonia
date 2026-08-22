@@ -4,32 +4,44 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:views="clr-namespace:TotoroNext.Anime.Local.Views"
+             xmlns:controls="totoro.next/controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="views:SettingsViewModel"
              x:Class="TotoroNext.Anime.Local.ViewModels.SettingsView">
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
         <Image Source="avares://TotoroNext.Anime.Local/Assets/oad.png" Stretch="UniformToFill" Width="600" />
-        <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
-            <Button Content="Download All Seasons From Cache"
-                    u:FormItem.NoLabel="True"
-                    Theme="{DynamicResource SolidButton}"
+        <StackPanel Grid.Row="1" 
                     HorizontalAlignment="Stretch"
-                    Command="{Binding DownloadAllCachedSeasonsCommand}"/>
-            <Button Content="Download Season From Cache"
-                    u:FormItem.NoLabel="True"
-                    Theme="{DynamicResource SolidButton}"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding DownloadCachedSeasonCommand}"/>
-            <Button Content="Download Season Online"
-                    u:FormItem.NoLabel="True"
-                    Theme="{DynamicResource SolidButton}"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding DownloadSeasonCommand}"/>
-            <Button Content="Sync List"
-                    u:FormItem.NoLabel="True"
-                    Theme="{DynamicResource SolidButton}"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding SyncListCommand}"/>
-        </u:Form>
+                    Classes.SettingsContainer="true">
+            <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"/>
+            <controls:SettingsCard Header="Download All Season"
+                                   Description="Download all season metadata from 1980 till today which is cached">
+                <controls:SettingsCard.Editor>
+                    <Button Content="Download"
+                            Command="{Binding DownloadAllCachedSeasonsCommand}" />
+                </controls:SettingsCard.Editor>
+            </controls:SettingsCard>
+            <controls:SettingsCard Header="Download Season"
+                                   Description="Download metadata for specific season which is cached">
+                <controls:SettingsCard.Editor>
+                    <Button Content="Download"
+                            Command="{Binding DownloadCachedSeasonCommand}" />
+                </controls:SettingsCard.Editor>
+            </controls:SettingsCard>
+            <controls:SettingsCard Header="Download Season"
+                                   Description="Download current metadata for specific season from online db's">
+                <controls:SettingsCard.Editor>
+                    <Button Content="Download"
+                            Command="{Binding DownloadSeasonCommand}"/>
+                </controls:SettingsCard.Editor>
+            </controls:SettingsCard>
+            <controls:SettingsCard Header="Import List"
+                                   Description="Import anime list from other tracking services">
+                <controls:SettingsCard.Editor>
+                    <Button Content="Import"
+                            Command="{Binding ImportListCommand}"/>
+                </controls:SettingsCard.Editor>
+            </controls:SettingsCard>
+        </StackPanel>
     </Grid>
 </ContentPage>

@@ -11,7 +11,7 @@ internal class TrackingService(
     IAnimeMappingService mappingService,
     ILocalMetadataService localMetadataService) : ILocalTrackingService
 {
-    public Guid Id => Module.Descriptor.Id;
+    public Guid Id => Module.Id;
 
     public string Name => "Local";
 

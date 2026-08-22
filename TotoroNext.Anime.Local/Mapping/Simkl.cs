@@ -1,62 +1,54 @@
-﻿using TotoroNext.Anime.Abstractions.Models;
+﻿using System.Net;
 
 namespace TotoroNext.Anime.Local.Mapping;
 
 internal static class Simkl
 {
-	public const string ClientId = "0a814ce1ee4819adcbcee198151e256f0700cc8c3976ad3084c8a329720124fc";
-	private static readonly HttpClient Client = new(new SocketsHttpHandler { AllowAutoRedirect = false });
+    private static readonly HttpClient Client = new(new SocketsHttpHandler { AllowAutoRedirect = false });
 
-	public static async Task<int?> TryGetId(OfflineAnimeModel anime)
-	{
-		try
-		{
-			var url = $"https://api.simkl.com/redirect?to=Simkl&mal={anime.MyAnimeListId}&client_id={ClientId}";
+    public static async Task<int?> TryGetId(OfflineAnimeModel anime, string clientId)
+    {
+        try
+        {
+            var url = $"https://api.simkl.com/redirect?to=Simkl&mal={anime.MyAnimeListId}&client_id={clientId}";
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-			using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            var response = await Client.GetAsync(url);
+            if (response.StatusCode is not (HttpStatusCode.Found or HttpStatusCode.MovedPermanently))
+            {
+                return null;
+            }
 
-			var response = await Client.GetAsync(url);
+            var redirectLocation = response.Headers.Location?.ToString();
+            return !string.IsNullOrEmpty(redirectLocation) ? ExtractSimklIdFromUrl(redirectLocation) : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
-			if (response.StatusCode is System.Net.HttpStatusCode.Found or System.Net.HttpStatusCode.MovedPermanently)
-			{
-				var redirectLocation = response.Headers.Location?.ToString();
+    private static int? ExtractSimklIdFromUrl(string url)
+    {
+        Uri uri = new(url);
+        var segments = uri.Segments;
 
-				if (!string.IsNullOrEmpty(redirectLocation))
-				{
-					// The URL structure looks like: https://simkl.com/anime/54321/show-name
-					// We can extract the numeric Simkl ID from the path segments.
-					return ExtractSimklIdFromUrl(redirectLocation);
-				}
-			}
+        for (var i = 0; i < segments.Length - 1; i++)
+        {
+            if (segments[i].Trim('/') != "anime" &&
+                segments[i].Trim('/') != "tv" &&
+                segments[i].Trim('/') != "movies")
+            {
+                continue;
+            }
 
-			return null;
-		}
-		catch
-		{
-			return null;
-		}
-	}
+            var idCandidate = segments[i + 1].Trim('/');
+            if (int.TryParse(idCandidate, out var id))
+            {
+                return id;
+            }
+        }
 
-	private static int? ExtractSimklIdFromUrl(string url)
-	{
-		// Split the URL parts to isolate the ID segment
-		Uri uri = new(url);
-		string[] segments = uri.Segments;
-
-		// Typically, the segment after /anime/, /tv/, or /movies/ is the ID
-		for (int i = 0; i < segments.Length - 1; i++)
-		{
-			if (segments[i].Trim('/') == "anime" ||
-				segments[i].Trim('/') == "tv" ||
-				segments[i].Trim('/') == "movies")
-			{
-				string idCandidate = segments[i + 1].Trim('/');
-				if (int.TryParse(idCandidate, out var id))
-				{
-					return id;
-				}
-			}
-		}
-		return null;
-	}
+        return null;
+    }
 }

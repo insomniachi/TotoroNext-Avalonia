@@ -2,18 +2,22 @@
 using System.Text.Json.Serialization;
 using Flurl.Http;
 using GraphQL.Client.Http;
+using JetBrains.Annotations;
 using LiteDB;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Anime.Local.Mapping;
 using TotoroNext.Module;
+using TotoroNext.Module.Abstractions;
 using ZstdSharp;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TotoroNext.Anime.Local;
 
+[UsedImplicitly]
 internal class DbContext(GraphQLHttpClient client,
-                         IHttpClientFactory httpClientFactory) : IDbContext
+                         IHttpClientFactory httpClientFactory,
+                         IModuleSettings<Settings> settings) : IDbContext
 {
     private readonly LiteDatabase _db = new(FileHelper.GetPath("anime.db"));
 
@@ -85,7 +89,7 @@ internal class DbContext(GraphQLHttpClient client,
         if (year > currentSeason.Year || (year == currentSeason.Year && season >= currentSeason.SeasonName))
         {
             await anidb.CacheAniDbTitlesAsync();
-            await ann.CacheAnnDirectoryAsync();
+            await ann.Initialize();
         }
         
         await foreach (var list in AnilistHelper.GetSeasonalAnime(client, year, season))
@@ -98,7 +102,7 @@ internal class DbContext(GraphQLHttpClient client,
                     model.AnnId = ann.TryGetId(model);
                     model.AniDbId = anidb.TryGetId(model);
                     model.KitsuId = await kitsu.TryGetId(model);
-                    model.SimklId = await Simkl.TryGetId(model);
+                    model.SimklId = await Simkl.TryGetId(model, settings.Value.SimklClientId);
                 }
                 catch (Exception e)
                 {

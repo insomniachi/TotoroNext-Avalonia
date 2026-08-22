@@ -10,7 +10,12 @@ internal class Anidb(IHttpClientFactory httpClientFactory)
 
     public long? TryGetId(OfflineAnimeModel anime)
     {
-        var titles = new[] { anime.Title.Native, anime.Title.Romaji, anime.Title.English }.Where(x => !string.IsNullOrEmpty(x));
+        var titles = new[]
+        {
+            anime.Title.Native,
+            anime.Title.Romaji,
+            anime.Title.English
+        }.OfType<string>();
         foreach (var title in titles)
         {
             if (Items.FirstOrDefault(x => x.Titles.Any(t => t.Equals(title, StringComparison.OrdinalIgnoreCase))) is { } match)
@@ -30,17 +35,15 @@ internal class Anidb(IHttpClientFactory httpClientFactory)
             return;
         }
 
+        await DownloadAniDbTitles();
+    }
+
+    public async Task DownloadAniDbTitles()
+    {
         var client = httpClientFactory.CreateClient();
-
-        // AniDB official public anime titles dump URL
         const string url = "https://anidb.net/api/anime-titles.xml.gz";
-
-        Console.WriteLine("Downloading AniDB titles dump...");
-
         var response = await client.GetAsync(url);
         response.EnsureSuccessStatusCode();
-
-        // 1. Read the network stream and decompress GZip (.gz) on the fly
         await using var gzStream = await response.Content.ReadAsStreamAsync();
         var stream = File.OpenWrite(GzFilePath);
         await gzStream.CopyToAsync(stream);
@@ -82,7 +85,6 @@ internal class Anidb(IHttpClientFactory httpClientFactory)
                     }
                 }
 
-                // Create a compact cache entry object
                 Items.Add(new AnidbItem { Id = int.Parse(aid), Titles = titles });
             }
         }
@@ -95,6 +97,6 @@ internal class Anidb(IHttpClientFactory httpClientFactory)
 
 internal class AnidbItem
 {
-    public int Id { get; set; }
-    public List<string> Titles { get; set; } = [];
+    public int Id { get; init; }
+    public List<string> Titles { get; init; } = [];
 }
