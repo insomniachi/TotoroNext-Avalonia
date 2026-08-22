@@ -1,15 +1,16 @@
 ﻿using System.Xml;
 using Avalonia.Platform.Storage;
+using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 
 namespace TotoroNext.Anime.Local;
 
+[UsedImplicitly]
 internal class TrackingService(
     IDbContext dbContext,
     IStorageProvider storageProvider,
-    IAnimeMappingService mappingService,
-    ILocalMetadataService localMetadataService) : ILocalTrackingService
+    IAnimeMappingService mappingService) : ILocalTrackingService
 {
     public Guid Id => Module.Id;
 
@@ -244,12 +245,12 @@ internal class TrackingService(
             return;
         }
 
-        if (await mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 } id)
+        if (await mappingService.GetId(anime) is not { Anilist: > 0 } id)
         {
             return;
         }
 
-        if (!visited.Add(id.MyAnimeList))
+        if (!visited.Add(id.Anilist))
         {
             return;
         }
@@ -261,21 +262,21 @@ internal class TrackingService(
 
         var localAnime = dbContext.Anime.FindById(anime.Id);
 
-        foreach (var relatedAnime in localAnime.Related)
+        foreach (var relation in localAnime.Related)
         {
-            if (relatedAnime.RelationType is not ("PREQUEL" or "SEQUEL" or "PARENT" or "SPIN_OFF") )
+            if (relation.RelationType is not ("PREQUEL" or "SEQUEL" or "PARENT" or "SPIN_OFF"))
             {
                 continue;
             }
 
-            var relatedAnimeObj = await localMetadataService.GetAnimeWithoutAdditionalInfoAsync(relatedAnime.Id);
-            
-            if (relatedAnimeObj is null)
+            var relatedAnime = dbContext.Anime.FindById(relation.Id);
+
+            if (relatedAnime is null)
             {
                 continue;
             }
-            
-            await UpdateUntrackedAnime(relatedAnimeObj, visited, untracked, ct);
+
+            await UpdateUntrackedAnime(Converter.ToAppModel(relatedAnime), visited, untracked, ct);
         }
     }
 }

@@ -29,9 +29,9 @@ public class AiringStatusBehavior : Behavior<AnimeCard>
         _disposables.Dispose();
     }
 
-    private static IImmutableBrush ToBrush(AnimeModel anime)
+    private static IImmutableBrush ToBrush(AnimeModel? anime)
     {
-        return anime.AiringStatus switch
+        return anime?.AiringStatus switch
         {
             AiringStatus.CurrentlyAiring => Brushes.LimeGreen,
             AiringStatus.FinishedAiring => Brushes.MediumSlateBlue,

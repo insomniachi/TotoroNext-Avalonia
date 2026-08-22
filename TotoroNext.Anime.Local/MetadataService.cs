@@ -246,8 +246,11 @@ internal class MetadataService(
                                 .WithValue(anime.AiringStatus).WithAllowedValues<AiringStatus>())
                .AddOption(b => b.WithName(nameof(anime.TotalEpisodes))
                                 .WithDisplayName("Total Episodes")
-                                .WithValue(anime.TotalEpisodes));
-
+                                .WithValue(anime.TotalEpisodes))
+               .AddOption(b => b.WithName("AniDbId").WithValue(anime.ExternalIds.AniDb))
+               .AddOption(b => b.WithName("Kitsu").WithValue(anime.ExternalIds.Kitsu))
+               .AddOption(b => b.WithName("AnimeNewsNetwork").WithValue(anime.ExternalIds.AnimeNewsNetwork));
+        
         if (!await dialogService.EditModuleOptions(dbAnime.Title.Romaji ?? "", options))
         {
             return;
@@ -255,9 +258,15 @@ internal class MetadataService(
 
         anime.TotalEpisodes = options.GetInt32(nameof(anime.TotalEpisodes));
         anime.AiringStatus = options.GetEnum(nameof(anime.AiringStatus), anime.AiringStatus);
+        anime.ExternalIds.AniDb = options.GetInt32("AniDbId");
+        anime.ExternalIds.Kitsu = options.GetInt32("Kitsu");
+        anime.ExternalIds.AnimeNewsNetwork = options.GetInt32("AnimeNewsNetwork");
 
         dbAnime.TotalEpisodes = anime.TotalEpisodes ?? dbAnime.TotalEpisodes;
         dbAnime.AiringStatus = anime.AiringStatus;
+        dbAnime.AniDbId = anime.ExternalIds.AniDb;
+        dbAnime.KitsuId = anime.ExternalIds.Kitsu;
+        dbAnime.AnnId = anime.ExternalIds.AnimeNewsNetwork;
         dbContext.Anime.Upsert(dbAnime);
     }
 
