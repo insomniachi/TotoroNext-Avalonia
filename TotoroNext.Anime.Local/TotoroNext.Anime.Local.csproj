@@ -15,4 +15,8 @@
         <PackageReference Include="ZstdSharp.Port"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaResource Include="Assets\oad.png" />
+    </ItemGroup>
+
 </Project>

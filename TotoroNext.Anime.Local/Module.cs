@@ -14,9 +14,10 @@ public class Module : IModule
     public static Descriptor Descriptor { get; } = new Descriptor
     {
         Id = new Guid("5500de7e-4268-4edf-afcd-d445fec437e1"),
-        Name = "Local Anime Database",
+        Name = "Offline Anime Database",
         Components = [ComponentTypes.Metadata, ComponentTypes.Tracking],
-        SettingViewModel = typeof(SettingsViewModel)
+        SettingViewModel = typeof(SettingsViewModel),
+        HeroImage = ResourceHelper.GetResource("oad.png")
     };
     
     public void ConfigureServices(IServiceCollection services)

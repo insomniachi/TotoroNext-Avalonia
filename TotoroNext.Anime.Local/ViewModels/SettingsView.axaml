@@ -8,7 +8,7 @@
              x:DataType="views:SettingsViewModel"
              x:Class="TotoroNext.Anime.Local.ViewModels.SettingsView">
     <Grid RowDefinitions="Auto,*" RowSpacing="16">
-        <Image Source="avares://TotoroNext.Anime.Anilist/Assets/anilist.jpg" Stretch="UniformToFill" Width="600" />
+        <Image Source="avares://TotoroNext.Anime.Local/Assets/oad.png" Stretch="UniformToFill" Width="600" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
             <Button Content="Download All Seasons From Cache"
                     u:FormItem.NoLabel="True"

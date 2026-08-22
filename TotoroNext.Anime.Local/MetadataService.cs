@@ -12,7 +12,6 @@ namespace TotoroNext.Anime.Local;
 [UsedImplicitly]
 internal class MetadataService(
     IDbContext dbContext,
-    IAnimeMappingService mappingService,
     IDialogService dialogService,
     GraphQLHttpClient client) : ILocalMetadataService
 {
@@ -220,20 +219,21 @@ internal class MetadataService(
 
     public async Task<List<AnimeModel>> BuilderRelationshipsAsync(long id, CancellationToken ct)
     {
-        var anime = await GetAnimeWithoutAdditionalInfoAsync(id);
+        var anime = dbContext.Anime.FindById(id);
         if (anime is null)
         {
             return [];
         }
 
-        var ids = new HashSet<long> { id };
-        var relations = new List<AnimeModel> { anime };
-        await BuildRelationshipsInternalAsync(anime, ids, relations, ct);
+        var visited = new HashSet<long> { id };
+        var related = new List<OfflineAnimeModel>();
+        await BuildRelationshipsInternalAsync(anime, visited, related, ct);
         return
         [
-            .. relations
+            .. related
                .Where(x => x.Season is not null)
                .OrderBy(x => x.Season!.Year).ThenBy(x => x.Season!.SeasonName)
+               .Select(Converter.ToAppModel)
         ];
     }
 
@@ -252,7 +252,7 @@ internal class MetadataService(
         {
             return;
         }
-        
+
         anime.TotalEpisodes = options.GetInt32(nameof(anime.TotalEpisodes));
         anime.AiringStatus = options.GetEnum(nameof(anime.AiringStatus), anime.AiringStatus);
 
@@ -261,26 +261,27 @@ internal class MetadataService(
         dbContext.Anime.Upsert(dbAnime);
     }
 
-    private async Task BuildRelationshipsInternalAsync(AnimeModel anime, HashSet<long> ids, List<AnimeModel> relations, CancellationToken ct)
+    private async Task BuildRelationshipsInternalAsync(OfflineAnimeModel anime, HashSet<long> visited, List<OfflineAnimeModel> related,
+                                                       CancellationToken ct)
     {
         if (ct.IsCancellationRequested)
         {
             return;
         }
 
-        if (await mappingService.GetId(anime) is not { MyAnimeList: > 0, Anilist: > 0 })
+        foreach (var relationship in anime.Related)
         {
-            return;
-        }
-
-        foreach (var related in anime.Related)
-        {
-            if (!ids.Add(related.Id))
+            if (!visited.Add(relationship.Id))
             {
                 continue;
             }
 
-            var relatedFull = await GetAnimeWithoutAdditionalInfoAsync(related.Id);
+            if (relationship.RelationType is not ("SEQUEL" or "PREQUEL"))
+            {
+                continue;
+            }
+
+            var relatedFull = dbContext.Anime.FindById(relationship.Id);
 
             if (relatedFull is null)
             {
@@ -292,9 +293,9 @@ internal class MetadataService(
                 continue;
             }
 
-            relations.Add(relatedFull);
+            related.Add(relatedFull);
 
-            await BuildRelationshipsInternalAsync(relatedFull, ids, relations, ct);
+            await BuildRelationshipsInternalAsync(relatedFull, visited, related, ct);
         }
     }
 }
