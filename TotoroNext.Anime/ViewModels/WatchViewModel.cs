@@ -75,7 +75,7 @@ public sealed partial class WatchViewModel(
         {
             await dialogService.Warning("Media Player installation not found, please configure mpv/vlc");
             var id = mediaPlayerFactory.GetDefaultId();
-            await dialogService.EditModuleOptions(id, ComponentTypes.MediaEngine);
+            await dialogService.EditModuleOptions(id);
             return;
         }
 

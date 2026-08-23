@@ -66,14 +66,14 @@ public class DialogService(
         return result == DialogResult.OK;
     }
 
-    public async Task<bool> EditModuleOptions(Guid id, string componentType)
+    public async Task<bool> EditModuleOptions(Guid moduleId)
     {
-        var descriptor = modules.Where(x => x.Components.Contains(componentType)).SingleOrDefault(x => x.Id == id);
+        var descriptor = modules.SingleOrDefault(x => x.Id == moduleId);
 
         using var scope = scopeFactory.CreateScope();
-        var items = scope.ServiceProvider.GetKeyedService<List<DataContainerProperty>>(id);
+        var options = scope.ServiceProvider.GetKeyedService<DataContainer>(moduleId);
 
-        if (items is not { Count: > 0 })
+        if (options is not { Count: > 0 })
         {
             return false;
         }
@@ -84,7 +84,7 @@ public class DialogService(
             Title = descriptor?.Name ?? ""
         };
 
-        var editor = new DataContainerEditor { Options = items, Width = 600 };
+        var editor = new DataContainerEditor { Options = options, Width = 600 };
         var result = await OverlayDialog.ShowStandardAsync(editor, null, null, dialogOptions);
         return result == DialogResult.OK;
     }

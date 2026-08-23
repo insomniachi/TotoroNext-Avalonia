@@ -8,6 +8,6 @@ public interface IDialogService
     Task Warning(string warning);
     Task Information(string info);
     Task<bool> EditDataContainer(string title, List<DataContainerProperty> options);
-    Task<bool> EditModuleOptions(Guid id, string componentType);
+    Task<bool> EditModuleOptions(Guid moduleId);
     Task<MessageBoxResult> AskSkip(string type, MessageBoxResult defaultResult = MessageBoxResult.No);
 }
