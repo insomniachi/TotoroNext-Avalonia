@@ -47,7 +47,7 @@ public class Settings : OverridableConfig
     [Description("First torrent of matching this resolution would be selected as default, remaining will be returned and used manually")]
     public string Resolution { get; set; } = "1080";
 
-    protected override void ConfigureProperty(ModuleOptionBuilder builder, PropertyInfo info)
+    protected override void ConfigureProperty(DataContainerBuilder builder, PropertyInfo info)
     {
         if (info.Name == nameof(Group))
         {

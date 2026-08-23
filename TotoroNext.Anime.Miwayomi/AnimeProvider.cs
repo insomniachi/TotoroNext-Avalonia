@@ -4,14 +4,13 @@ using Flurl;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Miwayomi;
 
-public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
+public class AnimeProvider(IModuleSettings<Settings> settings) : AnimeProvider<Settings>(settings)
 {
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         var stream = await GetBaseUrl().AppendPathSegment("search")
                                        .AppendQueryParam("query", query)
@@ -28,7 +27,7 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
         }
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var stream = await GetBaseUrl().AppendPathSegment("episodes")
                                        .AppendQueryParam("url", animeId)
@@ -43,7 +42,8 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         var stream = await GetBaseUrl().AppendPathSegment("videos")
                                        .AppendQueryParam("url", episodeId)
@@ -75,11 +75,8 @@ public class AnimeProvider(IModuleSettings<Settings> settings) : IAnimeProvider
         }
     }
 
-    public List<ModuleOptionItem> GetOptions() => settings.Value.ToModuleOptions();
-    public void UpdateOptions(List<ModuleOptionItem> options) => settings.Value.UpdateValues(options);
-
     private string GetBaseUrl()
     {
-        return $"{settings.Value.BaseUrl}/api/v1/anime/{settings.Value.SelectedSource}";
+        return $"{Settings.BaseUrl}/api/v1/anime/{Settings.SelectedSource}";
     }
 }

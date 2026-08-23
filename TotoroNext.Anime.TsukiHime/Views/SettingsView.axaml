@@ -15,7 +15,7 @@
                Source="/Assets/tsukihime.png" />
         <u:Form Grid.Row="1" HorizontalAlignment="Stretch">
 
-            <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"
+            <controls:DataContainerEditor Options="{Binding EditableSettings}"
                                           IsVisible="{Binding EditableSettings, Converter={x:Static ObjectConverters.IsNotNull}}" />
             <Button Content="Fetch Catalog"
                     u:FormItem.NoLabel="True"

@@ -193,7 +193,7 @@ public partial class ProviderDebuggerViewModel(
 
         var title = AnimeProviders.FirstOrDefault(x => x.Id == ProviderId)?.Name ?? "";
 
-        var isUpdated = await dialogService.EditModuleOptions(title, options);
+        var isUpdated = await dialogService.EditDataContainer(title, options);
 
         if (!isUpdated)
         {

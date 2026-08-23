@@ -39,7 +39,7 @@ public class Module : IModule<Settings>
     }
 }
 
-public class Settings
+public class Settings : OverridableConfig
 {
     public static Guid? UserId { get; set; }
     public static string? AccessToken { get; set; }

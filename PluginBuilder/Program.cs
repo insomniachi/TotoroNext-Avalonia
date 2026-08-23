@@ -5,20 +5,6 @@ var plugins = new List<PluginProject>
     new("TotoroNext.Anime.AnimeParadise"),
     new("TotoroNext.Anime.Anizone"),
     new("TotoroNext.Anime.SubsPlease"),
-    new("TotoroNext.Anime.Jellyfin")
-    {
-        Dependencies =
-        [
-            "Jellyfin.Sdk",
-            "Microsoft.Kiota.Abstractions",
-            "Microsoft.Kiota.Http.HttpClientLibrary",
-            "Microsoft.Kiota.Serialization.Form",
-            "Microsoft.Kiota.Serialization.Json",
-            "Microsoft.Kiota.Serialization.Text",
-            "Microsoft.Kiota.Serialization.Multipart",
-            "Std.UriTemplate"
-        ]
-    },
     new("TotoroNext.Anime.AnimeGG"),
     new("TotoroNext.Anime.Anikoto"),
     new("TotoroNext.Anime.TsukiHime"),

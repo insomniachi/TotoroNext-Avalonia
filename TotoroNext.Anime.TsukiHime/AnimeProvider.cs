@@ -3,7 +3,6 @@ using System.Text.Json;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.TsukiHime;
@@ -11,12 +10,12 @@ namespace TotoroNext.Anime.TsukiHime;
 public class AnimeProvider(
     IHttpClientFactory httpClientFactory,
     IModuleSettings<Settings> settings,
-    ITorrentExtractor torrentExtractor) : IAnimeProvider
+    ITorrentExtractor torrentExtractor) : AnimeProvider<Settings>(settings)
 {
     public const string BaseUrl = "https://api.tsukihime.org/v1/";
     private readonly IVideoExtractor _extractor = new TsukiHimeExtractor(torrentExtractor);
 
-    public async IAsyncEnumerable<SearchResult> SearchAsync(SearchOptions options, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(SearchOptions options, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var stream = await client.Request("animes", "mal", options.Ids?.MyAnimeList)
@@ -29,14 +28,14 @@ public class AnimeProvider(
         yield return new SearchResult(this, id.ToString(), title, new Uri(image));
     }
 
-    public IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
+    public override IAsyncEnumerable<SearchResult> SearchAsync(string query, CancellationToken ct)
     {
         return TsukiHimeLocalData.Search(query)
                                  .Select(x => new SearchResult(this, x.Id.ToString(), x.Title))
                                  .ToAsyncEnumerable();
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var stream = await client.Request("animes", animeId, "episodes")
@@ -49,14 +48,15 @@ public class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var response = await client.Request("animes", animeId, "episodes", episodeId)
                                    .GetJsonAsync<EpisodeTorrentsListResponse>(cancellationToken: ct);
 
-        var descriptor = TsukiHimeLocalData.Groups.FirstOrDefault(x => x.Name == settings.Value.Group);
-        
+        var descriptor = TsukiHimeLocalData.Groups.FirstOrDefault(x => x.Name == Settings.Group);
+
         foreach (var torrent in response.Results.Where(x => x.Group.Id == descriptor?.Id))
         {
             var name = TorrentInfo.Parse(torrent);
@@ -64,14 +64,10 @@ public class AnimeProvider(
             {
                 ContentType = "mkv",
                 DownloaderType = DownloaderTypes.Http,
-                IsDefault = name.Resolution?.Contains(settings.Value.Resolution) == true
+                IsDefault = name.Resolution?.Contains(Settings.Resolution) == true
             };
         }
     }
-    
-    public List<ModuleOptionItem> GetOptions() => settings.Value.ToModuleOptions();
-    
-    public void UpdateOptions(List<ModuleOptionItem> options) => settings.Value.UpdateValues(options);
 
     private FlurlClient CreateClient()
     {

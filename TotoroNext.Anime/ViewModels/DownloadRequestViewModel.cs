@@ -31,7 +31,7 @@ public partial class DownloadRequestViewModel(
     [ObservableProperty] public partial int End { get; set; }
     [ObservableProperty] public partial double TotalEpisodes { get; set; }
     [ObservableProperty] public partial int EpisodeOffset { get; set; }
-    [ObservableProperty] public partial List<ModuleOptionItem> ProviderOptions { get; set; } = [];
+    [ObservableProperty] public partial List<DataContainerProperty> ProviderOptions { get; set; } = [];
     [ObservableProperty] public partial List<Descriptor> Providers { get; set; } = [];
 
 

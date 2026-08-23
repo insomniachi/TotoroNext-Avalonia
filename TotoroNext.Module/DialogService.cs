@@ -53,7 +53,7 @@ public class DialogService(
         await OverlayMessageBox.ShowAsync(info, "Info", icon: MessageBoxIcon.Information, button: MessageBoxButton.OK);
     }
 
-    public async Task<bool> EditModuleOptions(string title, List<ModuleOptionItem> options)
+    public async Task<bool> EditDataContainer(string title, List<DataContainerProperty> options)
     {
         var dialogOptions = new OverlayDialogOptions
         {
@@ -61,7 +61,7 @@ public class DialogService(
             Title = title
         };
 
-        var editor = new ModuleOptionsEditor { Options = options, Width = 600 };
+        var editor = new DataContainerEditor { Options = options, Width = 600 };
         var result = await OverlayDialog.ShowStandardAsync(editor, null, null, dialogOptions);
         return result == DialogResult.OK;
     }
@@ -71,7 +71,7 @@ public class DialogService(
         var descriptor = modules.Where(x => x.Components.Contains(componentType)).SingleOrDefault(x => x.Id == id);
 
         using var scope = scopeFactory.CreateScope();
-        var items = scope.ServiceProvider.GetKeyedService<List<ModuleOptionItem>>(id);
+        var items = scope.ServiceProvider.GetKeyedService<List<DataContainerProperty>>(id);
 
         if (items is not { Count: > 0 })
         {
@@ -84,7 +84,7 @@ public class DialogService(
             Title = descriptor?.Name ?? ""
         };
 
-        var editor = new ModuleOptionsEditor { Options = items, Width = 600 };
+        var editor = new DataContainerEditor { Options = items, Width = 600 };
         var result = await OverlayDialog.ShowStandardAsync(editor, null, null, dialogOptions);
         return result == DialogResult.OK;
     }

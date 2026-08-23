@@ -19,15 +19,6 @@ internal class MetadataService(
 
     public string Name => "Local";
 
-    public Task<AnimeModel?> GetAnimeWithoutAdditionalInfoAsync(long id)
-    {
-        return Task.Run(() =>
-        {
-            var anime = dbContext.Anime.FindById(id);
-            return anime is null ? null : Converter.ToAppModel(anime);
-        });
-    }
-
     public Task<AnimeModel> GetAnimeAsync(long id)
     {
         return Task.Run(async () =>
@@ -240,27 +231,35 @@ internal class MetadataService(
     public async Task Edit(AnimeModel anime)
     {
         var dbAnime = dbContext.Anime.FindById(anime.Id);
-        var options = new ModuleOptions();
-        options.AddOption(b => b.WithName(nameof(anime.AiringStatus))
-                                .WithDisplayName("Airing Status")
-                                .WithValue(anime.AiringStatus).WithAllowedValues<AiringStatus>())
-               .AddOption(b => b.WithName(nameof(anime.TotalEpisodes))
-                                .WithDisplayName("Total Episodes")
-                                .WithValue(anime.TotalEpisodes))
-               .AddOption(b => b.WithName("AniDbId").WithValue(anime.ExternalIds.AniDb))
-               .AddOption(b => b.WithName("Kitsu").WithValue(anime.ExternalIds.Kitsu))
-               .AddOption(b => b.WithName("AnimeNewsNetwork").WithValue(anime.ExternalIds.AnimeNewsNetwork));
-        
-        if (!await dialogService.EditModuleOptions(dbAnime.Title.Romaji ?? "", options))
+        var dataContainer = new DataContainer();
+        dataContainer.WithProperty(b => b.WithName(nameof(anime.AiringStatus))
+                                         .WithDisplayName("Airing Status")
+                                         .WithValue(anime.AiringStatus)
+                                         .WithAllowedValues<AiringStatus>())
+                     .WithProperty(b => b.WithName(nameof(anime.TotalEpisodes))
+                                         .WithDisplayName("Total Episodes")
+                                         .WithEditorType(SpecialEditorType.NumberBox)
+                                         .WithValue(anime.TotalEpisodes))
+                     .WithProperty(b => b.WithName("AniDbId")
+                                         .WithValue(anime.ExternalIds.AniDb)
+                                         .WithEditorType(SpecialEditorType.NumberBox))
+                     .WithProperty(b => b.WithName("Kitsu")
+                                         .WithEditorType(SpecialEditorType.NumberBox)
+                                         .WithValue(anime.ExternalIds.Kitsu))
+                     .WithProperty(b => b.WithName("AnimeNewsNetwork")
+                                         .WithEditorType(SpecialEditorType.NumberBox)
+                                         .WithValue(anime.ExternalIds.AnimeNewsNetwork));
+
+        if (!await dialogService.EditDataContainer(dbAnime.Title.Romaji ?? "", dataContainer))
         {
             return;
         }
 
-        anime.TotalEpisodes = options.GetInt32(nameof(anime.TotalEpisodes));
-        anime.AiringStatus = options.GetEnum(nameof(anime.AiringStatus), anime.AiringStatus);
-        anime.ExternalIds.AniDb = options.GetInt32("AniDbId");
-        anime.ExternalIds.Kitsu = options.GetInt32("Kitsu");
-        anime.ExternalIds.AnimeNewsNetwork = options.GetInt32("AnimeNewsNetwork");
+        anime.TotalEpisodes = dataContainer.GetInt32(nameof(anime.TotalEpisodes));
+        anime.AiringStatus = dataContainer.GetValue(nameof(anime.AiringStatus), anime.AiringStatus);
+        anime.ExternalIds.AniDb = dataContainer.GetInt32("AniDbId");
+        anime.ExternalIds.Kitsu = dataContainer.GetInt32("Kitsu");
+        anime.ExternalIds.AnimeNewsNetwork = dataContainer.GetInt32("AnimeNewsNetwork");
 
         dbAnime.TotalEpisodes = anime.TotalEpisodes ?? dbAnime.TotalEpisodes;
         dbAnime.AiringStatus = anime.AiringStatus;
@@ -268,6 +267,15 @@ internal class MetadataService(
         dbAnime.KitsuId = anime.ExternalIds.Kitsu;
         dbAnime.AnnId = anime.ExternalIds.AnimeNewsNetwork;
         dbContext.Anime.Upsert(dbAnime);
+    }
+
+    public Task<AnimeModel?> GetAnimeWithoutAdditionalInfoAsync(long id)
+    {
+        return Task.Run(() =>
+        {
+            var anime = dbContext.Anime.FindById(id);
+            return anime is null ? null : Converter.ToAppModel(anime);
+        });
     }
 
     private async Task BuildRelationshipsInternalAsync(OfflineAnimeModel anime, HashSet<long> visited, List<OfflineAnimeModel> related,

@@ -12,6 +12,6 @@
                Source="avares://TotoroNext.Anime.AnimeOnsen/Assets/animeonsen.jpg"
                Stretch="UniformToFill"
                Width="600" />
-        <controls:ModuleOptionsEditor Grid.Row="1" Options="{Binding EditableSettings}" />
+        <controls:DataContainerEditor Grid.Row="1" Options="{Binding EditableSettings}" />
     </Grid>
 </ContentPage>

@@ -12,7 +12,7 @@
         <StackPanel Grid.Row="1" 
                     HorizontalAlignment="Stretch"
                     Classes.SettingsContainer="true">
-            <controls:ModuleOptionsEditor Options="{Binding EditableSettings}"/>
+            <controls:DataContainerEditor Options="{Binding EditableSettings}"/>
             <controls:SettingsCard Header="Anime News Network Dump"
                                    Description="Download all items from ANN, required for mapping">
                 <controls:SettingsCard.Editor>

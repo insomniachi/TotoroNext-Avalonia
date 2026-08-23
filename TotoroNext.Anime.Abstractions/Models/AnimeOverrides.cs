@@ -10,7 +10,7 @@ public sealed class AnimeOverrides
     public SkipMethod EndingSkipMethod { get; init; }
     public ProviderItemResult? ProviderResult { get; set; }
     public bool UseAbsoluteNumbering { get; set; }
-    public List<ModuleOptionItem> AnimeProviderOptions { get; init; } = [];
+    public List<DataContainerProperty> AnimeProviderOptions { get; init; } = [];
 }
 
 [Serializable]

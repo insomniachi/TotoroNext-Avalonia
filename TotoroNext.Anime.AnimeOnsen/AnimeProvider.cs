@@ -2,7 +2,6 @@
 using System.Text.Json;
 using Downloader;
 using Flurl.Http;
-using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
 using TotoroNext.Module;
@@ -12,12 +11,12 @@ namespace TotoroNext.Anime.AnimeOnsen;
 
 public class AnimeProvider(
     IModuleSettings<Settings> settings,
-    IHttpClientFactory httpClientFactory) : IAnimeProvider
+    IHttpClientFactory httpClientFactory) : AnimeProvider<Settings>(settings)
 {
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient("search");
-        
+
         var response = await client.Request("indexes/content/search")
                                    .PostJsonAsync(new
                                    {
@@ -32,8 +31,8 @@ public class AnimeProvider(
             yield return new SearchResult(this, item.Id, item.Title, new Uri(image));
         }
     }
-    
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient("api");
         var response = await client.Request($"content/{animeId}/episodes")
@@ -43,7 +42,7 @@ public class AnimeProvider(
         foreach (var item in response)
         {
             ct.ThrowIfCancellationRequested();
-            
+
             if (!float.TryParse(item.Key, out var number))
             {
                 continue;
@@ -63,7 +62,8 @@ public class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient("api");
 
@@ -78,7 +78,7 @@ public class AnimeProvider(
 
         yield return new VideoServer("Default", new Uri(response.Url))
         {
-            Subtitle = response.Subtitles.Get(settings.Value.SubtitleLanguage),
+            Subtitle = response.Subtitles.Get(Settings.SubtitleLanguage),
             Headers =
             {
                 [HeaderNames.Referer] = "https://www.animeonsen.xyz/",
@@ -87,16 +87,6 @@ public class AnimeProvider(
             ContentType = "mp4",
             SkipData = CovertSkipData(skipData)
         };
-    }
-
-    public List<ModuleOptionItem> GetOptions()
-    {
-        return settings.Value.ToModuleOptions();
-    }
-
-    public void UpdateOptions(List<ModuleOptionItem> options)
-    {
-        settings.Value.UpdateValues(options);
     }
 
     private FlurlClient CreateClient(string name)

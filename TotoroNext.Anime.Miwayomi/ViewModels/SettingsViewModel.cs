@@ -170,11 +170,11 @@ internal partial class SettingsViewModel(IModuleSettings<Settings> settings,
     [RelayCommand]
     private async Task AddRepository()
     {
-        var options = new ModuleOptions();
-        options.AddOption(b => b.WithName("Name"))
-               .AddOption(b => b.WithName("Url"));
+        var options = new DataContainer();
+        options.WithProperty(b => b.WithName("Name"))
+               .WithProperty(b => b.WithName("Url"));
 
-        var result = await dialogService.EditModuleOptions("Add Repository", options);
+        var result = await dialogService.EditDataContainer("Add Repository", options);
 
         if (!result)
         {
