@@ -25,41 +25,23 @@ internal partial class SettingsViewModel(
     [RelayCommand]
     private async Task DownloadCachedSeason()
     {
-        var options = new DataContainer();
-        options.WithProperty(b => b.WithName("Year").WithEditorType(SpecialEditorType.NumberBox));
-        options.WithProperty(b => b.WithDisplayName("Season").WithAllowedValues<AnimeSeason>());
-
-        var result = await dialogService.EditDataContainer("Select Season", options);
-        if (!result)
+        if (await GetSeasonFromUser() is not { } input)
         {
             return;
         }
 
-        var year = options.GetInt32("Year");
-        var season = options.GetValue("SeasonName", AnimeSeason.Winter);
-
-        await dbContext.DownloadSeasonFromCache(year, season);
+        await dbContext.DownloadSeasonFromCache(input.Year, input.SeasonName);
     }
 
     [RelayCommand]
     private async Task DownloadSeason()
     {
-        var current = AnimeHelpers.CurrentSeason();
-
-        var options = new DataContainer();
-        options.WithProperty(b => b.WithNameAndValue(current.Year).WithEditorType(SpecialEditorType.NumberBox));
-        options.WithProperty(b => b.WithNameAndValue(current.SeasonName).WithAllowedValues<AnimeSeason>());
-
-        var result = await dialogService.EditDataContainer("Select Season", options);
-        if (!result)
+        if (await GetSeasonFromUser() is not { } input)
         {
             return;
         }
 
-        var year = options.GetInt32("Year");
-        var season = options.GetValue("SeasonName", AnimeSeason.Winter);
-
-        await dbContext.DownloadSeason(year, season);
+        await dbContext.DownloadSeason(input.Year, input.SeasonName);
     }
 
     [RelayCommand]
@@ -107,5 +89,24 @@ internal partial class SettingsViewModel(
     {
         var ann = new Anidb(httpClientFactory);
         await ann.DownloadDump();
+    }
+
+    private async Task<(int Year, AnimeSeason SeasonName)?> GetSeasonFromUser()
+    {
+        var options = new DataContainer();
+        var current = AnimeHelpers.CurrentSeason();
+        options.WithProperty(b => b.WithValueAndName(current.Year));
+        options.WithProperty(b => b.WithValueAndName(current.SeasonName));
+
+        var result = await dialogService.EditDataContainer("Select Season", options);
+        if (!result)
+        {
+            return null;
+        }
+
+        var year = options.GetInt32(nameof(current.Year));
+        var season = options.GetValue<AnimeSeason>(nameof(current.SeasonName));
+        
+        return (year, season);
     }
 }

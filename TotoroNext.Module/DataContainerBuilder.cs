@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace TotoroNext.Module;
 
@@ -32,14 +33,16 @@ public class DataContainerBuilder
     public DataContainerBuilder WithValue(object? value)
     {
         _value = value;
+        SetDefaultsForType(value);
         return this;
     }
 
-    public DataContainerBuilder WithNameAndValue<T>(T value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
+    public DataContainerBuilder WithValueAndName<T>(T value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
     {
         _value = value;
         _name = valueExpression.Split('.').LastOrDefault() ?? "";
         _displayName = _name;
+        SetDefaultsForType(value);
         return this;
     }
 
@@ -94,5 +97,25 @@ public class DataContainerBuilder
         _value = "";
         _editorType = default;
         _allowedValues = [];
+    }
+    
+    private void SetDefaultsForType(object? value)
+    {
+        if (value is null)
+        {
+            return;
+        }
+        
+        var type = value.GetType();
+        if (type.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(INumber<>)))
+        {
+            _editorType = SpecialEditorType.NumberBox;
+        }
+        else if (type.IsEnum)
+        {
+            _editorType = SpecialEditorType.ComboBox;
+            _allowedValues = Enum.GetValues(type).Cast<object>();
+        }
     }
 }

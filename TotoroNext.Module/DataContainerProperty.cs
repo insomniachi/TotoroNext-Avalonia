@@ -98,7 +98,7 @@ public static class DataContainerExtensions
             return options.GetProperty(name)?.GetValue(defaultValue) ?? defaultValue;
         }
 
-        public T? GetValue<T>(string name, T? defaultValue)
+        public T? GetValue<T>(string name, T? defaultValue = default)
         {
             return options.GetProperty(name) is not { } option ? defaultValue : option.GetValue(defaultValue);
         }

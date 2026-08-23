@@ -6,6 +6,7 @@ using Avalonia.Layout;
 using Avalonia.Markup.Declarative;
 using Avalonia.Media;
 using Ursa.Controls;
+using NumericUpDown = Ursa.Controls.NumericUpDown;
 
 namespace TotoroNext.Module.Controls;
 
@@ -44,15 +45,49 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
         };
     }
 
-    private static NumericIntUpDown CreateNumberBox(DataContainerProperty property)
+    private static NumericUpDown CreateNumberBox(DataContainerProperty property)
     {
-        var control = new NumericIntUpDown().MinWidth(100);
-        control.Bind(NumericIntUpDown.ValueProperty, new Binding(nameof(property.Value))
+        switch (property.Value)
         {
-            Source = property,
-            Mode = BindingMode.TwoWay
-        });
-        return control;
+            case int:
+            {
+                var control = new NumericIntUpDown().MinWidth(100);
+                control.Bind(NumericIntUpDown.ValueProperty, new Binding(nameof(property.Value))
+                {
+                    Source = property,
+                    Mode = BindingMode.TwoWay
+                });
+                return control;
+            }
+            case double:
+            {
+                var control = new NumericDoubleUpDown().MinWidth(100);
+                control.Bind(NumericDoubleUpDown.ValueProperty, new Binding(nameof(property.Value))
+                {
+                    Source = property,
+                    Mode = BindingMode.TwoWay
+                });
+                return control;
+            }
+            case float:
+            {
+                var control = new NumericFloatUpDown().MinWidth(100);
+                control.Bind(NumericFloatUpDown.ValueProperty, new Binding(nameof(property.Value))
+                {
+                    Source = property,
+                    Mode = BindingMode.TwoWay
+                });
+                return control;
+            }
+            default:
+                var defaultControl = new NumericIntUpDown().MinWidth(100);
+                defaultControl.Bind(NumericIntUpDown.ValueProperty, new Binding(nameof(property.Value))
+                {
+                    Source = property,
+                    Mode = BindingMode.TwoWay
+                });
+                return defaultControl;
+        }
     }
 
     private static PathPicker CreatePathPicker(DataContainerProperty property)
@@ -74,7 +109,6 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
     private static ComboBox CreateComboBox(DataContainerProperty property)
     {
         return new ComboBox()
-               .Width(250)
                .HorizontalAlignment(HorizontalAlignment.Stretch)
                .SelectedItem(property, x => x.Value)
                .ItemsSource(property, x => x.AllowedValues);
