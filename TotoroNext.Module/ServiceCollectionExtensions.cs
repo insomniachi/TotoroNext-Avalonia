@@ -38,7 +38,7 @@ public static class ServiceCollectionExtensions
                     .AddKeyedTransient<List<DataContainerProperty>>(module.Descriptor.Id, (sp, _) =>
                     {
                         var settings = sp.GetRequiredService<IModuleSettings<TData>>();
-                        return settings.Value.ToModuleOptions();
+                        return settings.Value.ToDataContainer();
                     });
             ;
             return services;

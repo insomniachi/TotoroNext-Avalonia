@@ -13,11 +13,11 @@ namespace TotoroNext.Anime.Anidb;
 
 internal partial class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    IModuleSettings<Settings> settings) : IAnimeProvider
+    IModuleSettings<Settings> settings) : AnimeProvider<Settings>(settings)
 {
     public const string BaseUrl = "https://anidb.app";
 
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var stream = await client.Request("/browse")
@@ -36,7 +36,7 @@ internal partial class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         var id = animeId.Split('-').LastOrDefault();
 
@@ -60,7 +60,8 @@ internal partial class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var stream = await client.Request($"/api/frontend/episode/{episodeId}/languages")
@@ -84,19 +85,9 @@ internal partial class AnimeProvider(
                 {
                     [HeaderNames.Referer] = BaseUrl
                 },
-                IsDefault = settings.Value.AudioLanguage == name
+                IsDefault = Settings.AudioLanguage == name
             };
         }
-    }
-
-    public List<DataContainerProperty> GetOptions()
-    {
-        return settings.Value.ToModuleOptions();
-    }
-
-    public void UpdateOptions(List<DataContainerProperty> options)
-    {
-        settings.Value.UpdateValues(options);
     }
 
     private FlurlClient CreateClient()

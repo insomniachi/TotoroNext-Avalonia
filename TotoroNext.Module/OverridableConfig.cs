@@ -28,7 +28,7 @@ public abstract class OverridableConfig
         var type = typeof(T);
         return (T)CreateType(type, options);
     }
-    
+
     public static object CreateType(Type type, List<DataContainerProperty> options)
     {
         var instance = Activator.CreateInstance(type)!;
@@ -42,10 +42,11 @@ public abstract class OverridableConfig
                 propInfo.SetValue(instance, optionValue);
             }
         }
+
         return instance;
     }
 
-    public DataContainer ToModuleOptions()
+    public DataContainer ToDataContainer()
     {
         var options = new DataContainer();
         foreach (var propertyInfo in GetType().GetProperties())
@@ -77,7 +78,7 @@ public abstract class OverridableConfig
 
             if (propertyInfo.GetCustomAttribute<AllowedValuesAttribute>() is { } allowedValuesAttribute)
             {
-                builder.WithAllowedValues(allowedValuesAttribute.Values);
+                builder.WithAllowedValues(allowedValuesAttribute.Values.OfType<object>());
             }
 
             if (propertyInfo.PropertyType == typeof(bool))

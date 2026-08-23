@@ -6,18 +6,17 @@ using Flurl;
 using Flurl.Http;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.KickAssAnime;
 
 public partial class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    IModuleSettings<Settings> settings) : IAnimeProvider
+    IModuleSettings<Settings> settings) : AnimeProvider<Settings>(settings)
 {
     public const string BaseUrl = "https://kaa.lt/";
 
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var stream = await client.Request("/api/search")
@@ -35,7 +34,7 @@ public partial class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var stream = await client.Request($"/api/show/{animeId}/language")
@@ -43,7 +42,7 @@ public partial class AnimeProvider(
         var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
         var languages = doc.RootElement.GetProperty("result").EnumerateArray().Select(x => x.GetString()).ToList();
 
-        if (!languages.Contains(settings.Value.AudioLanguage))
+        if (!languages.Contains(Settings.AudioLanguage))
         {
             yield break;
         }
@@ -56,7 +55,7 @@ public partial class AnimeProvider(
             ct.ThrowIfCancellationRequested();
             stream = await client.Request($"/api/show/{animeId}/episodes")
                                  .AppendQueryParam("page", page)
-                                 .AppendQueryParam("lang", settings.Value.AudioLanguage)
+                                 .AppendQueryParam("lang", Settings.AudioLanguage)
                                  .GetStreamAsync(cancellationToken: ct);
             doc.Dispose();
             doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
@@ -71,7 +70,8 @@ public partial class AnimeProvider(
         } while (page <= pageCount);
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var stream = await client.Request($"/api/show/{animeId}/episode/{episodeId}")
@@ -87,7 +87,7 @@ public partial class AnimeProvider(
             {
                 embed = ReplacePath(embed, "/cat-player/player");
             }
-            
+
             var response = await client.Request(embed).GetStringAsync(cancellationToken: ct);
             var html = WebUtility.HtmlDecode(response).Replace("&quot;", "\"");
 
@@ -95,20 +95,20 @@ public partial class AnimeProvider(
             {
                 continue;
             }
-            
-            if(TracksRegex().Matches(html) is not { Count: > 0 } trackMatches)
+
+            if (TracksRegex().Matches(html) is not { Count: > 0 } trackMatches)
             {
                 continue;
             }
-            
-            var selectedTrack = trackMatches.FirstOrDefault(x => x.Groups[2].Value == settings.Value.SubtitleLanguage);
+
+            var selectedTrack = trackMatches.FirstOrDefault(x => x.Groups[2].Value == Settings.SubtitleLanguage);
 
             var json = $$"""{ {{match.Groups[0].Value}}] }""";
             var manifestUrl = JsonDocument.Parse(json).RootElement.GetProperty("manifest").EnumerateArray().ElementAt(1).GetString()!;
             var origin = Uri.TryCreate(embed, UriKind.Absolute, out var uri)
                 ? uri.GetLeftPart(UriPartial.Authority)
                 : BaseUrl;
-            
+
             yield return new VideoServer(title, new Uri(FixUrl(manifestUrl, embed)!))
             {
                 Subtitle = selectedTrack?.Groups[3].Value,
@@ -118,16 +118,6 @@ public partial class AnimeProvider(
                 }
             };
         }
-    }
-
-    public List<DataContainerProperty> GetOptions()
-    {
-        return settings.Value.ToModuleOptions();
-    }
-
-    public void UpdateOptions(List<DataContainerProperty> options)
-    {
-        settings.Value.UpdateValues(options);
     }
 
     private FlurlClient CreateClient()
@@ -154,16 +144,18 @@ public partial class AnimeProvider(
             }
         };
     }
-    
+
     private static string ReplacePath(string url, string path)
     {
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
             return url;
+        }
 
         var builder = new UriBuilder(uri) { Path = path, Query = uri.Query.TrimStart('?') };
         return builder.Uri.ToString();
     }
-    
+
     private static string? FixUrl(string? rawUrl, string baseUrl)
     {
         if (string.IsNullOrWhiteSpace(rawUrl))
@@ -173,7 +165,9 @@ public partial class AnimeProvider(
 
         var trimmed = WebUtility.HtmlDecode(rawUrl).Replace("\\/", "/").Trim();
         if (trimmed.StartsWith(@"http://") || trimmed.StartsWith("https://"))
+        {
             return HttpSlashRegex().Replace(trimmed, "$1//");
+        }
 
         if (trimmed.StartsWith("//"))
         {
@@ -191,7 +185,7 @@ public partial class AnimeProvider(
     [GeneratedRegex("\"manifest\":\\[0,\"(?:https?:)?(?<url>//[^\"]+)\"")]
     private static partial Regex ManifestRegex();
 
-    [GeneratedRegex( "\"language\":\\[\\d+,\"(?<language>[^\"]+)\"\\][^}]+?\"name\":\\[\\d+,\"(?<name>[^\"]+)\"\\][^}]+?\"src\":\\[\\d+,\"(?<src>[^\"]+)\"\\]")]
+    [GeneratedRegex("\"language\":\\[\\d+,\"(?<language>[^\"]+)\"\\][^}]+?\"name\":\\[\\d+,\"(?<name>[^\"]+)\"\\][^}]+?\"src\":\\[\\d+,\"(?<src>[^\"]+)\"\\]")]
     private static partial Regex TracksRegex();
 
     [GeneratedRegex(@"^(https?:)//+")]

@@ -11,11 +11,11 @@ namespace TotoroNext.Anime.Miruro;
 
 public class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    IModuleSettings<Settings> settings) : IAnimeProvider
+    IModuleSettings<Settings> settings) : AnimeProvider<Settings>(settings)
 {
     public const string BaseUrl = "https://www.miruro.tv";
-    
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
+
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
 
@@ -52,7 +52,7 @@ public class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
         var query = new JsonObject { ["anilistId"] = int.Parse(animeId) };
@@ -63,18 +63,19 @@ public class AnimeProvider(
             yield break;
         }
 
-        var preferredProvider = providers.GetProperty(settings.Value.PreferredProvider);
+        var preferredProvider = providers.GetProperty(Settings.PreferredProvider);
         foreach (var ep in ParseEpisodesFromProvider(preferredProvider))
         {
             yield return ep;
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient();
-        var provider = settings.Value.PreferredProvider;
-        var defaultSubType = settings.Value.PreferredSubType;
+        var provider = Settings.PreferredProvider;
+        var defaultSubType = Settings.PreferredSubType;
 
         if (string.IsNullOrEmpty(episodeId))
         {
@@ -93,17 +94,6 @@ public class AnimeProvider(
             yield return server;
         }
     }
-
-    public List<DataContainerProperty> GetOptions()
-    {
-        return settings.Value.ToModuleOptions();
-    }
-
-    public void UpdateOptions(List<DataContainerProperty> options)
-    {
-        settings.Value.UpdateValues(options);
-    }
-
 
     private static async IAsyncEnumerable<VideoServer> GetStreamServersAsync(FlurlClient client, JsonObject query,
                                                                              [EnumeratorCancellation] CancellationToken cancellationToken)
@@ -154,7 +144,7 @@ public class AnimeProvider(
     {
         var episodesObject = providerData.GetProperty("episodes");
 
-        string[] subTypes = settings.Value.PreferredProvider == "bee" ? ["ssub", "sub", "dub"] : ["sub", "dub"];
+        string[] subTypes = Settings.PreferredProvider == "bee" ? ["ssub", "sub", "dub"] : ["sub", "dub"];
         var episodeMap = new Dictionary<float, Dictionary<string, string>>();
         var titles = new Dictionary<float, string>();
 
@@ -203,8 +193,8 @@ public class AnimeProvider(
 
     private Episode? BuildEpisode(float number, string? title, Dictionary<string, string> subTypeIds)
     {
-        var defaultSubType = subTypeIds.ContainsKey(settings.Value.PreferredSubType)
-            ? settings.Value.PreferredSubType
+        var defaultSubType = subTypeIds.ContainsKey(Settings.PreferredSubType)
+            ? Settings.PreferredSubType
             : "";
 
         if (string.IsNullOrWhiteSpace(defaultSubType))

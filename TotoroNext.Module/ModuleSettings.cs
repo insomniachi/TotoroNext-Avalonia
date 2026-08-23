@@ -63,7 +63,7 @@ public abstract class ModuleSettingsViewModel<TSettings>(IModuleSettings<TSettin
             return;
         }
 
-        EditableSettings = oc.ToModuleOptions();
+        EditableSettings = oc.ToDataContainer();
         OnPropertyChanged(nameof(EditableSettings));
 
         foreach (var item in EditableSettings)

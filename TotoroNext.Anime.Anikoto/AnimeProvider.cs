@@ -9,18 +9,17 @@ using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Anikoto;
 
 public partial class AnimeProvider(
     IHttpClientFactory httpClientFactory,
-    IModuleSettings<Settings> settings) : IAnimeProvider
+    IModuleSettings<Settings> settings) : AnimeProvider<Settings>(settings)
 {
     public const string BaseUrl = "https://anikototv.to/";
 
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient("api");
 
@@ -52,7 +51,7 @@ public partial class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient("api");
         var idNumber = animeId.Split(":")[0];
@@ -73,7 +72,7 @@ public partial class AnimeProvider(
             var titleNode = node.QuerySelector(".d-title");
             var titleEn = titleNode?.InnerHtml ?? "";
             var titleJp = titleNode?.GetAttributeValue("data-jb", "") ?? "";
-            
+
             if (!float.TryParse(numberString, out var number))
             {
                 continue;
@@ -81,7 +80,7 @@ public partial class AnimeProvider(
 
             yield return new Episode(this, animeId, $"{id}:{number}", number)
             {
-                Info = new EpisodeInfo()
+                Info = new EpisodeInfo
                 {
                     Titles =
                     {
@@ -93,7 +92,8 @@ public partial class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         using var client = CreateClient("api");
         var episodeIdParts = episodeId.Split(':');
@@ -107,8 +107,8 @@ public partial class AnimeProvider(
         var doc = new HtmlDocument();
         doc.LoadHtml(html ?? "");
 
-        var preferredCategory = settings.Value.PreferredStreamCategory;
-        var preferredServer = settings.Value.PreferredServer;
+        var preferredCategory = Settings.PreferredStreamCategory;
+        var preferredServer = Settings.PreferredServer;
 
         foreach (var node in doc.QuerySelectorAll($".type[data-type='{preferredCategory}']"))
         {
@@ -155,16 +155,6 @@ public partial class AnimeProvider(
                 };
             }
         }
-    }
-
-    public List<DataContainerProperty> GetOptions()
-    {
-        return settings.Value.ToModuleOptions();
-    }
-
-    public void UpdateOptions(List<DataContainerProperty> options)
-    {
-        settings.Value.UpdateValues(options);
     }
 
     private FlurlClient CreateClient(string name)

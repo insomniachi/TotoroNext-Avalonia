@@ -11,12 +11,12 @@ namespace TotoroNext.Anime.Jellyfin;
 public class AnimeProvider(
     JellyfinApiClient client,
     Authenticator authenticator,
-    IModuleSettings<Settings> settings) : IAnimeProvider
+    IModuleSettings<Settings> settings) : AnimeProvider<Settings>(settings)
 {
     public static string? SessionId { get; private set; }
     public static string? MediaSourceId { get; private set; }
 
-    public async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<SearchResult> SearchAsync(string query, [EnumeratorCancellation] CancellationToken ct)
     {
         if (!await authenticator.LoginIfNotAuthenticated())
         {
@@ -42,12 +42,12 @@ public class AnimeProvider(
         foreach (var item in result.Items ?? [])
         {
             ct.ThrowIfCancellationRequested();
-            var image = settings.Value.ServerUrl.AppendPathSegment($"/Items/{item.Id}/Images/Primary");
+            var image = Settings.ServerUrl.AppendPathSegment($"/Items/{item.Id}/Images/Primary");
             yield return new SearchResult(this, $"{item.Id}", item.Name ?? "", new Uri(image));
         }
     }
 
-    public async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<Episode> GetEpisodes(string animeId, [EnumeratorCancellation] CancellationToken ct)
     {
         if (!await authenticator.LoginIfNotAuthenticated())
         {
@@ -102,14 +102,14 @@ public class AnimeProvider(
 
                     yield return new Episode(this, animeId, $"{ep.Id}", ++episodeNumber)
                     {
-                        Info = new EpisodeInfo()
+                        Info = new EpisodeInfo
                         {
                             Overview = ep.Overview ?? "",
                             AirDateUtc = ep.PremiereDate,
                             AirDate = ep.PremiereDate?.ToString("yyyy-MM-dd") ?? "",
                             Runtime = TimeSpan.FromTicks(ep.RunTimeTicks ?? 0).Minutes,
-                            Image= settings.Value.ServerUrl.AppendPathSegment($"/Items/{ep.Id}/Images/Primary"),
-                            Titles = new Titles()
+                            Image = Settings.ServerUrl.AppendPathSegment($"/Items/{ep.Id}/Images/Primary"),
+                            Titles = new Titles
                             {
                                 English = ep.Name ?? ""
                             }
@@ -120,7 +120,8 @@ public class AnimeProvider(
         }
     }
 
-    public async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId, [EnumeratorCancellation] CancellationToken ct)
+    public override async IAsyncEnumerable<VideoServer> GetServersAsync(string animeId, string episodeId,
+                                                                        [EnumeratorCancellation] CancellationToken ct)
     {
         var id = Guid.Parse(episodeId);
         var item = await client.Items[id].GetAsync(x => x.QueryParameters.UserId = Settings.UserId, ct);
@@ -239,7 +240,7 @@ public class AnimeProvider(
 
         if (mediaSource.SupportsDirectPlay == true)
         {
-            return settings.Value.ServerUrl
+            return Settings.ServerUrl
                            .AppendPathSegment($"/Videos/{id}/stream")
                            .AppendQueryParam("container", mediaSource.Container)
                            .AppendQueryParam("playSessionId", SessionId)
