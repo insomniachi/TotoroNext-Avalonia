@@ -1,4 +1,5 @@
-﻿using Jellyfin.Sdk;
+﻿using System.Runtime.Serialization;
+using Jellyfin.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Jellyfin.ViewModels;
@@ -41,7 +42,10 @@ public class Module : IModule<Settings>
 
 public class Settings : OverridableConfig
 {
+    [IgnoreDataMember]
     public static Guid? UserId { get; set; }
+    
+    [IgnoreDataMember]
     public static string? AccessToken { get; set; }
 
     public string? ServerUrl { get; set; }
