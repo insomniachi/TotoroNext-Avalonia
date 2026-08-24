@@ -9,13 +9,21 @@
              Width="400"
              x:DataType="viewModels:RelationsBuilderViewModel"
              x:Class="TotoroNext.Anime.Views.RelationsBuilderView">
+    <ContentPage.Styles>
+        <Style Selector="TableViewCell">
+            <Setter Property="Padding" Value="8 4" />
+        </Style>
+        <Style Selector="TableViewRow">
+            <Setter Property="MinHeight" Value="50" />
+        </Style>
+    </ContentPage.Styles>
     <Grid RowDefinitions="Auto,*" RowSpacing="4">
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
             <StackPanel.Styles>
                 <Style Selector="Button">
                     <Setter Property="Height" Value="15" />
                     <Setter Property="Width" Value="30" />
-                    <Setter Property="CommandParameter" Value="{Binding #TheDataGrid.SelectedItem}" />
+                    <Setter Property="CommandParameter" Value="{Binding #TableView.SelectedItem}" />
                 </Style>
                 <Style Selector="Viewbox">
                     <Setter Property="Height" Value="15" />
@@ -35,29 +43,30 @@
                 <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.Delete}}" />
             </Button>
         </StackPanel>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Anime}"
-                  GridLinesVisibility="All"
-                  AutoGenerateColumns="False"
-                  CanUserReorderColumns="False"
-                  CanUserResizeColumns="False"
-                  CanUserSortColumns="True"
-                  IsReadOnly="False"
-                  SelectionMode="Single"
-                  SelectedItem="{Binding SelectedRow}"
-                  x:Name="TheDataGrid">
-            <DataGrid.Styles>
-                <Style Selector="DataGridRow">
-                    <Setter Property="DragDrop.AllowDrop" Value="True" />
-                </Style>
-            </DataGrid.Styles>
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Title}"
-                                    Header="Title"
-                                    IsReadOnly="True"
-                                    Width="*" />
-                <DataGridTextColumn Binding="{Binding TotalEpisodes}"
-                                    Header="Episodes" />
-            </DataGrid.Columns>
-        </DataGrid>
+        <TableView Grid.Row="1"
+                   x:Name="TableView"
+                   CanUserResizeColumns="False"
+                   ItemsSource="{Binding Anime}"
+                   SelectedItem="{Binding SelectedRow}">
+            <TableView.Columns>
+                <TableViewColumn Header="Title" Width="3*">
+                    <TableViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}" TextWrapping="Wrap"/>
+                        </DataTemplate>
+                    </TableViewColumn.CellTemplate>
+                </TableViewColumn>
+                <TableViewColumn Header="Episodes" 
+                                 Width="*"
+                                 HorizontalContentAlignment="Center">
+                    <TableViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TotalEpisodes}"
+                                       VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </TableViewColumn.CellTemplate>
+                </TableViewColumn>
+            </TableView.Columns>
+        </TableView>
     </Grid>
 </ContentPage>
