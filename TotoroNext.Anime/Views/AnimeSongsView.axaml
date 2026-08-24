@@ -24,30 +24,40 @@
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding Themes}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="aa:AnimeMusic">
-                            <Grid Margin="0 4"
-                                  ColumnSpacing="8"
-                                  ColumnDefinitions="*,Auto,Auto,*">
-                                <TextBlock Text="{Binding DisplayName}"
-                                           VerticalAlignment="Center"
-                                           TextWrapping="Wrap" />
-                                <Button Grid.Column="1"
-                                        Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).OpenInMediaPlayerCommand, FallbackValue={x:Null}}"
-                                        CommandParameter="{Binding}"
-                                        ToolTip.Tip="Play Video">
-                                    <Viewbox Height="20" Width="20"
-                                             Child="{ext:PathIcon Key={x:Static module:CommonIcons.MonitorPlayFill}}" />
-                                </Button>
-                                <Button Grid.Column="2"
-                                        Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).PlayAudioCommand, FallbackValue={x:Null}}"
-                                        CommandParameter="{Binding}"
-                                        ToolTip.Tip="Play Audio"
-                                        Height="20">
-                                    <Viewbox Height="20" Width="20"
-                                             Child="{ext:PathIcon Key={x:Static module:CommonIcons.MusicNote}}" />
-                                </Button>
-                            </Grid>
+                            <Border Background="{DynamicResource SemiColorBackground1}"
+                                    BorderBrush="{DynamicResource SemiColorBorder}"
+                                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                                    Padding="8">
+                                <Grid Margin="0 4"
+                                      ColumnSpacing="8"
+                                      ColumnDefinitions="*,Auto,Auto">
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap" />
+                                    <Button Grid.Column="1"
+                                            Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).OpenInMediaPlayerCommand, FallbackValue={x:Null}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip.Tip="Play Video">
+                                        <Viewbox Height="20" Width="20"
+                                                 Child="{ext:PathIcon Key={x:Static module:CommonIcons.MonitorPlayFill}}" />
+                                    </Button>
+                                    <Button Grid.Column="2"
+                                            Command="{Binding $parent[ItemsControl].((vm:AnimeSongsViewModel)DataContext).PlayAudioCommand, FallbackValue={x:Null}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTip.Tip="Play Audio"
+                                            Height="20">
+                                        <Viewbox Height="20" Width="20"
+                                                 Child="{ext:PathIcon Key={x:Static module:CommonIcons.MusicNote}}" />
+                                    </Button>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="8"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
             </Grid>
         </ScrollViewer>
