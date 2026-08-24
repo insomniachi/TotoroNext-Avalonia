@@ -51,7 +51,7 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
         {
             case int:
             {
-                var control = new NumericIntUpDown().MinWidth(100);
+                var control = new NumericIntUpDown();
                 control.Bind(NumericIntUpDown.ValueProperty, new Binding(nameof(property.Value))
                 {
                     Source = property,
@@ -61,7 +61,7 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
             }
             case double:
             {
-                var control = new NumericDoubleUpDown().MinWidth(100);
+                var control = new NumericDoubleUpDown();
                 control.Bind(NumericDoubleUpDown.ValueProperty, new Binding(nameof(property.Value))
                 {
                     Source = property,
@@ -71,7 +71,7 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
             }
             case float:
             {
-                var control = new NumericFloatUpDown().MinWidth(100);
+                var control = new NumericFloatUpDown();
                 control.Bind(NumericFloatUpDown.ValueProperty, new Binding(nameof(property.Value))
                 {
                     Source = property,
@@ -80,7 +80,7 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
                 return control;
             }
             default:
-                var defaultControl = new NumericIntUpDown().MinWidth(100);
+                var defaultControl = new NumericIntUpDown();
                 defaultControl.Bind(NumericIntUpDown.ValueProperty, new Binding(nameof(property.Value))
                 {
                     Source = property,
@@ -106,8 +106,17 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
         return new ToggleSwitch().IsChecked(property, x => x.IsChecked);
     }
 
-    private static ComboBox CreateComboBox(DataContainerProperty property)
+    private static Control CreateComboBox(DataContainerProperty property)
     {
+        if (property.Value is Enum enumValue)
+        {
+            return new EnumSelector()
+                   .DisplayDescription(true)
+                   .HorizontalAlignment(HorizontalAlignment.Stretch)
+                   .Value(property, x => x.Value)
+                   .EnumType(enumValue.GetType());
+        }
+        
         return new ComboBox()
                .HorizontalAlignment(HorizontalAlignment.Stretch)
                .SelectedItem(property, x => x.Value)

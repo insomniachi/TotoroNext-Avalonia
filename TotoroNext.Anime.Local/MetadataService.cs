@@ -217,7 +217,7 @@ internal class MetadataService(
         }
 
         var visited = new HashSet<long> { id };
-        var related = new List<OfflineAnimeModel>();
+        var related = new List<OfflineAnimeModel>() { anime };
         await BuildRelationshipsInternalAsync(anime, visited, related, ct);
         return
         [
@@ -267,15 +267,6 @@ internal class MetadataService(
         dbAnime.KitsuId = anime.ExternalIds.Kitsu;
         dbAnime.AnnId = anime.ExternalIds.AnimeNewsNetwork;
         dbContext.Anime.Upsert(dbAnime);
-    }
-
-    public Task<AnimeModel?> GetAnimeWithoutAdditionalInfoAsync(long id)
-    {
-        return Task.Run(() =>
-        {
-            var anime = dbContext.Anime.FindById(id);
-            return anime is null ? null : Converter.ToAppModel(anime);
-        });
     }
 
     private async Task BuildRelationshipsInternalAsync(OfflineAnimeModel anime, HashSet<long> visited, List<OfflineAnimeModel> related,

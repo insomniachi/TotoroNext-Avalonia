@@ -9,14 +9,47 @@
              Width="400"
              x:DataType="viewModels:RelationsBuilderViewModel"
              x:Class="TotoroNext.Anime.Views.RelationsBuilderView">
-    <Grid>
-        <DataGrid ItemsSource="{Binding Anime}"
+    <Grid RowDefinitions="Auto,*" RowSpacing="4">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
+            <StackPanel.Styles>
+                <Style Selector="Button">
+                    <Setter Property="Height" Value="15" />
+                    <Setter Property="Width" Value="30" />
+                    <Setter Property="CommandParameter" Value="{Binding #TheDataGrid.SelectedItem}" />
+                </Style>
+                <Style Selector="Viewbox">
+                    <Setter Property="Height" Value="15" />
+                    <Setter Property="Width" Value="15" />
+                </Style>
+            </StackPanel.Styles>
+            <Button
+                Command="{Binding MoveUpCommand}">
+                <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.ArrowUp}}" />
+            </Button>
+            <Button
+                Command="{Binding MoveDownCommand}">
+                <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.ArrowDown}}" />
+            </Button>
+            <Button
+                Command="{Binding DeleteCommand}">
+                <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.Delete}}" />
+            </Button>
+        </StackPanel>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Anime}"
                   GridLinesVisibility="All"
                   AutoGenerateColumns="False"
                   CanUserReorderColumns="False"
                   CanUserResizeColumns="False"
                   CanUserSortColumns="True"
-                  IsReadOnly="False">
+                  IsReadOnly="False"
+                  SelectionMode="Single"
+                  SelectedItem="{Binding SelectedRow}"
+                  x:Name="TheDataGrid">
+            <DataGrid.Styles>
+                <Style Selector="DataGridRow">
+                    <Setter Property="DragDrop.AllowDrop" Value="True" />
+                </Style>
+            </DataGrid.Styles>
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Title}"
                                     Header="Title"
@@ -24,37 +57,6 @@
                                     Width="*" />
                 <DataGridTextColumn Binding="{Binding TotalEpisodes}"
                                     Header="Episodes" />
-                <DataGridTemplateColumn Header="Actions">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Spacing="4" Orientation="Horizontal" Margin="4">
-                                <StackPanel.Styles>
-                                    <Style Selector="Button">
-                                        <Setter Property="Height" Value="15" />
-                                        <Setter Property="Width" Value="30" />
-                                        <Setter Property="CommandParameter" Value="{Binding}" />
-                                    </Style>
-                                    <Style Selector="Viewbox">
-                                        <Setter Property="Height" Value="15" />
-                                        <Setter Property="Width" Value="15" />
-                                    </Style>
-                                </StackPanel.Styles>
-                                <Button
-                                    Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).MoveUpCommand, FallbackValue={x:Null}}">
-                                    <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.ArrowUp}}" />
-                                </Button>
-                                <Button
-                                    Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).MoveDownCommand, FallbackValue={x:Null}}">
-                                    <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.ArrowDown}}" />
-                                </Button>
-                                <Button
-                                    Command="{Binding $parent[DataGrid].((viewModels:RelationsBuilderViewModel)DataContext).DeleteCommand, FallbackValue={x:Null}}">
-                                    <Viewbox Child="{ext:PathIcon Key={x:Static module:CommonIcons.Delete}}" />
-                                </Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

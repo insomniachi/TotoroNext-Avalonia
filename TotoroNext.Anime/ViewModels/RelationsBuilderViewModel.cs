@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DynamicData;
 using JetBrains.Annotations;
@@ -12,10 +13,57 @@ using Ursa.Controls;
 namespace TotoroNext.Anime.ViewModels;
 
 [UsedImplicitly]
-public partial class RelationsBuilderViewModel(RelationsBuilderViewModelNavigationParameters parameters,
-                                               IAnimeRelations relations) : DialogViewModel, IInitializable, IDialogViewModel
+public partial class RelationsBuilderViewModel(
+    RelationsBuilderViewModelNavigationParameters parameters,
+    IAnimeRelations relations) : DialogViewModel, IInitializable, IDialogViewModel
 {
     public ObservableCollection<AnimeModel> Anime { get; } = [];
+
+    [ObservableProperty] public partial AnimeModel? SelectedRow { get; set; }
+
+    public async Task Handle(DialogResult result)
+    {
+        if (result is not DialogResult.OK)
+        {
+            return;
+        }
+
+        var sb = new StringBuilder();
+        var first = Anime[0];
+        var counter = first.TotalEpisodes ?? 0;
+        var hasNewRelation = false;
+        foreach (var anime in Anime.Skip(1))
+        {
+            var absoluteEndEp = counter + (anime.TotalEpisodes ?? 0);
+            var relation = new AnimeRelation
+            {
+                DestinationEpisodesRage = new EpisodeRange(1, anime.TotalEpisodes ?? 0),
+                SourceEpisodesRage = new EpisodeRange(counter + 1, absoluteEndEp),
+                DestinationIds = anime.ExternalIds,
+                SourceIds = first.ExternalIds
+            };
+
+            if (!relations.Exists(relation))
+            {
+                sb.AppendLine($"# {first.Title} -> {anime.Title.Replace(first.Title, "~")}");
+                sb.AppendLine(relation.ToString());
+                relations.AddRelation(relation);
+                hasNewRelation = true;
+            }
+
+            counter = absoluteEndEp;
+        }
+
+        if (!hasNewRelation)
+        {
+            return;
+        }
+
+        sb.AppendLine();
+
+        var localRelations = FileHelper.GetPath("relations-local.txt");
+        await File.AppendAllTextAsync(localRelations, sb.ToString());
+    }
 
     public void Initialize()
     {
@@ -38,7 +86,9 @@ public partial class RelationsBuilderViewModel(RelationsBuilderViewModelNavigati
 
         Anime.RemoveAt(index);
         Anime.Insert(index - 1, item);
-        
+
+        SelectedRow = item;
+
         MoveUpCommand.NotifyCanExecuteChanged();
         MoveDownCommand.NotifyCanExecuteChanged();
     }
@@ -64,7 +114,9 @@ public partial class RelationsBuilderViewModel(RelationsBuilderViewModelNavigati
 
         Anime.RemoveAt(index);
         Anime.Insert(index + 1, item);
-        
+
+        SelectedRow = item;
+
         MoveUpCommand.NotifyCanExecuteChanged();
         MoveDownCommand.NotifyCanExecuteChanged();
     }
@@ -77,53 +129,17 @@ public partial class RelationsBuilderViewModel(RelationsBuilderViewModelNavigati
     [RelayCommand]
     private void Delete(AnimeModel? item)
     {
-        if (item != null)
-        {
-            Anime.Remove(item);
-        }
-    }
-
-    public async Task Handle(DialogResult result)
-    {
-        if(result is not DialogResult.OK)
+        if (item is null)
         {
             return;
         }
 
-        var sb = new StringBuilder();
-        var first = Anime[0];
-        var counter = first.TotalEpisodes ?? 0;
-        var hasNewRelation = false;
-        foreach (var anime in Anime.Skip(1))
+        var index = Anime.IndexOf(item);
+        Anime.Remove(item);
+
+        if (Anime.Count > 0)
         {
-            var absoluteEndEp = counter + (anime.TotalEpisodes ?? 0);
-            var relation = new AnimeRelation()
-            {
-                DestinationEpisodesRage = new EpisodeRange(1, anime.TotalEpisodes ?? 0),
-                SourceEpisodesRage = new EpisodeRange(counter + 1, absoluteEndEp),
-                DestinationIds = anime.ExternalIds,
-                SourceIds = first.ExternalIds
-            };
-
-            if (!relations.Exists(relation))
-            {
-                sb.AppendLine($"# {first.Title} -> {anime.Title.Replace(first.Title, "~")}");
-                sb.AppendLine(relation.ToString());
-                relations.AddRelation(relation);
-                hasNewRelation = true;
-            }
-            
-            counter = absoluteEndEp;
+            SelectedRow = Anime[Math.Clamp(index, 0, Anime.Count - 1)];
         }
-
-        if (!hasNewRelation)
-        {
-            return;
-        }
-
-        sb.AppendLine();
-        
-        var localRelations = FileHelper.GetPath("relations-local.txt");
-        await File.AppendAllTextAsync(localRelations, sb.ToString());
     }
 }
