@@ -12,6 +12,4 @@ public interface ILocalTrackingService : ITrackingService
 public interface ILocalMetadataService : IMetadataService
 {
     Task<List<AnimeModel>> BuilderRelationshipsAsync(long id, CancellationToken ct);
-
-    Task Edit(AnimeModel id);
 }

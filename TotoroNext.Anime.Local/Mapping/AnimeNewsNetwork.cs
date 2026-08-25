@@ -178,7 +178,7 @@ internal class AnimeNewsNetwork(IHttpClientFactory httpClientFactory)
     {
         if (annDate is null)
         {
-            return false;
+            return true;
         }
 
         var year = annDate.Year;

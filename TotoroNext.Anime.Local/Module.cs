@@ -4,6 +4,7 @@ using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.ViewModels;
 using TotoroNext.Anime.Abstractions.Views;
 using TotoroNext.Anime.Local.ViewModels;
+using TotoroNext.Anime.Local.Views;
 using TotoroNext.Module;
 using TotoroNext.Module.Abstractions;
 using SettingsViewModel = TotoroNext.Anime.Local.ViewModels.SettingsViewModel;
@@ -29,6 +30,7 @@ public class Module : IModule<Settings>
         services.AddModuleSettings(this);
         services.AddKeyedViewMap<UpdateTrackingView, UpdateTrackingViewModel>("tracking/Local");
         services.AddViewMap<SettingsView, SettingsViewModel>();
+        services.AddKeyedViewMap<EditAnimeView, EditAnimeViewModel>("EditAnime");
 
         services.AddSingleton<IDbContext, DbContext>();
         services.AddTransient<IAnimeMappingService, AnimeMappingService>();

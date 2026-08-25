@@ -13,7 +13,6 @@ namespace TotoroNext.Anime;
 public class Commands(
     IMessenger messenger,
     ITrackingUpdater trackingUpdater,
-    ILocalMetadataService localMetadataService,
     IAnimeExtensionService extensionService) : IInitializer
 {
     public static ICommand WatchCommand { get; private set; } = null!;
@@ -21,7 +20,6 @@ public class Commands(
     public static ICommand DetailsCommand { get; private set; } = null!;
     public static ICommand SearchTorrentsCommand { get; private set; } = null!;
     public static ICommand AddToListCommand { get; private set; } = null!;
-    public static ICommand EditDbCommand { get; private set; } = null!;
 
     public void Initialize()
     {
@@ -30,20 +28,6 @@ public class Commands(
         DetailsCommand = CreateDetailsCommand();
         SearchTorrentsCommand = CreateSearchTorrentsCommand();
         AddToListCommand = CreateAddToListCommand();
-        EditDbCommand = CreateEditDbCommand();
-    }
-
-    private AsyncRelayCommand<AnimeModel> CreateEditDbCommand()
-    {
-        return new AsyncRelayCommand<AnimeModel>(async anime =>
-        {
-            if (anime is null)
-            {
-                return;
-            }
-
-            await localMetadataService.Edit(anime);
-        });
     }
 
     private AsyncRelayCommand<AnimeModel> CreateAddToListCommand()

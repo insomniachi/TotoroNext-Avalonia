@@ -4,15 +4,12 @@ using JetBrains.Annotations;
 using TotoroNext.Anime.Abstractions;
 using TotoroNext.Anime.Abstractions.Extensions;
 using TotoroNext.Anime.Abstractions.Models;
-using TotoroNext.Module;
-using TotoroNext.Module.Abstractions;
 
 namespace TotoroNext.Anime.Local;
 
 [UsedImplicitly]
 internal class MetadataService(
     IDbContext dbContext,
-    IDialogService dialogService,
     GraphQLHttpClient client) : ILocalMetadataService
 {
     public Guid Id => Module.Id;
@@ -217,7 +214,7 @@ internal class MetadataService(
         }
 
         var visited = new HashSet<long> { id };
-        var related = new List<OfflineAnimeModel>() { anime };
+        var related = new List<OfflineAnimeModel> { anime };
         await BuildRelationshipsInternalAsync(anime, visited, related, ct);
         return
         [
@@ -228,46 +225,6 @@ internal class MetadataService(
         ];
     }
 
-    public async Task Edit(AnimeModel anime)
-    {
-        var dbAnime = dbContext.Anime.FindById(anime.Id);
-        var dataContainer = new DataContainer();
-        dataContainer.WithProperty(b => b.WithName(nameof(anime.AiringStatus))
-                                         .WithDisplayName("Airing Status")
-                                         .WithValue(anime.AiringStatus)
-                                         .WithAllowedValues<AiringStatus>())
-                     .WithProperty(b => b.WithName(nameof(anime.TotalEpisodes))
-                                         .WithDisplayName("Total Episodes")
-                                         .WithEditorType(SpecialEditorType.NumberBox)
-                                         .WithValue(anime.TotalEpisodes))
-                     .WithProperty(b => b.WithName("AniDbId")
-                                         .WithValue(anime.ExternalIds.AniDb)
-                                         .WithEditorType(SpecialEditorType.NumberBox))
-                     .WithProperty(b => b.WithName("Kitsu")
-                                         .WithEditorType(SpecialEditorType.NumberBox)
-                                         .WithValue(anime.ExternalIds.Kitsu))
-                     .WithProperty(b => b.WithName("AnimeNewsNetwork")
-                                         .WithEditorType(SpecialEditorType.NumberBox)
-                                         .WithValue(anime.ExternalIds.AnimeNewsNetwork));
-
-        if (!await dialogService.EditDataContainer(dbAnime.Title.Romaji ?? "", dataContainer))
-        {
-            return;
-        }
-
-        anime.TotalEpisodes = dataContainer.GetInt32(nameof(anime.TotalEpisodes));
-        anime.AiringStatus = dataContainer.GetValue(nameof(anime.AiringStatus), anime.AiringStatus);
-        anime.ExternalIds.AniDb = dataContainer.GetInt32("AniDbId");
-        anime.ExternalIds.Kitsu = dataContainer.GetInt32("Kitsu");
-        anime.ExternalIds.AnimeNewsNetwork = dataContainer.GetInt32("AnimeNewsNetwork");
-
-        dbAnime.TotalEpisodes = anime.TotalEpisodes ?? dbAnime.TotalEpisodes;
-        dbAnime.AiringStatus = anime.AiringStatus;
-        dbAnime.AniDbId = anime.ExternalIds.AniDb;
-        dbAnime.KitsuId = anime.ExternalIds.Kitsu;
-        dbAnime.AnnId = anime.ExternalIds.AnimeNewsNetwork;
-        dbContext.Anime.Upsert(dbAnime);
-    }
 
     private async Task BuildRelationshipsInternalAsync(OfflineAnimeModel anime, HashSet<long> visited, List<OfflineAnimeModel> related,
                                                        CancellationToken ct)

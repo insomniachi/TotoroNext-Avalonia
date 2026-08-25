@@ -1,0 +1,57 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:TotoroNext.Anime.Local.ViewModels"
+             xmlns:module="clr-namespace:TotoroNext.Module;assembly=TotoroNext.Module"
+             xmlns:controls="totoro.next/controls"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:models="totoro.next/models"
+             xmlns:extensions="totoro.next/extensions"
+             Width="400"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="viewModels:EditAnimeViewModel"
+             x:Class="TotoroNext.Anime.Local.Views.EditAnimeView">
+    <StackPanel Classes.SettingsContainer="true">
+        <controls:SettingsCard Header="Status">
+            <controls:SettingsCard.Editor>
+                <u:EnumSelector Value="{Binding Status}"
+                                DisplayDescription="True"
+                                EnumType="{x:Type models:AiringStatus}" />
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+        <controls:SettingsCard Header="Total Episodes">
+            <controls:SettingsCard.Editor>
+                <u:NumericIntUpDown Value="{Binding TotalEpisodes}" />
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+        <controls:SettingsCard Header="Anime News Network Id"
+                               Description="Used to fetch anime op/ed">
+            <controls:SettingsCard.Editor>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <u:NumericIntUpDown Value="{Binding AnnId}" />
+                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Update}}"
+                            Command="{Binding FetchAnnIdCommand}" />
+                </StackPanel>
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+        <controls:SettingsCard Header="Kitsu Id">
+            <controls:SettingsCard.Editor>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <u:NumericIntUpDown Value="{Binding KitsuId}" />
+                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Update}}" 
+                            Command="{Binding FetchKitsuIdCommand}"/>
+                </StackPanel>
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+        <controls:SettingsCard Header="AniDb Id">
+            <controls:SettingsCard.Editor>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <u:NumericIntUpDown Value="{Binding AniDbId}" />
+                    <Button Content="{extensions:PathIcon Key={x:Static module:CommonIcons.Update}}"
+                            Command="{Binding FetchAniDbIdCommand}"/>
+                </StackPanel>
+            </controls:SettingsCard.Editor>
+        </controls:SettingsCard>
+    </StackPanel>
+</ContentPage>

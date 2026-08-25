@@ -13,31 +13,3 @@ public static class ComponentTypes
     public const string TorrentClient = "Torrent Client";
     public const string TorrentIndexer = "Torrent Indexer";
 }
-
-public interface IComponentRegistry
-{
-    void RegisterComponent(string componentType, Descriptor descriptor);
-    IEnumerable<Descriptor> GetComponents(string componentType);
-}
-
-public class ComponentRegistry : IComponentRegistry
-{
-    private readonly Dictionary<string, List<Descriptor>> _components = [];
-
-    public void RegisterComponent(string componentType, Descriptor descriptor)
-    {
-        if (_components.TryGetValue(componentType, out var list))
-        {
-            list.Add(descriptor);
-        }
-        else
-        {
-            _components[componentType] = [descriptor];
-        }
-    }
-
-    public IEnumerable<Descriptor> GetComponents(string componentType)
-    {
-        return _components.TryGetValue(componentType, out var descriptors) ? descriptors : Enumerable.Empty<Descriptor>();
-    }
-}

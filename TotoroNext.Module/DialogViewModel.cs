@@ -3,10 +3,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Irihi.Avalonia.Shared.Contracts;
 using TotoroNext.Module.Abstractions;
+using Ursa.Controls;
 
 namespace TotoroNext.Module;
 
-public abstract partial class DialogViewModel : ObservableObject, IKeyBindingsProvider, IDialogContext
+public abstract partial class DialogViewModel : ObservableObject, IKeyBindingsProvider, IDialogContext, IDialogViewModel
 {
     public event EventHandler<object?>? RequestClose;
 
@@ -32,5 +33,10 @@ public abstract partial class DialogViewModel : ObservableObject, IKeyBindingsPr
     protected virtual IEnumerable<KeyBinding> GetExtraKeyBindings()
     {
         yield break;
+    }
+
+    public virtual Task Handle(DialogResult result)
+    {
+        return Task.CompletedTask;
     }
 }

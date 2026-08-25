@@ -63,7 +63,7 @@ internal static class Converter
             })],
             Description = model.Description,
             StartDate = ConvertDate(model.StartDate),
-            EndDate = ConvertDate(model.EndDate)
+            EndDate = ConvertDate(model.EndDate),
         };
 
         return result;

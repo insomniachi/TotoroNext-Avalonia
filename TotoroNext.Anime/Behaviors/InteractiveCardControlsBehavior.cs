@@ -294,8 +294,16 @@ public class InteractiveCardControlsBehavior : Behavior<AnimeCard>, IAnimeCardOv
     private static Button EditDbButton(AnimeModel anime)
     {
         var button = new Button()
-                     .Command(Commands.EditDbCommand)
-                     .CommandParameter(anime)
+                     .OnClick(_ =>
+                     {
+                         WeakReferenceMessenger.Default.Send(new NavigateToKeyDialogMessage
+                         {
+                             Title = anime.Title,
+                             Key = $"EditAnime",
+                             Data = anime,
+                             Button = DialogButton.OKCancel,
+                         });
+                     })
                      .CornerRadius(30)
                      .Height(30).Width(30)
                      .Content(new Viewbox()
