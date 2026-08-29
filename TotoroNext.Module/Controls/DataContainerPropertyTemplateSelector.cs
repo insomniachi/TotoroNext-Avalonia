@@ -103,7 +103,7 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
 
     private static ToggleSwitch CreateToggleSwitch(DataContainerProperty property)
     {
-        return new ToggleSwitch().IsChecked(property, x => x.IsChecked);
+        return new ToggleSwitch().IsChecked(property, x => x.Value);
     }
 
     private static Control CreateComboBox(DataContainerProperty property)

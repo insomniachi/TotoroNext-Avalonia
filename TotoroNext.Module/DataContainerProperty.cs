@@ -11,12 +11,6 @@ public partial class DataContainerProperty : ObservableObject
     [ObservableProperty] public partial object? Value { get; set; }
     public IEnumerable<object>? AllowedValues { get; init; }
 
-    public bool IsChecked
-    {
-        get => Value is true;
-        set => Value = value;
-    }
-
     public T? GetValue<T>(T? defaultValue)
     {
         if (Value is T { } typedValue)
@@ -119,3 +113,4 @@ public enum SpecialEditorType
     NumberBox,
     FileBrowser
 }
+
