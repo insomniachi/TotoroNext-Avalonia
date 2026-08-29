@@ -11,6 +11,7 @@ public class DataContainerPropertyBuilder
     private SpecialEditorType _editorType;
     private string _name = "";
     private object? _value = "";
+    private string? _iconKey = "";
 
     public DataContainerPropertyBuilder WithName(string name)
     {
@@ -58,6 +59,12 @@ public class DataContainerPropertyBuilder
         _editorType = type;
         return this;
     }
+    
+    public DataContainerPropertyBuilder WithIcon(string key)
+    {
+        _iconKey = key;
+        return this;
+    }
 
     public DataContainerPropertyBuilder WithAllowedValues<T>()
         where T : struct, Enum
@@ -81,7 +88,8 @@ public class DataContainerPropertyBuilder
             Description = _description,
             Value = _value,
             EditorType = _editorType,
-            AllowedValues = _allowedValues
+            AllowedValues = _allowedValues,
+            IconKey = _iconKey
         };
 
         Reset();

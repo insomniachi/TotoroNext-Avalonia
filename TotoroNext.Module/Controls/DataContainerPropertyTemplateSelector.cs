@@ -24,12 +24,19 @@ public class DataContainerPropertyTemplateSelector : IDataTemplate
 
     private static SettingsCard CreateSettingsCard(DataContainerProperty property)
     {
-        return new SettingsCard
+        var card = new SettingsCard
         {
             Header = property.DisplayName ?? "",
             Description = property.Description ?? "",
-            Editor = CreateEditor(property)
+            Editor = CreateEditor(property),
         };
+
+        if (!string.IsNullOrEmpty(property.IconKey))
+        {
+            card.Icon = IconRegistry.GetGeometry(property.IconKey);
+        }
+
+        return card;
     }
 
     private static Control CreateEditor(DataContainerProperty property)

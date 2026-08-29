@@ -81,6 +81,11 @@ public abstract class OverridableConfig
                 builder.WithAllowedValues(allowedValuesAttribute.Values.OfType<object>());
             }
 
+            if (propertyInfo.GetCustomAttribute<IconAttribute>() is { } iconAttribute)
+            {
+                builder.WithIcon(iconAttribute.IconKey);
+            }
+
             if (propertyInfo.PropertyType == typeof(bool))
             {
                 builder.WithEditorType(SpecialEditorType.ToggleSwitch);

@@ -10,6 +10,7 @@ public partial class DataContainerProperty : ObservableObject
     public SpecialEditorType EditorType { get; init; } = SpecialEditorType.TextBox;
     [ObservableProperty] public partial object? Value { get; set; }
     public IEnumerable<object>? AllowedValues { get; init; }
+    public string? IconKey { get; init; }
 
     public T? GetValue<T>(T? defaultValue)
     {
@@ -103,6 +104,12 @@ public static class DataContainerExtensions
 public class SpecialEditorTypeAttribute(SpecialEditorType type) : Attribute
 {
     public SpecialEditorType Type { get; } = type;
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public class IconAttribute(string iconKey) : Attribute
+{
+    public string IconKey { get; } = iconKey;
 }
 
 public enum SpecialEditorType

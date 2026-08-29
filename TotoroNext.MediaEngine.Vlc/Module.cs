@@ -35,11 +35,14 @@ public class Settings : OverridableConfig
 {
     [DisplayName("Executable")]
     [SpecialEditorType(SpecialEditorType.FileBrowser)]
+    [Icon(CommonIcons.FilePath)]
     public string FileName { get; set; } = OperatingSystem.IsLinux()
         ? "/usr/bin/vlc"
         : "";
 
-    [DisplayName("Start in fullscreen")] public bool LaunchFullScreen { get; set; } = true;
+    [DisplayName("Start in fullscreen")]
+    [Icon(CommonIcons.Fullscreen)]
+    public bool LaunchFullScreen { get; set; } = true;
 }
 
 internal class SettingsViewModel(IModuleSettings<Settings> data) : ModuleSettingsViewModel<Settings>(data);
