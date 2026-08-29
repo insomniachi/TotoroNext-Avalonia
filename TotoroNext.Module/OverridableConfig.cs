@@ -56,7 +56,7 @@ public abstract class OverridableConfig
                 continue;
             }
 
-            var builder = new DataContainerBuilder()
+            var builder = new DataContainerPropertyBuilder()
                           .WithName(propertyInfo.Name)
                           .WithDisplayName(propertyInfo.Name)
                           .WithValue(propertyInfo.GetValue(this));
@@ -97,13 +97,13 @@ public abstract class OverridableConfig
 
             ConfigureProperty(builder, propertyInfo);
 
-            options.Add(builder.ToProperty());
+            options.Add(builder.Build());
         }
 
         return options;
     }
 
-    protected virtual void ConfigureProperty(DataContainerBuilder builder, PropertyInfo info) { }
+    protected virtual void ConfigureProperty(DataContainerPropertyBuilder propertyBuilder, PropertyInfo info) { }
 
     private static object? GetValue(DataContainerProperty options, Type t, object? defaultValue)
     {

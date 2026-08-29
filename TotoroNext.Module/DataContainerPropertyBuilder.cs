@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace TotoroNext.Module;
 
-public class DataContainerBuilder
+public class DataContainerPropertyBuilder
 {
     private IEnumerable<object> _allowedValues = [];
     private string? _description;
@@ -12,32 +12,32 @@ public class DataContainerBuilder
     private string _name = "";
     private object? _value = "";
 
-    public DataContainerBuilder WithName(string name)
+    public DataContainerPropertyBuilder WithName(string name)
     {
         _name = name;
         return this;
     }
 
-    public DataContainerBuilder WithDisplayName(string displayName)
+    public DataContainerPropertyBuilder WithDisplayName(string displayName)
     {
         _displayName = displayName;
         return this;
     }
 
-    public DataContainerBuilder WithDescription(string description)
+    public DataContainerPropertyBuilder WithDescription(string description)
     {
         _description = description;
         return this;
     }
 
-    public DataContainerBuilder WithValue(object? value)
+    public DataContainerPropertyBuilder WithValue(object? value)
     {
         _value = value;
         SetDefaultsForType(value);
         return this;
     }
 
-    public DataContainerBuilder WithValueAndName<T>(T value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
+    public DataContainerPropertyBuilder WithValueAndName<T>(T value, [CallerArgumentExpression(nameof(value))] string valueExpression = "")
     {
         _value = value;
         _name = valueExpression.Split('.').LastOrDefault() ?? "";
@@ -46,20 +46,20 @@ public class DataContainerBuilder
         return this;
     }
 
-    public DataContainerBuilder WithAllowedValues(IEnumerable<object> allowedValues)
+    public DataContainerPropertyBuilder WithAllowedValues(IEnumerable<object> allowedValues)
     {
         _allowedValues = allowedValues;
         _editorType = SpecialEditorType.ComboBox;
         return this;
     }
 
-    public DataContainerBuilder WithEditorType(SpecialEditorType type)
+    public DataContainerPropertyBuilder WithEditorType(SpecialEditorType type)
     {
         _editorType = type;
         return this;
     }
 
-    public DataContainerBuilder WithAllowedValues<T>()
+    public DataContainerPropertyBuilder WithAllowedValues<T>()
         where T : struct, Enum
     {
         _allowedValues = Enum.GetValues<T>().Cast<object>();
@@ -72,7 +72,7 @@ public class DataContainerBuilder
         return _allowedValues.Any();
     }
 
-    public DataContainerProperty ToProperty()
+    public DataContainerProperty Build()
     {
         var item = new DataContainerProperty
         {

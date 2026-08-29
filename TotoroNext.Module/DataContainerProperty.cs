@@ -31,11 +31,11 @@ public class DataContainer(IEnumerable<DataContainerProperty> items) : List<Data
 {
     public DataContainer() : this([]) { }
 
-    public DataContainer WithProperty(Action<DataContainerBuilder> creator)
+    public DataContainer WithProperty(Action<DataContainerPropertyBuilder> creator)
     {
-        var builder = new DataContainerBuilder();
+        var builder = new DataContainerPropertyBuilder();
         creator(builder);
-        Add(builder.ToProperty());
+        Add(builder.Build());
         return this;
     }
 

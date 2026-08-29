@@ -47,11 +47,11 @@ public class Settings : OverridableConfig
     [Description("First torrent of matching this resolution would be selected as default, remaining will be returned and used manually")]
     public string Resolution { get; set; } = "1080";
 
-    protected override void ConfigureProperty(DataContainerBuilder builder, PropertyInfo info)
+    protected override void ConfigureProperty(DataContainerPropertyBuilder propertyBuilder, PropertyInfo info)
     {
         if (info.Name == nameof(Group))
         {
-            builder.WithAllowedValues(TsukiHimeLocalData.Groups.Select(x => x.Name));
+            propertyBuilder.WithAllowedValues(TsukiHimeLocalData.Groups.Select(x => x.Name));
         }
     }
 }
