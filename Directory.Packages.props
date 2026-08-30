@@ -7,7 +7,7 @@
     <PackageVersion Include="AsyncImageLoader.Avalonia" Version="3.8.0" />
     <PackageVersion Include="Avalonia" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Controls.ItemsRepeater" Version="12.0.0" />
-    <PackageVersion Include="Avalonia.Controls.WebView" Version="12.0.1" />
+    <PackageVersion Include="Avalonia.Controls.WebView" Version="12.1.0" />
     <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Labs.Controls" Version="12.0.2" />
     <PackageVersion Include="Avalonia.Labs.Panels" Version="12.0.2" />
@@ -16,7 +16,7 @@
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.1" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
-    <PackageVersion Include="Banned.Qbittorrent" Version="1.5.1" />
+    <PackageVersion Include="Banned.Qbittorrent" Version="1.6.0" />
     <PackageVersion Include="Crc32.NET" Version="1.2.0" />
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageVersion Include="Downloader" Version="5.9.5" />
@@ -29,7 +29,7 @@
     <PackageVersion Include="GraphQL.Primitives" Version="6.1.0" />
     <PackageVersion Include="HotAvalonia" Version="3.0.0" />
     <PackageVersion Include="HotAvalonia.Extensions" Version="3.0.0" />
-    <PackageVersion Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageVersion Include="HtmlAgilityPack" Version="1.13.0" />
     <PackageVersion Include="HtmlAgilityPack.CssSelectors.NetCore" Version="1.2.1" />
     <PackageVersion Include="Humanizer" Version="3.0.10" />
     <PackageVersion Include="Infidex" Version="1.0.8" />
@@ -39,26 +39,26 @@
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
     <PackageVersion Include="JikanDotNet" Version="2.10.4" />
     <PackageVersion Include="LanguageDetection.Ai" Version="1.1.0" />
-    <PackageVersion Include="LibVLCSharp" Version="3.10.0" />
-    <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.10.0" />
+    <PackageVersion Include="LibVLCSharp" Version="3.10.1" />
+    <PackageVersion Include="LibVLCSharp.Avalonia" Version="3.10.1" />
     <PackageVersion Include="LiteDB" Version="5.0.21" />
     <PackageVersion Include="MalApi.V2" Version="2.0.8" />
-    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.8.0" />
-    <PackageVersion Include="Microsoft.Playwright" Version="1.61.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.9.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.62.0" />
     <PackageVersion Include="MonoTorrent" Version="3.9.0-alpha.unstable.rev0000" />
     <PackageVersion Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.3.1" />
     <PackageVersion Include="ReactiveUI.Avalonia.Reactive" Version="12.1.1" />
     <PackageVersion Include="Semi.Avalonia" Version="12.1.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Semi.Avalonia.DataGrid" Version="12.1.0.1" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.3" />
-    <PackageVersion Include="System.ServiceModel.Syndication" Version="10.0.10" />
+    <PackageVersion Include="System.ServiceModel.Syndication" Version="10.0.11" />
     <PackageVersion Include="System.Text.Encodings.Web" Version="10.0.0" />
     <PackageVersion Include="Velopack" Version="1.2.0" />
     <PackageVersion Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />

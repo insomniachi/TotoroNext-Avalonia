@@ -10,11 +10,11 @@ public interface IAnimeMusicService
 
 public class AnimeMusic
 {
-    public Uri? Video { get; init; }
-    public Uri? Audio { get; init; }
+    public Uri? Video { get; set; }
+    public Uri? Audio { get; set; }
     public string? Type { get; init; }
     public string SongName { get; init; } = "";
-    public string Artist { get; init; } = "";
+    public string Artist { get; set; } = "";
 
     public string DisplayName
     {

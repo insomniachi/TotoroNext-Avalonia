@@ -59,7 +59,7 @@ public partial class AnimeInfoViewModel(
         yield return new KeyValuePair<string, string>("Season", $"{anime.Season?.SeasonName} {anime.Season?.Year}");
         yield return new KeyValuePair<string, string>("Score", anime.MeanScore?.ToString() ?? "??");
         yield return new KeyValuePair<string, string>("Popularity", anime.Popularity.ToString("N0"));
-        yield return new KeyValuePair<string, string>("Studios", string.Join(",", anime.Studios));
+        yield return new KeyValuePair<string, string>("Studios", string.Join(Environment.NewLine, anime.Studios));
     }
 
     private static string Normalize(string title)
